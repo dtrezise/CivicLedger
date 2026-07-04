@@ -38,9 +38,9 @@ async def get_events(
     return [to_event_item(e) for e in events]
 
 
-@router.get("/{event_id}", response_model=EventItem)
-async def get_event(event_id: UUID, db: AsyncSession = Depends(get_db)):
-    event = await crud.get_event(db, event_id)
+@router.get("/{id}", response_model=EventItem)
+async def get_event(id: UUID, db: AsyncSession = Depends(get_db)):
+    event = await crud.get_event(db, id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     return to_event_item(event)

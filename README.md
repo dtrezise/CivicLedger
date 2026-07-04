@@ -56,6 +56,7 @@ On first startup the backend automatically seeds the database with:
 | `docs/architecture.md` | System layers and release gates |
 | `docs/data_model.md` | Current and next data model |
 | `docs/provenance_policy.md` | Source, fixture, correction, and share-card rules |
+| `docs/official_sources.md` | Official House/Senate source intake plan |
 | `docs/roadmap.md` | Stabilization and phased build plan |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
 
@@ -65,6 +66,7 @@ On first startup the backend automatically seeds the database with:
 |--------|------|-------------|
 | GET | `/meta/status` | Dataset version and ingestion status |
 | GET | `/meta/methodology` | Methodology blocks and key rules |
+| GET | `/meta/sources` | Official source registry and intake status |
 | GET | `/search/people?q=` | Autocomplete search |
 | GET | `/people` | Browse directory (filterable, paginated) |
 | GET | `/people/batch_stats?ids=` | Batch stats for multiple people |

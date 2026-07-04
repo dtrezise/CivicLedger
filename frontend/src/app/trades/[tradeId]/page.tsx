@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import {
+  DemoFixtureBanner,
+  MetadataSummary,
+  StatusBadge,
+  formatDateTime,
+} from "@/components/ProvenanceStatus";
 import { api } from "@/lib/api";
-import type { TradeDetail, MarketSeriesItem } from "@/lib/types";
+import type { TradeDetail, MarketSeriesItem, MetaStatus } from "@/lib/types";
 import {
   LineChart,
   Line,
@@ -23,7 +29,24 @@ export default function TradeDetailPage({
   const { tradeId } = params;
   const [trade, setTrade] = useState<TradeDetail | null>(null);
   const [marketData, setMarketData] = useState<MarketSeriesItem[]>([]);
+  const [status, setStatus] = useState<MetaStatus | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .getStatus()
+      .then((data) => {
+        if (!cancelled) setStatus(data);
+      })
+      .catch(() => {
+        if (!cancelled) setStatus(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     api
@@ -57,6 +80,14 @@ export default function TradeDetailPage({
     date: p.date,
     value: Number(p.value),
   }));
+  const provenance = trade.provenance;
+  const provenanceComplete = provenance?.provenance_complete === true;
+  const provenanceMissing = provenance?.provenance_complete === false || !provenance;
+  const provenanceLabel = provenanceComplete
+    ? "Complete"
+    : provenanceMissing
+    ? "Incomplete"
+    : "Not provided";
 
   return (
     <div>
@@ -71,6 +102,45 @@ export default function TradeDetailPage({
 
       <h1 className="text-2xl font-bold mb-1">Trade Detail</h1>
       <p className="text-gray-500 mb-6">{trade.asset_display_name}</p>
+
+      <DemoFixtureBanner status={status} className="mb-6" />
+
+      <MetadataSummary
+        className="mb-6"
+        title="Dataset and Trade Provenance"
+        description="Available dataset, methodology, and source metadata for this trade."
+        status={status}
+        items={[
+          { label: "Dataset", value: status?.dataset_version },
+          { label: "Methodology", value: status?.methodology_version },
+          { label: "Parser", value: status?.parser_version },
+          {
+            label: "Last ingestion",
+            value: formatDateTime(status?.last_ingestion_run_at),
+            missingLabel: "No completed ingestion timestamp",
+          },
+          {
+            label: "Provenance",
+            value: provenanceLabel,
+            missingLabel: "Completeness not provided",
+          },
+          {
+            label: "Retrieved",
+            value: formatDateTime(provenance?.retrieved_at),
+            missingLabel: "Retrieval timestamp not provided",
+          },
+          {
+            label: "File hash",
+            value: provenance?.file_hash,
+            missingLabel: "File hash not provided",
+          },
+          {
+            label: "Market overlay",
+            value: chartPoints.length > 0 ? "SPY loaded" : "",
+            missingLabel: "No SPY overlay loaded",
+          },
+        ]}
+      />
 
       {/* Facts grid */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
@@ -138,35 +208,51 @@ export default function TradeDetailPage({
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
         <h2 className="font-semibold text-sm text-gray-700 mb-2">
           Provenance
-          {!trade.provenance.provenance_complete && (
-            <span className="ml-2 text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded">
-              Incomplete
-            </span>
-          )}
+          <span className="ml-2">
+            <StatusBadge
+              tone={
+                provenanceComplete
+                  ? "complete"
+                  : provenanceMissing
+                  ? "attention"
+                  : "neutral"
+              }
+            >
+              {provenanceLabel}
+            </StatusBadge>
+          </span>
         </h2>
         <div className="text-sm space-y-1">
           <p>
             <span className="text-gray-400 w-24 inline-block">Source:</span>
-            <a
-              href={trade.provenance.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-civic-600 hover:underline break-all"
-            >
-              {trade.provenance.source_url}
-            </a>
+            {provenance?.source_url ? (
+              <a
+                href={provenance.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-civic-600 hover:underline break-all"
+              >
+                {provenance.source_url}
+              </a>
+            ) : (
+              <span className="text-gray-400">Not provided</span>
+            )}
           </p>
           <p>
             <span className="text-gray-400 w-24 inline-block">Retrieved:</span>
-            {trade.provenance.retrieved_at
-              ? new Date(trade.provenance.retrieved_at).toLocaleString()
-              : "N/A"}
+            {formatDateTime(provenance?.retrieved_at) || (
+              <span className="text-gray-400">Not provided</span>
+            )}
           </p>
           <p>
             <span className="text-gray-400 w-24 inline-block">File Hash:</span>
-            <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
-              {trade.provenance.file_hash}
-            </code>
+            {provenance?.file_hash ? (
+              <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
+                {provenance.file_hash}
+              </code>
+            ) : (
+              <span className="text-gray-400">Not provided</span>
+            )}
           </p>
         </div>
       </div>

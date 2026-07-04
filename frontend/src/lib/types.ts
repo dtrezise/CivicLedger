@@ -94,14 +94,14 @@ export interface TradeListResponse {
 }
 
 export interface ProvenanceInfo {
-  source_url: string;
-  retrieved_at: string;
-  file_hash: string;
-  provenance_complete: boolean;
+  source_url?: string | null;
+  retrieved_at?: string | null;
+  file_hash?: string | null;
+  provenance_complete?: boolean | null;
 }
 
 export interface TradeDetail extends TradeRow {
-  provenance: ProvenanceInfo;
+  provenance?: ProvenanceInfo | null;
 }
 
 export interface FilingDetail {
@@ -167,6 +167,25 @@ export interface MethodologyBlock {
 export interface MethodologyResponse {
   blocks: MethodologyBlock[];
   key_rules: string[];
+}
+
+export interface OfficialSourceInfo {
+  id: string;
+  name: string;
+  chamber: string;
+  source_url: string;
+  search_url: string | null;
+  download_url: string | null;
+  ingestion_status: string;
+  records_scope: string;
+  rights_note: string;
+  provenance_requirements: string[];
+}
+
+export interface OfficialSourcesResponse {
+  dataset_version: string;
+  methodology_version: string;
+  sources: OfficialSourceInfo[];
 }
 
 export interface BatchStatsItem {

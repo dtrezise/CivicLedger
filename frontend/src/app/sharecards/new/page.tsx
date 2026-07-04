@@ -3,8 +3,18 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import {
+  DemoFixtureBanner,
+  MetadataSummary,
+  formatDateTime,
+} from "@/components/ProvenanceStatus";
 import { api } from "@/lib/api";
-import type { PersonDetail, TradeRow, ShareCardCreateResponse } from "@/lib/types";
+import type {
+  MetaStatus,
+  PersonDetail,
+  TradeRow,
+  ShareCardCreateResponse,
+} from "@/lib/types";
 
 function ShareCardBuilderInner() {
   const searchParams = useSearchParams();
@@ -21,8 +31,25 @@ function ShareCardBuilderInner() {
   const [overlays, setOverlays] = useState(["SPY", "DIA"]);
   const [includeEvents, setIncludeEvents] = useState(true);
   const [result, setResult] = useState<ShareCardCreateResponse | null>(null);
+  const [status, setStatus] = useState<MetaStatus | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .getStatus()
+      .then((data) => {
+        if (!cancelled) setStatus(data);
+      })
+      .catch(() => {
+        if (!cancelled) setStatus(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (personId) {
@@ -58,6 +85,25 @@ function ShareCardBuilderInner() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Share Card Builder</h1>
+
+      <DemoFixtureBanner status={status} className="mb-6" />
+
+      <MetadataSummary
+        className="mb-6"
+        title="Dataset and Methodology Status"
+        description="Metadata available before generating a share card."
+        status={status}
+        items={[
+          { label: "Dataset", value: status?.dataset_version },
+          { label: "Methodology", value: status?.methodology_version },
+          { label: "Parser", value: status?.parser_version },
+          {
+            label: "Last ingestion",
+            value: formatDateTime(status?.last_ingestion_run_at),
+            missingLabel: "No completed ingestion timestamp",
+          },
+        ]}
+      />
 
       {person && (
         <p className="mb-4 text-gray-600">
@@ -210,7 +256,12 @@ function ShareCardBuilderInner() {
 
         <button
           onClick={handleGenerate}
-          disabled={generating || !personId}
+          disabled={
+            generating ||
+            !personId ||
+            (scope === "trade" && !selectedTradeId) ||
+            (scope === "range" && (!rangeStart || !rangeEnd))
+          }
           className="px-6 py-2 bg-civic-600 text-white rounded hover:bg-civic-700 disabled:opacity-50 text-sm"
         >
           {generating ? "Generating..." : "Generate Share Card"}
@@ -221,55 +272,70 @@ function ShareCardBuilderInner() {
 
       {/* Result */}
       {result && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="font-semibold mb-3">Share Card Generated</h2>
-          <div className="text-sm space-y-2">
-            <p>
-              <span className="text-gray-400">Card ID:</span>{" "}
-              <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
-                {result.sharecard_id}
-              </code>
-            </p>
-            <p>
-              <span className="text-gray-400">Generated:</span>{" "}
-              {new Date(result.generated_at).toLocaleString()}
-            </p>
-            <p>
-              <span className="text-gray-400">Dataset:</span>{" "}
-              <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
-                {result.dataset_version}
-              </code>
-            </p>
-            <p>
-              <span className="text-gray-400">Methodology:</span>{" "}
-              <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
-                {result.methodology_version}
-              </code>
-            </p>
-            {result.sources.length > 0 && (
-              <div>
-                <span className="text-gray-400">Sources:</span>
-                <ul className="ml-4 text-xs">
-                  {result.sources.map((s, i) => (
-                    <li key={i}>
-                      <a
-                        href={s}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-civic-600 hover:underline break-all"
-                      >
-                        {s}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+        <>
+          <MetadataSummary
+            className="mb-4"
+            title="Generated Card Metadata"
+            description="Metadata returned with this generated share card."
+            status={
+              status ?? {
+                dataset_version: result.dataset_version,
+                methodology_version: result.methodology_version,
+                parser_version: "Not returned",
+                last_ingestion_run_at: null,
+              }
+            }
+            items={[
+              { label: "Dataset", value: result.dataset_version },
+              { label: "Methodology", value: result.methodology_version },
+              {
+                label: "Generated",
+                value: formatDateTime(result.generated_at),
+                missingLabel: "Generation timestamp not provided",
+              },
+              {
+                label: "Sources",
+                value: result.sources.length
+                  ? `${result.sources.length} provided`
+                  : "",
+                missingLabel: "No sources returned",
+              },
+            ]}
+          />
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="font-semibold mb-3">Share Card Generated</h2>
+            <div className="text-sm space-y-2">
+              <p>
+                <span className="text-gray-400">Card ID:</span>{" "}
+                <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
+                  {result.sharecard_id}
+                </code>
+              </p>
+              {result.sources.length > 0 && (
+                <div>
+                  <span className="text-gray-400">Sources:</span>
+                  <ul className="ml-4 text-xs">
+                    {result.sources.map((s, i) => (
+                      <li key={i}>
+                        <a
+                          href={s}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-civic-600 hover:underline break-all"
+                        >
+                          {s}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                {result.disclaimer_text}
               </div>
-            )}
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
-              {result.disclaimer_text}
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

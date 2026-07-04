@@ -12,6 +12,7 @@
 
 - Add ingestion-run and raw-document tables.
 - Implement one official-source ingestion path.
+- Publish official House/Senate source registry through the API and methodology UI.
 - Store raw documents before parsed records.
 - Label fixture records across API, UI, and share cards.
 - Add source detail views.

@@ -28,6 +28,7 @@ import type {
   ShareCardCreateResponse,
   MetaStatus,
   MethodologyResponse,
+  OfficialSourcesResponse,
   BatchStatsItem,
 } from "./types";
 
@@ -35,6 +36,7 @@ export const api = {
   // Meta
   getStatus: () => fetchAPI<MetaStatus>("/meta/status"),
   getMethodology: () => fetchAPI<MethodologyResponse>("/meta/methodology"),
+  getSources: () => fetchAPI<OfficialSourcesResponse>("/meta/sources"),
 
   // Search
   searchPeople: (q: string) =>

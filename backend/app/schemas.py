@@ -245,3 +245,22 @@ class MethodologyBlock(BaseModel):
 class MethodologyResponse(BaseModel):
     blocks: list[MethodologyBlock]
     key_rules: list[str]
+
+
+class OfficialSourceInfo(BaseModel):
+    id: str
+    name: str
+    chamber: str
+    source_url: str
+    search_url: Optional[str] = None
+    download_url: Optional[str] = None
+    ingestion_status: str
+    records_scope: str
+    rights_note: str
+    provenance_requirements: list[str]
+
+
+class OfficialSourcesResponse(BaseModel):
+    dataset_version: str
+    methodology_version: str
+    sources: list[OfficialSourceInfo]

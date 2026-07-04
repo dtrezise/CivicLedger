@@ -3,6 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  DemoFixtureBanner,
+  MetadataSummary,
+  formatDateTime,
+} from "@/components/ProvenanceStatus";
 import { api } from "@/lib/api";
 import type { PersonSummary, MetaStatus } from "@/lib/types";
 
@@ -39,9 +44,13 @@ export default function HomePage() {
     <div className="flex flex-col items-center pt-16">
       <h1 className="text-4xl font-bold text-civic-800 mb-2">CivicLedger</h1>
       <p className="text-gray-500 mb-8 text-center max-w-lg">
-        Track financial disclosures by members of the U.S. Congress. Search for
-        a member to view their trading timeline, scorecard, and provenance data.
+        Explore congressional financial disclosure records. Search for a member
+        to view available timelines, scorecards, and source context.
       </p>
+
+      {status && (
+        <DemoFixtureBanner status={status} className="mb-6 w-full max-w-2xl" />
+      )}
 
       {/* Search */}
       <div className="relative w-full max-w-md mb-12">
@@ -93,17 +102,24 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {/* Status */}
+      {/* Data status */}
       {status && (
-        <div className="text-xs text-gray-400 space-y-1 text-center">
-          <p>Dataset: {status.dataset_version}</p>
-          <p>
-            Last ingestion:{" "}
-            {status.last_ingestion_run_at
-              ? new Date(status.last_ingestion_run_at).toLocaleString()
-              : "N/A (seed data)"}
-          </p>
-        </div>
+        <MetadataSummary
+          className="w-full max-w-3xl"
+          title="Dataset and Methodology Status"
+          description="Current metadata returned by the backend status endpoint."
+          status={status}
+          items={[
+            { label: "Dataset", value: status.dataset_version },
+            { label: "Methodology", value: status.methodology_version },
+            { label: "Parser", value: status.parser_version },
+            {
+              label: "Last ingestion",
+              value: formatDateTime(status.last_ingestion_run_at),
+              missingLabel: "No completed ingestion timestamp",
+            },
+          ]}
+        />
       )}
     </div>
   );

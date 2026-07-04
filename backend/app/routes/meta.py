@@ -1,6 +1,12 @@
 from fastapi import APIRouter
 from app.config import settings
-from app.schemas import MetaStatusResponse, MethodologyResponse, MethodologyBlock
+from app.schemas import (
+    MetaStatusResponse,
+    MethodologyResponse,
+    MethodologyBlock,
+    OfficialSourcesResponse,
+)
+from app.services.official_sources import get_official_sources_response
 
 router = APIRouter(prefix="/meta", tags=["meta"])
 
@@ -76,3 +82,8 @@ async def get_methodology():
         "Scorecard grading based on disclosure completeness and data-quality metrics",
     ]
     return MethodologyResponse(blocks=blocks, key_rules=key_rules)
+
+
+@router.get("/sources", response_model=OfficialSourcesResponse)
+async def get_sources():
+    return OfficialSourcesResponse.model_validate(get_official_sources_response())

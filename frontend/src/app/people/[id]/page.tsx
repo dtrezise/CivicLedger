@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
+  DemoFixtureBanner,
+  MetadataSummary,
+  formatDateTime,
+} from "@/components/ProvenanceStatus";
+import { api } from "@/lib/api";
+import {
   Bar,
   CartesianGrid,
   ComposedChart,
@@ -16,6 +22,7 @@ import {
 import type {
   EventItem,
   MarketSeriesItem,
+  MetaStatus,
   PersonDetail,
   ScorecardResponse,
   TimelineResponse,
@@ -76,6 +83,7 @@ export default function ProfilePage({
   const [timeline, setTimeline] = useState<TimelineResponse | null>(null);
   const [marketData, setMarketData] = useState<MarketSeriesItem[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [status, setStatus] = useState<MetaStatus | null>(null);
 
   const [showSPY, setShowSPY] = useState(true);
   const [showDIA, setShowDIA] = useState(false);
@@ -83,6 +91,22 @@ export default function ProfilePage({
 
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .getStatus()
+      .then((data) => {
+        if (!cancelled) setStatus(data);
+      })
+      .catch(() => {
+        if (!cancelled) setStatus(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Load core profile + scorecard + timeline
   useEffect(() => {
@@ -242,6 +266,8 @@ export default function ProfilePage({
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* Header */}
+      <DemoFixtureBanner status={status} className="mb-4" />
+
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="mb-2">
@@ -272,6 +298,53 @@ export default function ProfilePage({
           <div className="mt-1 text-xs text-gray-500">Disclosure Completeness</div>
         </div>
       </div>
+
+      <MetadataSummary
+        className="mt-6"
+        title="Dataset and Methodology Status"
+        description="Metadata for the profile, scorecard, timeline, and overlay context currently shown."
+        status={status}
+        items={[
+          { label: "Dataset", value: status?.dataset_version },
+          { label: "Methodology", value: status?.methodology_version },
+          { label: "Parser", value: status?.parser_version },
+          {
+            label: "Last ingestion",
+            value: formatDateTime(status?.last_ingestion_run_at),
+            missingLabel: "No completed ingestion timestamp",
+          },
+          {
+            label: "Timeline range",
+            value:
+              timeline?.start && timeline?.end
+                ? `${timeline.start} to ${timeline.end}`
+                : "",
+            missingLabel: "No timeline range returned",
+          },
+          {
+            label: "Timeline gaps",
+            value:
+              timeline?.gaps && timeline.gaps.length > 0
+                ? `${timeline.gaps.length} reported`
+                : timeline
+                ? "None reported"
+                : "",
+            missingLabel: "Gap data not returned",
+          },
+          {
+            label: "Market overlays",
+            value:
+              marketData.length > 0
+                ? marketData.map((series) => series.symbol).join(", ")
+                : "",
+            missingLabel: "No overlay data loaded",
+          },
+          {
+            label: "Context events",
+            value: events.length > 0 ? `${events.length} loaded` : "None loaded",
+          },
+        ]}
+      />
 
       {/* Scorecard summary */}
       <div className="mt-6 rounded-lg border bg-white p-4">
