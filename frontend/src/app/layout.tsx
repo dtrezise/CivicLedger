@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "CivicLedger",
-  description: "Congressional financial disclosure tracker",
+  description: "Federal public financial disclosure tracker",
 };
 
 export default function RootLayout({
@@ -42,7 +42,7 @@ export default function RootLayout({
           {children}
         </main>
         <footer className="border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
-          CivicLedger &middot; Congressional financial disclosures &middot;{" "}
+          CivicLedger &middot; Federal public financial disclosures &middot;{" "}
           <Link href="/methodology" className="underline">
             Methodology
           </Link>

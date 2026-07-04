@@ -44,8 +44,9 @@ export default function HomePage() {
     <div className="flex flex-col items-center pt-16">
       <h1 className="text-4xl font-bold text-civic-800 mb-2">CivicLedger</h1>
       <p className="text-gray-500 mb-8 text-center max-w-lg">
-        Explore congressional financial disclosure records. Search for a member
-        to view available timelines, scorecards, and source context.
+        Explore federal public financial disclosure records across the legislative,
+        executive, and judicial branches. Search for an official to view available
+        timelines, scorecards, and source context.
       </p>
 
       {status && (
@@ -62,7 +63,7 @@ export default function HomePage() {
             setShowResults(true);
           }}
           onFocus={() => setShowResults(true)}
-          placeholder="Search members of Congress..."
+          placeholder="Search federal officials..."
           className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-civic-400 focus:border-civic-400 outline-none text-lg"
         />
         {showResults && results.length > 0 && (
@@ -78,7 +79,7 @@ export default function HomePage() {
               >
                 <span className="font-medium">{p.full_name}</span>
                 <span className="text-sm text-gray-500 ml-2">
-                  {p.party} &middot; {p.state} &middot; {p.chamber}
+                  {[p.party, p.state, p.chamber].filter(Boolean).join(" · ")}
                 </span>
               </button>
             ))}

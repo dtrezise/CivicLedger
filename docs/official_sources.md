@@ -2,7 +2,7 @@
 
 ## Purpose
 
-CivicLedger must move from fixture data to official-source records without weakening provenance, neutrality, or use restrictions. This document defines the first official targets and the intake rules for the MVP.
+CivicLedger must move from fixture data to official-source records without weakening provenance, neutrality, or use restrictions. This document defines the first legislative, executive, and judicial official targets and the intake rules for the MVP.
 
 ## Initial Source Registry
 
@@ -24,10 +24,29 @@ The House disclosure search page includes statutory restrictions on use of finan
 
 The Senate public disclosure page points users to the Senate Public Financial Disclosure Database and describes STOCK Act reporting for covered Senators and senior staff. Chamber-specific field mapping must be verified separately from House parsing.
 
+### OGE Officials' Individual Disclosures
+
+- Source home: https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=
+- Search/request entry point: https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=
+- Initial status: planned
+- Scope: executive branch public financial disclosure documents, including OGE Form 278e annual reports and OGE Form 278-T periodic transaction reports where available.
+
+OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve these restrictions in ingestion logs, exports, and share-card workflows.
+
+### Federal Judicial Financial Disclosure Reports
+
+- Source home: https://www.uscourts.gov/administration-policies/judiciary-financial-disclosure-reports
+- Search/request entry point: https://pub.jefs.uscourts.gov/
+- Initial status: planned
+- Scope: financial disclosure reports and periodic transaction reports for federal judges and covered judiciary personnel released through the Administrative Office of the U.S. Courts.
+
+The judiciary database provides public access to downloadable reports but requires requester registration and acknowledgement of statutory access/use restrictions. CivicLedger must not automate around those access requirements.
+
 ## Intake Rules
 
 - Respect official terms, notices, robots controls, and rate limits.
-- Prefer documented downloads or manually supplied official document URLs before any broad crawling.
+- Prefer documented downloads, released documents, or manually supplied official document URLs before any broad crawling.
+- Treat request/registration workflows as human-governed source access, not as scraping targets.
 - Create an `ingestion_runs` record before retrieving documents.
 - Store raw documents or raw index payloads before normalized filings or trades are created.
 - Hash every retrieved artifact.
@@ -37,8 +56,8 @@ The Senate public disclosure page points users to the Senate Public Financial Di
 
 ## First Implementation Slice
 
-1. Add a manual official-source intake command that accepts a House or Senate source URL and archives the raw artifact.
+1. Add a manual official-source intake command that accepts a legislative, executive, or judicial source URL and archives the raw artifact.
 2. Persist `raw_documents` before creating any parsed filing or trade records.
-3. Add parser adapters behind explicit source IDs: `house-financial-disclosure` and `senate-public-financial-disclosure`.
+3. Add parser adapters behind explicit source IDs: `house-financial-disclosure`, `senate-public-financial-disclosure`, `oge-individual-disclosures`, and `judicial-financial-disclosure`.
 4. Run parser output in preview mode before promoting records into public-facing tables.
 5. Expose ingestion status in `/meta/status` once a non-fixture run completes.

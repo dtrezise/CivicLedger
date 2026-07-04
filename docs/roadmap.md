@@ -12,7 +12,7 @@
 
 - Add ingestion-run and raw-document tables.
 - Implement one official-source ingestion path.
-- Publish official House/Senate source registry through the API and methodology UI.
+- Publish official legislative, executive, and judicial source registry through the API and methodology UI.
 - Store raw documents before parsed records.
 - Label fixture records across API, UI, and share cards.
 - Add source detail views.
@@ -46,6 +46,14 @@ Required before public use:
 - Alerts framed around suspicious timing.
 - AI summaries about intent.
 - Automated allegation generation.
+
+## Cross-Branch Expansion
+
+- Add executive branch OGE source intake as a separate parser path.
+- Add judicial disclosure source intake as a separate parser path.
+- Preserve requester/access restrictions from each source before retrieving or exporting records.
+- Add branch-aware browse filters once non-legislative records exist.
+- Avoid forcing executive agencies or courts into the legislative `chamber` field.
 
 ## Release Blockers
 

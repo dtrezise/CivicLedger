@@ -69,7 +69,11 @@ export default function MethodologyPage() {
                     <h3 className="font-semibold text-gray-900">
                       {source.name}
                     </h3>
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                      {source.branch}
+                      {source.chamber ? ` / ${source.chamber}` : ""}
+                    </p>
+                    <p className="mt-2 text-sm text-gray-600">
                       {source.records_scope}
                     </p>
                   </div>

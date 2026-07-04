@@ -8,7 +8,11 @@ type PersonRow = {
   person_id?: string; // some endpoints may return this
   full_name?: string;
   name?: string;
-  chamber?: "House" | "Senate" | string;
+  branch?: string;
+  chamber?: "House" | "Senate" | string | null;
+  office?: string | null;
+  agency?: string | null;
+  court?: string | null;
   state?: string;
   party?: string;
   service_start?: string;
@@ -24,6 +28,14 @@ function getPersonId(p: PersonRow): string | null {
 
 function getPersonName(p: PersonRow): string {
   return p.full_name ?? p.name ?? "Unknown";
+}
+
+function getAffiliation(p: PersonRow): string {
+  return (
+    [p.branch, p.chamber, p.office, p.agency, p.court, p.state, p.party]
+      .filter(Boolean)
+      .join(" • ") || "Metadata unavailable"
+  );
 }
 
 export default function BrowsePage() {
@@ -101,7 +113,8 @@ export default function BrowsePage() {
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Browse Directory</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Filter by chamber, state, or party. Click a name to view profile.
+          Filter currently available fixture officials by chamber, state, or party.
+          Executive and judicial filters will be added as those sources are ingested.
         </p>
       </div>
 
@@ -115,7 +128,7 @@ export default function BrowsePage() {
             onChange={(e) => setChamber(e.target.value)}
           >
             <option value="">All</option>
-            {/* If backend supports only House/Senate, these are safe */}
+            {/* Legislative fixture values; branch filters arrive with non-legislative ingestion. */}
             <option value="House">House</option>
             <option value="Senate">Senate</option>
             {/* In case seed includes variations */}
@@ -208,7 +221,7 @@ export default function BrowsePage() {
                   <div>
                     <div className="font-medium">{name}</div>
                     <div className="mt-1 text-xs text-gray-600">
-                      {(p.chamber ?? "—") + " • " + (p.state ?? "—") + " • " + (p.party ?? "—")}
+                      {getAffiliation(p)}
                     </div>
                   </div>
                   <div className="text-xs text-gray-500">

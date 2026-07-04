@@ -6,7 +6,7 @@ from app.routes import meta, search, people, trades, filings, market, events, sh
 app = FastAPI(
     title="CivicLedger API",
     version="0.1.0",
-    description="Congressional financial disclosure tracker",
+    description="Federal public financial disclosure tracker",
 )
 
 app.add_middleware(

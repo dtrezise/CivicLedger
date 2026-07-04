@@ -2,7 +2,7 @@
 
 ## Existing MVP Tables
 
-- `people`: public officials and service metadata.
+- `people`: public officials and service metadata across legislative, executive, and judicial branches.
 - `ingestion_runs`: ingestion job metadata, parser version, dataset version, and status.
 - `raw_documents`: source-first archival metadata for raw filing documents.
 - `filings`: filing metadata, source URL, retrieval timestamp, file hash, retrieval source.
@@ -45,6 +45,10 @@ Stores source-first archival metadata:
 - `provenance_complete`
 
 ## Near-Term Additions
+
+### people branch fields
+
+The root `people` table now treats `branch` as the primary branch discriminator. `chamber` is nullable and should only be used for legislative records. Executive records should use `office` and `agency`; judicial records should use `court` and, later, judge-type metadata.
 
 ### event_people
 

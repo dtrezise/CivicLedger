@@ -2,7 +2,7 @@
 
 ## System Definition
 
-CivicLedger presents publicly available congressional financial disclosure records, provenance metadata, reporting-lag calculations, and contextual market or civic-event timelines. It does not determine whether any trade was lawful, ethical, suspicious, informed by nonpublic information, or financially advisable.
+CivicLedger presents publicly available federal financial disclosure records, provenance metadata, reporting-lag calculations, and contextual market or civic-event timelines for officials across the legislative, executive, and judicial branches. It does not determine whether any trade was lawful, ethical, suspicious, informed by nonpublic information, or financially advisable.
 
 ## What CivicLedger Is
 
@@ -25,7 +25,7 @@ CivicLedger presents publicly available congressional financial disclosure recor
 
 ## Primary User Jobs
 
-- Find a public official and inspect available disclosure records.
+- Find a federal public official and inspect available disclosure records.
 - View reported trades in chronological context.
 - Verify each record against original source metadata.
 - Understand reporting lag and data completeness.
@@ -34,6 +34,12 @@ CivicLedger presents publicly available congressional financial disclosure recor
 ## MVP Data Boundary
 
 The MVP should use official or clearly labeled fixture data only. Fixture records must remain visibly labeled in API responses, UI views, exports, and share cards. Public presentation must not make fictional seed data look like real official records.
+
+Initial official-source expansion order:
+
+- Legislative: House Clerk and Senate public disclosure systems.
+- Executive: Office of Government Ethics public disclosure resources and request workflows.
+- Judicial: Administrative Office of the U.S. Courts financial disclosure database and request workflows.
 
 ## Language Policy
 

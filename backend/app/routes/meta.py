@@ -27,7 +27,8 @@ async def get_methodology():
         MethodologyBlock(
             title="Overview",
             content=(
-                "CivicLedger tracks financial disclosures filed by members of U.S. Congress. "
+                "CivicLedger tracks public financial disclosures filed by federal officials "
+                "across the legislative, executive, and judicial branches. "
                 "The current dataset is fixture/demo data and is intended for development "
                 "and portfolio evaluation only."
             ),
@@ -80,6 +81,7 @@ async def get_methodology():
         "Market-adjusted benchmarks with disclosed methodology",
         "Full provenance chain for every data point",
         "Scorecard grading based on disclosure completeness and data-quality metrics",
+        "Branch-aware source intake for legislative, executive, and judicial disclosures",
     ]
     return MethodologyResponse(blocks=blocks, key_rules=key_rules)
 

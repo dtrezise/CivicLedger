@@ -1,9 +1,9 @@
 export interface PersonSummary {
   person_id: string;
   full_name: string;
-  chamber: string;
-  state: string;
-  party: string;
+  chamber: string | null;
+  state: string | null;
+  party: string | null;
   service_start: string;
   service_end: string | null;
 }
@@ -11,6 +11,9 @@ export interface PersonSummary {
 export interface PersonDetail extends PersonSummary {
   branch: string;
   district: string | null;
+  office: string | null;
+  agency: string | null;
+  court: string | null;
   created_at: string | null;
 }
 
@@ -172,7 +175,8 @@ export interface MethodologyResponse {
 export interface OfficialSourceInfo {
   id: string;
   name: string;
-  chamber: string;
+  branch: string;
+  chamber: string | null;
   source_url: string;
   search_url: string | null;
   download_url: string | null;

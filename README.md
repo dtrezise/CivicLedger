@@ -1,6 +1,6 @@
 # CivicLedger
 
-Congressional financial disclosure tracker. View trading timelines, disclosure completeness scorecards, and provenance data for members of U.S. Congress.
+Federal public financial disclosure tracker. View reporting timelines, disclosure completeness scorecards, and provenance data for officials across the legislative, executive, and judicial branches.
 
 > Current data is fixture/demo data. CivicLedger is a disclosure-transparency and provenance tool; it does not make legal, ethics, causation, insider-trading, or investment conclusions.
 
@@ -31,7 +31,7 @@ This will:
 ## Seed Data
 
 On first startup the backend automatically seeds the database with:
-- **3 members of Congress** (2 senators, 1 representative)
+- **3 congressional fixture officials** (2 senators, 1 representative)
 - **3–5 filings** per person
 - **10–20 trades** per person across 18+ months
 - **SPY and DIA** daily market series (Jan 2023 – Aug 2024)
@@ -56,7 +56,7 @@ On first startup the backend automatically seeds the database with:
 | `docs/architecture.md` | System layers and release gates |
 | `docs/data_model.md` | Current and next data model |
 | `docs/provenance_policy.md` | Source, fixture, correction, and share-card rules |
-| `docs/official_sources.md` | Official House/Senate source intake plan |
+| `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
 | `docs/roadmap.md` | Stabilization and phased build plan |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
 

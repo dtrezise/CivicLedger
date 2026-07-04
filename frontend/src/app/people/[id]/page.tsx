@@ -282,7 +282,17 @@ export default function ProfilePage({
 
           <h1 className="text-2xl font-semibold">{person.full_name}</h1>
           <div className="mt-1 text-sm text-gray-600">
-            {(person.party ?? "—") + " · " + (person.chamber ?? "—") + " · " + (person.state ?? "—")}
+            {[
+              person.branch,
+              person.chamber,
+              person.office,
+              person.agency,
+              person.court,
+              person.party,
+              person.state,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
             {person.district ? ` (${person.state}-${person.district})` : ""}
           </div>
           <div className="mt-1 text-xs text-gray-500">

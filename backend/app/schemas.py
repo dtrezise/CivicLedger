@@ -10,9 +10,9 @@ from typing import Optional
 class PersonSummary(BaseModel):
     person_id: UUID
     full_name: str
-    chamber: str
-    state: str
-    party: str
+    chamber: Optional[str] = None
+    state: Optional[str] = None
+    party: Optional[str] = None
     service_start: date
     service_end: Optional[date] = None
 
@@ -23,6 +23,9 @@ class PersonSummary(BaseModel):
 class PersonDetail(PersonSummary):
     branch: str
     district: Optional[str] = None
+    office: Optional[str] = None
+    agency: Optional[str] = None
+    court: Optional[str] = None
     created_at: Optional[datetime] = None
 
 
@@ -250,7 +253,8 @@ class MethodologyResponse(BaseModel):
 class OfficialSourceInfo(BaseModel):
     id: str
     name: str
-    chamber: str
+    branch: str
+    chamber: Optional[str] = None
     source_url: str
     search_url: Optional[str] = None
     download_url: Optional[str] = None
