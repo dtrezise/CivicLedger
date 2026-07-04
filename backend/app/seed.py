@@ -15,7 +15,16 @@ from sqlalchemy import text
 from app.config import settings
 from app.database import sync_engine, SyncSessionLocal
 from app.models import (
-    Base, Person, IngestionRun, RawDocument, Filing, Trade, Event, EventSource, MarketSeries
+    Base,
+    Person,
+    IngestionRun,
+    RawDocument,
+    Filing,
+    Trade,
+    Event,
+    EventSource,
+    MarketSeries,
+    ParserArtifact,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -126,7 +135,81 @@ def create_people():
             service_start=date(2021, 1, 3),
             service_end=None,
         ),
+        Person(
+            id=uuid4(),
+            full_name="Secretary Elaine Park",
+            branch="Executive",
+            chamber=None,
+            state=None,
+            party=None,
+            district=None,
+            office="Secretary",
+            agency="Department of Energy",
+            court=None,
+            service_start=date(2022, 2, 14),
+            service_end=None,
+        ),
+        Person(
+            id=uuid4(),
+            full_name="Deputy Administrator Thomas Reed",
+            branch="Executive",
+            chamber=None,
+            state=None,
+            party=None,
+            district=None,
+            office="Deputy Administrator",
+            agency="Environmental Protection Agency",
+            court=None,
+            service_start=date(2021, 8, 2),
+            service_end=None,
+        ),
+        Person(
+            id=uuid4(),
+            full_name="Judge Amelia Ortiz",
+            branch="Judicial",
+            chamber=None,
+            state=None,
+            party=None,
+            district=None,
+            office="Circuit Judge",
+            agency=None,
+            court="U.S. Court of Appeals for the Ninth Circuit",
+            service_start=date(2020, 6, 1),
+            service_end=None,
+        ),
+        Person(
+            id=uuid4(),
+            full_name="Judge Malcolm Price",
+            branch="Judicial",
+            chamber=None,
+            state=None,
+            party=None,
+            district=None,
+            office="District Judge",
+            agency=None,
+            court="U.S. District Court for the District of Maryland",
+            service_start=date(2018, 11, 15),
+            service_end=None,
+        ),
     ]
+
+
+def source_id_for_person(person: Person) -> str:
+    if person.branch == "Executive":
+        return "oge-individual-disclosures"
+    if person.branch == "Judicial":
+        return "judicial-financial-disclosure"
+    if person.chamber == "Senate":
+        return "senate-public-financial-disclosure"
+    return "house-financial-disclosure"
+
+
+def filing_type_for_person(person: Person) -> str:
+    if person.branch == "Executive":
+        return random.choice(["OGE278e", "OGE278T"])
+    if person.branch == "Judicial":
+        return random.choice(["JFD", "JPTR"])
+    return "PTR"
 
 
 def create_filings_and_trades(person: Person, ingestion_run_id):
@@ -134,6 +217,8 @@ def create_filings_and_trades(person: Person, ingestion_run_id):
     raw_documents = []
     filings = []
     trades = []
+    artifacts = []
+    source_id = source_id_for_person(person)
 
     num_filings = random.randint(3, 5)
     # Spread filings across the time range
@@ -146,7 +231,7 @@ def create_filings_and_trades(person: Person, ingestion_run_id):
         filing_id = uuid4()
         raw_document_id = uuid4()
         source_idx = random.randint(1000, 9999)
-        source_url = f"https://example.test/fixture/ptr/{source_idx}/"
+        source_url = f"https://example.test/fixture/{source_id}/{source_idx}/"
         retrieved_at = datetime(fdate.year, fdate.month, fdate.day, 12, 0, 0)
         file_hash = generate_hash(f"{person.full_name}-{fdate}-{i}")
         raw_documents.append(RawDocument(
@@ -161,11 +246,16 @@ def create_filings_and_trades(person: Person, ingestion_run_id):
             rights_status="public_record_fixture",
             parser_version=settings.PARSER_VERSION,
             provenance_complete=True,
+            source_metadata={
+                "source_id": source_id,
+                "branch": person.branch,
+                "fixture": True,
+            },
         ))
         filing = Filing(
             id=filing_id,
             person_id=person.id,
-            filing_type="PTR",
+            filing_type=filing_type_for_person(person),
             filed_date=fdate,
             source_url=source_url,
             retrieved_at=retrieved_at,
@@ -174,6 +264,25 @@ def create_filings_and_trades(person: Person, ingestion_run_id):
             raw_document_id=raw_document_id,
         )
         filings.append(filing)
+        artifacts.append(ParserArtifact(
+            id=uuid4(),
+            source_id=source_id,
+            raw_document_id=raw_document_id,
+            filing_id=filing_id,
+            artifact_type="filing",
+            page_number=1,
+            row_number=None,
+            text_span={
+                "label": "Fixture filing header",
+                "text": f"{person.full_name} {person.branch} disclosure filed {fdate}",
+            },
+            parser_output={
+                "filing_type": filing.filing_type,
+                "filed_date": fdate.isoformat(),
+                "retrieval_source": "fixture",
+            },
+            confidence=Decimal("0.98"),
+        ))
 
         # 3-6 trades per filing
         num_trades = random.randint(3, 6)
@@ -189,8 +298,9 @@ def create_filings_and_trades(person: Person, ingestion_run_id):
             vrange = random.choice(VALUE_RANGES)
             action = random.choice(["BUY", "BUY", "SELL", "BUY", "SELL"])
 
+            trade_id = uuid4()
             trades.append(Trade(
-                id=uuid4(),
+                id=trade_id,
                 person_id=person.id,
                 filing_id=filing_id,
                 trade_date=trade_date,
@@ -207,8 +317,31 @@ def create_filings_and_trades(person: Person, ingestion_run_id):
                 parsing_confidence=round(Decimal(str(random.uniform(0.85, 1.0))), 2),
                 asset_match_confidence=round(Decimal(str(random.uniform(0.90, 1.0))), 2),
             ))
+            artifacts.append(ParserArtifact(
+                id=uuid4(),
+                source_id=source_id,
+                raw_document_id=raw_document_id,
+                filing_id=filing_id,
+                trade_id=trade_id,
+                artifact_type="trade",
+                page_number=1,
+                row_number=j + 1,
+                text_span={
+                    "label": "Fixture transaction row",
+                    "text": f"{action} {ticker_info[1]} {vrange[0]} reported {fdate}",
+                },
+                parser_output={
+                    "trade_date": trade_date.isoformat(),
+                    "reported_date": fdate.isoformat(),
+                    "action": action,
+                    "asset": ticker_info[1],
+                    "ticker": ticker_info[0],
+                    "value_range_label": vrange[0],
+                },
+                confidence=Decimal("0.94"),
+            ))
 
-    return raw_documents, filings, trades
+    return raw_documents, filings, trades, artifacts
 
 
 def load_events(session):
@@ -271,8 +404,9 @@ def run_seed():
         total_raw_documents = 0
         total_filings = 0
         total_trades = 0
+        total_artifacts = 0
         for person in people:
-            raw_documents, filings, trades = create_filings_and_trades(person, ingestion_run.id)
+            raw_documents, filings, trades, artifacts = create_filings_and_trades(person, ingestion_run.id)
             for raw_document in raw_documents:
                 session.add(raw_document)
             session.flush()
@@ -281,13 +415,18 @@ def run_seed():
             session.flush()
             for t in trades:
                 session.add(t)
+            session.flush()
+            for artifact in artifacts:
+                session.add(artifact)
             total_raw_documents += len(raw_documents)
             total_filings += len(filings)
             total_trades += len(trades)
+            total_artifacts += len(artifacts)
         session.flush()
         print(f"  → Created {total_raw_documents} raw documents")
         print(f"  → Created {total_filings} filings")
         print(f"  → Created {total_trades} trades")
+        print(f"  → Created {total_artifacts} parser artifacts")
 
         # Market series
         market_data = generate_market_series()

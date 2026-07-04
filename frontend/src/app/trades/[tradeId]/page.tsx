@@ -9,7 +9,12 @@ import {
   formatDateTime,
 } from "@/components/ProvenanceStatus";
 import { api } from "@/lib/api";
-import type { TradeDetail, MarketSeriesItem, MetaStatus } from "@/lib/types";
+import type {
+  TradeDetail,
+  MarketSeriesItem,
+  MetaStatus,
+  ParserArtifactItem,
+} from "@/lib/types";
 import {
   LineChart,
   Line,
@@ -29,6 +34,7 @@ export default function TradeDetailPage({
   const { tradeId } = params;
   const [trade, setTrade] = useState<TradeDetail | null>(null);
   const [marketData, setMarketData] = useState<MarketSeriesItem[]>([]);
+  const [artifacts, setArtifacts] = useState<ParserArtifactItem[]>([]);
   const [status, setStatus] = useState<MetaStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -60,13 +66,19 @@ export default function TradeDetailPage({
         const end = new Date(td);
         end.setDate(end.getDate() + 60);
 
-        return api.getMarketSeries({
-          symbols: "SPY,DIA",
-          start: start.toISOString().split("T")[0],
-          end: end.toISOString().split("T")[0],
-        });
+        return Promise.all([
+          api.getMarketSeries({
+            symbols: "SPY,DIA",
+            start: start.toISOString().split("T")[0],
+            end: end.toISOString().split("T")[0],
+          }),
+          api.getTradeArtifacts(tradeId).catch(() => []),
+        ]);
       })
-      .then(setMarketData)
+      .then(([series, evidence]) => {
+        setMarketData(series);
+        setArtifacts(evidence);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [tradeId]);
@@ -138,6 +150,11 @@ export default function TradeDetailPage({
             label: "Market overlay",
             value: chartPoints.length > 0 ? "SPY loaded" : "",
             missingLabel: "No SPY overlay loaded",
+          },
+          {
+            label: "Parser artifacts",
+            value: artifacts.length > 0 ? `${artifacts.length} linked` : "",
+            missingLabel: "No parser artifacts linked",
           },
         ]}
       />
@@ -255,6 +272,58 @@ export default function TradeDetailPage({
             )}
           </p>
         </div>
+      </div>
+
+      {/* Parser evidence panel */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <h2 className="font-semibold text-sm text-gray-700 mb-3">
+          Parser Evidence
+        </h2>
+        {artifacts.length === 0 ? (
+          <div className="text-sm text-gray-500">No parser artifacts linked.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-xs">
+              <thead className="border-b text-gray-500">
+                <tr>
+                  <th className="py-2 pr-4 font-medium">Source</th>
+                  <th className="py-2 pr-4 font-medium">Type</th>
+                  <th className="py-2 pr-4 font-medium">Location</th>
+                  <th className="py-2 pr-4 font-medium">Confidence</th>
+                  <th className="py-2 pr-4 font-medium">Evidence Text</th>
+                </tr>
+              </thead>
+              <tbody>
+                {artifacts.map((artifact) => (
+                  <tr key={artifact.id} className="border-b last:border-0">
+                    <td className="py-2 pr-4 font-mono text-gray-700">
+                      {artifact.source_id}
+                    </td>
+                    <td className="py-2 pr-4">{artifact.artifact_type}</td>
+                    <td className="py-2 pr-4 text-gray-600">
+                      {[
+                        artifact.page_number ? `p.${artifact.page_number}` : "",
+                        artifact.row_number ? `row ${artifact.row_number}` : "",
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "Not provided"}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {artifact.confidence != null
+                        ? `${(Number(artifact.confidence) * 100).toFixed(0)}%`
+                        : "Not provided"}
+                    </td>
+                    <td className="max-w-md py-2 pr-4 text-gray-600">
+                      {typeof artifact.text_span?.text === "string"
+                        ? artifact.text_span.text
+                        : "No text span provided"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Mini benchmark chart */}

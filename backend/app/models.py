@@ -65,10 +65,12 @@ class RawDocument(Base):
     rights_status = Column(Text, nullable=False, default="public_record")
     parser_version = Column(Text, nullable=False)
     provenance_complete = Column(Boolean, nullable=False, default=True)
+    source_metadata = Column(JSONB, nullable=False, default=dict)
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 
     ingestion_run = relationship("IngestionRun", back_populates="raw_documents")
     filings = relationship("Filing", back_populates="raw_document")
+    parser_artifacts = relationship("ParserArtifact", back_populates="raw_document")
 
 
 class Filing(Base):
@@ -89,6 +91,7 @@ class Filing(Base):
     person = relationship("Person", back_populates="filings")
     trades = relationship("Trade", back_populates="filing")
     raw_document = relationship("RawDocument", back_populates="filings")
+    parser_artifacts = relationship("ParserArtifact", back_populates="filing")
 
 
 class Trade(Base):
@@ -114,6 +117,28 @@ class Trade(Base):
 
     person = relationship("Person", back_populates="trades")
     filing = relationship("Filing", back_populates="trades")
+    parser_artifacts = relationship("ParserArtifact", back_populates="trade")
+
+
+class ParserArtifact(Base):
+    __tablename__ = "parser_artifacts"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source_id = Column(Text, nullable=False)
+    raw_document_id = Column(UUID(as_uuid=True), ForeignKey("raw_documents.id"), nullable=False)
+    filing_id = Column(UUID(as_uuid=True), ForeignKey("filings.id"), nullable=True)
+    trade_id = Column(UUID(as_uuid=True), ForeignKey("trades.id"), nullable=True)
+    artifact_type = Column(Text, nullable=False)
+    page_number = Column(Integer, nullable=True)
+    row_number = Column(Integer, nullable=True)
+    text_span = Column(JSONB, nullable=False, default=dict)
+    parser_output = Column(JSONB, nullable=False, default=dict)
+    confidence = Column(Numeric, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+
+    raw_document = relationship("RawDocument", back_populates="parser_artifacts")
+    filing = relationship("Filing", back_populates="parser_artifacts")
+    trade = relationship("Trade", back_populates="parser_artifacts")
 
 
 class Event(Base):

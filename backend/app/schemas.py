@@ -10,9 +10,13 @@ from typing import Optional
 class PersonSummary(BaseModel):
     person_id: UUID
     full_name: str
+    branch: str
     chamber: Optional[str] = None
     state: Optional[str] = None
     party: Optional[str] = None
+    office: Optional[str] = None
+    agency: Optional[str] = None
+    court: Optional[str] = None
     service_start: date
     service_end: Optional[date] = None
 
@@ -21,11 +25,7 @@ class PersonSummary(BaseModel):
 
 
 class PersonDetail(PersonSummary):
-    branch: str
     district: Optional[str] = None
-    office: Optional[str] = None
-    agency: Optional[str] = None
-    court: Optional[str] = None
     created_at: Optional[datetime] = None
 
 
@@ -268,3 +268,37 @@ class OfficialSourcesResponse(BaseModel):
     dataset_version: str
     methodology_version: str
     sources: list[OfficialSourceInfo]
+
+
+class SourceCompletenessItem(BaseModel):
+    source_id: str
+    branch: str
+    ingestion_status: str
+    has_completed_ingestion: bool
+    raw_document_count: int
+    filing_count: int
+    provenance_requirements_count: int
+    missing_capabilities: list[str]
+
+
+class SourceCompletenessResponse(BaseModel):
+    dataset_version: str
+    sources: list[SourceCompletenessItem]
+
+
+class ParserArtifactItem(BaseModel):
+    id: UUID
+    source_id: str
+    raw_document_id: UUID
+    filing_id: Optional[UUID] = None
+    trade_id: Optional[UUID] = None
+    artifact_type: str
+    page_number: Optional[int] = None
+    row_number: Optional[int] = None
+    text_span: dict
+    parser_output: dict
+    confidence: Optional[Decimal] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

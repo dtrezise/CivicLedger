@@ -5,8 +5,14 @@ from app.schemas import (
     MethodologyResponse,
     MethodologyBlock,
     OfficialSourcesResponse,
+    SourceCompletenessResponse,
+    SourceCompletenessItem,
 )
 from app.services.official_sources import get_official_sources_response
+from app.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends
+from app import crud
 
 router = APIRouter(prefix="/meta", tags=["meta"])
 
@@ -89,3 +95,38 @@ async def get_methodology():
 @router.get("/sources", response_model=OfficialSourcesResponse)
 async def get_sources():
     return OfficialSourcesResponse.model_validate(get_official_sources_response())
+
+
+@router.get("/source-completeness", response_model=SourceCompletenessResponse)
+async def get_source_completeness(db: AsyncSession = Depends(get_db)):
+    sources = get_official_sources_response()["sources"]
+    completed = await crud.get_completed_ingestion_source_names(db)
+    raw_counts = await crud.count_raw_documents_by_source(db)
+    filing_counts = await crud.count_filings_by_source(db)
+
+    items = []
+    for source in sources:
+        source_id = source["id"]
+        has_completed = source_id in completed
+        missing = []
+        if not has_completed:
+            missing.append("completed official-source ingestion")
+        if raw_counts.get(source_id, 0) == 0:
+            missing.append("archived raw documents")
+        if filing_counts.get(source_id, 0) == 0:
+            missing.append("normalized filings")
+
+        items.append(
+            SourceCompletenessItem(
+                source_id=source_id,
+                branch=source["branch"],
+                ingestion_status=source["ingestion_status"],
+                has_completed_ingestion=has_completed,
+                raw_document_count=raw_counts.get(source_id, 0),
+                filing_count=filing_counts.get(source_id, 0),
+                provenance_requirements_count=len(source["provenance_requirements"]),
+                missing_capabilities=missing,
+            )
+        )
+
+    return SourceCompletenessResponse(dataset_version=settings.DATASET_VERSION, sources=items)

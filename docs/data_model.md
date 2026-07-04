@@ -7,6 +7,7 @@
 - `raw_documents`: source-first archival metadata for raw filing documents.
 - `filings`: filing metadata, source URL, retrieval timestamp, file hash, retrieval source.
 - `trades`: normalized reported transactions.
+- `parser_artifacts`: parser evidence, preview output, row/page references, and confidence metadata.
 - `events`: contextual civic or market events.
 - `event_sources`: source links for events.
 - `market_series`: benchmark time series.
@@ -43,6 +44,23 @@ Stores source-first archival metadata:
 - `rights_status`
 - `parser_version`
 - `provenance_complete`
+- `source_metadata`
+
+### parser_artifacts
+
+Stores parser evidence without promoting unreviewed data into public-facing tables:
+
+- `id`
+- `source_id`
+- `raw_document_id`
+- `filing_id`
+- `trade_id`
+- `artifact_type`
+- `page_number`
+- `row_number`
+- `text_span`
+- `parser_output`
+- `confidence`
 
 ## Near-Term Additions
 
@@ -54,9 +72,9 @@ The root `people` table now treats `branch` as the primary branch discriminator.
 
 Links a global event to specific people only when there is an explicit source-backed relevance rule. Until this exists, frontend views should label events as global context, not person-specific context.
 
-### parser_artifacts
+### parser artifact coordinates
 
-Stores row, page, span, parser output, and extraction evidence for each normalized trade.
+Promoted from near-term plan into the MVP schema. Next additions should include richer coordinates for PDFs and table cells once source-specific parsers move beyond preview mode.
 
 ## Derived Data Rules
 

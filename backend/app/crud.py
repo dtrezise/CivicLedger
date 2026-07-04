@@ -4,7 +4,18 @@ from typing import Optional
 from sqlalchemy import select, func, and_, or_, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from app.models import Person, Filing, Trade, Event, EventSource, MarketSeries, ShareCard
+from app.models import (
+    Person,
+    Filing,
+    Trade,
+    Event,
+    EventSource,
+    MarketSeries,
+    ShareCard,
+    RawDocument,
+    IngestionRun,
+    ParserArtifact,
+)
 
 
 # ---- People ----
@@ -17,7 +28,10 @@ async def search_people(db: AsyncSession, q: str) -> list[Person]:
 
 async def list_people(
     db: AsyncSession,
+    branch: Optional[str] = None,
     chamber: Optional[str] = None,
+    agency: Optional[str] = None,
+    court: Optional[str] = None,
     state: Optional[str] = None,
     party: Optional[str] = None,
     sort: str = "full_name",
@@ -27,9 +41,18 @@ async def list_people(
     query = select(Person)
     count_query = select(func.count(Person.id))
 
+    if branch:
+        query = query.where(Person.branch == branch)
+        count_query = count_query.where(Person.branch == branch)
     if chamber:
         query = query.where(Person.chamber == chamber)
         count_query = count_query.where(Person.chamber == chamber)
+    if agency:
+        query = query.where(Person.agency == agency)
+        count_query = count_query.where(Person.agency == agency)
+    if court:
+        query = query.where(Person.court == court)
+        count_query = count_query.where(Person.court == court)
     if state:
         query = query.where(Person.state == state)
         count_query = count_query.where(Person.state == state)
@@ -111,6 +134,24 @@ async def get_trade(db: AsyncSession, trade_id: UUID) -> Optional[Trade]:
 async def get_filing(db: AsyncSession, filing_id: UUID) -> Optional[Filing]:
     result = await db.execute(select(Filing).where(Filing.id == filing_id))
     return result.scalar_one_or_none()
+
+
+async def get_parser_artifacts_for_trade(db: AsyncSession, trade_id: UUID) -> list[ParserArtifact]:
+    result = await db.execute(
+        select(ParserArtifact)
+        .where(ParserArtifact.trade_id == trade_id)
+        .order_by(ParserArtifact.created_at, ParserArtifact.row_number)
+    )
+    return result.scalars().all()
+
+
+async def get_parser_artifacts_for_filing(db: AsyncSession, filing_id: UUID) -> list[ParserArtifact]:
+    result = await db.execute(
+        select(ParserArtifact)
+        .where(ParserArtifact.filing_id == filing_id)
+        .order_by(ParserArtifact.created_at, ParserArtifact.row_number)
+    )
+    return result.scalars().all()
 
 
 async def get_person_filings(db: AsyncSession, person_id: UUID) -> list[Filing]:
@@ -219,3 +260,30 @@ async def get_batch_stats(
         }
 
     return results
+
+
+# ---- Source Completeness ----
+
+async def get_completed_ingestion_source_names(db: AsyncSession) -> set[str]:
+    result = await db.execute(
+        select(IngestionRun.source_name).where(IngestionRun.status == "completed")
+    )
+    return set(result.scalars().all())
+
+
+async def count_raw_documents_by_source(db: AsyncSession) -> dict[str, int]:
+    result = await db.execute(
+        select(RawDocument.retrieval_source, func.count(RawDocument.id)).group_by(
+            RawDocument.retrieval_source
+        )
+    )
+    return {source: count for source, count in result.all()}
+
+
+async def count_filings_by_source(db: AsyncSession) -> dict[str, int]:
+    result = await db.execute(
+        select(Filing.retrieval_source, func.count(Filing.id)).group_by(
+            Filing.retrieval_source
+        )
+    )
+    return {source: count for source, count in result.all()}

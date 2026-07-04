@@ -1,19 +1,19 @@
 export interface PersonSummary {
   person_id: string;
   full_name: string;
+  branch: string;
   chamber: string | null;
   state: string | null;
   party: string | null;
+  office: string | null;
+  agency: string | null;
+  court: string | null;
   service_start: string;
   service_end: string | null;
 }
 
 export interface PersonDetail extends PersonSummary {
-  branch: string;
   district: string | null;
-  office: string | null;
-  agency: string | null;
-  court: string | null;
   created_at: string | null;
 }
 
@@ -190,6 +190,37 @@ export interface OfficialSourcesResponse {
   dataset_version: string;
   methodology_version: string;
   sources: OfficialSourceInfo[];
+}
+
+export interface SourceCompletenessItem {
+  source_id: string;
+  branch: string;
+  ingestion_status: string;
+  has_completed_ingestion: boolean;
+  raw_document_count: number;
+  filing_count: number;
+  provenance_requirements_count: number;
+  missing_capabilities: string[];
+}
+
+export interface SourceCompletenessResponse {
+  dataset_version: string;
+  sources: SourceCompletenessItem[];
+}
+
+export interface ParserArtifactItem {
+  id: string;
+  source_id: string;
+  raw_document_id: string;
+  filing_id: string | null;
+  trade_id: string | null;
+  artifact_type: string;
+  page_number: number | null;
+  row_number: number | null;
+  text_span: Record<string, unknown>;
+  parser_output: Record<string, unknown>;
+  confidence: number | null;
+  created_at: string | null;
 }
 
 export interface BatchStatsItem {

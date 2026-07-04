@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from app.database import get_db
-from app.schemas import TradeDetail, ProvenanceInfo
+from app.schemas import TradeDetail, ProvenanceInfo, ParserArtifactItem
 from app import crud
 
 router = APIRouter(prefix="/trades", tags=["trades"])
@@ -31,3 +31,11 @@ async def get_trade(trade_id: UUID, db: AsyncSession = Depends(get_db)):
         **{k: v for k, v in trade.__dict__.items() if not k.startswith("_")},
         provenance=provenance,
     )
+
+
+@router.get("/{trade_id}/artifacts", response_model=list[ParserArtifactItem])
+async def get_trade_artifacts(trade_id: UUID, db: AsyncSession = Depends(get_db)):
+    trade = await crud.get_trade(db, trade_id)
+    if not trade:
+        raise HTTPException(status_code=404, detail="Trade not found")
+    return await crud.get_parser_artifacts_for_trade(db, trade_id)

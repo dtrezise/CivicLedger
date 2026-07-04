@@ -31,9 +31,10 @@ This will:
 ## Seed Data
 
 On first startup the backend automatically seeds the database with:
-- **3 congressional fixture officials** (2 senators, 1 representative)
+- **7 fixture officials** across legislative, executive, and judicial branches
 - **3–5 filings** per person
 - **10–20 trades** per person across 18+ months
+- **Parser evidence artifacts** for fixture filings and trades
 - **SPY and DIA** daily market series (Jan 2023 – Aug 2024)
 - **10 curated events** with source links
 
@@ -67,6 +68,7 @@ On first startup the backend automatically seeds the database with:
 | GET | `/meta/status` | Dataset version and ingestion status |
 | GET | `/meta/methodology` | Methodology blocks and key rules |
 | GET | `/meta/sources` | Official source registry and intake status |
+| GET | `/meta/source-completeness` | Source readiness and provenance completeness by source |
 | GET | `/search/people?q=` | Autocomplete search |
 | GET | `/people` | Browse directory (filterable, paginated) |
 | GET | `/people/batch_stats?ids=` | Batch stats for multiple people |
@@ -75,7 +77,9 @@ On first startup the backend automatically seeds the database with:
 | GET | `/people/{id}/timeline` | Timeline buckets + gaps |
 | GET | `/people/{id}/trades` | Trade list (filterable, paginated) |
 | GET | `/trades/{id}` | Trade detail + provenance |
+| GET | `/trades/{id}/artifacts` | Parser evidence linked to a trade |
 | GET | `/filings/{id}` | Filing detail + provenance |
+| GET | `/filings/{id}/artifacts` | Parser evidence linked to a filing |
 | GET | `/market/series` | Market overlay data (SPY, DIA) |
 | GET | `/events` | Curated events |
 | GET | `/events/{id}` | Event detail + source links |
@@ -107,6 +111,13 @@ docker compose up --build
 ```bash
 # Backend only
 cd backend && pip install -e . && uvicorn app.main:app --reload
+
+# Manual official-source intake
+cd backend && python -m app.intake \
+  --source-id oge-individual-disclosures \
+  --source-url "https://www.oge.gov/..." \
+  --file /path/to/released-disclosure.pdf \
+  --access-acknowledged
 
 # Frontend only
 cd frontend && npm install && npm run dev

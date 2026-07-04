@@ -27,7 +27,10 @@ def bucket_floor(value: date, bucket: str) -> date:
 
 @router.get("", response_model=PersonListResponse)
 async def list_people(
+    branch: Optional[str] = None,
     chamber: Optional[str] = None,
+    agency: Optional[str] = None,
+    court: Optional[str] = None,
     state: Optional[str] = None,
     party: Optional[str] = None,
     sort: str = "full_name",
@@ -35,15 +38,30 @@ async def list_people(
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    items, total = await crud.list_people(db, chamber, state, party, sort, page, page_size)
+    items, total = await crud.list_people(
+        db,
+        branch=branch,
+        chamber=chamber,
+        agency=agency,
+        court=court,
+        state=state,
+        party=party,
+        sort=sort,
+        page=page,
+        page_size=page_size,
+    )
     return PersonListResponse(
         items=[
             PersonSummary(
                 person_id=p.id,
                 full_name=p.full_name,
+                branch=p.branch,
                 chamber=p.chamber,
                 state=p.state,
                 party=p.party,
+                office=p.office,
+                agency=p.agency,
+                court=p.court,
                 service_start=p.service_start,
                 service_end=p.service_end,
             )
@@ -81,10 +99,10 @@ async def get_person(person_id: UUID, db: AsyncSession = Depends(get_db)):
         chamber=person.chamber,
         state=person.state,
         party=person.party,
-        district=person.district,
         office=person.office,
         agency=person.agency,
         court=person.court,
+        district=person.district,
         service_start=person.service_start,
         service_end=person.service_end,
         created_at=person.created_at,

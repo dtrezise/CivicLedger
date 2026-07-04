@@ -29,6 +29,8 @@ import type {
   MetaStatus,
   MethodologyResponse,
   OfficialSourcesResponse,
+  SourceCompletenessResponse,
+  ParserArtifactItem,
   BatchStatsItem,
 } from "./types";
 
@@ -37,6 +39,8 @@ export const api = {
   getStatus: () => fetchAPI<MetaStatus>("/meta/status"),
   getMethodology: () => fetchAPI<MethodologyResponse>("/meta/methodology"),
   getSources: () => fetchAPI<OfficialSourcesResponse>("/meta/sources"),
+  getSourceCompleteness: () =>
+    fetchAPI<SourceCompletenessResponse>("/meta/source-completeness"),
 
   // Search
   searchPeople: (q: string) =>
@@ -44,7 +48,10 @@ export const api = {
 
   // People
   listPeople: (params: {
+    branch?: string;
     chamber?: string;
+    agency?: string;
+    court?: string;
     state?: string;
     party?: string;
     sort?: string;
@@ -52,7 +59,10 @@ export const api = {
     page_size?: number;
   }) => {
     const sp = new URLSearchParams();
+    if (params.branch) sp.set("branch", params.branch);
     if (params.chamber) sp.set("chamber", params.chamber);
+    if (params.agency) sp.set("agency", params.agency);
+    if (params.court) sp.set("court", params.court);
     if (params.state) sp.set("state", params.state);
     if (params.party) sp.set("party", params.party);
     if (params.sort) sp.set("sort", params.sort);
@@ -116,9 +126,13 @@ export const api = {
 
   // Trades
   getTrade: (id: string) => fetchAPI<TradeDetail>(`/trades/${id}`),
+  getTradeArtifacts: (id: string) =>
+    fetchAPI<ParserArtifactItem[]>(`/trades/${id}/artifacts`),
 
   // Filings
   getFiling: (id: string) => fetchAPI<FilingDetail>(`/filings/${id}`),
+  getFilingArtifacts: (id: string) =>
+    fetchAPI<ParserArtifactItem[]>(`/filings/${id}/artifacts`),
 
   // Market
   getMarketSeries: (params: {

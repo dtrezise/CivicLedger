@@ -13,8 +13,8 @@ type PersonRow = {
   office?: string | null;
   agency?: string | null;
   court?: string | null;
-  state?: string;
-  party?: string;
+  state?: string | null;
+  party?: string | null;
   service_start?: string;
   service_end?: string | null;
 };
@@ -44,7 +44,10 @@ export default function BrowsePage() {
   const [error, setError] = useState<string | null>(null);
 
   // simple filters (MVP)
+  const [branch, setBranch] = useState<string>("");
   const [chamber, setChamber] = useState<string>("");
+  const [agency, setAgency] = useState<string>("");
+  const [court, setCourt] = useState<string>("");
   const [stateAbbr, setStateAbbr] = useState<string>("");
   const [party, setParty] = useState<string>("");
 
@@ -57,7 +60,10 @@ export default function BrowsePage() {
 
       try {
         const params = new URLSearchParams();
+        if (branch) params.set("branch", branch);
         if (chamber) params.set("chamber", chamber);
+        if (agency) params.set("agency", agency);
+        if (court) params.set("court", court);
         if (stateAbbr) params.set("state", stateAbbr);
         if (party) params.set("party", party);
 
@@ -88,21 +94,30 @@ export default function BrowsePage() {
     return () => {
       cancelled = true;
     };
-  }, [chamber, stateAbbr, party]);
+  }, [branch, chamber, agency, court, stateAbbr, party]);
 
   const stats = useMemo(() => {
+    const branches = new Set<string>();
     const chambers = new Set<string>();
+    const agencies = new Set<string>();
+    const courts = new Set<string>();
     const states = new Set<string>();
     const parties = new Set<string>();
 
     for (const p of people) {
+      if (p.branch) branches.add(p.branch);
       if (p.chamber) chambers.add(p.chamber);
+      if (p.agency) agencies.add(p.agency);
+      if (p.court) courts.add(p.court);
       if (p.state) states.add(p.state);
       if (p.party) parties.add(p.party);
     }
 
     return {
+      branches: Array.from(branches).sort(),
       chambers: Array.from(chambers).sort(),
+      agencies: Array.from(agencies).sort(),
+      courts: Array.from(courts).sort(),
       states: Array.from(states).sort(),
       parties: Array.from(parties).sort(),
     };
@@ -113,13 +128,38 @@ export default function BrowsePage() {
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Browse Directory</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Filter currently available fixture officials by chamber, state, or party.
-          Executive and judicial filters will be added as those sources are ingested.
+          Filter currently available fixture officials by branch, office context,
+          state, or party.
         </p>
       </div>
 
       {/* Filters */}
       <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-gray-700">Branch</span>
+          <select
+            className="rounded-md border px-3 py-2 text-sm"
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+          >
+            <option value="">All</option>
+            {["Legislative", "Executive", "Judicial"]
+              .filter((b) => stats.branches.includes(b))
+              .map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            {stats.branches
+              .filter((b) => !["Legislative", "Executive", "Judicial"].includes(b))
+              .map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+          </select>
+        </label>
+
         <label className="flex flex-col gap-1">
           <span className="text-xs font-medium text-gray-700">Chamber</span>
           <select
@@ -139,6 +179,38 @@ export default function BrowsePage() {
                   {c}
                 </option>
               ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-gray-700">Agency</span>
+          <select
+            className="rounded-md border px-3 py-2 text-sm"
+            value={agency}
+            onChange={(e) => setAgency(e.target.value)}
+          >
+            <option value="">All</option>
+            {stats.agencies.map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-gray-700">Court</span>
+          <select
+            className="rounded-md border px-3 py-2 text-sm"
+            value={court}
+            onChange={(e) => setCourt(e.target.value)}
+          >
+            <option value="">All</option>
+            {stats.courts.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </select>
         </label>
 

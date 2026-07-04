@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from app.database import get_db
-from app.schemas import FilingDetail
+from app.schemas import FilingDetail, ParserArtifactItem
 from app import crud
 
 router = APIRouter(prefix="/filings", tags=["filings"])
@@ -30,3 +30,11 @@ async def get_filing(filing_id: UUID, db: AsyncSession = Depends(get_db)):
         provenance_complete=provenance_complete,
         created_at=filing.created_at,
     )
+
+
+@router.get("/{filing_id}/artifacts", response_model=list[ParserArtifactItem])
+async def get_filing_artifacts(filing_id: UUID, db: AsyncSession = Depends(get_db)):
+    filing = await crud.get_filing(db, filing_id)
+    if not filing:
+        raise HTTPException(status_code=404, detail="Filing not found")
+    return await crud.get_parser_artifacts_for_filing(db, filing_id)

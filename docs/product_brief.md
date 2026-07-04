@@ -41,6 +41,8 @@ Initial official-source expansion order:
 - Executive: Office of Government Ethics public disclosure resources and request workflows.
 - Judicial: Administrative Office of the U.S. Courts financial disclosure database and request workflows.
 
+Current first-draft implementation includes fixture officials for all three branches, branch-aware browse filters, source-readiness filters, a manual official-source archive command, preview-only parser adapters, and parser artifact evidence surfaces. These are scaffolding and review tools, not a claim that official executive or judicial records have been fully ingested.
+
 ## Language Policy
 
 Preferred terms:

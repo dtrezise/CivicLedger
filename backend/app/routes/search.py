@@ -17,9 +17,13 @@ async def search_people(
         PersonSummary(
             person_id=p.id,
             full_name=p.full_name,
+            branch=p.branch,
             chamber=p.chamber,
             state=p.state,
             party=p.party,
+            office=p.office,
+            agency=p.agency,
+            court=p.court,
             service_start=p.service_start,
             service_end=p.service_end,
         )

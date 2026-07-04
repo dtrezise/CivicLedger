@@ -11,12 +11,14 @@
 ## Phase 1 - Provenance-First MVP
 
 - Add ingestion-run and raw-document tables.
-- Implement one official-source ingestion path.
+- Implement manual official-source intake with preview-only parser adapters.
 - Publish official legislative, executive, and judicial source registry through the API and methodology UI.
 - Store raw documents before parsed records.
 - Label fixture records across API, UI, and share cards.
 - Add source detail views.
 - Keep disclosure-completeness scorecards narrow and documented.
+- Add branch-aware demo fixtures for legislative, executive, and judicial officials.
+- Add parser artifact/evidence table and trade evidence display.
 
 ## Phase 2 - Timeline and Source UX
 
@@ -53,6 +55,7 @@ Required before public use:
 - Add judicial disclosure source intake as a separate parser path.
 - Preserve requester/access restrictions from each source before retrieving or exporting records.
 - Add branch-aware browse filters once non-legislative records exist.
+- Add source completeness filters to the methodology/source intake UI.
 - Avoid forcing executive agencies or courts into the legislative `chamber` field.
 
 ## Release Blockers

@@ -56,8 +56,21 @@ The judiciary database provides public access to downloadable reports but requir
 
 ## First Implementation Slice
 
-1. Add a manual official-source intake command that accepts a legislative, executive, or judicial source URL and archives the raw artifact.
-2. Persist `raw_documents` before creating any parsed filing or trade records.
-3. Add parser adapters behind explicit source IDs: `house-financial-disclosure`, `senate-public-financial-disclosure`, `oge-individual-disclosures`, and `judicial-financial-disclosure`.
-4. Run parser output in preview mode before promoting records into public-facing tables.
-5. Expose ingestion status in `/meta/status` once a non-fixture run completes.
+Implemented:
+
+1. `python -m app.intake` archives a local artifact against a source ID and official source URL.
+2. Intake creates `ingestion_runs` and `raw_documents` before parser preview output.
+3. Parser adapters exist behind explicit source IDs: `house-financial-disclosure`, `senate-public-financial-disclosure`, `oge-individual-disclosures`, and `judicial-financial-disclosure`.
+4. Parser output is preview-only and stored in `parser_artifacts`.
+5. `/meta/source-completeness` reports missing raw-document, filing, and completed-ingestion capabilities by source.
+
+Example:
+
+```bash
+cd backend
+python -m app.intake \
+  --source-id judicial-financial-disclosure \
+  --source-url "https://pub.jefs.uscourts.gov/" \
+  --file /path/to/released-report.pdf \
+  --access-acknowledged
+```

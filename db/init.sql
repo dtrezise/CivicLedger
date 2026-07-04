@@ -41,6 +41,7 @@ CREATE TABLE raw_documents (
     rights_status TEXT NOT NULL DEFAULT 'public_record',
     parser_version TEXT NOT NULL,
     provenance_complete BOOLEAN NOT NULL DEFAULT true,
+    source_metadata JSONB NOT NULL DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -81,6 +82,24 @@ CREATE TABLE trades (
 CREATE INDEX idx_trades_person_trade_date ON trades(person_id, trade_date);
 CREATE INDEX idx_trades_person_reported_date ON trades(person_id, reported_date);
 CREATE INDEX idx_trades_ticker ON trades(ticker);
+
+CREATE TABLE parser_artifacts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source_id TEXT NOT NULL,
+    raw_document_id UUID NOT NULL REFERENCES raw_documents(id),
+    filing_id UUID REFERENCES filings(id),
+    trade_id UUID REFERENCES trades(id),
+    artifact_type TEXT NOT NULL CHECK (artifact_type IN ('document','filing','trade','row','warning','preview')),
+    page_number INT,
+    row_number INT,
+    text_span JSONB NOT NULL DEFAULT '{}',
+    parser_output JSONB NOT NULL DEFAULT '{}',
+    confidence NUMERIC,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX idx_parser_artifacts_source ON parser_artifacts(source_id);
+CREATE INDEX idx_parser_artifacts_raw_document ON parser_artifacts(raw_document_id);
 
 CREATE TABLE events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
