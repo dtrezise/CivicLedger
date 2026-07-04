@@ -1,0 +1,28 @@
+.DS_Store
+**/.DS_Store
+
+# Local packaging / transfer artifacts
+*.tar.gz
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and local runtime files
+.env
+.env.*
+!.env.example
+*.log
