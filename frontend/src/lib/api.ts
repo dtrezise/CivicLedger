@@ -23,6 +23,7 @@ import type {
   TradeListResponse,
   TradeDetail,
   FilingDetail,
+  RawDocumentDetail,
   MarketSeriesItem,
   EventItem,
   ShareCardCreateResponse,
@@ -133,6 +134,12 @@ export const api = {
   getFiling: (id: string) => fetchAPI<FilingDetail>(`/filings/${id}`),
   getFilingArtifacts: (id: string) =>
     fetchAPI<ParserArtifactItem[]>(`/filings/${id}/artifacts`),
+
+  // Raw Documents
+  getRawDocument: (id: string) =>
+    fetchAPI<RawDocumentDetail>(`/raw-documents/${id}`),
+  getRawDocumentArtifacts: (id: string) =>
+    fetchAPI<ParserArtifactItem[]>(`/raw-documents/${id}/artifacts`),
 
   // Market
   getMarketSeries: (params: {

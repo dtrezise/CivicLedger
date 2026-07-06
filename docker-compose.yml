@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: civicledger
       POSTGRES_PASSWORD: civicledger
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
@@ -19,7 +19,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     environment:
       DATABASE_URL: postgresql+asyncpg://civicledger:civicledger@db:5432/civicledger
       DATABASE_URL_SYNC: postgresql://civicledger:civicledger@db:5432/civicledger
@@ -33,7 +33,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
     environment:
       NEXT_PUBLIC_API_URL: /api
       API_URL_INTERNAL: http://backend:8000

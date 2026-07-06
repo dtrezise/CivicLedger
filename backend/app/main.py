@@ -1,7 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routes import meta, search, people, trades, filings, market, events, sharecards
+from app.routes import (
+    meta,
+    search,
+    people,
+    trades,
+    filings,
+    raw_documents,
+    market,
+    events,
+    sharecards,
+)
 
 app = FastAPI(
     title="CivicLedger API",
@@ -22,6 +32,7 @@ app.include_router(search.router)
 app.include_router(people.router)
 app.include_router(trades.router)
 app.include_router(filings.router)
+app.include_router(raw_documents.router)
 app.include_router(market.router)
 app.include_router(events.router)
 app.include_router(sharecards.router)

@@ -61,7 +61,7 @@ Implemented:
 1. `python -m app.intake` archives a local artifact against a source ID and official source URL.
 2. Intake creates `ingestion_runs` and `raw_documents` before parser preview output.
 3. Parser adapters exist behind explicit source IDs: `house-financial-disclosure`, `senate-public-financial-disclosure`, `oge-individual-disclosures`, and `judicial-financial-disclosure`.
-4. Parser output is preview-only and stored in `parser_artifacts`.
+4. Parser output extracts common transaction fields into preview output and stores evidence in `parser_artifacts`.
 5. `/meta/source-completeness` reports missing raw-document, filing, and completed-ingestion capabilities by source.
 
 Example:
@@ -74,3 +74,17 @@ python -m app.intake \
   --file /path/to/released-report.pdf \
   --access-acknowledged
 ```
+
+Promotion requires explicit review:
+
+```bash
+python -m app.promote \
+  --artifact-id <preview-artifact-id> \
+  --reviewer "Reviewer Name" \
+  --person-name "Judge Example" \
+  --branch Judicial \
+  --office "Circuit Judge" \
+  --court "U.S. Court of Appeals"
+```
+
+Parser regression fixtures live under `backend/tests/fixtures/parsers/`.

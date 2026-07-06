@@ -112,12 +112,27 @@ docker compose up --build
 # Backend only
 cd backend && pip install -e . && uvicorn app.main:app --reload
 
+# Schema migrations
+cd backend && alembic upgrade head
+
+# Docker smoke test
+./scripts/docker_smoke.sh
+
 # Manual official-source intake
 cd backend && python -m app.intake \
   --source-id oge-individual-disclosures \
   --source-url "https://www.oge.gov/..." \
   --file /path/to/released-disclosure.pdf \
   --access-acknowledged
+
+# Promote reviewed parser preview output
+cd backend && python -m app.promote \
+  --artifact-id 00000000-0000-0000-0000-000000000000 \
+  --reviewer "Reviewer Name" \
+  --person-name "Official Name" \
+  --branch Executive \
+  --office "Secretary" \
+  --agency "Department Name"
 
 # Frontend only
 cd frontend && npm install && npm run dev

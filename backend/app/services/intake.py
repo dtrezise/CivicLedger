@@ -99,6 +99,10 @@ def archive_manual_source_document(
         parser_output={
             "document_type": preview.document_type,
             "normalized_record_count": preview.normalized_record_count,
+            "filer_name": preview.filer_name,
+            "report_type": preview.report_type,
+            "filing_date": preview.filing_date,
+            "transactions": [transaction.to_dict() for transaction in preview.transactions],
             "warnings": preview.warnings,
             "output": preview.output,
         },

@@ -136,6 +136,11 @@ async def get_filing(db: AsyncSession, filing_id: UUID) -> Optional[Filing]:
     return result.scalar_one_or_none()
 
 
+async def get_raw_document(db: AsyncSession, raw_document_id: UUID) -> Optional[RawDocument]:
+    result = await db.execute(select(RawDocument).where(RawDocument.id == raw_document_id))
+    return result.scalar_one_or_none()
+
+
 async def get_parser_artifacts_for_trade(db: AsyncSession, trade_id: UUID) -> list[ParserArtifact]:
     result = await db.execute(
         select(ParserArtifact)
@@ -149,6 +154,17 @@ async def get_parser_artifacts_for_filing(db: AsyncSession, filing_id: UUID) -> 
     result = await db.execute(
         select(ParserArtifact)
         .where(ParserArtifact.filing_id == filing_id)
+        .order_by(ParserArtifact.created_at, ParserArtifact.row_number)
+    )
+    return result.scalars().all()
+
+
+async def get_parser_artifacts_for_raw_document(
+    db: AsyncSession, raw_document_id: UUID
+) -> list[ParserArtifact]:
+    result = await db.execute(
+        select(ParserArtifact)
+        .where(ParserArtifact.raw_document_id == raw_document_id)
         .order_by(ParserArtifact.created_at, ParserArtifact.row_number)
     )
     return result.scalars().all()

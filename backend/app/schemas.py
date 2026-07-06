@@ -162,6 +162,25 @@ class FilingDetail(BaseModel):
         from_attributes = True
 
 
+class RawDocumentDetail(BaseModel):
+    id: UUID
+    ingestion_run_id: UUID
+    source_url: str
+    retrieved_at: datetime
+    retrieval_source: str
+    content_type: str
+    file_hash: str
+    storage_uri: Optional[str] = None
+    rights_status: str
+    parser_version: str
+    provenance_complete: bool
+    source_metadata: dict
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
 # ---- Market ----
 
 class MarketPoint(BaseModel):

@@ -81,4 +81,5 @@ Promoted from near-term plan into the MVP schema. Next additions should include 
 - Raw source records should be stored before normalized rows.
 - Normalized trades must retain links to source filing and raw document metadata.
 - Parser confidence should be exposed as parser confidence, not factual certainty.
+- Parser previews must be promoted only after explicit human review.
 - Data-quality scores must remain separate from conduct or ethics judgments.

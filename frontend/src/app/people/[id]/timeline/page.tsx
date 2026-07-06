@@ -41,6 +41,20 @@ function eventBucketLabel(evt: EventItem, timeline: TimelineResponse, bucket: Bu
   return matchingBucket ? bucketLabel(bucket, matchingBucket.start) : evt.date;
 }
 
+function personAffiliation(person: PersonDetail) {
+  return [
+    person.branch,
+    person.chamber,
+    person.office,
+    person.agency,
+    person.court,
+    person.party,
+    person.state,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 export default function TimelinePage({
   params,
 }: {
@@ -147,7 +161,8 @@ export default function TimelinePage({
       </div>
 
       <h1 className="text-2xl font-bold mb-1">{person.full_name}</h1>
-      <h2 className="text-gray-500 mb-6">Timeline Detail</h2>
+      <div className="text-sm text-gray-600">{personAffiliation(person)}</div>
+      <h2 className="text-gray-500 mb-6">Disclosure Timeline Detail</h2>
 
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">

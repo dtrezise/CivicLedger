@@ -34,6 +34,12 @@ export default function RootLayout({
                 >
                   Methodology
                 </Link>
+                <Link
+                  href="/sources"
+                  className="text-gray-600 hover:text-civic-700"
+                >
+                  Sources
+                </Link>
               </div>
             </div>
           </div>

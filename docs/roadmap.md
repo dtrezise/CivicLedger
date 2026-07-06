@@ -58,6 +58,13 @@ Required before public use:
 - Add source completeness filters to the methodology/source intake UI.
 - Avoid forcing executive agencies or courts into the legislative `chamber` field.
 
+## Parser and Promotion Workflow
+
+- Source-specific parsers extract common transaction fields from CSV-like text, line-based text, and PDFs with extractable text.
+- Parser output stays in preview/evidence state until `python -m app.promote` is run with reviewer context.
+- Regression fixtures cover House, Senate, OGE, and judicial parser lanes.
+- Raw-document and filing-evidence pages expose the provenance chain for review.
+
 ## Release Blockers
 
 - Incomplete provenance display.

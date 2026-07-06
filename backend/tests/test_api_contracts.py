@@ -192,3 +192,5 @@ def test_parser_artifact_routes_are_in_openapi(client):
 
     assert "/trades/{trade_id}/artifacts" in paths
     assert "/filings/{filing_id}/artifacts" in paths
+    assert "/raw-documents/{raw_document_id}" in paths
+    assert "/raw-documents/{raw_document_id}/artifacts" in paths

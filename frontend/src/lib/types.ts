@@ -122,6 +122,22 @@ export interface FilingDetail {
   created_at: string | null;
 }
 
+export interface RawDocumentDetail {
+  id: string;
+  ingestion_run_id: string;
+  source_url: string;
+  retrieved_at: string;
+  retrieval_source: string;
+  content_type: string;
+  file_hash: string;
+  storage_uri: string | null;
+  rights_status: string;
+  parser_version: string;
+  provenance_complete: boolean;
+  source_metadata: Record<string, unknown>;
+  created_at: string | null;
+}
+
 export interface MarketPoint {
   date: string;
   value: number;

@@ -290,6 +290,7 @@ export default function TradeDetailPage({
                   <th className="py-2 pr-4 font-medium">Type</th>
                   <th className="py-2 pr-4 font-medium">Location</th>
                   <th className="py-2 pr-4 font-medium">Confidence</th>
+                  <th className="py-2 pr-4 font-medium">Evidence</th>
                   <th className="py-2 pr-4 font-medium">Evidence Text</th>
                 </tr>
               </thead>
@@ -312,6 +313,24 @@ export default function TradeDetailPage({
                       {artifact.confidence != null
                         ? `${(Number(artifact.confidence) * 100).toFixed(0)}%`
                         : "Not provided"}
+                    </td>
+                    <td className="py-2 pr-4">
+                      <div className="flex flex-col gap-1">
+                        <Link
+                          href={`/raw-documents/${artifact.raw_document_id}`}
+                          className="text-civic-700 underline"
+                        >
+                          Raw document
+                        </Link>
+                        {artifact.filing_id ? (
+                          <Link
+                            href={`/filings/${artifact.filing_id}/evidence`}
+                            className="text-civic-700 underline"
+                          >
+                            Filing evidence
+                          </Link>
+                        ) : null}
+                      </div>
                     </td>
                     <td className="max-w-md py-2 pr-4 text-gray-600">
                       {typeof artifact.text_span?.text === "string"
