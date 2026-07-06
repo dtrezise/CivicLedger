@@ -21,7 +21,7 @@ export default function RootLayout({
               <Link href="/" className="text-xl font-bold text-civic-700">
                 CivicLedger
               </Link>
-              <div className="flex space-x-6 text-sm">
+              <div className="flex flex-wrap justify-end gap-x-4 gap-y-1 text-sm">
                 <Link
                   href="/browse"
                   className="text-gray-600 hover:text-civic-700"
@@ -39,6 +39,30 @@ export default function RootLayout({
                   className="text-gray-600 hover:text-civic-700"
                 >
                   Sources
+                </Link>
+                <Link
+                  href="/review"
+                  className="text-gray-600 hover:text-civic-700"
+                >
+                  Review
+                </Link>
+                <Link
+                  href="/evidence"
+                  className="text-gray-600 hover:text-civic-700"
+                >
+                  Evidence
+                </Link>
+                <Link
+                  href="/quality"
+                  className="text-gray-600 hover:text-civic-700"
+                >
+                  Quality
+                </Link>
+                <Link
+                  href="/admin/runs"
+                  className="text-gray-600 hover:text-civic-700"
+                >
+                  Runs
                 </Link>
               </div>
             </div>

@@ -8,6 +8,10 @@ from app.routes import (
     trades,
     filings,
     raw_documents,
+    review,
+    ingestion_runs,
+    evidence,
+    quality,
     market,
     events,
     sharecards,
@@ -33,6 +37,10 @@ app.include_router(people.router)
 app.include_router(trades.router)
 app.include_router(filings.router)
 app.include_router(raw_documents.router)
+app.include_router(review.router)
+app.include_router(ingestion_runs.router)
+app.include_router(evidence.router)
+app.include_router(quality.router)
 app.include_router(market.router)
 app.include_router(events.router)
 app.include_router(sharecards.router)

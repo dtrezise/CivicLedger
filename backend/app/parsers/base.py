@@ -11,6 +11,8 @@ class ParsedTransaction:
     amount: str
     comment: str | None = None
     row_number: int | None = None
+    confidence: float | None = None
+    field_confidence: dict | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -22,6 +24,8 @@ class ParsedTransaction:
             "amount": self.amount,
             "comment": self.comment,
             "row_number": self.row_number,
+            "confidence": self.confidence,
+            "field_confidence": self.field_confidence or {},
         }
 
 

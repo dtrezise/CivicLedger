@@ -102,6 +102,19 @@ export default function SourcesPage() {
                 </div>
               </dl>
 
+              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="text-gray-500">Access mode</dt>
+                  <dd className="mt-1 font-medium">{source.access_mode ?? "Not specified"}</dd>
+                </div>
+                <div>
+                  <dt className="text-gray-500">Public sample</dt>
+                  <dd className="mt-1 font-medium">
+                    {source.public_sample_url ? "Configured" : "Not configured"}
+                  </dd>
+                </div>
+              </dl>
+
               {item && item.missing_capabilities.length > 0 ? (
                 <ul className="mt-4 list-disc space-y-1 pl-5 text-xs text-gray-600">
                   {item.missing_capabilities.map((missing) => (

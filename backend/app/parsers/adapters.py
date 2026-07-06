@@ -65,6 +65,21 @@ def clean(value: str | None) -> str | None:
     return value or None
 
 
+def transaction_confidence(
+    *, asset: str | None, date: str | None, amount: str | None, action: str | None, ticker: str | None
+) -> tuple[float, dict[str, float]]:
+    field_confidence = {
+        "asset": 0.95 if asset else 0.0,
+        "transaction_date": 0.95 if date else 0.0,
+        "amount": 0.9 if amount else 0.0,
+        "transaction_type": 0.9 if action in {"BUY", "SELL", "EXCHANGE", "OTHER"} else 0.45,
+        "ticker": 0.8 if ticker else 0.35,
+    }
+    required = ["asset", "transaction_date", "amount", "transaction_type"]
+    confidence = sum(field_confidence[field] for field in required) / len(required)
+    return round(confidence, 2), field_confidence
+
+
 def extract_metadata(text: str) -> dict:
     metadata = {}
     patterns = {
@@ -125,16 +140,26 @@ def extract_table_transactions(text: str) -> list[ParsedTransaction]:
         )
         if not asset or not date or not amount or not action:
             continue
+        normalized_action = normalize_action(action)
+        confidence, field_confidence = transaction_confidence(
+            asset=asset,
+            date=date,
+            amount=amount,
+            action=normalized_action,
+            ticker=clean(by_key.get("ticker") or by_key.get("symbol")),
+        )
         transactions.append(
             ParsedTransaction(
                 owner=clean(by_key.get("owner")),
                 asset=asset,
                 ticker=clean(by_key.get("ticker") or by_key.get("symbol")),
-                transaction_type=normalize_action(action),
+                transaction_type=normalized_action,
                 transaction_date=normalize_date(date),
                 amount=amount,
                 comment=clean(by_key.get("comment") or by_key.get("notes")),
                 row_number=row_number,
+                confidence=confidence,
+                field_confidence=field_confidence,
             )
         )
     return transactions
@@ -160,6 +185,13 @@ def extract_line_transactions(text: str) -> list[ParsedTransaction]:
         if ticker_match:
             ticker = ticker_match.group(1)
             asset = clean(asset.replace(ticker_match.group(0), "")) or asset
+        confidence, field_confidence = transaction_confidence(
+            asset=asset,
+            date=date_match.group(1),
+            amount=amount_match.group(1),
+            action=action,
+            ticker=ticker,
+        )
 
         transactions.append(
             ParsedTransaction(
@@ -171,6 +203,8 @@ def extract_line_transactions(text: str) -> list[ParsedTransaction]:
                 amount=amount_match.group(1),
                 comment=after_amount or None,
                 row_number=row_number,
+                confidence=confidence,
+                field_confidence=field_confidence,
             )
         )
     return transactions

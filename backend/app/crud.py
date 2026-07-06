@@ -1,7 +1,7 @@
 from uuid import UUID
 from datetime import date, datetime
 from typing import Optional
-from sqlalchemy import select, func, and_, or_, desc, asc
+from sqlalchemy import Text, select, func, and_, or_, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models import (
@@ -170,6 +170,31 @@ async def get_parser_artifacts_for_raw_document(
     return result.scalars().all()
 
 
+async def list_parser_artifacts(
+    db: AsyncSession,
+    artifact_type: Optional[str] = None,
+    source_id: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 50,
+) -> tuple[list[ParserArtifact], int]:
+    query = select(ParserArtifact)
+    count_query = select(func.count(ParserArtifact.id))
+    if artifact_type:
+        query = query.where(ParserArtifact.artifact_type == artifact_type)
+        count_query = count_query.where(ParserArtifact.artifact_type == artifact_type)
+    if source_id:
+        query = query.where(ParserArtifact.source_id == source_id)
+        count_query = count_query.where(ParserArtifact.source_id == source_id)
+    query = (
+        query.order_by(desc(ParserArtifact.created_at))
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+    total_result = await db.execute(count_query)
+    result = await db.execute(query)
+    return result.scalars().all(), total_result.scalar() or 0
+
+
 async def get_person_filings(db: AsyncSession, person_id: UUID) -> list[Filing]:
     result = await db.execute(
         select(Filing).where(Filing.person_id == person_id).order_by(Filing.filed_date.desc())
@@ -303,3 +328,65 @@ async def count_filings_by_source(db: AsyncSession) -> dict[str, int]:
         )
     )
     return {source: count for source, count in result.all()}
+
+
+async def list_ingestion_runs(
+    db: AsyncSession,
+    source_name: Optional[str] = None,
+    status: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 50,
+) -> tuple[list[IngestionRun], int]:
+    query = select(IngestionRun)
+    count_query = select(func.count(IngestionRun.id))
+    if source_name:
+        query = query.where(IngestionRun.source_name == source_name)
+        count_query = count_query.where(IngestionRun.source_name == source_name)
+    if status:
+        query = query.where(IngestionRun.status == status)
+        count_query = count_query.where(IngestionRun.status == status)
+    query = (
+        query.order_by(desc(IngestionRun.started_at))
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+    total_result = await db.execute(count_query)
+    result = await db.execute(query)
+    return result.scalars().all(), total_result.scalar() or 0
+
+
+async def search_parser_artifacts(
+    db: AsyncSession,
+    q: str,
+    source_id: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 50,
+) -> tuple[list[ParserArtifact], int]:
+    pattern = f"%{q}%"
+    query = select(ParserArtifact).where(
+        or_(
+            ParserArtifact.source_id.ilike(pattern),
+            ParserArtifact.artifact_type.ilike(pattern),
+            ParserArtifact.parser_output.cast(Text).ilike(pattern),
+            ParserArtifact.text_span.cast(Text).ilike(pattern),
+        )
+    )
+    count_query = select(func.count(ParserArtifact.id)).where(
+        or_(
+            ParserArtifact.source_id.ilike(pattern),
+            ParserArtifact.artifact_type.ilike(pattern),
+            ParserArtifact.parser_output.cast(Text).ilike(pattern),
+            ParserArtifact.text_span.cast(Text).ilike(pattern),
+        )
+    )
+    if source_id:
+        query = query.where(ParserArtifact.source_id == source_id)
+        count_query = count_query.where(ParserArtifact.source_id == source_id)
+    query = (
+        query.order_by(desc(ParserArtifact.created_at))
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+    total_result = await db.execute(count_query)
+    result = await db.execute(query)
+    return result.scalars().all(), total_result.scalar() or 0

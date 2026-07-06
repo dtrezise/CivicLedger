@@ -80,6 +80,15 @@ On first startup the backend automatically seeds the database with:
 | GET | `/trades/{id}/artifacts` | Parser evidence linked to a trade |
 | GET | `/filings/{id}` | Filing detail + provenance |
 | GET | `/filings/{id}/artifacts` | Parser evidence linked to a filing |
+| GET | `/raw-documents/{id}` | Raw source artifact metadata |
+| GET | `/raw-documents/{id}/artifacts` | Parser artifacts linked to a raw document |
+| GET | `/review/parser-previews` | Pending parser previews for reviewer promotion |
+| POST | `/review/parser-previews/{id}/promote` | Promote reviewed preview into filing/trade records |
+| POST | `/review/filings/{id}/rollback` | Roll back a promoted filing |
+| POST | `/review/filings/{id}/supersede` | Mark a filing superseded by a replacement |
+| GET | `/evidence/search?q=` | Search parser evidence and raw text spans |
+| GET | `/quality/duplicates` | Duplicate filing/trade detection |
+| GET | `/ingestion-runs` | Source-run history |
 | GET | `/market/series` | Market overlay data (SPY, DIA) |
 | GET | `/events` | Curated events |
 | GET | `/events/{id}` | Event detail + source links |
@@ -96,8 +105,15 @@ On first startup the backend automatically seeds the database with:
 | `/people/[id]/timeline` | Timeline Detail |
 | `/people/[id]/trades` | Trades List |
 | `/trades/[tradeId]` | Trade Detail + Provenance |
+| `/filings/[filingId]/evidence` | Filing Evidence |
+| `/raw-documents/[rawDocumentId]` | Raw Document Detail |
 | `/sharecards/new` | Share Card Builder |
 | `/methodology` | Methodology |
+| `/sources` | Source Readiness |
+| `/review` | Parser Review Queue |
+| `/evidence` | Evidence Search |
+| `/quality` | Duplicate Quality Report |
+| `/admin/runs` | Source Run History |
 
 ## Resetting Data
 
@@ -125,6 +141,15 @@ cd backend && python -m app.intake \
   --file /path/to/released-disclosure.pdf \
   --access-acknowledged
 
+# Direct official-source download intake
+cd backend && python -m app.download_source \
+  --source-id oge-individual-disclosures \
+  --url "https://www.oge.gov/path/to/public-document.pdf" \
+  --access-acknowledged
+
+# Verified public sample ingestion path
+./scripts/run_sample_ingestion.sh
+
 # Promote reviewed parser preview output
 cd backend && python -m app.promote \
   --artifact-id 00000000-0000-0000-0000-000000000000 \
@@ -134,6 +159,10 @@ cd backend && python -m app.promote \
   --office "Secretary" \
   --agency "Department Name"
 
+# Rollback/supersession are also available through the review API:
+# POST /review/filings/{filing_id}/rollback
+# POST /review/filings/{filing_id}/supersede
+
 # Frontend only
-cd frontend && npm install && npm run dev
+cd frontend && pnpm install && pnpm dev
 ```

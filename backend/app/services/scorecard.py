@@ -2,12 +2,22 @@ from uuid import UUID
 from datetime import date, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from app.models import Trade, Filing
+from app.models import Trade, Filing, Person
 from app.schemas import ScorecardDeduction, ScorecardMetrics, ScorecardResponse
 
 
 async def compute_scorecard(db: AsyncSession, person_id: UUID) -> ScorecardResponse:
     """Compute scorecard per CivicLedger canvas rules."""
+
+    person_result = await db.execute(select(Person).where(Person.id == person_id))
+    person = person_result.scalar_one_or_none()
+    branch = person.branch if person else "Unknown"
+    branch_lag_thresholds = {
+        "Legislative": (45, 90),
+        "Executive": (60, 120),
+        "Judicial": (60, 120),
+    }
+    elevated_lag, high_lag = branch_lag_thresholds.get(branch, (45, 90))
 
     # Get all trades for this person
     trades_result = await db.execute(
@@ -31,6 +41,7 @@ async def compute_scorecard(db: AsyncSession, person_id: UUID) -> ScorecardRespo
     else:
         transaction_level = "No"
         notes.append("No trades on record.")
+    notes.append(f"Branch rule profile: {branch}.")
 
     # Median lag (last 24 months or all if < 10 trades)
     cutoff = date.today() - timedelta(days=730)  # ~24 months
@@ -63,22 +74,28 @@ async def compute_scorecard(db: AsyncSession, person_id: UUID) -> ScorecardRespo
 
     # Deduction: high median lag
     if median_lag is not None:
-        if median_lag > 90:
+        if median_lag > high_lag:
             completeness -= 25
             notes.append(f"High median disclosure lag: {median_lag:.0f} days.")
             deductions.append(ScorecardDeduction(
-                rule_id="median_lag_over_90_days",
+                rule_id=f"{branch.lower()}_median_lag_over_{high_lag}_days",
                 points=25,
-                explanation=f"Median disclosure lag is {median_lag:.0f} days.",
+                explanation=(
+                    f"Median disclosure lag is {median_lag:.0f} days, above the "
+                    f"{branch} high-lag threshold of {high_lag} days."
+                ),
                 evidence_count=len(lags),
             ))
-        elif median_lag > 45:
+        elif median_lag > elevated_lag:
             completeness -= 15
             notes.append(f"Elevated median disclosure lag: {median_lag:.0f} days.")
             deductions.append(ScorecardDeduction(
-                rule_id="median_lag_over_45_days",
+                rule_id=f"{branch.lower()}_median_lag_over_{elevated_lag}_days",
                 points=15,
-                explanation=f"Median disclosure lag is {median_lag:.0f} days.",
+                explanation=(
+                    f"Median disclosure lag is {median_lag:.0f} days, above the "
+                    f"{branch} elevated-lag threshold of {elevated_lag} days."
+                ),
                 evidence_count=len(lags),
             ))
 

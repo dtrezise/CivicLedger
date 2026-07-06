@@ -75,8 +75,10 @@ async def get_methodology():
             title="Disclosure Completeness Scorecard",
             content=(
                 "Completeness rating starts at 100. Deductions apply for: missing filings (-30), "
-                "high median lag >90d (-25), elevated lag >45d (-15), negative lag trades (-10), "
-                "low parsing confidence (-10). Grades: A (90+), B (80-89), C (70-79), D (60-69), F (<60)."
+                "branch-specific high median lag (-25), branch-specific elevated lag (-15), "
+                "negative lag trades (-10), low parsing confidence (-10). Legislative thresholds "
+                "currently use 45/90 days; executive and judicial thresholds use 60/120 days. "
+                "Grades: A (90+), B (80-89), C (70-79), D (60-69), F (<60)."
                 " These are data-quality and reporting-timeliness indicators, not ethics ratings, "
                 "compliance findings, integrity scores, or investment-performance assessments."
             ),

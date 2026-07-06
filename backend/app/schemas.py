@@ -277,6 +277,8 @@ class OfficialSourceInfo(BaseModel):
     source_url: str
     search_url: Optional[str] = None
     download_url: Optional[str] = None
+    access_mode: Optional[str] = None
+    public_sample_url: Optional[str] = None
     ingestion_status: str
     records_scope: str
     rights_note: str
@@ -321,3 +323,102 @@ class ParserArtifactItem(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ParserArtifactListResponse(BaseModel):
+    items: list[ParserArtifactItem]
+    page: int
+    page_size: int
+    total: int
+
+
+class PromotePreviewRequest(BaseModel):
+    reviewer: str
+    person_name: str
+    branch: str
+    chamber: Optional[str] = None
+    state: Optional[str] = None
+    party: Optional[str] = None
+    office: Optional[str] = None
+    agency: Optional[str] = None
+    court: Optional[str] = None
+
+
+class PromotePreviewResponse(BaseModel):
+    filing_id: UUID
+    trade_count: int
+
+
+class RollbackFilingRequest(BaseModel):
+    reviewer: str
+    reason: str
+
+
+class RollbackFilingResponse(BaseModel):
+    filing_id: str
+    reviewed_by: str
+    reason: str
+    deleted_trade_count: int
+    deleted_artifact_count: int
+
+
+class SupersedeFilingRequest(BaseModel):
+    superseded_by_filing_id: UUID
+    reviewer: str
+    reason: str
+
+
+class IngestionRunItem(BaseModel):
+    id: UUID
+    source_name: str
+    source_url: Optional[str] = None
+    started_at: datetime
+    completed_at: Optional[datetime] = None
+    status: str
+    dataset_version: str
+    parser_version: str
+    notes: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class IngestionRunListResponse(BaseModel):
+    items: list[IngestionRunItem]
+    page: int
+    page_size: int
+    total: int
+
+
+class EvidenceSearchResponse(BaseModel):
+    items: list[ParserArtifactItem]
+    page: int
+    page_size: int
+    total: int
+
+
+class DuplicateTradeGroup(BaseModel):
+    duplicate_key: str
+    trade_ids: list[UUID]
+    person_id: UUID
+    trade_date: date
+    action: str
+    asset_display_name: str
+    value_range_label: str
+    count: int
+
+
+class DuplicateFilingGroup(BaseModel):
+    duplicate_key: str
+    filing_ids: list[UUID]
+    person_id: UUID
+    filed_date: date
+    filing_type: str
+    file_hash: str
+    count: int
+
+
+class DuplicateReportResponse(BaseModel):
+    trade_groups: list[DuplicateTradeGroup]
+    filing_groups: list[DuplicateFilingGroup]

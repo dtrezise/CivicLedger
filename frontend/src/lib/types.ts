@@ -196,6 +196,8 @@ export interface OfficialSourceInfo {
   source_url: string;
   search_url: string | null;
   download_url: string | null;
+  access_mode: string | null;
+  public_sample_url: string | null;
   ingestion_status: string;
   records_scope: string;
   rights_note: string;
@@ -237,6 +239,66 @@ export interface ParserArtifactItem {
   parser_output: Record<string, unknown>;
   confidence: number | null;
   created_at: string | null;
+}
+
+export interface ParserArtifactListResponse {
+  items: ParserArtifactItem[];
+  page: number;
+  page_size: number;
+  total: number;
+}
+
+export interface IngestionRunItem {
+  id: string;
+  source_name: string;
+  source_url: string | null;
+  started_at: string;
+  completed_at: string | null;
+  status: string;
+  dataset_version: string;
+  parser_version: string;
+  notes: string | null;
+  created_at: string | null;
+}
+
+export interface IngestionRunListResponse {
+  items: IngestionRunItem[];
+  page: number;
+  page_size: number;
+  total: number;
+}
+
+export interface EvidenceSearchResponse {
+  items: ParserArtifactItem[];
+  page: number;
+  page_size: number;
+  total: number;
+}
+
+export interface DuplicateTradeGroup {
+  duplicate_key: string;
+  trade_ids: string[];
+  person_id: string;
+  trade_date: string;
+  action: string;
+  asset_display_name: string;
+  value_range_label: string;
+  count: number;
+}
+
+export interface DuplicateFilingGroup {
+  duplicate_key: string;
+  filing_ids: string[];
+  person_id: string;
+  filed_date: string;
+  filing_type: string;
+  file_hash: string;
+  count: number;
+}
+
+export interface DuplicateReportResponse {
+  trade_groups: DuplicateTradeGroup[];
+  filing_groups: DuplicateFilingGroup[];
 }
 
 export interface BatchStatsItem {

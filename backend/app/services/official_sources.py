@@ -10,6 +10,8 @@ OFFICIAL_SOURCES = [
         "source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
         "search_url": "https://disclosures-clerk.house.gov/FinancialDisclosure/ViewSearch",
         "download_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+        "access_mode": "public_portal",
+        "public_sample_url": None,
         "ingestion_status": "planned",
         "records_scope": "Member, staff, and candidate financial disclosure reports published by the Office of the Clerk.",
         "rights_note": (
@@ -32,6 +34,8 @@ OFFICIAL_SOURCES = [
         "source_url": "https://www.disclosure.senate.gov/",
         "search_url": "https://efdsearch.senate.gov/",
         "download_url": None,
+        "access_mode": "public_portal_acknowledged",
+        "public_sample_url": None,
         "ingestion_status": "planned",
         "records_scope": "Senate public financial disclosures and periodic transaction reports maintained through public disclosure systems.",
         "rights_note": (
@@ -54,6 +58,8 @@ OFFICIAL_SOURCES = [
         "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
         "search_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
         "download_url": None,
+        "access_mode": "direct_public_document_or_acknowledged_portal",
+        "public_sample_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
         "ingestion_status": "planned",
         "records_scope": "Executive branch public financial disclosure documents, including OGE Form 278e annual reports and OGE Form 278-T periodic transaction reports where available.",
         "rights_note": (
@@ -77,6 +83,8 @@ OFFICIAL_SOURCES = [
         "source_url": "https://www.uscourts.gov/administration-policies/judiciary-financial-disclosure-reports",
         "search_url": "https://pub.jefs.uscourts.gov/",
         "download_url": None,
+        "access_mode": "public_portal_acknowledged",
+        "public_sample_url": None,
         "ingestion_status": "planned",
         "records_scope": "Financial disclosure reports and periodic transaction reports for federal judges and covered judiciary personnel released through the Administrative Office of the U.S. Courts.",
         "rights_note": (

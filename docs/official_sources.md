@@ -63,6 +63,9 @@ Implemented:
 3. Parser adapters exist behind explicit source IDs: `house-financial-disclosure`, `senate-public-financial-disclosure`, `oge-individual-disclosures`, and `judicial-financial-disclosure`.
 4. Parser output extracts common transaction fields into preview output and stores evidence in `parser_artifacts`.
 5. `/meta/source-completeness` reports missing raw-document, filing, and completed-ingestion capabilities by source.
+6. `python -m app.download_source` downloads a specific public official-source document URL or configured public sample, then archives it through the same provenance path.
+7. `/review` exposes preview promotion, while `/evidence`, `/quality`, and `/admin/runs` expose evidence search, duplicate checks, and source-run history.
+8. Parser previews include field-level confidence and branch-specific scorecards use branch-specific lag thresholds.
 
 Example:
 
@@ -88,3 +91,11 @@ python -m app.promote \
 ```
 
 Parser regression fixtures live under `backend/tests/fixtures/parsers/`.
+
+Verified sample ingestion:
+
+```bash
+./scripts/run_sample_ingestion.sh
+```
+
+The current sample uses an official OGE public PDF URL. It is a smoke path for downloader, archiver, parser-preview, and provenance persistence; it is not a production ingestion policy.

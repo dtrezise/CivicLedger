@@ -67,6 +67,7 @@ def test_meta_sources_contract(client):
     }
     assert all(source["ingestion_status"] == "planned" for source in payload["sources"])
     assert all(source["provenance_requirements"] for source in payload["sources"])
+    assert all("access_mode" in source for source in payload["sources"])
 
 
 def test_meta_source_completeness_contract(client, monkeypatch):
@@ -194,3 +195,9 @@ def test_parser_artifact_routes_are_in_openapi(client):
     assert "/filings/{filing_id}/artifacts" in paths
     assert "/raw-documents/{raw_document_id}" in paths
     assert "/raw-documents/{raw_document_id}/artifacts" in paths
+    assert "/review/parser-previews" in paths
+    assert "/review/parser-previews/{artifact_id}/promote" in paths
+    assert "/review/filings/{filing_id}/rollback" in paths
+    assert "/evidence/search" in paths
+    assert "/quality/duplicates" in paths
+    assert "/ingestion-runs" in paths

@@ -64,6 +64,10 @@ Required before public use:
 - Parser output stays in preview/evidence state until `python -m app.promote` is run with reviewer context.
 - Regression fixtures cover House, Senate, OGE, and judicial parser lanes.
 - Raw-document and filing-evidence pages expose the provenance chain for review.
+- Source-client download paths support specific public document URLs and configured public samples while preserving access acknowledgements.
+- Reviewer/admin screens cover parser preview promotion, evidence search, duplicate detection, and source-run history.
+- Promotion rollback and filing supersession are available through review API endpoints.
+- CI now covers backend tests, frontend build, Alembic migration, and Docker smoke.
 
 ## Release Blockers
 

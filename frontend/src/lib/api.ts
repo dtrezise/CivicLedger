@@ -32,6 +32,10 @@ import type {
   OfficialSourcesResponse,
   SourceCompletenessResponse,
   ParserArtifactItem,
+  ParserArtifactListResponse,
+  IngestionRunListResponse,
+  EvidenceSearchResponse,
+  DuplicateReportResponse,
   BatchStatsItem,
 } from "./types";
 
@@ -42,6 +46,12 @@ export const api = {
   getSources: () => fetchAPI<OfficialSourcesResponse>("/meta/sources"),
   getSourceCompleteness: () =>
     fetchAPI<SourceCompletenessResponse>("/meta/source-completeness"),
+  listIngestionRuns: (params?: { source_name?: string; status?: string }) => {
+    const sp = new URLSearchParams();
+    if (params?.source_name) sp.set("source_name", params.source_name);
+    if (params?.status) sp.set("status", params.status);
+    return fetchAPI<IngestionRunListResponse>(`/ingestion-runs?${sp.toString()}`);
+  },
 
   // Search
   searchPeople: (q: string) =>
@@ -140,6 +150,57 @@ export const api = {
     fetchAPI<RawDocumentDetail>(`/raw-documents/${id}`),
   getRawDocumentArtifacts: (id: string) =>
     fetchAPI<ParserArtifactItem[]>(`/raw-documents/${id}/artifacts`),
+
+  // Review
+  listParserPreviews: () =>
+    fetchAPI<ParserArtifactListResponse>("/review/parser-previews"),
+  promoteParserPreview: (
+    artifactId: string,
+    data: {
+      reviewer: string;
+      person_name: string;
+      branch: string;
+      chamber?: string;
+      state?: string;
+      party?: string;
+      office?: string;
+      agency?: string;
+      court?: string;
+    }
+  ) =>
+    fetchAPI<{ filing_id: string; trade_count: number }>(
+      `/review/parser-previews/${artifactId}/promote`,
+      { method: "POST", body: JSON.stringify(data) }
+    ),
+  rollbackFiling: (filingId: string, data: { reviewer: string; reason: string }) =>
+    fetchAPI<{
+      filing_id: string;
+      reviewed_by: string;
+      reason: string;
+      deleted_trade_count: number;
+      deleted_artifact_count: number;
+    }>(`/review/filings/${filingId}/rollback`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  supersedeFiling: (
+    filingId: string,
+    data: { superseded_by_filing_id: string; reviewer: string; reason: string }
+  ) =>
+    fetchAPI<FilingDetail>(`/review/filings/${filingId}/supersede`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  // Evidence and quality
+  searchEvidence: (params: { q: string; source_id?: string }) => {
+    const sp = new URLSearchParams();
+    sp.set("q", params.q);
+    if (params.source_id) sp.set("source_id", params.source_id);
+    return fetchAPI<EvidenceSearchResponse>(`/evidence/search?${sp.toString()}`);
+  },
+  getDuplicateReport: () =>
+    fetchAPI<DuplicateReportResponse>("/quality/duplicates"),
 
   // Market
   getMarketSeries: (params: {

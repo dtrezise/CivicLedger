@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.models import Filing, ParserArtifact, Person, RawDocument, Trade
@@ -32,6 +32,13 @@ def parse_value_range(label: str) -> tuple[Decimal | None, Decimal | None]:
     if label in VALUE_RANGE_DEFAULTS:
         return VALUE_RANGE_DEFAULTS[label]
     return None, None
+
+
+def decimal_confidence(row: dict, fallback: str = "0.85") -> Decimal:
+    try:
+        return Decimal(str(row.get("confidence") or fallback))
+    except Exception:
+        return Decimal(fallback)
 
 
 def disclosure_lag(trade_date: date, reported_date: date) -> int:
@@ -150,6 +157,7 @@ def promote_preview_artifact(
     for row in transactions:
         trade_date = parse_date(row.get("transaction_date"), fallback=filed_date)
         min_value, max_value = parse_value_range(row.get("amount") or "")
+        confidence = decimal_confidence(row)
         trade = Trade(
             id=uuid4(),
             person_id=person.id,
@@ -165,7 +173,7 @@ def promote_preview_artifact(
             value_range_min=min_value,
             value_range_max=max_value,
             disclosure_lag_days=disclosure_lag(trade_date, filed_date),
-            parsing_confidence=Decimal("0.85"),
+            parsing_confidence=confidence,
             asset_match_confidence=None,
         )
         session.add(trade)
@@ -188,7 +196,7 @@ def promote_preview_artifact(
                     "promoted_from_artifact_id": str(preview.id),
                     "row": row,
                 },
-                confidence=Decimal("0.85"),
+                confidence=confidence,
             )
         )
 
@@ -197,3 +205,105 @@ def promote_preview_artifact(
     for trade in trades:
         session.refresh(trade)
     return filing, trades
+
+
+def rollback_promoted_filing(
+    session: Session,
+    *,
+    filing_id: UUID,
+    reviewer: str,
+    reason: str,
+) -> dict:
+    filing = session.get(Filing, filing_id)
+    if not filing:
+        raise ValueError(f"Filing not found: {filing_id}")
+
+    promotion_artifact = session.execute(
+        select(ParserArtifact).where(
+            ParserArtifact.filing_id == filing_id,
+            ParserArtifact.artifact_type == "filing",
+        )
+    ).scalar_one_or_none()
+    if not promotion_artifact or not (
+        promotion_artifact.parser_output or {}
+    ).get("promoted_from_artifact_id"):
+        raise ValueError("Only filings promoted from reviewed parser previews can be rolled back.")
+
+    trade_ids = [
+        trade_id
+        for trade_id in session.execute(select(Trade.id).where(Trade.filing_id == filing_id)).scalars()
+    ]
+    artifact_count = session.execute(
+        select(ParserArtifact).where(ParserArtifact.filing_id == filing_id)
+    ).scalars().all()
+
+    preview_id = promotion_artifact.parser_output.get("promoted_from_artifact_id")
+    if preview_id:
+        preview = session.get(ParserArtifact, UUID(preview_id))
+        if preview:
+            preview.parser_output = {
+                **(preview.parser_output or {}),
+                "review_status": "rolled_back",
+                "rollback": {
+                    "reviewed_by": reviewer,
+                    "reason": reason,
+                    "rolled_back_filing_id": str(filing_id),
+                    "rolled_back_at": datetime.utcnow().isoformat(),
+                },
+            }
+
+    session.execute(delete(ParserArtifact).where(ParserArtifact.filing_id == filing_id))
+    session.execute(delete(Trade).where(Trade.filing_id == filing_id))
+    session.delete(filing)
+    session.commit()
+
+    return {
+        "filing_id": str(filing_id),
+        "reviewed_by": reviewer,
+        "reason": reason,
+        "deleted_trade_count": len(trade_ids),
+        "deleted_artifact_count": len(artifact_count),
+    }
+
+
+def supersede_filing(
+    session: Session,
+    *,
+    filing_id: UUID,
+    superseded_by_filing_id: UUID,
+    reviewer: str,
+    reason: str,
+) -> Filing:
+    filing = session.get(Filing, filing_id)
+    replacement = session.get(Filing, superseded_by_filing_id)
+    if not filing:
+        raise ValueError(f"Filing not found: {filing_id}")
+    if not replacement:
+        raise ValueError(f"Replacement filing not found: {superseded_by_filing_id}")
+    if filing.id == replacement.id:
+        raise ValueError("A filing cannot supersede itself.")
+
+    filing.superseded_by_filing_id = replacement.id
+    raw_document_id = filing.raw_document_id or replacement.raw_document_id
+    if raw_document_id:
+        session.add(
+            ParserArtifact(
+                id=uuid4(),
+                source_id=filing.retrieval_source,
+                raw_document_id=raw_document_id,
+                filing_id=filing.id,
+                artifact_type="warning",
+                text_span={},
+                parser_output={
+                    "review_status": "superseded",
+                    "superseded_by_filing_id": str(replacement.id),
+                    "reviewed_by": reviewer,
+                    "reason": reason,
+                    "reviewed_at": datetime.utcnow().isoformat(),
+                },
+                confidence=None,
+            )
+        )
+    session.commit()
+    session.refresh(filing)
+    return filing
