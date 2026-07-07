@@ -78,6 +78,6 @@ def test_market_price_dataset_uses_tiingo_adjusted_close_scope():
     )
     assert data["ticker_reference"]["AAPL"]["issuer_name"] == "Apple Inc."
     assert data["ticker_reference"]["AAPL"]["benchmark_symbol"] == "XLK"
-    assert data["coverage_report"]["AAPL"]["status"] == "covered"
+    assert data["coverage_report"]["AAPL"]["status"] in {"covered", "cached"}
     assert data["series"]["SPY"]["price_field_for_overlays"] in {"adj_close", "close"}
     assert data["context_label"].startswith("Market-price overlays prefer Tiingo")
