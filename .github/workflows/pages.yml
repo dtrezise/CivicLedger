@@ -7,10 +7,13 @@ on:
       - "pages-site/**"
       - "scripts/build_pages_dataset.py"
       - "scripts/build_public_officials_dataset.py"
+      - "scripts/build_fred_context_dataset.py"
       - "data/public_officials/**"
+      - "data/context/**"
       - "backend/app/seed.py"
       - "backend/app/fixtures/**"
       - "backend/app/services/official_sources.py"
+      - "backend/app/services/fred_context.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

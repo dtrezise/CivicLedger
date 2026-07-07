@@ -29,3 +29,18 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 - Commit only variable names, source metadata, and non-secret documentation URLs.
 - Use GitHub repository secrets for scheduled refresh workflows.
 - Do not print API keys in logs, test output, build output, or generated public data.
+
+## Scheduled Refresh
+
+The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, FRED context data, and Pages static JSON once per day. It can also be run manually from GitHub Actions.
+
+Required repository secrets:
+
+- `CONGRESS_GOV_API_KEY`
+- `FRED_API_KEY`
+
+Manual run:
+
+```bash
+gh workflow run data-refresh.yml --repo dtrezise/CivicLedger
+```
