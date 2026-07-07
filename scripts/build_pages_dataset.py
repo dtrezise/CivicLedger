@@ -7,7 +7,7 @@ import json
 import random
 import re
 from collections import Counter, defaultdict
-from datetime import date
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -25,6 +25,8 @@ from app.services.official_sources import OFFICIAL_SOURCES
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "pages-site" / "data" / "civicledger-static.json"
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
+FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
+MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
 
 def slugify(value: str) -> str:
@@ -45,6 +47,10 @@ def iso(value) -> str | None:
     if hasattr(value, "isoformat"):
         return value.isoformat()
     return str(value)
+
+
+def parse_iso_date(value: str) -> date:
+    return datetime.strptime(value, "%Y-%m-%d").date()
 
 
 def median(values: list[int]) -> float | None:
@@ -104,17 +110,59 @@ def scorecard(branch: str, filing_count: int, trades: list[dict]) -> dict:
     }
 
 
-def market_snapshot() -> dict:
-    series = generate_market_series()
+def generate_context_market_series() -> list[dict]:
+    seed_points = generate_market_series()
+    by_date = defaultdict(dict)
+    for point in seed_points:
+        by_date[point.date][point.symbol] = float(point.value)
+
+    baselines = {
+        "QQQ": 270.0,
+        "XLK": 126.0,
+        "XLF": 34.0,
+        "XLE": 85.0,
+        "XLV": 134.0,
+        "XLI": 98.0,
+    }
+    drift = {
+        "QQQ": 0.00055,
+        "XLK": 0.00062,
+        "XLF": 0.00032,
+        "XLE": 0.00018,
+        "XLV": 0.00028,
+        "XLI": 0.00036,
+    }
+    volatility = {
+        "QQQ": 0.015,
+        "XLK": 0.016,
+        "XLF": 0.012,
+        "XLE": 0.017,
+        "XLV": 0.009,
+        "XLI": 0.011,
+    }
+    prices = baselines.copy()
+    rows = []
+    for day in sorted(by_date):
+        rows.append({"symbol": "SPY", "date": day, "value": by_date[day]["SPY"], "source": "fixture_market"})
+        rows.append({"symbol": "DIA", "date": day, "value": by_date[day]["DIA"], "source": "fixture_market"})
+        for symbol in baselines:
+            prices[symbol] *= 1 + random.gauss(drift[symbol], volatility[symbol])
+            rows.append({"symbol": symbol, "date": day, "value": round(prices[symbol], 2), "source": "fixture_market"})
+    return rows
+
+
+def market_snapshot(series: list[dict]) -> dict:
     monthly = defaultdict(dict)
     for point in series:
-        month = point.date.strftime("%Y-%m")
-        monthly[month][point.symbol] = float(point.value)
+        month = point["date"].strftime("%Y-%m")
+        monthly[month][point["symbol"]] = float(point["value"])
     return {
+        "symbols": MARKET_SYMBOLS,
+        "context_label": "Market overlays are fixture data in this public demo.",
         "monthly": [
             {"month": month, **values}
             for month, values in sorted(monthly.items())
-            if "SPY" in values and "DIA" in values
+            if all(symbol in values for symbol in MARKET_SYMBOLS)
         ]
     }
 
@@ -142,9 +190,164 @@ def load_public_officials() -> dict:
         return json.load(handle)
 
 
+def load_fred_context() -> dict:
+    if not FRED_CONTEXT.exists():
+        return {
+            "summary": {"series_count": 0, "observation_count": 0, "release_event_count": 0},
+            "series": {},
+            "release_events": [],
+            "source_priorities": [],
+            "context_label": "Context only - no inference of causation, intent, legality, ethics, or investment performance.",
+        }
+    with FRED_CONTEXT.open() as handle:
+        return json.load(handle)
+
+
+def latest_observation_at_or_before(observations: list[dict], target: date) -> dict | None:
+    latest = None
+    for row in observations:
+        row_date = parse_iso_date(row["date"])
+        if row_date > target:
+            break
+        if row.get("value") is not None:
+            latest = row
+    return latest
+
+
+def market_point_at_or_after(points: list[dict], target: date) -> dict | None:
+    for point in points:
+        if point["date"] >= target:
+            return point
+    return None
+
+
+def market_point_at_or_before(points: list[dict], target: date) -> dict | None:
+    for point in reversed(points):
+        if point["date"] <= target:
+            return point
+    return None
+
+
+def market_move(points_by_symbol: dict[str, list[dict]], symbol: str, start: str, horizon_days: int) -> dict | None:
+    points = points_by_symbol.get(symbol, [])
+    if not points:
+        return None
+    start_date = parse_iso_date(start)
+    start_point = market_point_at_or_after(points, start_date)
+    end_point = market_point_at_or_before(points, start_date + timedelta(days=horizon_days))
+    if not start_point or not end_point or start_point["value"] == 0:
+        return None
+    pct_change = ((end_point["value"] - start_point["value"]) / start_point["value"]) * 100
+    return {
+        "symbol": symbol,
+        "horizon_days": horizon_days,
+        "start_date": iso(start_point["date"]),
+        "end_date": iso(end_point["date"]),
+        "start_value": start_point["value"],
+        "end_value": end_point["value"],
+        "pct_change": round(pct_change, 2),
+    }
+
+
+def nearby_context_events(fred_context: dict, civic_events: list[dict], target: date, window_days: int = 14) -> list[dict]:
+    rows = []
+    for event in civic_events:
+        event_date = parse_iso_date(event["date"])
+        delta = (event_date - target).days
+        if abs(delta) <= window_days:
+            rows.append(
+                {
+                    "date": event["date"],
+                    "label": event["label"],
+                    "event_type": event["event_type"],
+                    "source": "CivicLedger fixture event",
+                    "days_from_trade": delta,
+                }
+            )
+    for event in fred_context.get("release_events", []):
+        event_date = parse_iso_date(event["date"])
+        delta = (event_date - target).days
+        if abs(delta) <= window_days:
+            rows.append(
+                {
+                    "date": event["date"],
+                    "label": event["label"],
+                    "event_type": event["event_type"],
+                    "source": event["source"],
+                    "days_from_trade": delta,
+                }
+            )
+    return sorted(rows, key=lambda item: (abs(item["days_from_trade"]), item["date"]))[:5]
+
+
+def trade_context_rows(
+    all_people: list[dict],
+    all_trades: list[dict],
+    market_series: list[dict],
+    fred_context: dict,
+    civic_events: list[dict],
+) -> list[dict]:
+    person_by_id = {person["id"]: person for person in all_people}
+    points_by_symbol = defaultdict(list)
+    for point in market_series:
+        points_by_symbol[point["symbol"]].append(point)
+    for points in points_by_symbol.values():
+        points.sort(key=lambda item: item["date"])
+
+    rows = []
+    for trade in sorted(all_trades, key=lambda item: (item["trade_date"], item["id"]))[:48]:
+        trade_date = parse_iso_date(trade["trade_date"])
+        macro_snapshot = {}
+        for series_id in ["FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "USREC"]:
+            series = fred_context.get("series", {}).get(series_id)
+            if not series:
+                continue
+            observation = latest_observation_at_or_before(series["observations"], trade_date)
+            if observation:
+                macro_snapshot[series_id] = {
+                    "label": series["label"],
+                    "date": observation["date"],
+                    "value": observation["value"],
+                    "units": series["units"],
+                }
+        rows.append(
+            {
+                "trade_id": trade["id"],
+                "person_id": trade["person_id"],
+                "person_name": person_by_id.get(trade["person_id"], {}).get("full_name", trade["person_id"]),
+                "trade_date": trade["trade_date"],
+                "reported_date": trade["reported_date"],
+                "action": trade["action"],
+                "asset_display_name": trade["asset_display_name"],
+                "ticker": trade["ticker"],
+                "value_range_label": trade["value_range_label"],
+                "disclosure_lag_days": trade["disclosure_lag_days"],
+                "market_moves": [
+                    move
+                    for move in [
+                        market_move(points_by_symbol, "SPY", trade["trade_date"], 30),
+                        market_move(points_by_symbol, "QQQ", trade["trade_date"], 30),
+                        market_move(points_by_symbol, "DIA", trade["trade_date"], 30),
+                    ]
+                    if move
+                ],
+                "macro_snapshot": macro_snapshot,
+                "nearby_events": nearby_context_events(fred_context, civic_events, trade_date),
+                "context_label": fred_context.get(
+                    "context_label",
+                    "Context only - no inference of causation, intent, legality, ethics, or investment performance.",
+                ),
+            }
+        )
+    return rows
+
+
 def build_dataset() -> dict:
     random.seed(42)
     public_officials = load_public_officials()
+    fred_context = load_fred_context()
+    civic_events = load_events()
+    market_series = generate_context_market_series()
     people = create_people()
     all_people = []
     all_filings = []
@@ -289,7 +492,9 @@ def build_dataset() -> dict:
             "filing_count": len(all_filings),
             "trade_count": len(all_trades),
             "raw_document_count": len(all_raw_documents),
-            "event_count": len(load_events()),
+            "event_count": len(civic_events),
+            "macro_series_count": fred_context["summary"].get("series_count", 0),
+            "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
             "branch_counts": dict(sorted(branch_counts.items())),
             "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
             "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
@@ -301,8 +506,22 @@ def build_dataset() -> dict:
         "trades": all_trades,
         "raw_documents": all_raw_documents,
         "sources": sources,
-        "events": load_events(),
-        "market": market_snapshot(),
+        "events": civic_events,
+        "market": market_snapshot(market_series),
+        "fred_context": fred_context,
+        "trade_context": {
+            "context_label": fred_context.get(
+                "context_label",
+                "Context only - no inference of causation, intent, legality, ethics, or investment performance.",
+            ),
+            "rows": trade_context_rows(
+                all_people,
+                all_trades,
+                market_series,
+                fred_context,
+                civic_events,
+            ),
+        },
     }
 
 

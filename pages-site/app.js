@@ -62,6 +62,23 @@ function roleCategoryLabel(value) {
   return String(value || "").replaceAll("_", " ");
 }
 
+function signedPct(value) {
+  if (value === null || value === undefined) return "n/a";
+  const prefix = value > 0 ? "+" : "";
+  return `${prefix}${Number(value).toFixed(2)}%`;
+}
+
+function latestObservation(series) {
+  if (!series?.observations?.length) return null;
+  return [...series.observations].reverse().find((row) => row.value !== null && row.value !== undefined) || null;
+}
+
+function formatMacroValue(value, units) {
+  if (value === null || value === undefined) return "n/a";
+  if (units === "0 or 1") return Number(value) === 1 ? "Recession" : "Expansion";
+  return `${Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 })}${units === "Percent" ? "%" : ""}`;
+}
+
 function affiliation(person) {
   if (!person.primary_role) return person.branch;
   const metadata = person.primary_role.source_metadata || {};
@@ -675,6 +692,72 @@ function renderEvents() {
     .join("");
 }
 
+function renderTradeContext() {
+  const fred = state.data.fred_context || {};
+  const series = fred.series || {};
+  const macroIds = ["FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "USREC"];
+  $("macroSummary").innerHTML = macroIds
+    .map((seriesId) => {
+      const item = series[seriesId];
+      const latest = latestObservation(item);
+      if (!item || !latest) return "";
+      return `
+        <article class="macro-card">
+          <span>${escapeHtml(item.category)}</span>
+          <strong>${escapeHtml(formatMacroValue(latest.value, item.units))}</strong>
+          <small>${escapeHtml(item.label)} / ${shortDate(latest.date)}</small>
+        </article>
+      `;
+    })
+    .join("");
+
+  $("sourcePriority").innerHTML = (fred.source_priorities || [])
+    .map(
+      (source) => `
+        <article class="priority-row ${escapeHtml(source.status)}">
+          <strong>${escapeHtml(source.source)}</strong>
+          <span>${escapeHtml(source.status)}</span>
+          <p>${escapeHtml(source.reason)}</p>
+        </article>
+      `
+    )
+    .join("");
+
+  const rows = state.data.trade_context?.rows || [];
+  $("tradeContextCount").textContent = `${fmt.format(rows.length)} demo rows`;
+  $("tradeContextRows").innerHTML =
+    rows
+      .slice(0, 36)
+      .map((row) => {
+        const market = (row.market_moves || [])
+          .map((move) => `${move.symbol} ${signedPct(move.pct_change)}`)
+          .join(" / ");
+        const macro = Object.entries(row.macro_snapshot || {})
+          .map(([, item]) => `${item.label}: ${formatMacroValue(item.value, item.units)}`)
+          .slice(0, 3)
+          .join(" / ");
+        const events =
+          (row.nearby_events || [])
+            .map((event) => `${event.label} (${event.days_from_trade > 0 ? "+" : ""}${event.days_from_trade}d)`)
+            .slice(0, 2)
+            .join(" / ") || "No nearby context events";
+        return `
+          <tr>
+            <td>
+              <strong>${escapeHtml(row.person_name)}</strong>
+              <small>${escapeHtml(row.context_label)}</small>
+            </td>
+            <td>${shortDate(row.trade_date)}<br /><small>Reported ${shortDate(row.reported_date)} / ${fmt.format(row.disclosure_lag_days)}d lag</small></td>
+            <td>${escapeHtml(row.action)} ${escapeHtml(row.asset_display_name)}<br /><small>${escapeHtml(row.value_range_label)}</small></td>
+            <td>${escapeHtml(market || "n/a")}</td>
+            <td>${escapeHtml(macro || "n/a")}</td>
+            <td>${escapeHtml(events)}</td>
+          </tr>
+        `;
+      })
+      .join("");
+}
+
 async function boot() {
   const response = await fetch("./data/civicledger-static.json");
   state.data = await response.json();
@@ -689,6 +772,7 @@ async function boot() {
   renderExplorer();
   renderSources();
   renderEvents();
+  renderTradeContext();
 }
 
 boot().catch((error) => {

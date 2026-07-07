@@ -11,6 +11,13 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 - `CENSUS_API_KEY`: Census API demographic and geography datasets.
 - `BLS_API_KEY`: Bureau of Labor Statistics datasets.
 
+## Current Product Priority
+
+- FRED is active for macro context around stock-market trades.
+- BLS and Treasury Fiscal Data are watchlist sources.
+- FEC is deferred because campaign-finance data is not directly tied to stock-trade context.
+- USAspending is deferred until ticker/company/entity matching can connect public companies to federal awards or contract events.
+
 ## Keyless or Documentation-Only Sources
 
 - `USASPENDING_API_DOCS_URL`: USAspending API documentation.

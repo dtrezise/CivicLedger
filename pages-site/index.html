@@ -41,6 +41,7 @@
       <nav class="mode-tabs" aria-label="Dashboard sections">
         <a class="active" href="#overview">Overview</a>
         <a href="#explore">Compare</a>
+        <a href="#trade-context">Trade Context</a>
         <a href="#sources">Sources</a>
         <a href="#events">Events</a>
         <a href="#methodology">Methodology</a>
@@ -163,6 +164,42 @@
             <div class="comparison-graph" id="comparisonGraph"></div>
             <section class="profile" id="profilePanel" aria-live="polite"></section>
           </section>
+        </div>
+      </section>
+
+      <section class="list-view" id="trade-context">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Market context</p>
+            <h2>Trade Dates, Report Dates, and Macro Events</h2>
+          </div>
+          <p>
+            FRED macro overlays and market-index demo overlays are context only.
+            They do not infer causation, intent, legality, ethics, or investment performance.
+          </p>
+        </div>
+        <div id="macroSummary" class="macro-grid"></div>
+        <div id="sourcePriority" class="source-priority"></div>
+        <div class="chart-shell">
+          <div class="chart-title">
+            <span>Demo Trade Timeline</span>
+            <span id="tradeContextCount">0 rows</span>
+          </div>
+          <div class="table-scroll">
+            <table class="trade-table">
+              <thead>
+                <tr>
+                  <th>Official</th>
+                  <th>Trade / Report</th>
+                  <th>Asset</th>
+                  <th>30-day market</th>
+                  <th>Macro snapshot</th>
+                  <th>Nearby events</th>
+                </tr>
+              </thead>
+              <tbody id="tradeContextRows"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 

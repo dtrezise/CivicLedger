@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DATASET = ROOT / "data" / "public_officials" / "public_official_roles.json"
+FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
 
 
 def test_public_officials_dataset_has_expected_initial_scope():
@@ -43,3 +44,15 @@ def test_congressional_dataset_has_115th_to_119th_counts():
     assert all(count >= 540 for count in summary["role_counts_by_congress"].values())
     assert summary["role_counts_by_chamber"]["House"] >= 2200
     assert summary["role_counts_by_chamber"]["Senate"] >= 550
+
+
+def test_fred_context_dataset_has_trade_relevant_macro_scope():
+    data = json.loads(FRED_CONTEXT.read_text())
+
+    assert data["summary"]["series_count"] == 6
+    assert data["summary"]["observation_count"] >= 1000
+    assert data["summary"]["release_event_count"] >= 20
+    assert {"FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "UNRATE", "USREC"} <= set(data["series"])
+    assert data["summary"]["active_context_source"] == "FRED"
+    assert set(data["summary"]["deferred_sources"]) == {"FEC", "USAspending"}
+    assert data["context_label"].startswith("Context only")
