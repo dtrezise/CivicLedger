@@ -991,6 +991,113 @@ svg {
   margin-bottom: 0;
 }
 
+.timeline-workspace {
+  display: grid;
+  gap: 18px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 16px 38px rgba(30, 38, 49, 0.08);
+}
+
+.timeline-controls {
+  display: grid;
+  grid-template-columns: auto repeat(2, minmax(180px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.timeline-controls label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.timeline-controls select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font: inherit;
+  padding: 0 10px;
+}
+
+.segmented {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.segmented button {
+  min-height: 42px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 900;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.segmented button:last-child {
+  border-right: 0;
+}
+
+.segmented button.active {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.timeline-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.career-chart {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.career-chart svg {
+  min-width: 960px;
+  display: block;
+}
+
+.career-chart [data-timeline-event] {
+  cursor: pointer;
+}
+
+.event-detail {
+  max-height: 190px;
+  overflow: auto;
+  padding: 16px;
+  border-left: 5px solid var(--judicial);
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
+.event-detail h3 {
+  margin: 4px 0 8px;
+}
+
+.event-detail p {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
 .research-block {
   min-height: 180px;
 }
@@ -1029,6 +1136,7 @@ svg {
   }
 
   .controls-band,
+  .timeline-controls,
   .explorer,
   .role-row,
   .overview-grid {
@@ -1066,6 +1174,7 @@ svg {
 
   .topbar,
   .chart-panel,
+  .timeline-workspace,
   .list-view,
   .research-layout,
   .directory,
@@ -1074,6 +1183,7 @@ svg {
   }
 
   .profile-grid,
+  .timeline-summary,
   .role-breakdown,
   .source-grid,
   .method-grid,

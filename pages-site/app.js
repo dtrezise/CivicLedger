@@ -12,6 +12,10 @@ const state = {
   party: "",
   officialState: "",
   district: "",
+  timelineAxis: "career",
+  timelineAssetClass: "",
+  timelineEventType: "",
+  activeTimelineEventId: null,
 };
 
 const fmt = new Intl.NumberFormat("en-US");
@@ -286,6 +290,7 @@ function renderSummary() {
     ["Judicial Roles", summary.public_official_role_counts_by_branch.Judicial || 0],
     ["Demo Filings", summary.filing_count],
     ["Demo Trades", summary.trade_count],
+    ["Timeline Trades", summary.career_timeline_trade_count || 0],
     ["Market Price Points", summary.market_price_point_count || 0],
   ]
     .map(
@@ -414,6 +419,18 @@ function hydrateControls() {
       .map((district) => `<option value="${escapeHtml(district)}">${escapeHtml(district)}</option>`)
       .join("");
 
+  const timeline = state.data.career_trade_timeline || {};
+  $("timelineAssetFilter").innerHTML =
+    '<option value="">All asset classes</option>' +
+    (timeline.asset_classes || [])
+      .map((assetClass) => `<option value="${escapeHtml(assetClass)}">${escapeHtml(roleCategoryLabel(assetClass))}</option>`)
+      .join("");
+  $("timelineEventFilter").innerHTML =
+    '<option value="">All event types</option>' +
+    (timeline.event_types || [])
+      .map((eventType) => `<option value="${escapeHtml(eventType)}">${escapeHtml(roleCategoryLabel(eventType))}</option>`)
+      .join("");
+
   $("searchInput").addEventListener("input", (event) => {
     state.query = event.target.value;
     renderExplorer();
@@ -463,6 +480,28 @@ function hydrateControls() {
     $("branchFilter").value = "";
     $("roleFilter").value = "";
     $("termFilter").value = "";
+    renderExplorer();
+  });
+  $("careerAxisButton").addEventListener("click", () => {
+    state.timelineAxis = "career";
+    renderCareerTimeline();
+  });
+  $("calendarAxisButton").addEventListener("click", () => {
+    state.timelineAxis = "calendar";
+    renderCareerTimeline();
+  });
+  $("timelineAssetFilter").addEventListener("change", (event) => {
+    state.timelineAssetClass = event.target.value;
+    renderCareerTimeline();
+  });
+  $("timelineEventFilter").addEventListener("change", (event) => {
+    state.timelineEventType = event.target.value;
+    renderCareerTimeline();
+  });
+  $("presidentBaselineButton").addEventListener("click", () => {
+    const defaultIds = state.data.career_trade_timeline?.default_official_ids || [];
+    state.comparisonIds = defaultIds.length ? defaultIds : state.comparisonIds;
+    state.selectedId = state.comparisonIds[0] || state.selectedId;
     renderExplorer();
   });
 }
@@ -572,6 +611,231 @@ function comparisonGraphSvg(people) {
   `;
 }
 
+function timelineOfficialsById() {
+  return new Map((state.data.career_trade_timeline?.officials || []).map((official) => [official.id, official]));
+}
+
+function timelinePlaceholderOfficial(person) {
+  const starts = person.roles.map((role) => role.service_start).filter(Boolean).sort();
+  const ends = person.roles.map((role) => role.service_end).filter(Boolean).sort();
+  const active = person.roles.some((role) => role.service_start && !role.service_end);
+  return {
+    id: person.id,
+    full_name: person.full_name,
+    branch: person.branch,
+    timeline_group: "source_backed_no_trades",
+    service_start: starts[0] || null,
+    service_end: active ? new Date().toISOString().slice(0, 10) : ends.at(-1) || starts[0] || null,
+    roles: person.roles,
+    trades: [],
+    events: [],
+    stats: {
+      trade_count: 0,
+      buy_count: 0,
+      sell_count: 0,
+      crypto_count: 0,
+      total_value_midpoint: 0,
+      disclosure_status: "No reviewed trade disclosures ingested yet",
+    },
+  };
+}
+
+function selectedTimelineOfficials() {
+  const timelineById = timelineOfficialsById();
+  const explorerById = new Map(state.explorerPeople.map((person) => [person.id, person]));
+  const selectedIds = state.comparisonIds.length
+    ? state.comparisonIds
+    : state.data.career_trade_timeline?.default_official_ids || [];
+  return selectedIds
+    .map((id) => timelineById.get(id) || (explorerById.get(id) ? timelinePlaceholderOfficial(explorerById.get(id)) : null))
+    .filter(Boolean)
+    .slice(0, 6);
+}
+
+function timelineTradeVisible(trade) {
+  return !state.timelineAssetClass || trade.asset_class === state.timelineAssetClass;
+}
+
+function timelineEventVisible(event) {
+  return !state.timelineEventType || event.event_type === state.timelineEventType;
+}
+
+function dateToDay(value) {
+  if (!value) return null;
+  return Math.round(new Date(`${value}T00:00:00`).getTime() / 86400000);
+}
+
+function timelineExtent(officials) {
+  const values = [];
+  for (const official of officials) {
+    if (state.timelineAxis === "career") {
+      values.push(0);
+      values.push(dateToDay(official.service_end) - dateToDay(official.service_start));
+      for (const trade of official.trades.filter(timelineTradeVisible)) values.push(trade.career_day);
+      for (const event of (official.events || []).filter(timelineEventVisible)) values.push(event.career_day);
+    } else {
+      values.push(dateToDay(official.service_start));
+      values.push(dateToDay(official.service_end));
+      for (const trade of official.trades.filter(timelineTradeVisible)) values.push(dateToDay(trade.date));
+      for (const event of (official.events || []).filter(timelineEventVisible)) values.push(dateToDay(event.date));
+    }
+  }
+  const clean = values.filter((value) => Number.isFinite(value));
+  return {
+    min: Math.min(...clean, 0),
+    max: Math.max(...clean, 1),
+  };
+}
+
+function timelineTickLabel(value, extent) {
+  if (state.timelineAxis === "career") {
+    const years = Math.round(value / 365);
+    return years <= 0 ? "Start" : `Y${years}`;
+  }
+  const date = new Date(value * 86400000);
+  return String(date.getUTCFullYear());
+}
+
+function timelineEventById(eventId) {
+  for (const official of state.data.career_trade_timeline?.officials || []) {
+    const found = (official.events || []).find((event) => event.id === eventId);
+    if (found) return found;
+  }
+  return (state.data.career_trade_timeline?.events || []).find((event) => event.id === eventId) || null;
+}
+
+function careerTimelineSvg(officials) {
+  const width = 1120;
+  const laneHeight = 104;
+  const height = 112 + Math.max(1, officials.length) * laneHeight;
+  const left = 190;
+  const right = 42;
+  const extent = timelineExtent(officials);
+  const span = Math.max(1, extent.max - extent.min);
+  const xFor = (value) => left + ((value - extent.min) / span) * (width - left - right);
+  const ticks = Array.from({ length: 6 }, (_, index) => extent.min + (span / 5) * index);
+
+  return `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Career trade timeline">
+      <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
+      ${ticks
+        .map((tick) => {
+          const x = xFor(tick);
+          return `
+            <line x1="${x}" y1="48" x2="${x}" y2="${height - 44}" stroke="#dbe4e0"></line>
+            <text x="${x - 16}" y="${height - 16}" fill="#64706a" font-size="12">${escapeHtml(timelineTickLabel(tick, extent))}</text>
+          `;
+        })
+        .join("")}
+      ${officials
+        .map((official, index) => {
+          const y = 74 + index * laneHeight;
+          const color = branchColors[official.branch] || "#0b6b8f";
+          const startValue = state.timelineAxis === "career" ? 0 : dateToDay(official.service_start);
+          const endValue =
+            state.timelineAxis === "career"
+              ? dateToDay(official.service_end) - dateToDay(official.service_start)
+              : dateToDay(official.service_end);
+          const visibleTrades = (official.trades || []).filter(timelineTradeVisible);
+          const visibleEvents = (official.events || []).filter(timelineEventVisible);
+          return `
+            <text x="24" y="${y - 22}" fill="#17201d" font-size="14" font-weight="800">${escapeHtml(official.full_name)}</text>
+            <text x="24" y="${y - 4}" fill="#64706a" font-size="12">${escapeHtml(official.stats?.disclosure_status || official.branch)}</text>
+            <line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}" stroke="#edf4ef" stroke-width="12" stroke-linecap="round"></line>
+            ${
+              Number.isFinite(startValue) && Number.isFinite(endValue)
+                ? `<line x1="${xFor(startValue)}" y1="${y}" x2="${xFor(Math.max(endValue, startValue + 1))}" y2="${y}" stroke="${color}" stroke-width="7" stroke-linecap="round"></line>`
+                : ""
+            }
+            ${
+              visibleTrades.length
+                ? visibleTrades
+                    .map((trade) => {
+                      const value = state.timelineAxis === "career" ? trade.career_day : dateToDay(trade.date);
+                      if (!Number.isFinite(value)) return "";
+                      const radius = Math.max(5, Math.min(14, Math.sqrt((trade.value_midpoint || 0) / 5000)));
+                      const fill = trade.asset_class === "crypto" ? "#b66a1d" : trade.action === "SELL" ? "#9f3a3a" : "#0b6b8f";
+                      return `
+                        <circle cx="${xFor(value)}" cy="${y}" r="${radius.toFixed(1)}" fill="${fill}" stroke="#fff" stroke-width="2">
+                          <title>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker} ${trade.value_range_label} on ${shortDate(trade.date)}`)}</title>
+                        </circle>
+                      `;
+                    })
+                    .join("")
+                : `<text x="${left}" y="${y + 28}" fill="#64706a" font-size="12">No reviewed trade rows in this snapshot</text>`
+            }
+            ${visibleEvents
+              .map((event) => {
+                const value = state.timelineAxis === "career" ? event.career_day : dateToDay(event.date);
+                if (!Number.isFinite(value)) return "";
+                const x = xFor(value);
+                return `
+                  <rect x="${x - 5}" y="${y - 36}" width="10" height="10" transform="rotate(45 ${x} ${y - 31})" fill="#7154a6" data-timeline-event="${escapeHtml(event.id)}">
+                    <title>${escapeHtml(`${event.label}: ${event.description}`)}</title>
+                  </rect>
+                `;
+              })
+              .join("")}
+          `;
+        })
+        .join("")}
+    </svg>
+  `;
+}
+
+function renderTimelineEventDetail() {
+  const event = state.activeTimelineEventId ? timelineEventById(state.activeTimelineEventId) : null;
+  $("timelineEventDetail").innerHTML = event
+    ? `
+      <div>
+        <p class="eyebrow">${escapeHtml(roleCategoryLabel(event.event_type))} / ${shortDate(event.date)}</p>
+        <h3>${escapeHtml(event.label)}</h3>
+        <p>${escapeHtml(event.description || "No event description available.")}</p>
+        <small>${escapeHtml(event.source || "CivicLedger event context")} / ${escapeHtml(event.relevance || "general")}</small>
+      </div>
+    `
+    : `
+      <div>
+        <p class="eyebrow">Event detail</p>
+        <h3>Select an event marker</h3>
+        <p>Event markers open here with a concise source-aware summary while the chart stays in view.</p>
+      </div>
+    `;
+}
+
+function renderCareerTimeline() {
+  const timeline = state.data.career_trade_timeline || {};
+  const officials = selectedTimelineOfficials();
+  $("careerAxisButton").classList.toggle("active", state.timelineAxis === "career");
+  $("calendarAxisButton").classList.toggle("active", state.timelineAxis === "calendar");
+  $("careerTimelineSummary").innerHTML = [
+    ["Baseline Officials", timeline.summary?.default_official_count || 0],
+    ["Compared Lanes", officials.length],
+    ["Timeline Trades", officials.reduce((total, official) => total + (official.trades || []).filter(timelineTradeVisible).length, 0)],
+    ["Crypto Trades", officials.reduce((total, official) => total + (official.trades || []).filter((trade) => timelineTradeVisible(trade) && trade.asset_class === "crypto").length, 0)],
+    ["Event Markers", officials.reduce((total, official) => total + (official.events || []).filter(timelineEventVisible).length, 0)],
+  ]
+    .map(
+      ([label, value]) => `
+        <div class="mini-stat">
+          <strong>${fmt.format(value)}</strong>
+          <span>${escapeHtml(label)}</span>
+        </div>
+      `
+    )
+    .join("");
+  $("careerTimelineChart").innerHTML = officials.length
+    ? careerTimelineSvg(officials)
+    : '<p class="muted">Select officials to build a timeline.</p>';
+  document.querySelectorAll("[data-timeline-event]").forEach((marker) => {
+    marker.addEventListener("click", () => {
+      state.activeTimelineEventId = marker.getAttribute("data-timeline-event");
+      renderTimelineEventDetail();
+    });
+  });
+  renderTimelineEventDetail();
+}
+
 function renderSelectedChips(people) {
   $("selectedChips").innerHTML =
     people
@@ -662,6 +926,7 @@ function renderExplorer() {
   if (!people.length) {
     renderPeopleList(people);
     renderComparison();
+    renderCareerTimeline();
     $("profilePanel").innerHTML = `
       <div class="empty-state">
         <h3>No officials match these filters</h3>
@@ -676,6 +941,7 @@ function renderExplorer() {
   ensureComparisonHas(state.selectedId);
   renderPeopleList(people);
   renderComparison();
+  renderCareerTimeline();
   const selected = state.explorerPeople.find((person) => person.id === state.selectedId);
   if (selected) renderProfile(selected);
 }
@@ -820,9 +1086,11 @@ async function boot() {
   const response = await fetch("./data/civicledger-static.json");
   state.data = await response.json();
   buildExplorerPeople();
-  state.comparisonIds = branchOrder
-    .map((branch) => state.explorerPeople.find((person) => person.branch === branch)?.id)
-    .filter(Boolean);
+  state.comparisonIds = state.data.career_trade_timeline?.default_official_ids?.length
+    ? state.data.career_trade_timeline.default_official_ids
+    : branchOrder
+        .map((branch) => state.explorerPeople.find((person) => person.branch === branch)?.id)
+        .filter(Boolean);
   state.selectedId = state.comparisonIds[0] || state.explorerPeople[0]?.id || null;
   renderSummary();
   renderBranchChart();

@@ -20,6 +20,7 @@ from app.seed import (
     source_id_for_person,
 )
 from app.services.official_sources import OFFICIAL_SOURCES
+from app.services.market_prices import crypto_reference, normalize_asset_symbol, ticker_reference
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -108,6 +109,28 @@ def scorecard(branch: str, filing_count: int, trades: list[dict]) -> dict:
         "median_lag_days": median_lag,
         "deductions": deductions,
         "thresholds": {"elevated_lag_days": elevated, "high_lag_days": high},
+    }
+
+
+def value_midpoint(trade: dict) -> float | None:
+    minimum = trade.get("value_range_min")
+    maximum = trade.get("value_range_max")
+    if minimum is None or maximum is None:
+        return None
+    return round((float(minimum) + float(maximum)) / 2, 2)
+
+
+def asset_reference(symbol: str | None, asset_class: str | None = None) -> dict:
+    normalized = normalize_asset_symbol(symbol)
+    reference = crypto_reference(normalized) if asset_class == "crypto" else ticker_reference(normalized)
+    if reference:
+        return reference
+    return {
+        "symbol": normalized,
+        "issuer_name": normalized or "Unmapped asset",
+        "asset_class": asset_class or "unknown",
+        "sector": "Unmapped",
+        "benchmark_symbol": "SPY",
     }
 
 
@@ -359,6 +382,235 @@ def nearby_context_events(fred_context: dict, civic_events: list[dict], target: 
     return sorted(rows, key=lambda item: (abs(item["days_from_trade"]), item["date"]))[:5]
 
 
+def public_roles_by_person(public_officials: dict) -> dict[str, list[dict]]:
+    roles = defaultdict(list)
+    for role in public_officials.get("roles", []):
+        roles[role["external_person_id"]].append(role)
+    for role_rows in roles.values():
+        role_rows.sort(key=lambda role: (role.get("service_start") or "9999-12-31", role.get("role_title") or ""))
+    return roles
+
+
+def timeline_event_rows(fred_context: dict, civic_events: list[dict]) -> list[dict]:
+    rows = []
+    for index, event in enumerate(civic_events, start=1):
+        rows.append(
+            {
+                "id": f"civic-event-{index:03d}",
+                "date": event["date"],
+                "label": event["label"],
+                "event_type": event["event_type"],
+                "description": event.get("description") or "",
+                "source": "CivicLedger fixture event",
+                "relevance": "general",
+                "source_urls": event.get("sources", []),
+            }
+        )
+    for index, event in enumerate(fred_context.get("release_events", []), start=1):
+        rows.append(
+            {
+                "id": f"fred-release-{index:03d}",
+                "date": event["date"],
+                "label": event["label"],
+                "event_type": event.get("event_type", "macro_release"),
+                "description": event.get("description") or event.get("label") or "",
+                "source": event.get("source", "FRED"),
+                "relevance": "macro",
+                "source_urls": event.get("source_urls", []),
+            }
+        )
+    return sorted(rows, key=lambda item: (item["date"], item["id"]))
+
+
+def service_bounds(roles: list[dict], trades: list[dict]) -> tuple[str | None, str | None]:
+    starts = [role.get("service_start") for role in roles if role.get("service_start")]
+    starts += [trade.get("trade_date") for trade in trades if trade.get("trade_date")]
+    ends = [role.get("service_end") for role in roles if role.get("service_end")]
+    ends += [trade.get("trade_date") for trade in trades if trade.get("trade_date")]
+    if any(role.get("service_start") and not role.get("service_end") for role in roles):
+        ends.append(date.today().isoformat())
+    return (min(starts) if starts else None, max(ends) if ends else None)
+
+
+def days_from_anchor(value: str | None, anchor: str | None) -> int | None:
+    if not value or not anchor:
+        return None
+    return (parse_iso_date(value) - parse_iso_date(anchor)).days
+
+
+def timeline_trade_row(trade: dict, anchor: str | None) -> dict:
+    reference = asset_reference(trade.get("ticker"), trade.get("asset_class"))
+    midpoint = value_midpoint(trade)
+    return {
+        "id": trade["id"],
+        "date": trade["trade_date"],
+        "career_day": days_from_anchor(trade.get("trade_date"), anchor),
+        "reported_date": trade["reported_date"],
+        "action": trade["action"],
+        "ticker": normalize_asset_symbol(trade.get("ticker")),
+        "asset_display_name": trade["asset_display_name"],
+        "asset_class": reference.get("asset_class") or trade.get("asset_class") or "unknown",
+        "sector": reference.get("sector", "Unmapped"),
+        "value_range_label": trade["value_range_label"],
+        "value_midpoint": midpoint,
+        "disclosure_lag_days": trade["disclosure_lag_days"],
+    }
+
+
+def timeline_event_positions(events: list[dict], anchor: str | None, start: str | None, end: str | None) -> list[dict]:
+    if not start or not end:
+        return []
+    start_date = parse_iso_date(start)
+    end_date = parse_iso_date(end)
+    rows = []
+    for event in events:
+        event_date = parse_iso_date(event["date"])
+        if start_date - timedelta(days=180) <= event_date <= end_date + timedelta(days=180):
+            rows.append({**event, "career_day": days_from_anchor(event["date"], anchor)})
+    return rows
+
+
+def career_trade_timeline(
+    public_officials: dict,
+    fixture_people: list[dict],
+    all_trades: list[dict],
+    fred_context: dict,
+    civic_events: list[dict],
+) -> dict:
+    roles_by_person = public_roles_by_person(public_officials)
+    trades_by_person = defaultdict(list)
+    for trade in all_trades:
+        trades_by_person[trade["person_id"]].append(trade)
+
+    public_people_by_id = {person["external_person_id"]: person for person in public_officials.get("people", [])}
+    president_ids = []
+    official_rows = []
+    events = timeline_event_rows(fred_context, civic_events)
+
+    for external_id, roles in roles_by_person.items():
+        presidential_roles = [
+            role
+            for role in roles
+            if role.get("role_title") == "President" and role.get("role_category") == "elected_executive"
+        ]
+        if not presidential_roles:
+            continue
+        person = public_people_by_id.get(external_id, {})
+        start, end = service_bounds(presidential_roles, [])
+        president_ids.append(external_id)
+        official_rows.append(
+            {
+                "id": external_id,
+                "full_name": person.get("full_name", external_id),
+                "branch": "Executive",
+                "timeline_group": "presidential_baseline",
+                "service_start": start,
+                "service_end": end,
+                "roles": presidential_roles,
+                "trades": [],
+                "events": timeline_event_positions(events, start, start, end),
+                "stats": {
+                    "trade_count": 0,
+                    "buy_count": 0,
+                    "sell_count": 0,
+                    "crypto_count": 0,
+                    "total_value_midpoint": 0,
+                    "disclosure_status": "No reviewed presidential trade disclosures ingested yet",
+                },
+            }
+        )
+
+    for person in fixture_people:
+        person_trades = sorted(trades_by_person.get(person["id"], []), key=lambda item: (item["trade_date"], item["id"]))
+        start, end = service_bounds(
+            [
+                {
+                    "service_start": person.get("service_start"),
+                    "service_end": person.get("service_end"),
+                    "role_title": person.get("office") or person.get("chamber") or person.get("branch"),
+                    "role_category": "fixture_trade_official",
+                    "source_tier": "fixture",
+                }
+            ],
+            person_trades,
+        )
+        timeline_trades = [timeline_trade_row(trade, start) for trade in person_trades]
+        official_rows.append(
+            {
+                "id": person["id"],
+                "full_name": person["full_name"],
+                "branch": person["branch"],
+                "timeline_group": "fixture_trade_preview",
+                "service_start": start,
+                "service_end": end,
+                "roles": [
+                    {
+                        "service_start": person.get("service_start"),
+                        "service_end": person.get("service_end"),
+                        "role_title": person.get("office") or person.get("chamber") or person.get("branch"),
+                        "role_category": "fixture_trade_official",
+                        "source_tier": "fixture",
+                    }
+                ],
+                "trades": timeline_trades,
+                "events": timeline_event_positions(events, start, start, end),
+                "stats": {
+                    "trade_count": len(timeline_trades),
+                    "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
+                    "sell_count": sum(1 for trade in timeline_trades if trade["action"] == "SELL"),
+                    "crypto_count": sum(1 for trade in timeline_trades if trade["asset_class"] == "crypto"),
+                    "total_value_midpoint": round(sum(trade["value_midpoint"] or 0 for trade in timeline_trades), 2),
+                    "disclosure_status": "Fixture trade preview",
+                },
+            }
+        )
+
+    event_windows = []
+    for event in events:
+        event_date = parse_iso_date(event["date"])
+        event_windows.append(
+            {
+                **event,
+                "window_days": 180,
+                "official_trade_counts": {
+                    official["id"]: sum(
+                        1
+                        for trade in official["trades"]
+                        if abs((parse_iso_date(trade["date"]) - event_date).days) <= 180
+                    )
+                    for official in official_rows
+                },
+            }
+        )
+
+    asset_classes = sorted(
+        {
+            trade["asset_class"]
+            for official in official_rows
+            for trade in official["trades"]
+            if trade.get("asset_class")
+        }
+    )
+    return {
+        "schema_version": "career-trade-timeline-v1",
+        "default_axis": "career",
+        "axis_modes": ["career", "calendar"],
+        "default_official_ids": sorted(president_ids),
+        "asset_classes": asset_classes,
+        "event_types": sorted({event["event_type"] for event in events}),
+        "summary": {
+            "official_count": len(official_rows),
+            "default_official_count": len(president_ids),
+            "trade_count": sum(len(official["trades"]) for official in official_rows),
+            "event_count": len(events),
+            "crypto_trade_count": sum(official["stats"]["crypto_count"] for official in official_rows),
+        },
+        "officials": official_rows,
+        "events": events,
+        "event_windows": event_windows,
+    }
+
+
 def trade_context_rows(
     all_people: list[dict],
     all_trades: list[dict],
@@ -586,6 +838,7 @@ def build_dataset() -> dict:
         )
 
     branch_counts = Counter(person["branch"] for person in all_people)
+    career_timeline = career_trade_timeline(public_officials, all_people, all_trades, fred_context, civic_events)
     sources = []
     for source in OFFICIAL_SOURCES:
         counts = source_counts[source["id"]]
@@ -627,6 +880,10 @@ def build_dataset() -> dict:
             "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
             "market_price_provider": market_metadata["summary"].get("active_market_price_provider", market_metadata["provider"]),
             "market_price_point_count": market_metadata["summary"].get("price_point_count", 0),
+            "career_timeline_official_count": career_timeline["summary"]["official_count"],
+            "career_timeline_default_official_count": career_timeline["summary"]["default_official_count"],
+            "career_timeline_trade_count": career_timeline["summary"]["trade_count"],
+            "career_timeline_crypto_trade_count": career_timeline["summary"]["crypto_trade_count"],
             "branch_counts": dict(sorted(branch_counts.items())),
             "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
             "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
@@ -641,6 +898,7 @@ def build_dataset() -> dict:
         "events": civic_events,
         "market": market_snapshot(market_series, market_metadata),
         "fred_context": fred_context,
+        "career_trade_timeline": career_timeline,
         "trade_context": {
             "context_label": fred_context.get(
                 "context_label",

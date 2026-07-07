@@ -40,6 +40,7 @@
 
       <nav class="mode-tabs" aria-label="Dashboard sections">
         <a class="active" href="#overview">Overview</a>
+        <a href="#career-timeline">Career Timeline</a>
         <a href="#explore">Compare</a>
         <a href="#trade-context">Trade Context</a>
         <a href="#sources">Sources</a>
@@ -70,6 +71,43 @@
           <div class="branch-cards" id="branchCards"></div>
           <div class="role-breakdown" id="globalRoleBreakdown"></div>
         </div>
+      </section>
+
+      <section class="timeline-workspace" id="career-timeline">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Career trade timeline</p>
+            <h2>Presidential Baseline and Official Comparisons</h2>
+          </div>
+          <p>
+            Presidents are the default baseline. Add officials from the comparison workspace to overlay reviewed
+            trade activity against events, policy changes, bills, rulings, funding, and macro context.
+          </p>
+        </div>
+
+        <div class="timeline-controls">
+          <div class="segmented" role="group" aria-label="Timeline axis">
+            <button class="active" id="careerAxisButton" type="button">Career</button>
+            <button id="calendarAxisButton" type="button">Calendar</button>
+          </div>
+          <label>
+            <span>Assets</span>
+            <select id="timelineAssetFilter">
+              <option value="">All asset classes</option>
+            </select>
+          </label>
+          <label>
+            <span>Events</span>
+            <select id="timelineEventFilter">
+              <option value="">All event types</option>
+            </select>
+          </label>
+          <button class="clear-button" id="presidentBaselineButton" type="button">Presidents</button>
+        </div>
+
+        <div class="timeline-summary" id="careerTimelineSummary"></div>
+        <div class="career-chart" id="careerTimelineChart"></div>
+        <div class="event-detail" id="timelineEventDetail"></div>
       </section>
 
       <section class="workspace" id="explore">
@@ -276,6 +314,6 @@
       </footer>
     </div>
 
-    <script src="./app.js?v=2026-07-07-market-overlays" type="module"></script>
+    <script src="./app.js?v=2026-07-07-career-timeline" type="module"></script>
   </body>
 </html>

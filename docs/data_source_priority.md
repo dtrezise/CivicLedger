@@ -12,6 +12,8 @@ Tiingo is the preferred production market-price provider for ETF and ticker over
 
 If Tiingo is temporarily rate-limited, the refresh pipeline can fall back to Nasdaq public historical daily close data and labels those series as Nasdaq sourced. Fallback rows use close instead of adjusted close and remain acceptable only as first-draft context until Tiingo can refresh them.
 
+Tiingo also supports cryptocurrency price history. CivicLedger treats crypto as a first-class asset class with pair normalization such as BTCUSD and ETHUSD instead of forcing crypto assets into the equity ticker model.
+
 Initial issuer and benchmark overlay symbols:
 
 - AAPL
@@ -90,3 +92,16 @@ The public Pages demo now prefers Tiingo adjusted close values for individual st
 - A coverage report and anomaly count from the refresh workflow.
 
 Market-price overlays remain context only and must not imply causation, intent, legality, ethics, or investment performance. Official disclosure ingestion remains the next priority after the ticker-overlay layer is stable.
+
+## Timeline Presentation
+
+The first timeline mode is the career trade timeline. U.S. presidents currently tracked in the public-official roster are the default comparison baseline because they anchor federal executive authority. Presidential lanes remain visible even before reviewed presidential trade disclosures are ingested, and the UI labels those lanes as having no reviewed trade rows yet.
+
+The timeline supports:
+
+- Career-time and calendar-time axes.
+- Multi-official comparison lanes.
+- Trade markers sized by disclosed value range.
+- Asset-class filters including crypto.
+- Event markers for legislation, macro releases, role changes, and other contextual events.
+- A click-through event detail panel below the chart.

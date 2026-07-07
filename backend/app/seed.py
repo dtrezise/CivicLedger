@@ -97,6 +97,8 @@ TICKERS = [
     ("IWM", "iShares Russell 2000 ETF", "etf"),
     ("BND", "Vanguard Total Bond Market ETF", "bond"),
     ("VFIAX", "Vanguard 500 Index Fund", "mutual_fund"),
+    ("BTCUSD", "Bitcoin / U.S. Dollar", "crypto"),
+    ("ETHUSD", "Ethereum / U.S. Dollar", "crypto"),
 ]
 
 VALUE_RANGES = [

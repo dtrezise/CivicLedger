@@ -10,6 +10,7 @@ from app.config import settings
 
 
 TIINGO_BASE_URL = "https://api.tiingo.com/tiingo/daily"
+TIINGO_CRYPTO_BASE_URL = "https://api.tiingo.com/tiingo/crypto"
 NASDAQ_BASE_URL = "https://api.nasdaq.com/api/quote"
 USER_AGENT = "CivicLedger data refresh"
 
@@ -144,6 +145,35 @@ TICKER_REFERENCE = {
 
 MARKET_PRICE_SYMBOLS = list(TICKER_REFERENCE)
 
+CRYPTO_REFERENCE = {
+    "BTCUSD": {
+        "issuer_name": "Bitcoin / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "btc",
+        "quote_currency": "usd",
+        "benchmark_symbol": "BTCUSD",
+    },
+    "ETHUSD": {
+        "issuer_name": "Ethereum / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "eth",
+        "quote_currency": "usd",
+        "benchmark_symbol": "ETHUSD",
+    },
+    "SOLUSD": {
+        "issuer_name": "Solana / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "sol",
+        "quote_currency": "usd",
+        "benchmark_symbol": "BTCUSD",
+    },
+}
+
+CRYPTO_PRICE_SYMBOLS = list(CRYPTO_REFERENCE)
+
 
 def ticker_reference(symbol: str | None) -> dict | None:
     if not symbol:
@@ -152,6 +182,32 @@ def ticker_reference(symbol: str | None) -> dict | None:
     if not reference:
         return None
     return {"symbol": symbol.upper(), **reference}
+
+
+def crypto_reference(symbol: str | None) -> dict | None:
+    if not symbol:
+        return None
+    normalized = normalize_asset_symbol(symbol)
+    reference = CRYPTO_REFERENCE.get(normalized)
+    if not reference:
+        return None
+    return {"symbol": normalized, **reference}
+
+
+def normalize_asset_symbol(symbol: str | None) -> str:
+    if not symbol:
+        return ""
+    cleaned = symbol.upper().replace("/", "").replace("-", "").replace(" ", "")
+    aliases = {
+        "BTC": "BTCUSD",
+        "BITCOIN": "BTCUSD",
+        "XBTUSD": "BTCUSD",
+        "ETH": "ETHUSD",
+        "ETHEREUM": "ETHUSD",
+        "SOL": "SOLUSD",
+        "SOLANA": "SOLUSD",
+    }
+    return aliases.get(cleaned, cleaned)
 
 
 @dataclass(frozen=True)
@@ -171,6 +227,25 @@ class MarketPricePoint:
     div_cash: float | None
     split_factor: float | None
     source: str = "tiingo"
+
+    def as_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class CryptoPricePoint:
+    symbol: str
+    date: str
+    open: float | None
+    high: float | None
+    low: float | None
+    close: float | None
+    volume: float | None
+    volume_notional: float | None
+    trades_done: int | None
+    base_currency: str | None
+    quote_currency: str | None
+    source: str = "tiingo_crypto"
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -240,6 +315,38 @@ def parse_nasdaq_prices(symbol: str, payload: dict) -> list[MarketPricePoint]:
     )
 
 
+def parse_tiingo_crypto_price_row(symbol: str, metadata: dict, row: dict) -> CryptoPricePoint:
+    return CryptoPricePoint(
+        symbol=normalize_asset_symbol(symbol),
+        date=row["date"][:10],
+        open=row.get("open"),
+        high=row.get("high"),
+        low=row.get("low"),
+        close=row.get("close"),
+        volume=row.get("volume"),
+        volume_notional=row.get("volumeNotional"),
+        trades_done=row.get("tradesDone"),
+        base_currency=metadata.get("baseCurrency"),
+        quote_currency=metadata.get("quoteCurrency"),
+    )
+
+
+def parse_tiingo_crypto_prices(symbol: str, payload: list[dict]) -> list[CryptoPricePoint]:
+    rows = []
+    normalized = normalize_asset_symbol(symbol)
+    for item in payload:
+        if normalize_asset_symbol(item.get("ticker")) != normalized:
+            continue
+        metadata = {
+            "baseCurrency": item.get("baseCurrency"),
+            "quoteCurrency": item.get("quoteCurrency"),
+        }
+        for row in item.get("priceData", []):
+            if row.get("date"):
+                rows.append(parse_tiingo_crypto_price_row(normalized, metadata, row))
+    return sorted(rows, key=lambda point: point.date)
+
+
 class TiingoClient:
     def __init__(self, api_key: str | None = None, base_url: str = TIINGO_BASE_URL) -> None:
         self.api_key = api_key or settings.TIINGO_API_KEY
@@ -267,6 +374,38 @@ class TiingoClient:
         )
         with urlopen(request, timeout=45) as response:
             return parse_tiingo_prices(symbol, json.loads(response.read().decode("utf-8")))
+
+
+class TiingoCryptoClient:
+    def __init__(self, api_key: str | None = None, base_url: str = TIINGO_CRYPTO_BASE_URL) -> None:
+        self.api_key = api_key or settings.TIINGO_API_KEY
+        self.base_url = base_url.rstrip("/")
+
+    def historical_prices(
+        self,
+        symbol: str,
+        *,
+        start_date: str,
+        end_date: str | None = None,
+        resample_freq: str = "1day",
+    ) -> list[CryptoPricePoint]:
+        if not self.api_key:
+            raise RuntimeError("TIINGO_API_KEY is required for live crypto price refreshes")
+        normalized = normalize_asset_symbol(symbol).lower()
+        query = {
+            "tickers": normalized,
+            "startDate": start_date,
+            "resampleFreq": resample_freq,
+            "token": self.api_key,
+        }
+        if end_date:
+            query["endDate"] = end_date
+        request = Request(
+            f"{self.base_url}/prices?{urlencode(query)}",
+            headers={"User-Agent": USER_AGENT},
+        )
+        with urlopen(request, timeout=45) as response:
+            return parse_tiingo_crypto_prices(normalized, json.loads(response.read().decode("utf-8")))
 
 
 class NasdaqClient:
