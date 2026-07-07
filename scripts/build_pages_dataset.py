@@ -28,6 +28,7 @@ OUTPUT = ROOT / "pages-site" / "data" / "civicledger-static.json"
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
 FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
+CRYPTO_PRICES = ROOT / "data" / "context" / "crypto_prices.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
 
@@ -205,6 +206,60 @@ def load_market_prices() -> tuple[list[dict], dict]:
         "ticker_reference": data.get("ticker_reference", {}),
         "coverage_report": data.get("coverage_report", {}),
         "anomaly_report": data.get("anomaly_report", []),
+    }
+
+
+def load_crypto_prices() -> dict:
+    if not CRYPTO_PRICES.exists():
+        return {
+            "provider": "not_configured",
+            "context_label": "Crypto price overlays are not refreshed in this snapshot.",
+            "summary": {"active_crypto_price_provider": "not_configured", "price_point_count": 0},
+            "source": {},
+            "crypto_reference": {},
+            "coverage_report": {},
+            "series": {},
+        }
+    data = json.loads(CRYPTO_PRICES.read_text())
+    return {
+        "provider": data.get("source", {}).get("id", "tiingo-crypto"),
+        "context_label": data.get("context_label", "Crypto overlays use production crypto price data."),
+        "summary": data.get("summary", {}),
+        "source": data.get("source", {}),
+        "crypto_reference": data.get("crypto_reference", {}),
+        "coverage_report": data.get("coverage_report", {}),
+        "series": data.get("series", {}),
+    }
+
+
+def crypto_price_window(symbol: str | None, trade_date: str | None, points_by_symbol: dict[str, list[dict]]) -> dict | None:
+    if not symbol or not trade_date:
+        return None
+    points = points_by_symbol.get(normalize_asset_symbol(symbol), [])
+    if not points:
+        return None
+    trade_day = parse_iso_date(trade_date)
+    rows = []
+    for point in points:
+        point_day = parse_iso_date(point["date"])
+        if abs((point_day - trade_day).days) <= 7:
+            rows.append(
+                {
+                    "date": point["date"],
+                    "close": point.get("close"),
+                    "days_from_trade": (point_day - trade_day).days,
+                    "source": point.get("source", "tiingo_crypto"),
+                }
+            )
+    if not rows:
+        return None
+    closest = sorted(rows, key=lambda row: (abs(row["days_from_trade"]), row["date"]))[0]
+    return {
+        "provider": "Tiingo Crypto",
+        "window_days": 7,
+        "closest_close": closest.get("close"),
+        "closest_date": closest["date"],
+        "points": sorted(rows, key=lambda row: row["date"]),
     }
 
 
@@ -438,10 +493,10 @@ def days_from_anchor(value: str | None, anchor: str | None) -> int | None:
     return (parse_iso_date(value) - parse_iso_date(anchor)).days
 
 
-def timeline_trade_row(trade: dict, anchor: str | None) -> dict:
+def timeline_trade_row(trade: dict, anchor: str | None, crypto_points_by_symbol: dict[str, list[dict]]) -> dict:
     reference = asset_reference(trade.get("ticker"), trade.get("asset_class"))
     midpoint = value_midpoint(trade)
-    return {
+    row = {
         "id": trade["id"],
         "date": trade["trade_date"],
         "career_day": days_from_anchor(trade.get("trade_date"), anchor),
@@ -455,9 +510,47 @@ def timeline_trade_row(trade: dict, anchor: str | None) -> dict:
         "value_midpoint": midpoint,
         "disclosure_lag_days": trade["disclosure_lag_days"],
     }
+    if row["asset_class"] == "crypto":
+        row["price_window"] = crypto_price_window(row["ticker"], row["date"], crypto_points_by_symbol)
+    return row
 
 
-def timeline_event_positions(events: list[dict], anchor: str | None, start: str | None, end: str | None) -> list[dict]:
+def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
+    score = 35
+    reasons = []
+    event_type = event.get("event_type", "")
+    branch = official.get("branch")
+    if event.get("relevance") == "macro":
+        score += 20
+        reasons.append("macro context")
+    if branch == "Executive" and event_type in {"executive_order", "policy_change", "macro_release"}:
+        score += 18
+        reasons.append("executive-adjacent event")
+    if branch == "Legislative" and event_type in {"bill", "funding", "macro_release"}:
+        score += 18
+        reasons.append("legislative-adjacent event")
+    if branch == "Judicial" and event_type in {"court_decision", "ruling"}:
+        score += 18
+        reasons.append("judicial-adjacent event")
+    if trades and any(trade.get("asset_class") == "crypto" for trade in trades) and "crypto" in event_type:
+        score += 20
+        reasons.append("crypto asset overlap")
+    if trades and not reasons:
+        reasons.append("selected official has reviewed trades")
+    return {
+        "score": min(score, 100),
+        "reason": ", ".join(reasons) if reasons else "general public context",
+    }
+
+
+def timeline_event_positions(
+    events: list[dict],
+    anchor: str | None,
+    start: str | None,
+    end: str | None,
+    official: dict,
+    trades: list[dict],
+) -> list[dict]:
     if not start or not end:
         return []
     start_date = parse_iso_date(start)
@@ -466,8 +559,43 @@ def timeline_event_positions(events: list[dict], anchor: str | None, start: str 
     for event in events:
         event_date = parse_iso_date(event["date"])
         if start_date - timedelta(days=180) <= event_date <= end_date + timedelta(days=180):
-            rows.append({**event, "career_day": days_from_anchor(event["date"], anchor)})
+            relevance = event_relevance(event, official, trades)
+            rows.append(
+                {
+                    **event,
+                    "career_day": days_from_anchor(event["date"], anchor),
+                    "relevance_score": relevance["score"],
+                    "relevance_reason": relevance["reason"],
+                }
+            )
     return rows
+
+
+def trade_clusters(timeline_trades: list[dict], window_days: int = 14) -> list[dict]:
+    clusters = []
+    current = []
+    for trade in sorted(timeline_trades, key=lambda row: (row["date"], row["id"])):
+        if current and (parse_iso_date(trade["date"]) - parse_iso_date(current[-1]["date"])).days > window_days:
+            if len(current) > 1:
+                clusters.append(cluster_row(current, window_days))
+            current = []
+        current.append(trade)
+    if len(current) > 1:
+        clusters.append(cluster_row(current, window_days))
+    return clusters
+
+
+def cluster_row(rows: list[dict], window_days: int) -> dict:
+    return {
+        "id": f"cluster-{rows[0]['date']}-{rows[-1]['date']}-{len(rows)}",
+        "start_date": rows[0]["date"],
+        "end_date": rows[-1]["date"],
+        "window_days": window_days,
+        "trade_count": len(rows),
+        "asset_classes": dict(Counter(row["asset_class"] for row in rows)),
+        "tickers": sorted({row["ticker"] for row in rows if row.get("ticker")}),
+        "total_value_midpoint": round(sum(row.get("value_midpoint") or 0 for row in rows), 2),
+    }
 
 
 def career_trade_timeline(
@@ -476,6 +604,7 @@ def career_trade_timeline(
     all_trades: list[dict],
     fred_context: dict,
     civic_events: list[dict],
+    crypto_prices: dict,
 ) -> dict:
     roles_by_person = public_roles_by_person(public_officials)
     trades_by_person = defaultdict(list)
@@ -486,6 +615,10 @@ def career_trade_timeline(
     president_ids = []
     official_rows = []
     events = timeline_event_rows(fred_context, civic_events)
+    crypto_points_by_symbol = {
+        symbol: series.get("points", [])
+        for symbol, series in crypto_prices.get("series", {}).items()
+    }
 
     for external_id, roles in roles_by_person.items():
         presidential_roles = [
@@ -508,7 +641,15 @@ def career_trade_timeline(
                 "service_end": end,
                 "roles": presidential_roles,
                 "trades": [],
-                "events": timeline_event_positions(events, start, start, end),
+                "events": timeline_event_positions(
+                    events,
+                    start,
+                    start,
+                    end,
+                    {"branch": "Executive"},
+                    [],
+                ),
+                "trade_clusters": [],
                 "stats": {
                     "trade_count": 0,
                     "buy_count": 0,
@@ -534,7 +675,7 @@ def career_trade_timeline(
             ],
             person_trades,
         )
-        timeline_trades = [timeline_trade_row(trade, start) for trade in person_trades]
+        timeline_trades = [timeline_trade_row(trade, start, crypto_points_by_symbol) for trade in person_trades]
         official_rows.append(
             {
                 "id": person["id"],
@@ -553,7 +694,8 @@ def career_trade_timeline(
                     }
                 ],
                 "trades": timeline_trades,
-                "events": timeline_event_positions(events, start, start, end),
+                "events": timeline_event_positions(events, start, start, end, person, timeline_trades),
+                "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
                     "trade_count": len(timeline_trades),
                     "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
@@ -594,7 +736,13 @@ def career_trade_timeline(
     return {
         "schema_version": "career-trade-timeline-v1",
         "default_axis": "career",
-        "axis_modes": ["career", "calendar"],
+        "axis_modes": ["career", "calendar", "event_window"],
+        "zoom_presets": [
+            {"id": "full", "label": "Full career", "days": None},
+            {"id": "first-year", "label": "First year", "days": 365},
+            {"id": "first-term", "label": "First term", "days": 1461},
+            {"id": "event-window", "label": "Event window", "days": 360},
+        ],
         "default_official_ids": sorted(president_ids),
         "asset_classes": asset_classes,
         "event_types": sorted({event["event_type"] for event in events}),
@@ -608,6 +756,12 @@ def career_trade_timeline(
         "officials": official_rows,
         "events": events,
         "event_windows": event_windows,
+        "crypto_market": {
+            "provider": crypto_prices.get("provider"),
+            "context_label": crypto_prices.get("context_label"),
+            "summary": crypto_prices.get("summary", {}),
+            "coverage_report": crypto_prices.get("coverage_report", {}),
+        },
     }
 
 
@@ -730,6 +884,7 @@ def build_dataset() -> dict:
     fred_context = load_fred_context()
     civic_events = load_events()
     market_series, market_metadata = load_market_prices()
+    crypto_prices = load_crypto_prices()
     people = create_people()
     all_people = []
     all_filings = []
@@ -838,7 +993,14 @@ def build_dataset() -> dict:
         )
 
     branch_counts = Counter(person["branch"] for person in all_people)
-    career_timeline = career_trade_timeline(public_officials, all_people, all_trades, fred_context, civic_events)
+    career_timeline = career_trade_timeline(
+        public_officials,
+        all_people,
+        all_trades,
+        fred_context,
+        civic_events,
+        crypto_prices,
+    )
     sources = []
     for source in OFFICIAL_SOURCES:
         counts = source_counts[source["id"]]
@@ -880,6 +1042,7 @@ def build_dataset() -> dict:
             "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
             "market_price_provider": market_metadata["summary"].get("active_market_price_provider", market_metadata["provider"]),
             "market_price_point_count": market_metadata["summary"].get("price_point_count", 0),
+            "crypto_price_point_count": crypto_prices["summary"].get("price_point_count", 0),
             "career_timeline_official_count": career_timeline["summary"]["official_count"],
             "career_timeline_default_official_count": career_timeline["summary"]["default_official_count"],
             "career_timeline_trade_count": career_timeline["summary"]["trade_count"],
@@ -897,6 +1060,13 @@ def build_dataset() -> dict:
         "sources": sources,
         "events": civic_events,
         "market": market_snapshot(market_series, market_metadata),
+        "crypto_market": {
+            "provider": crypto_prices.get("provider"),
+            "context_label": crypto_prices.get("context_label"),
+            "summary": crypto_prices.get("summary", {}),
+            "source": crypto_prices.get("source", {}),
+            "coverage_report": crypto_prices.get("coverage_report", {}),
+        },
         "fred_context": fred_context,
         "career_trade_timeline": career_timeline,
         "trade_context": {

@@ -57,6 +57,11 @@ jobs:
           PYTHONPATH: backend
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python scripts/build_market_price_dataset.py --start 2023-01-01
+      - name: Refresh Tiingo crypto prices
+        env:
+          PYTHONPATH: backend
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+        run: python scripts/build_crypto_price_dataset.py --start 2023-01-01
       - name: Check market price coverage
         run: python scripts/check_market_price_dataset.py
       - name: Rebuild Pages data

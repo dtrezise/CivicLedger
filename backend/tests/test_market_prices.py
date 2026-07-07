@@ -113,4 +113,8 @@ def test_ticker_reference_maps_issuer_sector_and_benchmark():
 def test_crypto_reference_normalizes_common_disclosure_labels():
     assert normalize_asset_symbol("Bitcoin") == "BTCUSD"
     assert normalize_asset_symbol("ETH/USD") == "ETHUSD"
+    assert normalize_asset_symbol("Dogecoin") == "DOGEUSD"
+    assert normalize_asset_symbol("Cardano") == "ADAUSD"
+    assert normalize_asset_symbol("Ripple") == "XRPUSD"
     assert crypto_reference("btc")["asset_class"] == "crypto"
+    assert crypto_reference("doge")["issuer_name"] == "Dogecoin / U.S. Dollar"

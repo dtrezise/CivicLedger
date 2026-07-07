@@ -29,6 +29,7 @@ FJC_EXPORT_PAGE = (
     "biographical-directory-article-iii-federal-judges-export"
 )
 BIDEN_CABINET_PAGE = "https://bidenwhitehouse.archives.gov/administration/cabinet/"
+OBAMA44_CABINET_PAGE = "https://obamawhitehouse.archives.gov/administration/cabinet"
 TRUMP45_CABINET_PAGE = "https://trumpwhitehouse.archives.gov/the-trump-administration/the-cabinet/"
 TRUMP47_CABINET_PAGE = "https://www.whitehouse.gov/administration/cabinet/"
 TRUMP47_NOMINATION_PAGE = (
@@ -37,6 +38,13 @@ TRUMP47_NOMINATION_PAGE = (
 )
 
 TERMS = {
+    "obama-44": {
+        "label": "Obama 44",
+        "administration": "Barack Obama Administration",
+        "term_start": "2009-01-20",
+        "term_end": "2017-01-20",
+        "president": "Barack Obama",
+    },
     "trump-45": {
         "label": "Trump 45",
         "administration": "Donald J. Trump Administration",
@@ -103,6 +111,30 @@ TRUMP45_ARCHIVE_ROWS = [
     ("Robert Wilkie", "Secretary of Veterans Affairs"),
     ("Michael R. Pence", "Vice President"),
     ("Mark Meadows", "White House Chief of Staff"),
+]
+
+OBAMA44_ARCHIVE_ROWS = [
+    ("Joseph R. Biden", "Vice President"),
+    ("John Kerry", "Secretary of State"),
+    ("Jack Lew", "Secretary of the Treasury"),
+    ("Ashton Carter", "Secretary of Defense"),
+    ("Loretta E. Lynch", "Attorney General"),
+    ("Sally Jewell", "Secretary of the Interior"),
+    ("Thomas J. Vilsack", "Secretary of Agriculture"),
+    ("Penny Pritzker", "Secretary of Commerce"),
+    ("Thomas E. Perez", "Secretary of Labor"),
+    ("Sylvia Mathews Burwell", "Secretary of Health and Human Services"),
+    ("Julian Castro", "Secretary of Housing and Urban Development"),
+    ("Anthony Foxx", "Secretary of Transportation"),
+    ("Ernest Moniz", "Secretary of Energy"),
+    ("John King", "Secretary of Education"),
+    ("Robert McDonald", "Secretary of Veterans Affairs"),
+    ("Jeh Johnson", "Secretary of Homeland Security"),
+    ("Gina McCarthy", "Administrator of the Environmental Protection Agency"),
+    ("Shaun L.S. Donovan", "Director of the Office of Management and Budget"),
+    ("Michael Froman", "United States Trade Representative"),
+    ("Samantha Power", "United States Ambassador to the United Nations"),
+    ("Maria Contreras-Sweet", "Administrator of the Small Business Administration"),
 ]
 
 
@@ -182,6 +214,12 @@ def source_info(source_id: str) -> dict:
         "biden-46-cabinet-archive": {
             "name": "Biden White House Archive Cabinet page",
             "url": BIDEN_CABINET_PAGE,
+            "source_tier": "official_archive",
+            "branch": "Executive",
+        },
+        "obama-44-cabinet-archive": {
+            "name": "Obama White House Archive Cabinet page",
+            "url": OBAMA44_CABINET_PAGE,
             "source_tier": "official_archive",
             "branch": "Executive",
         },
@@ -297,6 +335,10 @@ def parse_heading_pairs(url: str) -> list[tuple[str, str]]:
 def elected_executive_rows() -> list[dict]:
     rows = []
     elected = {
+        "obama-44": [
+            ("Barack Obama", "President"),
+            ("Joseph R. Biden", "Vice President"),
+        ],
         "trump-45": [
             ("Donald J. Trump", "President"),
             ("Michael R. Pence", "Vice President"),
@@ -311,6 +353,7 @@ def elected_executive_rows() -> list[dict]:
         ],
     }
     source_by_term = {
+        "obama-44": "obama-44-cabinet-archive",
         "trump-45": "trump-45-cabinet-archive",
         "biden-46": "biden-46-cabinet-archive",
         "trump-47": "trump-47-current-cabinet",
@@ -336,6 +379,23 @@ def elected_executive_rows() -> list[dict]:
 
 def executive_rows() -> list[dict]:
     rows = elected_executive_rows()
+
+    for index, (name, role_title) in enumerate(OBAMA44_ARCHIVE_ROWS, start=1):
+        rows.append(
+            make_role(
+                person_name=name,
+                role_title=role_title,
+                branch="Executive",
+                presidential_term="obama-44",
+                role_category=executive_role_category(role_title),
+                source_id="obama-44-cabinet-archive",
+                source_row_id=f"archive-cabinet-{index}",
+                agency=agency_for_role(role_title),
+                service_start="2009-01-20",
+                service_end="2017-01-20",
+                source_metadata={"source_scope": "Archived Cabinet page roster"},
+            )
+        )
 
     for index, (name, role_title) in enumerate(TRUMP45_ARCHIVE_ROWS, start=1):
         rows.append(
@@ -416,6 +476,8 @@ def judicial_term(row: dict) -> str | None:
         or parse_date(row.get("Confirmation Date"))
         or parse_date(row.get("Nomination Date"))
     )
+    if president == "Barack Obama" and row_date and date(2009, 1, 20) <= row_date < date(2017, 1, 20):
+        return "obama-44"
     if president == "Joseph R. Biden" and row_date and date(2021, 1, 20) <= row_date < date(2025, 1, 20):
         return "biden-46"
     if president == "Donald J. Trump" and row_date:
@@ -505,8 +567,8 @@ def build_dataset() -> dict:
             "description": (
                 "Source-backed public-official role database for executive Cabinet "
                 "and Cabinet-level officials, Article III judges appointed during "
-                "the last three presidential terms, and congressional service "
-                "records for the 115th through 119th Congresses."
+                "Obama 44, Trump 45, Biden 46, and Trump 47, plus congressional "
+                "service records for the 115th through 119th Congresses."
             ),
         },
         "summary": {

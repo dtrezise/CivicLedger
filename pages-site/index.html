@@ -89,7 +89,18 @@
           <div class="segmented" role="group" aria-label="Timeline axis">
             <button class="active" id="careerAxisButton" type="button">Career</button>
             <button id="calendarAxisButton" type="button">Calendar</button>
+            <button id="eventWindowAxisButton" type="button">Event</button>
           </div>
+          <label>
+            <span>Zoom</span>
+            <select id="timelineZoomFilter">
+              <option value="full">Full career</option>
+            </select>
+          </label>
+          <label>
+            <span>Timeline search</span>
+            <input id="timelineOfficialSearch" type="search" placeholder="Add official by name" />
+          </label>
           <label>
             <span>Assets</span>
             <select id="timelineAssetFilter">

@@ -170,6 +170,38 @@ CRYPTO_REFERENCE = {
         "quote_currency": "usd",
         "benchmark_symbol": "BTCUSD",
     },
+    "XRPUSD": {
+        "issuer_name": "XRP / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "xrp",
+        "quote_currency": "usd",
+        "benchmark_symbol": "BTCUSD",
+    },
+    "ADAUSD": {
+        "issuer_name": "Cardano / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "ada",
+        "quote_currency": "usd",
+        "benchmark_symbol": "BTCUSD",
+    },
+    "DOGEUSD": {
+        "issuer_name": "Dogecoin / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "doge",
+        "quote_currency": "usd",
+        "benchmark_symbol": "BTCUSD",
+    },
+    "USDCUSD": {
+        "issuer_name": "USD Coin / U.S. Dollar",
+        "asset_class": "crypto",
+        "sector": "Crypto",
+        "base_currency": "usdc",
+        "quote_currency": "usd",
+        "benchmark_symbol": "BTCUSD",
+    },
 }
 
 CRYPTO_PRICE_SYMBOLS = list(CRYPTO_REFERENCE)
@@ -206,6 +238,14 @@ def normalize_asset_symbol(symbol: str | None) -> str:
         "ETHEREUM": "ETHUSD",
         "SOL": "SOLUSD",
         "SOLANA": "SOLUSD",
+        "XRP": "XRPUSD",
+        "RIPPLE": "XRPUSD",
+        "ADA": "ADAUSD",
+        "CARDANO": "ADAUSD",
+        "DOGE": "DOGEUSD",
+        "DOGECOIN": "DOGEUSD",
+        "USDC": "USDCUSD",
+        "USDCOIN": "USDCUSD",
     }
     return aliases.get(cleaned, cleaned)
 

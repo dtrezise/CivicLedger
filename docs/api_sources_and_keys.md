@@ -6,7 +6,7 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 
 - `CONGRESS_GOV_API_KEY`: Congress.gov member, bill, and legislative data.
 - `FRED_API_KEY`: Federal Reserve Economic Data macroeconomic series.
-- `TIINGO_API_KEY`: Tiingo end-of-day stock and ETF price data.
+- `TIINGO_API_KEY`: Tiingo end-of-day stock, ETF, and crypto price data.
 - `FEC_API_KEY`: Federal Election Commission campaign finance data.
 - `DATA_GOV_API_KEY`: api.data.gov-backed federal APIs where required.
 - `CENSUS_API_KEY`: Census API demographic and geography datasets.
@@ -15,7 +15,7 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 ## Current Product Priority
 
 - FRED is active for macro context around stock-market trades.
-- Tiingo is active for production ETF and ticker market-price overlays.
+- Tiingo is active for production ETF, ticker, and crypto market-price overlays.
 - BLS and Treasury Fiscal Data are watchlist sources.
 - FEC is deferred because campaign-finance data is not directly tied to stock-trade context.
 - USAspending is deferred until ticker/company/entity matching can connect public companies to federal awards or contract events.
@@ -35,7 +35,7 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 
 ## Scheduled Refresh
 
-The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, FRED context data, Tiingo market prices, and Pages static JSON once per day. It can also be run manually from GitHub Actions.
+The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, FRED context data, Tiingo stock/ETF prices, Tiingo crypto prices, and Pages static JSON once per day. It can also be run manually from GitHub Actions.
 
 Required repository secrets:
 

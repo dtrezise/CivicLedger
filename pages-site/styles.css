@@ -1003,7 +1003,7 @@ svg {
 
 .timeline-controls {
   display: grid;
-  grid-template-columns: auto repeat(2, minmax(180px, 1fr)) auto;
+  grid-template-columns: auto repeat(4, minmax(150px, 1fr)) auto;
   gap: 12px;
   align-items: end;
 }
@@ -1017,6 +1017,7 @@ svg {
   text-transform: uppercase;
 }
 
+.timeline-controls input,
 .timeline-controls select {
   width: 100%;
   min-height: 42px;
@@ -1030,7 +1031,7 @@ svg {
 
 .segmented {
   display: inline-grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;

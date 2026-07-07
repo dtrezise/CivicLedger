@@ -12,14 +12,14 @@ def test_public_officials_dataset_has_expected_initial_scope():
     data = json.loads(DATASET.read_text())
     summary = data["summary"]
 
-    assert summary["person_count"] >= 1400
-    assert summary["role_count"] >= 3300
+    assert summary["person_count"] >= 1600
+    assert summary["role_count"] >= 3600
     assert summary["role_counts_by_branch"]["Executive"] >= 50
-    assert summary["role_counts_by_branch"]["Judicial"] >= 500
+    assert summary["role_counts_by_branch"]["Judicial"] >= 800
     assert summary["role_counts_by_branch"]["Legislative"] >= 2700
     assert summary["role_counts_by_category"]["representative"] >= 2100
     assert summary["role_counts_by_category"]["senator"] >= 550
-    assert set(summary["role_counts_by_term"]) == {"trump-45", "biden-46", "trump-47"}
+    assert set(summary["role_counts_by_term"]) == {"obama-44", "trump-45", "biden-46", "trump-47"}
 
 
 def test_public_officials_dataset_roles_are_source_backed():
@@ -88,10 +88,15 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     timeline = data["career_trade_timeline"]
 
     assert timeline["schema_version"] == "career-trade-timeline-v1"
-    assert {"exec:donald-j-trump", "exec:joseph-r-biden"} <= set(timeline["default_official_ids"])
-    assert timeline["summary"]["default_official_count"] >= 2
+    assert {"exec:barack-obama", "exec:donald-j-trump", "exec:joseph-r-biden"} <= set(
+        timeline["default_official_ids"]
+    )
+    assert "exec:kamala-harris" not in set(timeline["default_official_ids"])
+    assert "exec:michael-r-pence" not in set(timeline["default_official_ids"])
+    assert timeline["summary"]["default_official_count"] >= 3
     assert timeline["summary"]["event_count"] >= 20
     assert "crypto" in timeline["asset_classes"]
+    assert "event_window" in timeline["axis_modes"]
     president_rows = [
         official
         for official in timeline["officials"]

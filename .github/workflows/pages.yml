@@ -9,6 +9,7 @@ on:
       - "scripts/build_public_officials_dataset.py"
       - "scripts/build_fred_context_dataset.py"
       - "scripts/build_market_price_dataset.py"
+      - "scripts/build_crypto_price_dataset.py"
       - "data/public_officials/**"
       - "data/context/**"
       - "backend/app/seed.py"
