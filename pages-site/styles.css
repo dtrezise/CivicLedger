@@ -786,6 +786,15 @@ svg {
   line-height: 1.35;
 }
 
+.sparkline {
+  width: 190px;
+  height: 54px;
+  margin: 6px 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcfd;
+}
+
 .role-table td:nth-child(2),
 .role-table td:nth-child(3) {
   min-width: 12rem;

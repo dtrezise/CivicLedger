@@ -79,6 +79,35 @@ function formatMacroValue(value, units) {
   return `${Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 })}${units === "Percent" ? "%" : ""}`;
 }
 
+function moveList(moves) {
+  return (moves || [])
+    .map((move) => `${move.horizon_days || move.label}: ${signedPct(move.pct_change)}`)
+    .join(" / ");
+}
+
+function sparkline(points, label) {
+  if (!points?.length) return '<span class="muted">No price path</span>';
+  const width = 190;
+  const height = 54;
+  const values = points.map((point) => Number(point.value)).filter(Number.isFinite);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = Math.max(0.0001, max - min);
+  const step = points.length > 1 ? width / (points.length - 1) : width;
+  const path = points
+    .map((point, index) => {
+      const x = index * step;
+      const y = height - 8 - ((Number(point.value) - min) / span) * (height - 16);
+      return `${index ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  return `
+    <svg class="sparkline" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(label)}">
+      <path d="${path}" fill="none" stroke="#0b6b8f" stroke-width="2"></path>
+    </svg>
+  `;
+}
+
 function affiliation(person) {
   if (!person.primary_role) return person.branch;
   const metadata = person.primary_role.source_metadata || {};
@@ -696,8 +725,22 @@ function renderEvents() {
 function renderTradeContext() {
   const fred = state.data.fred_context || {};
   const series = fred.series || {};
+  const market = state.data.market || {};
+  const marketSummary = market.summary || {};
+  const generatedAt = state.data.generated_at || "";
+  const coveredSymbols = marketSummary.covered_symbol_count ?? marketSummary.series_count ?? 0;
+  const missingSymbols = marketSummary.missing_symbol_count ?? 0;
+  const anomalyCount = marketSummary.anomaly_count ?? (market.anomaly_report || []).length;
   const macroIds = ["FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "USREC"];
-  $("macroSummary").innerHTML = macroIds
+  const marketFreshnessCard = `
+    <article class="macro-card market-card">
+      <span>Market prices</span>
+      <strong>${escapeHtml(marketSummary.active_market_price_provider || market.provider || "market")}</strong>
+      <small>${fmt.format(marketSummary.price_point_count || 0)} price points / generated ${shortDate(generatedAt)}</small>
+      <small>${fmt.format(coveredSymbols)} covered symbols / ${fmt.format(missingSymbols)} missing / ${fmt.format(anomalyCount)} anomalies</small>
+    </article>
+  `;
+  const macroCards = macroIds
     .map((seriesId) => {
       const item = series[seriesId];
       const latest = latestObservation(item);
@@ -711,6 +754,7 @@ function renderTradeContext() {
       `;
     })
     .join("");
+  $("macroSummary").innerHTML = marketFreshnessCard + macroCards;
 
   $("sourcePriority").innerHTML = (fred.source_priorities || [])
     .map(
@@ -730,8 +774,10 @@ function renderTradeContext() {
     rows
       .slice(0, 36)
       .map((row) => {
-        const market = (row.market_moves || [])
-          .map((move) => `${move.symbol} ${signedPct(move.pct_change)}`)
+        const assetMoves = moveList(row.horizon_moves?.asset);
+        const benchmarkMoves = moveList(row.horizon_moves?.benchmark);
+        const reportMoves = (row.trade_to_report_moves || [])
+          .map((move) => `${move.symbol}: ${signedPct(move.pct_change)}`)
           .join(" / ");
         const macro = Object.entries(row.macro_snapshot || {})
           .map(([, item]) => `${item.label}: ${formatMacroValue(item.value, item.units)}`)
@@ -749,8 +795,19 @@ function renderTradeContext() {
               <small>${escapeHtml(row.market_provider || "market")} prices / ${escapeHtml(row.context_label)}</small>
             </td>
             <td>${shortDate(row.trade_date)}<br /><small>Reported ${shortDate(row.reported_date)} / ${fmt.format(row.disclosure_lag_days)}d lag</small></td>
-            <td>${escapeHtml(row.action)} ${escapeHtml(row.asset_display_name)}<br /><small>${escapeHtml(row.value_range_label)}</small></td>
-            <td>${escapeHtml(market || "n/a")}</td>
+            <td>
+              ${escapeHtml(row.action)} ${escapeHtml(row.ticker || "")}
+              <small>${escapeHtml(row.issuer_reference?.issuer_name || row.asset_display_name)}</small>
+              <small>${escapeHtml(row.issuer_reference?.sector || "Unmapped")} / benchmark ${escapeHtml(row.issuer_reference?.benchmark_symbol || "SPY")}</small>
+              <small>${escapeHtml(row.value_range_label)}</small>
+            </td>
+            <td>
+              <strong>${escapeHtml(row.price_window?.asset?.symbol || row.ticker || "Asset")}</strong>
+              <small>7/30/90d ${escapeHtml(assetMoves || "n/a")}</small>
+              <small>Trade-report ${escapeHtml(reportMoves || "n/a")}</small>
+              ${sparkline(row.price_window?.asset?.points || [], `${row.ticker} price path`)}
+              <small>Benchmark ${escapeHtml(row.price_window?.benchmark?.symbol || "SPY")}: ${escapeHtml(benchmarkMoves || "n/a")}</small>
+            </td>
             <td>${escapeHtml(macro || "n/a")}</td>
             <td>${escapeHtml(events)}</td>
           </tr>

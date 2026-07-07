@@ -179,6 +179,9 @@ def load_market_prices() -> tuple[list[dict], dict]:
         "context_label": data.get("context_label", "Market overlays use production market-price data."),
         "summary": data.get("summary", {}),
         "source": data.get("source", {}),
+        "ticker_reference": data.get("ticker_reference", {}),
+        "coverage_report": data.get("coverage_report", {}),
+        "anomaly_report": data.get("anomaly_report", []),
     }
 
 
@@ -193,6 +196,8 @@ def market_snapshot(series: list[dict], metadata: dict) -> dict:
         "context_label": metadata["context_label"],
         "summary": metadata["summary"],
         "source": metadata.get("source", {}),
+        "coverage_report": metadata.get("coverage_report", {}),
+        "anomaly_report": metadata.get("anomaly_report", []),
         "monthly": [
             {"month": month, **values}
             for month, values in sorted(monthly.items())
@@ -283,6 +288,46 @@ def market_move(points_by_symbol: dict[str, list[dict]], symbol: str, start: str
     }
 
 
+def market_move_between(
+    points_by_symbol: dict[str, list[dict]],
+    symbol: str,
+    start: str,
+    end: str,
+    label: str,
+) -> dict | None:
+    points = points_by_symbol.get(symbol, [])
+    if not points:
+        return None
+    start_point = market_point_at_or_after(points, parse_iso_date(start))
+    end_point = market_point_at_or_before(points, parse_iso_date(end))
+    if not start_point or not end_point or start_point["value"] == 0:
+        return None
+    pct_change = ((end_point["value"] - start_point["value"]) / start_point["value"]) * 100
+    return {
+        "symbol": symbol,
+        "label": label,
+        "start_date": iso(start_point["date"]),
+        "end_date": iso(end_point["date"]),
+        "start_value": start_point["value"],
+        "end_value": end_point["value"],
+        "pct_change": round(pct_change, 2),
+    }
+
+
+def price_window(points_by_symbol: dict[str, list[dict]], symbol: str, center: str, days: int = 30) -> list[dict]:
+    points = points_by_symbol.get(symbol, [])
+    if not points:
+        return []
+    center_date = parse_iso_date(center)
+    start = center_date - timedelta(days=days)
+    end = center_date + timedelta(days=days)
+    return [
+        {"date": iso(point["date"]), "value": round(point["value"], 4)}
+        for point in points
+        if start <= point["date"] <= end
+    ][::2][:32]
+
+
 def nearby_context_events(fred_context: dict, civic_events: list[dict], target: date, window_days: int = 14) -> list[dict]:
     rows = []
     for event in civic_events:
@@ -332,6 +377,40 @@ def trade_context_rows(
     rows = []
     for trade in sorted(all_trades, key=lambda item: (item["trade_date"], item["id"]))[:48]:
         trade_date = parse_iso_date(trade["trade_date"])
+        ticker = (trade.get("ticker") or "").upper()
+        reference = market_metadata.get("ticker_reference", {}).get(ticker, {})
+        benchmark_symbol = reference.get("benchmark_symbol") or "SPY"
+        benchmark_symbol = benchmark_symbol if benchmark_symbol in points_by_symbol else "SPY"
+        ticker_covered = ticker in points_by_symbol
+        primary_symbol = ticker if ticker_covered else benchmark_symbol
+        horizon_moves = {
+            "asset": [
+                move
+                for move in [
+                    market_move(points_by_symbol, primary_symbol, trade["trade_date"], 7),
+                    market_move(points_by_symbol, primary_symbol, trade["trade_date"], 30),
+                    market_move(points_by_symbol, primary_symbol, trade["trade_date"], 90),
+                ]
+                if move
+            ],
+            "benchmark": [
+                move
+                for move in [
+                    market_move(points_by_symbol, benchmark_symbol, trade["trade_date"], 7),
+                    market_move(points_by_symbol, benchmark_symbol, trade["trade_date"], 30),
+                    market_move(points_by_symbol, benchmark_symbol, trade["trade_date"], 90),
+                ]
+                if move
+            ],
+        }
+        trade_to_report_moves = [
+            move
+            for move in [
+                market_move_between(points_by_symbol, primary_symbol, trade["trade_date"], trade["reported_date"], "asset trade-to-report"),
+                market_move_between(points_by_symbol, benchmark_symbol, trade["trade_date"], trade["reported_date"], "benchmark trade-to-report"),
+            ]
+            if move
+        ]
         macro_snapshot = {}
         for series_id in ["FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "USREC"]:
             series = fred_context.get("series", {}).get(series_id)
@@ -354,18 +433,29 @@ def trade_context_rows(
                 "reported_date": trade["reported_date"],
                 "action": trade["action"],
                 "asset_display_name": trade["asset_display_name"],
-                "ticker": trade["ticker"],
+                "ticker": ticker,
+                "issuer_reference": {
+                    "issuer_name": reference.get("issuer_name") or trade["asset_display_name"],
+                    "asset_class": reference.get("asset_class") or trade.get("asset_class"),
+                    "sector": reference.get("sector") or "Unmapped",
+                    "benchmark_symbol": benchmark_symbol,
+                    "coverage_status": "covered" if ticker_covered else "fallback_to_benchmark",
+                },
                 "value_range_label": trade["value_range_label"],
                 "disclosure_lag_days": trade["disclosure_lag_days"],
-                "market_moves": [
-                    move
-                    for move in [
-                        market_move(points_by_symbol, "SPY", trade["trade_date"], 30),
-                        market_move(points_by_symbol, "QQQ", trade["trade_date"], 30),
-                        market_move(points_by_symbol, "DIA", trade["trade_date"], 30),
-                    ]
-                    if move
-                ],
+                "market_moves": horizon_moves["asset"][:1] + horizon_moves["benchmark"][:1],
+                "horizon_moves": horizon_moves,
+                "trade_to_report_moves": trade_to_report_moves,
+                "price_window": {
+                    "asset": {
+                        "symbol": primary_symbol,
+                        "points": price_window(points_by_symbol, primary_symbol, trade["trade_date"]),
+                    },
+                    "benchmark": {
+                        "symbol": benchmark_symbol,
+                        "points": price_window(points_by_symbol, benchmark_symbol, trade["trade_date"]),
+                    },
+                },
                 "market_provider": market_metadata["summary"].get(
                     "active_market_price_provider",
                     market_metadata["provider"],

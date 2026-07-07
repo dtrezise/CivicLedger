@@ -62,9 +62,22 @@ def test_fred_context_dataset_has_trade_relevant_macro_scope():
 def test_market_price_dataset_uses_tiingo_adjusted_close_scope():
     data = json.loads(MARKET_PRICES.read_text())
 
-    assert data["summary"]["active_market_price_provider"] == "Tiingo"
-    assert data["summary"]["series_count"] == 8
-    assert data["summary"]["price_point_count"] >= 6000
-    assert data["scope"]["symbols"] == ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
-    assert data["series"]["SPY"]["price_field_for_overlays"] == "adj_close"
-    assert data["context_label"].startswith("Market-price overlays use Tiingo")
+    assert any(
+        provider in data["summary"]["active_market_price_provider"]
+        for provider in ["Tiingo", "Nasdaq"]
+    )
+    assert data["summary"]["series_count"] >= 20
+    assert data["summary"]["covered_symbol_count"] >= 20
+    assert data["summary"]["missing_symbol_count"] == 0
+    assert data["summary"]["price_point_count"] >= 15000
+    assert {"AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "JPM", "V", "JNJ"} <= set(
+        data["scope"]["symbols"]
+    )
+    assert {"SPY", "QQQ", "IWM", "BND", "VFIAX", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"} <= set(
+        data["scope"]["symbols"]
+    )
+    assert data["ticker_reference"]["AAPL"]["issuer_name"] == "Apple Inc."
+    assert data["ticker_reference"]["AAPL"]["benchmark_symbol"] == "XLK"
+    assert data["coverage_report"]["AAPL"]["status"] == "covered"
+    assert data["series"]["SPY"]["price_field_for_overlays"] in {"adj_close", "close"}
+    assert data["context_label"].startswith("Market-price overlays prefer Tiingo")
