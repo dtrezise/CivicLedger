@@ -27,6 +27,7 @@ This will:
 | Backend API      | http://localhost:8000           |
 | API Docs (Swagger) | http://localhost:8000/docs    |
 | API Docs (ReDoc) | http://localhost:8000/redoc     |
+| Public GitHub Pages demo | https://dtrezise.github.io/CivicLedger/ |
 
 ## Seed Data
 
@@ -60,6 +61,21 @@ On first startup the backend automatically seeds the database with:
 | `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
 | `docs/roadmap.md` | Stabilization and phased build plan |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
+
+## Public GitHub Pages Demo
+
+The repository publishes a static public demo from `pages-site/` using GitHub
+Pages. It is intentionally separate from the Docker/FastAPI app: Pages serves a
+generated fixture-data JSON snapshot, then renders search, filters, timelines,
+market context, source readiness, and methodology in the browser.
+
+```bash
+# Rebuild the static Pages dataset locally
+PYTHONPATH=backend .venv/bin/python scripts/build_pages_dataset.py
+
+# Preview the Pages site locally
+python3 -m http.server 4173 --directory pages-site
+```
 
 ## API Endpoints
 

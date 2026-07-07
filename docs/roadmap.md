@@ -69,6 +69,13 @@ Required before public use:
 - Promotion rollback and filing supersession are available through review API endpoints.
 - CI now covers backend tests, frontend build, Alembic migration, and Docker smoke.
 
+## Public Pages Edition
+
+- GitHub Pages publishes a static, public-facing demo at the repository Pages URL.
+- `scripts/build_pages_dataset.py` generates the fixture-data JSON snapshot used by `pages-site/`.
+- The Pages UI presents search, branch and asset filtering, profile detail panels, transaction timelines, market context, source readiness, events, and methodology without requiring the FastAPI backend.
+- The Pages edition remains clearly labeled as fixture/demo data until reviewed production records exist.
+
 ## Release Blockers
 
 - Incomplete provenance display.
