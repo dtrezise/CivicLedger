@@ -24,6 +24,38 @@ export interface PersonListResponse {
   total: number;
 }
 
+export interface PublicOfficialRoleItem {
+  role_id: string;
+  person_id: string;
+  external_role_id: string;
+  external_person_id: string;
+  full_name: string;
+  branch: string;
+  presidential_term: string;
+  administration: string;
+  role_category: string;
+  role_title: string;
+  office: string | null;
+  agency: string | null;
+  court: string | null;
+  service_start: string | null;
+  service_end: string | null;
+  appointing_president: string | null;
+  source_id: string;
+  source_name: string;
+  source_url: string;
+  source_tier: string;
+  source_retrieved_at: string | null;
+  source_metadata: Record<string, unknown>;
+}
+
+export interface PublicOfficialRoleListResponse {
+  items: PublicOfficialRoleItem[];
+  page: number;
+  page_size: number;
+  total: number;
+}
+
 export interface ScorecardResponse {
   transaction_level_reporting: string;
   typical_reporting_lag_days: number | null;

@@ -18,6 +18,7 @@ import type {
   PersonListResponse,
   PersonDetail,
   PersonSummary,
+  PublicOfficialRoleListResponse,
   ScorecardResponse,
   TimelineResponse,
   TradeListResponse,
@@ -133,6 +134,26 @@ export const api = {
     return fetchAPI<{ by_id: Record<string, BatchStatsItem> }>(
       `/people/batch_stats?${sp.toString()}`
     );
+  },
+
+  listOfficialRoles: (params?: {
+    branch?: string;
+    presidential_term?: string;
+    role_category?: string;
+    source_id?: string;
+    q?: string;
+    page?: number;
+    page_size?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params?.branch) sp.set("branch", params.branch);
+    if (params?.presidential_term) sp.set("presidential_term", params.presidential_term);
+    if (params?.role_category) sp.set("role_category", params.role_category);
+    if (params?.source_id) sp.set("source_id", params.source_id);
+    if (params?.q) sp.set("q", params.q);
+    if (params?.page) sp.set("page", String(params.page));
+    if (params?.page_size) sp.set("page_size", String(params.page_size));
+    return fetchAPI<PublicOfficialRoleListResponse>(`/officials/roles?${sp.toString()}`);
   },
 
   // Trades

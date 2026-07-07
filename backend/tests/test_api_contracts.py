@@ -201,3 +201,79 @@ def test_parser_artifact_routes_are_in_openapi(client):
     assert "/evidence/search" in paths
     assert "/quality/duplicates" in paths
     assert "/ingestion-runs" in paths
+    assert "/officials/roles" in paths
+
+
+def test_public_official_roles_response_schema_with_mocked_crud(client, monkeypatch):
+    role_id = UUID("22222222-2222-2222-2222-222222222222")
+    person_id = UUID("33333333-3333-3333-3333-333333333333")
+
+    async def fake_list_public_official_roles(db, **params):
+        assert params["branch"] == "Judicial"
+        assert params["presidential_term"] == "biden-46"
+        return [
+            SimpleNamespace(
+                id=role_id,
+                person_id=person_id,
+                external_role_id="fjc:test-role",
+                external_person_id="fjc:test-person",
+                person=SimpleNamespace(full_name="Jane Example"),
+                branch="Judicial",
+                presidential_term="biden-46",
+                administration="Joseph R. Biden Administration",
+                role_category="article_iii_judge",
+                role_title="Judge, U.S. District Court for the District of Example",
+                office="Judge, U.S. District Court for the District of Example",
+                agency=None,
+                court="U.S. District Court for the District of Example",
+                service_start=date(2024, 9, 12),
+                service_end=None,
+                appointing_president="Joseph R. Biden",
+                source_id="fjc-article-iii-service",
+                source_name="Federal Judicial Center Article III Federal Judicial Service CSV",
+                source_url="https://www.fjc.gov/sites/default/files/history/federal-judicial-service.csv",
+                source_tier="official",
+                source_retrieved_at=date(2026, 7, 6),
+                source_metadata={"commission_date": "2024-09-12"},
+            )
+        ], 1
+
+    monkeypatch.setattr(crud, "list_public_official_roles", fake_list_public_official_roles)
+
+    response = client.get(
+        "/officials/roles",
+        params={"branch": "Judicial", "presidential_term": "biden-46"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "items": [
+            {
+                "role_id": str(role_id),
+                "person_id": str(person_id),
+                "external_role_id": "fjc:test-role",
+                "external_person_id": "fjc:test-person",
+                "full_name": "Jane Example",
+                "branch": "Judicial",
+                "presidential_term": "biden-46",
+                "administration": "Joseph R. Biden Administration",
+                "role_category": "article_iii_judge",
+                "role_title": "Judge, U.S. District Court for the District of Example",
+                "office": "Judge, U.S. District Court for the District of Example",
+                "agency": None,
+                "court": "U.S. District Court for the District of Example",
+                "service_start": "2024-09-12",
+                "service_end": None,
+                "appointing_president": "Joseph R. Biden",
+                "source_id": "fjc-article-iii-service",
+                "source_name": "Federal Judicial Center Article III Federal Judicial Service CSV",
+                "source_url": "https://www.fjc.gov/sites/default/files/history/federal-judicial-service.csv",
+                "source_tier": "official",
+                "source_retrieved_at": "2026-07-06",
+                "source_metadata": {"commission_date": "2024-09-12"},
+            }
+        ],
+        "page": 1,
+        "page_size": 50,
+        "total": 1,
+    }

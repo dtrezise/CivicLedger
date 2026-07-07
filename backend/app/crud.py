@@ -15,6 +15,7 @@ from app.models import (
     RawDocument,
     IngestionRun,
     ParserArtifact,
+    PublicOfficialRole,
 )
 
 
@@ -200,6 +201,64 @@ async def get_person_filings(db: AsyncSession, person_id: UUID) -> list[Filing]:
         select(Filing).where(Filing.person_id == person_id).order_by(Filing.filed_date.desc())
     )
     return result.scalars().all()
+
+
+# ---- Public Official Roles ----
+
+async def list_public_official_roles(
+    db: AsyncSession,
+    branch: Optional[str] = None,
+    presidential_term: Optional[str] = None,
+    role_category: Optional[str] = None,
+    source_id: Optional[str] = None,
+    q: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 50,
+):
+    query = select(PublicOfficialRole).options(selectinload(PublicOfficialRole.person))
+    count_query = select(func.count(PublicOfficialRole.id))
+
+    filters = []
+    if branch:
+        filters.append(PublicOfficialRole.branch == branch)
+    if presidential_term:
+        filters.append(PublicOfficialRole.presidential_term == presidential_term)
+    if role_category:
+        filters.append(PublicOfficialRole.role_category == role_category)
+    if source_id:
+        filters.append(PublicOfficialRole.source_id == source_id)
+    if q:
+        pattern = f"%{q}%"
+        filters.append(
+            or_(
+                PublicOfficialRole.role_title.ilike(pattern),
+                PublicOfficialRole.office.ilike(pattern),
+                PublicOfficialRole.agency.ilike(pattern),
+                PublicOfficialRole.court.ilike(pattern),
+                PublicOfficialRole.administration.ilike(pattern),
+                PublicOfficialRole.person.has(Person.full_name.ilike(pattern)),
+            )
+        )
+
+    for item in filters:
+        query = query.where(item)
+        count_query = count_query.where(item)
+
+    query = (
+        query.order_by(
+            PublicOfficialRole.branch,
+            PublicOfficialRole.presidential_term,
+            PublicOfficialRole.role_category,
+            PublicOfficialRole.service_start,
+            PublicOfficialRole.role_title,
+        )
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+
+    total_result = await db.execute(count_query)
+    result = await db.execute(query)
+    return result.scalars().all(), total_result.scalar() or 0
 
 
 # ---- Market ----

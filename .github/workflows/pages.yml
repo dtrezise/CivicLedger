@@ -6,6 +6,8 @@ on:
     paths:
       - "pages-site/**"
       - "scripts/build_pages_dataset.py"
+      - "scripts/build_public_officials_dataset.py"
+      - "data/public_officials/**"
       - "backend/app/seed.py"
       - "backend/app/fixtures/**"
       - "backend/app/services/official_sources.py"

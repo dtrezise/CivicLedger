@@ -46,6 +46,40 @@ class PersonBatchStatsResponse(BaseModel):
     by_id: dict[str, PersonBatchStatsItem]
 
 
+# ---- Public Official Roles ----
+
+class PublicOfficialRoleItem(BaseModel):
+    role_id: UUID
+    person_id: UUID
+    external_role_id: str
+    external_person_id: str
+    full_name: str
+    branch: str
+    presidential_term: str
+    administration: str
+    role_category: str
+    role_title: str
+    office: Optional[str] = None
+    agency: Optional[str] = None
+    court: Optional[str] = None
+    service_start: Optional[date] = None
+    service_end: Optional[date] = None
+    appointing_president: Optional[str] = None
+    source_id: str
+    source_name: str
+    source_url: str
+    source_tier: str
+    source_retrieved_at: Optional[date] = None
+    source_metadata: dict
+
+
+class PublicOfficialRoleListResponse(BaseModel):
+    items: list[PublicOfficialRoleItem]
+    page: int
+    page_size: int
+    total: int
+
+
 # ---- Scorecard ----
 
 class ScorecardMetrics(BaseModel):

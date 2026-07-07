@@ -9,7 +9,7 @@ import sys
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4, uuid5
 
 from sqlalchemy import text
 from app.config import settings
@@ -25,9 +25,17 @@ from app.models import (
     EventSource,
     MarketSeries,
     ParserArtifact,
+    PublicOfficialRole,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
+PUBLIC_OFFICIALS_DATA = (
+    Path(__file__).resolve().parents[2]
+    / "data"
+    / "public_officials"
+    / "public_official_roles.json"
+)
+SEED_NAMESPACE = UUID("45e23791-3a49-4487-a6f3-739f7f9290b6")
 random.seed(42)
 
 
@@ -368,6 +376,108 @@ def load_events(session):
             ))
 
 
+def parse_optional_date(value: str | None) -> date | None:
+    return date.fromisoformat(value) if value else None
+
+
+def stable_seed_uuid(value: str):
+    return uuid5(SEED_NAMESPACE, value)
+
+
+def load_public_official_roles(session):
+    if not PUBLIC_OFFICIALS_DATA.exists():
+        print("  → Public officials dataset missing, skipping official roles")
+        return 0
+
+    data = json.loads(PUBLIC_OFFICIALS_DATA.read_text())
+    role_rows = data.get("roles", [])
+    person_rows = {}
+    for role in role_rows:
+        person = person_rows.setdefault(
+            role["external_person_id"],
+            {
+                "external_person_id": role["external_person_id"],
+                "full_name": role["full_name"],
+                "branch": role["branch"],
+                "roles": [],
+            },
+        )
+        person["roles"].append(role)
+
+    person_id_by_external_id = {}
+    for external_person_id, person_row in person_rows.items():
+        person_id = stable_seed_uuid(f"public-official-person:{external_person_id}")
+        role_dates = [
+            parse_optional_date(role.get("service_start"))
+            for role in person_row["roles"]
+            if role.get("service_start")
+        ]
+        first_role = sorted(
+            person_row["roles"],
+            key=lambda role: (
+                role.get("service_start") or "9999-12-31",
+                role.get("role_title") or "",
+            ),
+        )[0]
+        if session.get(Person, person_id) is None:
+            session.add(
+                Person(
+                    id=person_id,
+                    full_name=person_row["full_name"],
+                    branch=person_row["branch"],
+                    chamber=None,
+                    state=None,
+                    party=None,
+                    district=None,
+                    office=first_role.get("office"),
+                    agency=first_role.get("agency"),
+                    court=first_role.get("court"),
+                    service_start=min(role_dates) if role_dates else date(2017, 1, 20),
+                    service_end=None,
+                )
+            )
+        person_id_by_external_id[external_person_id] = person_id
+
+    session.flush()
+
+    created_roles = 0
+    for role in role_rows:
+        role_id = stable_seed_uuid(f"public-official-role:{role['external_role_id']}")
+        if session.get(PublicOfficialRole, role_id) is not None:
+            continue
+        session.add(
+            PublicOfficialRole(
+                id=role_id,
+                person_id=person_id_by_external_id[role["external_person_id"]],
+                external_role_id=role["external_role_id"],
+                external_person_id=role["external_person_id"],
+                branch=role["branch"],
+                presidential_term=role["presidential_term"],
+                administration=role["administration"],
+                role_category=role["role_category"],
+                role_title=role["role_title"],
+                office=role.get("office"),
+                agency=role.get("agency"),
+                court=role.get("court"),
+                service_start=parse_optional_date(role.get("service_start")),
+                service_end=parse_optional_date(role.get("service_end")),
+                appointing_president=role.get("appointing_president"),
+                source_id=role["source_id"],
+                source_name=role["source_name"],
+                source_url=role["source_url"],
+                source_tier=role["source_tier"],
+                source_retrieved_at=parse_optional_date(role.get("source_retrieved_at")),
+                source_metadata=role.get("source_metadata") or {},
+            )
+        )
+        created_roles += 1
+
+    session.flush()
+    print(f"  → Loaded {len(person_rows)} public official people")
+    print(f"  → Loaded {created_roles} public official roles")
+    return created_roles
+
+
 def run_seed():
     print("🌱 Starting seed...")
 
@@ -376,7 +486,11 @@ def run_seed():
         result = session.execute(text("SELECT COUNT(*) FROM people"))
         count = result.scalar()
         if count > 0:
-            print("✅ Database already seeded, skipping.")
+            role_count = session.execute(text("SELECT COUNT(*) FROM public_official_roles")).scalar()
+            if role_count == 0:
+                load_public_official_roles(session)
+                session.commit()
+            print("✅ Database already seeded, skipping fixture reload.")
             return
 
         # People
@@ -438,6 +552,9 @@ def run_seed():
         # Events
         load_events(session)
         print("  → Loaded 10 events")
+
+        # Public officials
+        load_public_official_roles(session)
 
         session.commit()
         print("✅ Seed complete!")

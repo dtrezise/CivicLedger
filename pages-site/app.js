@@ -4,6 +4,9 @@ const state = {
   query: "",
   branch: "",
   assetClass: "",
+  officialQuery: "",
+  officialBranch: "",
+  officialTerm: "",
 };
 
 const fmt = new Intl.NumberFormat("en-US");
@@ -57,6 +60,10 @@ function affiliation(person) {
   ]);
 }
 
+function termLabel(termId) {
+  return state.data.public_officials?.scope?.presidential_terms?.[termId]?.label || termId;
+}
+
 function filteredPeople() {
   const query = state.query.trim().toLowerCase();
   return state.data.people.filter((person) => {
@@ -90,6 +97,8 @@ function renderSummary() {
   `;
   $("summaryMetrics").innerHTML = [
     ["Officials", summary.official_count],
+    ["Tracked Public Officials", summary.tracked_public_official_count],
+    ["Official Roles", summary.public_official_role_count],
     ["Filings", summary.filing_count],
     ["Trades", summary.trade_count],
     ["Raw Documents", summary.raw_document_count],
@@ -148,6 +157,18 @@ function hydrateControls() {
       .map((asset) => `<option value="${asset}">${asset.replaceAll("_", " ")}</option>`)
       .join("");
 
+  const officialBranches = [
+    ...new Set(state.data.public_officials.roles.map((role) => role.branch)),
+  ].sort();
+  $("officialBranchFilter").innerHTML =
+    '<option value="">All branches</option>' +
+    officialBranches.map((branch) => `<option value="${branch}">${branch}</option>`).join("");
+
+  const terms = Object.entries(state.data.public_officials.scope.presidential_terms);
+  $("officialTermFilter").innerHTML =
+    '<option value="">All terms</option>' +
+    terms.map(([id, term]) => `<option value="${id}">${escapeHtml(term.label)}</option>`).join("");
+
   $("searchInput").addEventListener("input", (event) => {
     state.query = event.target.value;
     renderExplorer();
@@ -159,6 +180,18 @@ function hydrateControls() {
   $("assetFilter").addEventListener("change", (event) => {
     state.assetClass = event.target.value;
     renderExplorer();
+  });
+  $("officialSearchInput").addEventListener("input", (event) => {
+    state.officialQuery = event.target.value;
+    renderPublicOfficials();
+  });
+  $("officialBranchFilter").addEventListener("change", (event) => {
+    state.officialBranch = event.target.value;
+    renderPublicOfficials();
+  });
+  $("officialTermFilter").addEventListener("change", (event) => {
+    state.officialTerm = event.target.value;
+    renderPublicOfficials();
   });
 }
 
@@ -317,6 +350,85 @@ function renderExplorer() {
   if (selected) renderProfile(selected);
 }
 
+function filteredOfficialRoles() {
+  const query = state.officialQuery.trim().toLowerCase();
+  return state.data.public_officials.roles.filter((role) => {
+    const branchOk = !state.officialBranch || role.branch === state.officialBranch;
+    const termOk = !state.officialTerm || role.presidential_term === state.officialTerm;
+    const haystack = [
+      role.full_name,
+      role.branch,
+      role.presidential_term,
+      role.administration,
+      role.role_category,
+      role.role_title,
+      role.office,
+      role.agency,
+      role.court,
+      role.appointing_president,
+      role.source_name,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return branchOk && termOk && (!query || haystack.includes(query));
+  });
+}
+
+function renderPublicOfficials() {
+  const summary = state.data.public_officials.summary;
+  const byTerm = Object.entries(summary.role_counts_by_term)
+    .map(
+      ([term, count]) => `
+        <div class="mini-stat">
+          <strong>${fmt.format(count)}</strong>
+          <span>${escapeHtml(termLabel(term))}</span>
+        </div>
+      `
+    )
+    .join("");
+  $("officialsSummary").innerHTML = `
+    <div class="profile-grid">
+      <div class="mini-stat"><strong>${fmt.format(summary.person_count)}</strong><span>People</span></div>
+      <div class="mini-stat"><strong>${fmt.format(summary.role_count)}</strong><span>Roles</span></div>
+      <div class="mini-stat"><strong>${fmt.format(summary.role_counts_by_branch.Executive || 0)}</strong><span>Executive roles</span></div>
+      <div class="mini-stat"><strong>${fmt.format(summary.role_counts_by_branch.Judicial || 0)}</strong><span>Judicial roles</span></div>
+      ${byTerm}
+    </div>
+  `;
+
+  const roles = filteredOfficialRoles();
+  const limitedRoles = roles.slice(0, 120);
+  $("officialRoleList").innerHTML = `
+    <div class="chart-title">
+      <span>${fmt.format(roles.length)} matching role${roles.length === 1 ? "" : "s"}</span>
+      <span>Showing ${fmt.format(limitedRoles.length)} rows</span>
+    </div>
+    ${limitedRoles
+      .map(
+        (role) => `
+          <article class="role-row">
+            <div>
+              <div class="role-title-line">
+                <strong>${escapeHtml(role.full_name)}</strong>
+                <span class="badge">${escapeHtml(role.branch)}</span>
+                <span class="badge gold">${escapeHtml(termLabel(role.presidential_term))}</span>
+              </div>
+              <p>${escapeHtml(role.role_title)}</p>
+              <small>${escapeHtml(role.court || role.agency || role.administration)}</small>
+            </div>
+            <div class="role-meta">
+              <span>${shortDate(role.service_start)}</span>
+              <span>${escapeHtml(role.role_category.replaceAll("_", " "))}</span>
+              <a href="${escapeHtml(role.source_url)}" target="_blank" rel="noopener noreferrer">Source</a>
+            </div>
+          </article>
+        `
+      )
+      .join("")}
+  `;
+}
+
 function renderSources() {
   $("sourceGrid").innerHTML = state.data.sources
     .map(
@@ -366,6 +478,7 @@ async function boot() {
   renderSummary();
   renderBranchChart();
   hydrateControls();
+  renderPublicOfficials();
   renderExplorer();
   renderSources();
   renderEvents();

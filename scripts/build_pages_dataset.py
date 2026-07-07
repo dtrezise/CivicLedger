@@ -24,6 +24,7 @@ from app.services.official_sources import OFFICIAL_SOURCES
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "pages-site" / "data" / "civicledger-static.json"
+PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
 
 
 def slugify(value: str) -> str:
@@ -123,8 +124,27 @@ def load_events() -> list[dict]:
         return json.load(handle)
 
 
+def load_public_officials() -> dict:
+    if not PUBLIC_OFFICIALS.exists():
+        return {
+            "summary": {
+                "person_count": 0,
+                "role_count": 0,
+                "role_counts_by_branch": {},
+                "role_counts_by_term": {},
+                "role_counts_by_category": {},
+            },
+            "people": [],
+            "roles": [],
+            "sources": [],
+        }
+    with PUBLIC_OFFICIALS.open() as handle:
+        return json.load(handle)
+
+
 def build_dataset() -> dict:
     random.seed(42)
+    public_officials = load_public_officials()
     people = create_people()
     all_people = []
     all_filings = []
@@ -258,17 +278,24 @@ def build_dataset() -> dict:
         "parser_version": settings.PARSER_VERSION,
         "site_mode": "public_static_demo",
         "disclaimer": (
-            "This public GitHub Pages edition uses fixture/demo data generated from the CivicLedger seed model. "
+            "This public GitHub Pages edition combines fixture/demo financial-disclosure records with "
+            "a source-backed public-official role roster for executive and judicial branch buildout. "
             "It demonstrates the interface and provenance approach, not a production public disclosure database."
         ),
         "summary": {
             "official_count": len(all_people),
+            "tracked_public_official_count": public_officials["summary"]["person_count"],
+            "public_official_role_count": public_officials["summary"]["role_count"],
             "filing_count": len(all_filings),
             "trade_count": len(all_trades),
             "raw_document_count": len(all_raw_documents),
             "event_count": len(load_events()),
             "branch_counts": dict(sorted(branch_counts.items())),
+            "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
+            "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
+            "public_official_role_counts_by_category": public_officials["summary"]["role_counts_by_category"],
         },
+        "public_officials": public_officials,
         "people": all_people,
         "filings": all_filings,
         "trades": all_trades,

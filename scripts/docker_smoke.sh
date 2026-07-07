@@ -24,6 +24,16 @@ done
 curl -fsS "http://localhost:${BACKEND_PORT}/meta/status" >/tmp/civicledger-backend-smoke.json
 curl -fsS "http://localhost:${BACKEND_PORT}/meta/sources" >/tmp/civicledger-sources-smoke.json
 curl -fsS "http://localhost:${BACKEND_PORT}/meta/source-completeness" >/tmp/civicledger-source-completeness-smoke.json
+curl -fsS "http://localhost:${BACKEND_PORT}/officials/roles?branch=Judicial&page_size=1" >/tmp/civicledger-officials-smoke.json
+python3 - <<'PY'
+import json
+
+with open("/tmp/civicledger-officials-smoke.json") as handle:
+    payload = json.load(handle)
+
+if payload.get("total", 0) < 1 or not payload.get("items"):
+    raise SystemExit("officials smoke endpoint returned no seeded roles")
+PY
 
 for i in {1..40}; do
   if curl -fsS "http://localhost:${FRONTEND_PORT}" >/tmp/civicledger-frontend-smoke.html; then
@@ -38,6 +48,7 @@ echo "Docker smoke passed:"
 echo "- backend http://localhost:${BACKEND_PORT}/meta/status"
 echo "- backend http://localhost:${BACKEND_PORT}/meta/sources"
 echo "- backend http://localhost:${BACKEND_PORT}/meta/source-completeness"
+echo "- backend http://localhost:${BACKEND_PORT}/officials/roles?branch=Judicial&page_size=1"
 echo "- frontend http://localhost:${FRONTEND_PORT}/"
 
 if [[ "$KEEP_RUNNING" != "1" ]]; then

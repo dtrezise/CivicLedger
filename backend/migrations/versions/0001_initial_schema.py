@@ -21,6 +21,7 @@ def upgrade() -> None:
         statement.strip()
         for statement in init_sql.read_text().split(";")
         if statement.strip()
+        and "public_official_roles" not in statement
     ]
     for statement in statements:
         op.execute(statement)

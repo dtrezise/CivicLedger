@@ -8,6 +8,7 @@ from app.routes import (
     trades,
     filings,
     raw_documents,
+    officials,
     review,
     ingestion_runs,
     evidence,
@@ -37,6 +38,7 @@ app.include_router(people.router)
 app.include_router(trades.router)
 app.include_router(filings.router)
 app.include_router(raw_documents.router)
+app.include_router(officials.router)
 app.include_router(review.router)
 app.include_router(ingestion_runs.router)
 app.include_router(evidence.router)

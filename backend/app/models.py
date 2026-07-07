@@ -32,6 +32,36 @@ class Person(Base):
 
     filings = relationship("Filing", back_populates="person")
     trades = relationship("Trade", back_populates="person")
+    public_official_roles = relationship("PublicOfficialRole", back_populates="person")
+
+
+class PublicOfficialRole(Base):
+    __tablename__ = "public_official_roles"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    person_id = Column(UUID(as_uuid=True), ForeignKey("people.id"), nullable=False)
+    external_role_id = Column(Text, nullable=False, unique=True)
+    external_person_id = Column(Text, nullable=False)
+    branch = Column(Text, nullable=False)
+    presidential_term = Column(Text, nullable=False)
+    administration = Column(Text, nullable=False)
+    role_category = Column(Text, nullable=False)
+    role_title = Column(Text, nullable=False)
+    office = Column(Text, nullable=True)
+    agency = Column(Text, nullable=True)
+    court = Column(Text, nullable=True)
+    service_start = Column(Date, nullable=True)
+    service_end = Column(Date, nullable=True)
+    appointing_president = Column(Text, nullable=True)
+    source_id = Column(Text, nullable=False)
+    source_name = Column(Text, nullable=False)
+    source_url = Column(Text, nullable=False)
+    source_tier = Column(Text, nullable=False, default="official")
+    source_retrieved_at = Column(Date, nullable=True)
+    source_metadata = Column(JSONB, nullable=False, default=dict)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+
+    person = relationship("Person", back_populates="public_official_roles")
 
 
 class IngestionRun(Base):
