@@ -36,6 +36,8 @@ jobs:
           PYTHONPATH: backend
         run: python scripts/build_pages_dataset.py
       - uses: actions/configure-pages@v6
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v5
         with:
           path: pages-site
