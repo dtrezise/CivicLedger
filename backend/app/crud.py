@@ -210,6 +210,11 @@ async def list_public_official_roles(
     branch: Optional[str] = None,
     presidential_term: Optional[str] = None,
     role_category: Optional[str] = None,
+    chamber: Optional[str] = None,
+    congress_number: Optional[int] = None,
+    party: Optional[str] = None,
+    state: Optional[str] = None,
+    district: Optional[str] = None,
     source_id: Optional[str] = None,
     q: Optional[str] = None,
     page: int = 1,
@@ -225,6 +230,16 @@ async def list_public_official_roles(
         filters.append(PublicOfficialRole.presidential_term == presidential_term)
     if role_category:
         filters.append(PublicOfficialRole.role_category == role_category)
+    if chamber:
+        filters.append(PublicOfficialRole.source_metadata["chamber"].astext == chamber)
+    if congress_number:
+        filters.append(PublicOfficialRole.source_metadata["congress_number"].astext == str(congress_number))
+    if party:
+        filters.append(PublicOfficialRole.source_metadata["party"].astext == party)
+    if state:
+        filters.append(PublicOfficialRole.source_metadata["state"].astext == state)
+    if district:
+        filters.append(PublicOfficialRole.source_metadata["district"].astext == district)
     if source_id:
         filters.append(PublicOfficialRole.source_id == source_id)
     if q:

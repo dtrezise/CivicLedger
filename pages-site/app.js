@@ -7,6 +7,11 @@ const state = {
   branch: "",
   roleCategory: "",
   term: "",
+  chamber: "",
+  congressNumber: "",
+  party: "",
+  officialState: "",
+  district: "",
 };
 
 const fmt = new Intl.NumberFormat("en-US");
@@ -59,8 +64,13 @@ function roleCategoryLabel(value) {
 
 function affiliation(person) {
   if (!person.primary_role) return person.branch;
+  const metadata = person.primary_role.source_metadata || {};
   return compact([
     person.branch,
+    metadata.chamber,
+    metadata.congress_number ? `${metadata.congress_number}th Congress` : null,
+    metadata.state,
+    metadata.district ? `District ${metadata.district}` : null,
     termLabel(person.primary_role.presidential_term),
     person.primary_role.office,
     person.primary_role.agency,
@@ -91,6 +101,11 @@ function buildExplorerPeople() {
         primary_role: primaryRole,
         role_terms: [...new Set(roles.map((role) => role.presidential_term))],
         role_categories: [...new Set(roles.map((role) => role.role_category))],
+        chambers: [...new Set(roles.map((role) => role.source_metadata?.chamber).filter(Boolean))],
+        congress_numbers: [...new Set(roles.map((role) => role.source_metadata?.congress_number).filter(Boolean))],
+        parties: [...new Set(roles.map((role) => role.source_metadata?.party).filter(Boolean))],
+        states: [...new Set(roles.map((role) => role.source_metadata?.state).filter(Boolean))],
+        districts: [...new Set(roles.map((role) => role.source_metadata?.district).filter(Boolean))],
       };
     })
     .sort((a, b) => {
@@ -130,6 +145,12 @@ function personMatchesQuery(person, query) {
       role.court,
       role.appointing_president,
       role.source_name,
+      role.source_metadata?.bioguide_id,
+      role.source_metadata?.congress_number,
+      role.source_metadata?.chamber,
+      role.source_metadata?.party,
+      role.source_metadata?.state,
+      role.source_metadata?.district,
     ]),
   ]
     .filter(Boolean)
@@ -138,14 +159,25 @@ function personMatchesQuery(person, query) {
   return haystack.includes(query);
 }
 
+function roleMatchesFilters(role) {
+  const metadata = role.source_metadata || {};
+  return (
+    (!state.roleCategory || role.role_category === state.roleCategory) &&
+    (!state.term || role.presidential_term === state.term) &&
+    (!state.chamber || metadata.chamber === state.chamber) &&
+    (!state.congressNumber || String(metadata.congress_number) === state.congressNumber) &&
+    (!state.party || metadata.party === state.party) &&
+    (!state.officialState || metadata.state === state.officialState) &&
+    (!state.district || String(metadata.district || "") === state.district)
+  );
+}
+
 function filteredPeople() {
   const query = state.query.trim().toLowerCase();
   return state.explorerPeople.filter((person) => {
     const branchOk = !state.branch || person.branch === state.branch;
-    const roleOk =
-      !state.roleCategory || person.roles.some((role) => role.role_category === state.roleCategory);
-    const termOk = !state.term || person.roles.some((role) => role.presidential_term === state.term);
-    return branchOk && roleOk && termOk && personMatchesQuery(person, query);
+    const roleOk = person.roles.some((role) => roleMatchesFilters(role));
+    return branchOk && roleOk && personMatchesQuery(person, query);
   });
 }
 
@@ -176,7 +208,22 @@ function toggleComparison(personId) {
 function selectBranch(branch) {
   state.branch = branch;
   $("branchFilter").value = branch;
+  if (branch && branch !== "Legislative") {
+    clearCongressionalFilters();
+  }
   renderExplorer();
+}
+
+function clearCongressionalFilters() {
+  state.chamber = "";
+  state.congressNumber = "";
+  state.party = "";
+  state.officialState = "";
+  state.district = "";
+  for (const id of ["chamberFilter", "congressFilter", "partyFilter", "stateFilter", "districtFilter"]) {
+    const control = $(id);
+    if (control) control.value = "";
+  }
 }
 
 function renderSummary() {
@@ -188,6 +235,7 @@ function renderSummary() {
   $("summaryMetrics").innerHTML = [
     ["Tracked Officials", summary.tracked_public_official_count],
     ["Official Roles", summary.public_official_role_count],
+    ["Legislative Roles", summary.public_official_role_counts_by_branch.Legislative || 0],
     ["Executive Roles", summary.public_official_role_counts_by_branch.Executive || 0],
     ["Judicial Roles", summary.public_official_role_counts_by_branch.Judicial || 0],
     ["Demo Filings", summary.filing_count],
@@ -227,7 +275,7 @@ function renderBranchChart() {
           `;
         })
         .join("")}
-      <text x="28" y="252" fill="#64706a" font-size="14">Branch overview. Legislative roster ingestion is not populated in this snapshot yet.</text>
+      <text x="28" y="252" fill="#64706a" font-size="14">Branch overview across source-backed public-official roles.</text>
     </svg>
   `;
 
@@ -284,12 +332,50 @@ function hydrateControls() {
     '<option value="">All terms</option>' +
     terms.map(([id, term]) => `<option value="${id}">${escapeHtml(term.label)}</option>`).join("");
 
+  $("chamberFilter").innerHTML =
+    '<option value="">All chambers</option>' +
+    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.chamber).filter(Boolean))]
+      .sort()
+      .map((chamber) => `<option value="${escapeHtml(chamber)}">${escapeHtml(chamber)}</option>`)
+      .join("");
+
+  $("congressFilter").innerHTML =
+    '<option value="">All Congresses</option>' +
+    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.congress_number).filter(Boolean))]
+      .sort((a, b) => Number(a) - Number(b))
+      .map((congress) => `<option value="${escapeHtml(congress)}">${escapeHtml(congress)}th Congress</option>`)
+      .join("");
+
+  $("partyFilter").innerHTML =
+    '<option value="">All parties</option>' +
+    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.party).filter(Boolean))]
+      .sort()
+      .map((party) => `<option value="${escapeHtml(party)}">${escapeHtml(party)}</option>`)
+      .join("");
+
+  $("stateFilter").innerHTML =
+    '<option value="">All states</option>' +
+    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.state).filter(Boolean))]
+      .sort()
+      .map((officialState) => `<option value="${escapeHtml(officialState)}">${escapeHtml(officialState)}</option>`)
+      .join("");
+
+  $("districtFilter").innerHTML =
+    '<option value="">All districts</option>' +
+    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.district).filter(Boolean))]
+      .sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }))
+      .map((district) => `<option value="${escapeHtml(district)}">${escapeHtml(district)}</option>`)
+      .join("");
+
   $("searchInput").addEventListener("input", (event) => {
     state.query = event.target.value;
     renderExplorer();
   });
   $("branchFilter").addEventListener("change", (event) => {
     state.branch = event.target.value;
+    if (state.branch && state.branch !== "Legislative") {
+      clearCongressionalFilters();
+    }
     renderExplorer();
   });
   $("roleFilter").addEventListener("change", (event) => {
@@ -300,11 +386,32 @@ function hydrateControls() {
     state.term = event.target.value;
     renderExplorer();
   });
+  $("chamberFilter").addEventListener("change", (event) => {
+    state.chamber = event.target.value;
+    renderExplorer();
+  });
+  $("congressFilter").addEventListener("change", (event) => {
+    state.congressNumber = event.target.value;
+    renderExplorer();
+  });
+  $("partyFilter").addEventListener("change", (event) => {
+    state.party = event.target.value;
+    renderExplorer();
+  });
+  $("stateFilter").addEventListener("change", (event) => {
+    state.officialState = event.target.value;
+    renderExplorer();
+  });
+  $("districtFilter").addEventListener("change", (event) => {
+    state.district = event.target.value;
+    renderExplorer();
+  });
   $("clearFilters").addEventListener("click", () => {
     state.query = "";
     state.branch = "";
     state.roleCategory = "";
     state.term = "";
+    clearCongressionalFilters();
     $("searchInput").value = "";
     $("branchFilter").value = "";
     $("roleFilter").value = "";
@@ -458,6 +565,7 @@ function renderProfile(person) {
     <div class="profile-grid">
       <div class="mini-stat"><strong>${escapeHtml(latestRole ? termLabel(latestRole.presidential_term) : "n/a")}</strong><span>Latest term</span></div>
       <div class="mini-stat"><strong>${escapeHtml(roleCategoryLabel(latestRole?.role_category || "n/a"))}</strong><span>Role type</span></div>
+      <div class="mini-stat"><strong>${escapeHtml(latestRole?.source_metadata?.chamber || latestRole?.source_metadata?.congress_number || "n/a")}</strong><span>Chamber / congress</span></div>
       <div class="mini-stat"><strong>${shortDate(latestRole?.service_start)}</strong><span>Latest start</span></div>
       <div class="mini-stat"><strong>${escapeHtml(latestRole?.source_tier || "n/a")}</strong><span>Source tier</span></div>
     </div>
@@ -468,6 +576,7 @@ function renderProfile(person) {
         <thead>
           <tr>
             <th>Term</th>
+            <th>Chamber</th>
             <th>Role</th>
             <th>Agency / Court</th>
             <th>Start</th>
@@ -480,6 +589,12 @@ function renderProfile(person) {
               (role) => `
                 <tr>
                   <td>${escapeHtml(termLabel(role.presidential_term))}</td>
+                  <td>${escapeHtml(compact([
+                    role.source_metadata?.chamber,
+                    role.source_metadata?.congress_number ? `${role.source_metadata.congress_number}th` : null,
+                    role.source_metadata?.state,
+                    role.source_metadata?.district,
+                  ]) || "n/a")}</td>
                   <td>${escapeHtml(role.role_title)}</td>
                   <td>${escapeHtml(role.court || role.agency || role.administration)}</td>
                   <td>${shortDate(role.service_start)}</td>

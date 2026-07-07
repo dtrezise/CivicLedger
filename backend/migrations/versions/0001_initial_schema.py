@@ -22,6 +22,7 @@ def upgrade() -> None:
         for statement in init_sql.read_text().split(";")
         if statement.strip()
         and "public_official_roles" not in statement
+        and "congressional_service_terms" not in statement
     ]
     for statement in statements:
         op.execute(statement)
@@ -29,6 +30,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     for table_name in [
+        "congressional_service_terms",
         "sharecards",
         "market_series",
         "event_sources",

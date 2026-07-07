@@ -26,6 +26,7 @@ from app.models import (
     MarketSeries,
     ParserArtifact,
     PublicOfficialRole,
+    CongressionalServiceTerm,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -419,16 +420,17 @@ def load_public_official_roles(session):
                 role.get("role_title") or "",
             ),
         )[0]
+        first_metadata = first_role.get("source_metadata") or {}
         if session.get(Person, person_id) is None:
             session.add(
                 Person(
                     id=person_id,
                     full_name=person_row["full_name"],
                     branch=person_row["branch"],
-                    chamber=None,
-                    state=None,
-                    party=None,
-                    district=None,
+                    chamber=first_metadata.get("chamber") if person_row["branch"] == "Legislative" else None,
+                    state=first_metadata.get("state") if person_row["branch"] == "Legislative" else None,
+                    party=first_metadata.get("party") if person_row["branch"] == "Legislative" else None,
+                    district=first_metadata.get("district") if person_row["branch"] == "Legislative" else None,
                     office=first_role.get("office"),
                     agency=first_role.get("agency"),
                     court=first_role.get("court"),
@@ -441,40 +443,71 @@ def load_public_official_roles(session):
     session.flush()
 
     created_roles = 0
+    created_service_terms = 0
     for role in role_rows:
         role_id = stable_seed_uuid(f"public-official-role:{role['external_role_id']}")
         if session.get(PublicOfficialRole, role_id) is not None:
+            pass
+        else:
+            session.add(
+                PublicOfficialRole(
+                    id=role_id,
+                    person_id=person_id_by_external_id[role["external_person_id"]],
+                    external_role_id=role["external_role_id"],
+                    external_person_id=role["external_person_id"],
+                    branch=role["branch"],
+                    presidential_term=role["presidential_term"],
+                    administration=role["administration"],
+                    role_category=role["role_category"],
+                    role_title=role["role_title"],
+                    office=role.get("office"),
+                    agency=role.get("agency"),
+                    court=role.get("court"),
+                    service_start=parse_optional_date(role.get("service_start")),
+                    service_end=parse_optional_date(role.get("service_end")),
+                    appointing_president=role.get("appointing_president"),
+                    source_id=role["source_id"],
+                    source_name=role["source_name"],
+                    source_url=role["source_url"],
+                    source_tier=role["source_tier"],
+                    source_retrieved_at=parse_optional_date(role.get("source_retrieved_at")),
+                    source_metadata=role.get("source_metadata") or {},
+                )
+            )
+            created_roles += 1
+
+        metadata = role.get("source_metadata") or {}
+        if role["branch"] != "Legislative" or not metadata.get("bioguide_id"):
+            continue
+        term_id = stable_seed_uuid(f"congressional-service-term:{role['external_role_id']}")
+        if session.get(CongressionalServiceTerm, term_id) is not None:
             continue
         session.add(
-            PublicOfficialRole(
-                id=role_id,
+            CongressionalServiceTerm(
+                id=term_id,
                 person_id=person_id_by_external_id[role["external_person_id"]],
-                external_role_id=role["external_role_id"],
-                external_person_id=role["external_person_id"],
-                branch=role["branch"],
-                presidential_term=role["presidential_term"],
-                administration=role["administration"],
-                role_category=role["role_category"],
-                role_title=role["role_title"],
-                office=role.get("office"),
-                agency=role.get("agency"),
-                court=role.get("court"),
+                bioguide_id=metadata["bioguide_id"],
+                congress_number=metadata["congress_number"],
+                chamber=metadata["chamber"],
+                state=metadata.get("state"),
+                district=metadata.get("district"),
+                party=metadata.get("party"),
                 service_start=parse_optional_date(role.get("service_start")),
                 service_end=parse_optional_date(role.get("service_end")),
-                appointing_president=role.get("appointing_president"),
                 source_id=role["source_id"],
                 source_name=role["source_name"],
                 source_url=role["source_url"],
-                source_tier=role["source_tier"],
                 source_retrieved_at=parse_optional_date(role.get("source_retrieved_at")),
-                source_metadata=role.get("source_metadata") or {},
+                source_metadata=metadata,
             )
         )
-        created_roles += 1
+        created_service_terms += 1
 
     session.flush()
     print(f"  → Loaded {len(person_rows)} public official people")
     print(f"  → Loaded {created_roles} public official roles")
+    if created_service_terms:
+        print(f"  → Loaded {created_service_terms} congressional service terms")
     return created_roles
 
 

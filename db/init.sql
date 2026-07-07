@@ -45,6 +45,31 @@ CREATE INDEX idx_public_official_roles_person ON public_official_roles(person_id
 CREATE INDEX idx_public_official_roles_branch_term ON public_official_roles(branch, presidential_term);
 CREATE INDEX idx_public_official_roles_category ON public_official_roles(role_category);
 
+CREATE TABLE congressional_service_terms (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    person_id UUID NOT NULL REFERENCES people(id),
+    bioguide_id TEXT NOT NULL,
+    congress_number INT NOT NULL,
+    chamber TEXT NOT NULL CHECK (chamber IN ('House','Senate')),
+    state TEXT,
+    district TEXT,
+    party TEXT,
+    service_start DATE,
+    service_end DATE,
+    source_id TEXT NOT NULL,
+    source_name TEXT NOT NULL,
+    source_url TEXT NOT NULL,
+    source_retrieved_at DATE,
+    source_metadata JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE (bioguide_id, congress_number, chamber, state, district)
+);
+
+CREATE INDEX idx_congressional_service_terms_person ON congressional_service_terms(person_id);
+CREATE INDEX idx_congressional_service_terms_bioguide ON congressional_service_terms(bioguide_id);
+CREATE INDEX idx_congressional_service_terms_congress ON congressional_service_terms(congress_number, chamber);
+CREATE INDEX idx_congressional_service_terms_state_party ON congressional_service_terms(state, party);
+
 CREATE TABLE ingestion_runs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     source_name TEXT NOT NULL,

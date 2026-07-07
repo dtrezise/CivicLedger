@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     METHODOLOGY_VERSION: str = "1.0.0"
     DATASET_VERSION: str = "seed-v1"
     PARSER_VERSION: str = "1.0.0"
+    CONGRESS_GOV_API_KEY: str | None = None
 
     @property
     def cors_origins_list(self) -> list[str]:

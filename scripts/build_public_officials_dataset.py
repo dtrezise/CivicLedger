@@ -21,6 +21,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "public_officials" / "public_official_roles.json"
+CONGRESSIONAL_OUTPUT = ROOT / "data" / "public_officials" / "congressional_service_terms.json"
 
 FJC_SERVICE_CSV = "https://www.fjc.gov/sites/default/files/history/federal-judicial-service.csv"
 FJC_EXPORT_PAGE = (
@@ -201,6 +202,25 @@ def source_info(source_id: str) -> dict:
             "url": TRUMP47_NOMINATION_PAGE,
             "source_tier": "official",
             "branch": "Executive",
+        },
+        "congress-gov-member-roster": {
+            "name": "Congress.gov Member API",
+            "url": "https://api.congress.gov/v3/member/congress/{congress}",
+            "landing_url": "https://api.congress.gov/",
+            "source_tier": "official",
+            "branch": "Legislative",
+        },
+        "house-clerk-current-members": {
+            "name": "House Clerk Current Member XML",
+            "url": "https://clerk.house.gov/xml/lists/memberdata.xml",
+            "source_tier": "official",
+            "branch": "Legislative",
+        },
+        "senate-current-members": {
+            "name": "Senate.gov Current Senators XML",
+            "url": "https://www.senate.gov/general/contact_information/senators_cfm.xml",
+            "source_tier": "official",
+            "branch": "Legislative",
         },
     }
     return sources[source_id]
@@ -448,8 +468,15 @@ def judicial_rows() -> list[dict]:
     return rows
 
 
+def congressional_rows() -> list[dict]:
+    if not CONGRESSIONAL_OUTPUT.exists():
+        return []
+    data = json.loads(CONGRESSIONAL_OUTPUT.read_text())
+    return data.get("roles", [])
+
+
 def build_dataset() -> dict:
-    roles = executive_rows() + judicial_rows()
+    roles = executive_rows() + judicial_rows() + congressional_rows()
     people = {}
     for role in roles:
         person = people.setdefault(
@@ -473,12 +500,13 @@ def build_dataset() -> dict:
     return {
         "generated_at": date.today().isoformat(),
         "scope": {
-            "branches": ["Executive", "Judicial"],
+            "branches": ["Executive", "Judicial", "Legislative"],
             "presidential_terms": TERMS,
             "description": (
-                "Initial public-official role database focused on executive Cabinet "
-                "and Cabinet-level officials plus Article III judges appointed "
-                "during the last three presidential terms."
+                "Source-backed public-official role database for executive Cabinet "
+                "and Cabinet-level officials, Article III judges appointed during "
+                "the last three presidential terms, and congressional service "
+                "records for the 115th through 119th Congresses."
             ),
         },
         "summary": {

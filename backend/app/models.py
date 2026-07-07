@@ -33,6 +33,7 @@ class Person(Base):
     filings = relationship("Filing", back_populates="person")
     trades = relationship("Trade", back_populates="person")
     public_official_roles = relationship("PublicOfficialRole", back_populates="person")
+    congressional_service_terms = relationship("CongressionalServiceTerm", back_populates="person")
 
 
 class PublicOfficialRole(Base):
@@ -62,6 +63,44 @@ class PublicOfficialRole(Base):
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 
     person = relationship("Person", back_populates="public_official_roles")
+
+
+class CongressionalServiceTerm(Base):
+    __tablename__ = "congressional_service_terms"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    person_id = Column(UUID(as_uuid=True), ForeignKey("people.id"), nullable=False)
+    bioguide_id = Column(Text, nullable=False)
+    congress_number = Column(Integer, nullable=False)
+    chamber = Column(Text, nullable=False)
+    state = Column(Text, nullable=True)
+    district = Column(Text, nullable=True)
+    party = Column(Text, nullable=True)
+    service_start = Column(Date, nullable=True)
+    service_end = Column(Date, nullable=True)
+    source_id = Column(Text, nullable=False)
+    source_name = Column(Text, nullable=False)
+    source_url = Column(Text, nullable=False)
+    source_retrieved_at = Column(Date, nullable=True)
+    source_metadata = Column(JSONB, nullable=False, default=dict)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+
+    person = relationship("Person", back_populates="congressional_service_terms")
+
+    __table_args__ = (
+        UniqueConstraint(
+            "bioguide_id",
+            "congress_number",
+            "chamber",
+            "state",
+            "district",
+            name="uq_congressional_service_terms_identity",
+        ),
+        Index("idx_congressional_service_terms_person", "person_id"),
+        Index("idx_congressional_service_terms_bioguide", "bioguide_id"),
+        Index("idx_congressional_service_terms_congress", "congress_number", "chamber"),
+        Index("idx_congressional_service_terms_state_party", "state", "party"),
+    )
 
 
 class IngestionRun(Base):

@@ -10,10 +10,13 @@ def test_public_officials_dataset_has_expected_initial_scope():
     data = json.loads(DATASET.read_text())
     summary = data["summary"]
 
-    assert summary["person_count"] >= 500
-    assert summary["role_count"] >= 550
+    assert summary["person_count"] >= 1400
+    assert summary["role_count"] >= 3300
     assert summary["role_counts_by_branch"]["Executive"] >= 50
     assert summary["role_counts_by_branch"]["Judicial"] >= 500
+    assert summary["role_counts_by_branch"]["Legislative"] >= 2700
+    assert summary["role_counts_by_category"]["representative"] >= 2100
+    assert summary["role_counts_by_category"]["senator"] >= 550
     assert set(summary["role_counts_by_term"]) == {"trump-45", "biden-46", "trump-47"}
 
 
@@ -27,3 +30,16 @@ def test_public_officials_dataset_roles_are_source_backed():
         assert role["full_name"]
         assert role["source_url"].startswith("https://")
         assert role["source_tier"] in {"official", "official_archive"}
+
+
+def test_congressional_dataset_has_115th_to_119th_counts():
+    data = json.loads((ROOT / "data" / "public_officials" / "congressional_service_terms.json").read_text())
+    summary = data["summary"]
+
+    assert data["scope"]["congress_numbers"] == [115, 116, 117, 118, 119]
+    assert summary["person_count"] >= 900
+    assert summary["role_count"] >= 2700
+    assert set(summary["role_counts_by_congress"]) == {"115", "116", "117", "118", "119"}
+    assert all(count >= 540 for count in summary["role_counts_by_congress"].values())
+    assert summary["role_counts_by_chamber"]["House"] >= 2200
+    assert summary["role_counts_by_chamber"]["Senate"] >= 550

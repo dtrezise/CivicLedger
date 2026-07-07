@@ -388,7 +388,7 @@ h3 {
 
 .controls-band {
   display: grid;
-  grid-template-columns: minmax(260px, 1.2fr) minmax(150px, 0.5fr) minmax(170px, 0.6fr) minmax(150px, 0.5fr) auto;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   align-items: end;
   gap: 14px;
   margin-bottom: 14px;
@@ -407,6 +407,10 @@ h3 {
   font-weight: 800;
 }
 
+.controls-band label:first-child {
+  grid-column: span 2;
+}
+
 input,
 select,
 .clear-button {
@@ -420,7 +424,7 @@ select,
 }
 
 .clear-button {
-  width: auto;
+  width: 100%;
   min-width: 82px;
   background: #f8fbfc;
   font-weight: 800;
@@ -931,6 +935,10 @@ svg {
   .role-row,
   .overview-grid {
     grid-template-columns: 1fr;
+  }
+
+  .controls-band label:first-child {
+    grid-column: auto;
   }
 
   .branch-cards {

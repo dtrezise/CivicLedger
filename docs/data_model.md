@@ -3,6 +3,8 @@
 ## Existing MVP Tables
 
 - `people`: public officials and service metadata across legislative, executive, and judicial branches.
+- `public_official_roles`: source-backed role records across presidential terms and federal branches.
+- `congressional_service_terms`: Bioguide-keyed congressional service terms by Congress number.
 - `ingestion_runs`: ingestion job metadata, parser version, dataset version, and status.
 - `raw_documents`: source-first archival metadata for raw filing documents.
 - `filings`: filing metadata, source URL, retrieval timestamp, file hash, retrieval source.
@@ -67,6 +69,10 @@ Stores parser evidence without promoting unreviewed data into public-facing tabl
 ### people branch fields
 
 The root `people` table now treats `branch` as the primary branch discriminator. `chamber` is nullable and should only be used for legislative records. Executive records should use `office` and `agency`; judicial records should use `court` and, later, judge-type metadata.
+
+### congressional service terms
+
+Congressional records use `bioguide_id` as the canonical legislative person key. The durable service grain is one person in one Congress/chamber/state/district combination. Public Pages data mirrors these fields into `public_official_roles.source_metadata` so the static explorer can filter by chamber, Congress, party, state, and district without requiring the FastAPI backend.
 
 ### event_people
 

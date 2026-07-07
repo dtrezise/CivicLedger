@@ -279,7 +279,7 @@ def build_dataset() -> dict:
         "site_mode": "public_static_demo",
         "disclaimer": (
             "This public GitHub Pages edition combines fixture/demo financial-disclosure records with "
-            "a source-backed public-official role roster for executive and judicial branch buildout. "
+            "a source-backed public-official role roster for legislative, executive, and judicial branch buildout. "
             "It demonstrates the interface and provenance approach, not a production public disclosure database."
         ),
         "summary": {
