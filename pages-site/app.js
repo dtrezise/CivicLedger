@@ -14,9 +14,9 @@ const money = new Intl.NumberFormat("en-US", {
 });
 
 const branchColors = {
-  Legislative: "#0f766e",
-  Executive: "#b7791f",
-  Judicial: "#6d5bd0",
+  Legislative: "#0b6b8f",
+  Executive: "#b66a1d",
+  Judicial: "#7154a6",
 };
 
 function $(id) {
@@ -105,16 +105,14 @@ function renderSummary() {
     )
     .join("");
   $("footerVersion").textContent = `Dataset ${state.data.dataset_version} / generated ${state.data.generated_at}`;
+  const readout = $("datasetReadout");
+  if (readout) readout.textContent = state.data.dataset_version;
 }
 
 function renderBranchChart() {
   const entries = Object.entries(state.data.summary.branch_counts);
   const max = Math.max(...entries.map(([, count]) => count));
   $("branchChart").innerHTML = `
-    <div class="chart-title">
-      <span>Branch Coverage</span>
-      <span>${fmt.format(state.data.summary.official_count)} officials</span>
-    </div>
     <svg viewBox="0 0 520 330" role="img" aria-label="Official count by branch">
       <rect x="0" y="0" width="520" height="330" fill="transparent"></rect>
       ${entries
@@ -165,6 +163,10 @@ function hydrateControls() {
 }
 
 function renderPeopleList(people) {
+  const directoryCount = $("directoryCount");
+  if (directoryCount) {
+    directoryCount.textContent = `${people.length} official${people.length === 1 ? "" : "s"}`;
+  }
   $("peopleList").innerHTML =
     people
       .map(
@@ -345,7 +347,7 @@ function renderEvents() {
   $("eventsList").innerHTML = state.data.events
     .map(
       (event) => `
-        <article class="event-item">
+        <article class="event-card">
           <div class="event-date">${shortDate(event.date)}</div>
           <div>
             <h3>${escapeHtml(event.label)}</h3>

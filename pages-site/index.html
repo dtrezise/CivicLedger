@@ -12,42 +12,65 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="#top" aria-label="CivicLedger home">
-        <span class="brand-mark">CL</span>
-        <span>CivicLedger</span>
-      </a>
-      <nav class="nav" aria-label="Site sections">
-        <a href="#explore">Explore</a>
+    <div class="app-shell">
+      <header class="topbar" id="top">
+        <div>
+          <p class="eyebrow">Federal disclosure transparency</p>
+          <h1>CivicLedger public demo</h1>
+          <p class="subtitle">
+            Fixture-data preview of disclosure timelines, reporting lag, source
+            readiness, and provenance across the legislative, executive, and
+            judicial branches.
+          </p>
+        </div>
+        <div class="status-cluster" aria-label="Project status">
+          <a class="trust-pill" href="https://github.com/dtrezise/CivicLedger">
+            Repository
+          </a>
+          <div class="data-status-pill">
+            <span>Mode</span>
+            <strong>Public demo</strong>
+          </div>
+          <div class="data-status-pill">
+            <span>Publishing</span>
+            <strong>GitHub Pages</strong>
+          </div>
+        </div>
+      </header>
+
+      <nav class="mode-tabs" aria-label="Dashboard sections">
+        <a class="active" href="#explore">Explore</a>
         <a href="#sources">Sources</a>
         <a href="#events">Events</a>
         <a href="#methodology">Methodology</a>
       </nav>
-    </header>
 
-    <main id="top">
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Federal disclosure transparency</p>
-          <h1>CivicLedger public demo</h1>
-          <p class="lead">
-            Explore a fixture-data preview of disclosure timelines, reporting lag,
-            source readiness, and provenance across legislative, executive, and
-            judicial branches.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#explore">Explore Officials</a>
-            <a class="button secondary" href="https://github.com/dtrezise/CivicLedger">View Repository</a>
+      <section class="metric-strip" id="summaryMetrics" aria-label="Dataset summary"></section>
+
+      <section class="source-note" id="demoNotice"></section>
+
+      <section class="chart-panel">
+        <div class="chart-head">
+          <div>
+            <h2>Branch Coverage</h2>
+            <p>
+              Static snapshot generated from the CivicLedger seed model for
+              public interface evaluation.
+            </p>
+          </div>
+          <div class="readout">
+            <span>Dataset</span>
+            <strong id="datasetReadout">seed-v1</strong>
+            <small>fixture snapshot</small>
           </div>
         </div>
-        <div class="hero-visual" aria-label="CivicLedger branch distribution">
-          <div id="branchChart" class="branch-chart"></div>
+        <div id="branchChart" class="branch-chart"></div>
+        <div class="legend-row">
+          <span class="legend legislative">Legislative</span>
+          <span class="legend executive">Executive</span>
+          <span class="legend judicial">Judicial</span>
         </div>
       </section>
-
-      <section class="notice" id="demoNotice"></section>
-
-      <section class="metrics" id="summaryMetrics" aria-label="Dataset summary"></section>
 
       <section class="workspace" id="explore">
         <div class="section-heading">
@@ -57,28 +80,35 @@
           </div>
           <p>
             Search and filter the public demo snapshot. Selecting an official
-            updates the profile, timeline, trade table, and provenance summary.
+            updates the profile, transaction timeline, trade table, and provenance summary.
           </p>
         </div>
 
+        <div class="controls-band">
+          <label>
+            <span>Search</span>
+            <input id="searchInput" type="search" placeholder="Name, agency, court, asset..." />
+          </label>
+          <label>
+            <span>Branch</span>
+            <select id="branchFilter">
+              <option value="">All branches</option>
+            </select>
+          </label>
+          <label>
+            <span>Asset Class</span>
+            <select id="assetFilter">
+              <option value="">All assets</option>
+            </select>
+          </label>
+        </div>
+
         <div class="explorer">
-          <aside class="directory" aria-label="Official directory controls">
-            <label class="field">
-              <span>Search</span>
-              <input id="searchInput" type="search" placeholder="Name, agency, court, asset..." />
-            </label>
-            <label class="field">
-              <span>Branch</span>
-              <select id="branchFilter">
-                <option value="">All branches</option>
-              </select>
-            </label>
-            <label class="field">
-              <span>Asset Class</span>
-              <select id="assetFilter">
-                <option value="">All assets</option>
-              </select>
-            </label>
+          <aside class="directory" aria-label="Official directory">
+            <div class="directory-heading">
+              <h3>Directory</h3>
+              <span id="directoryCount">0 officials</span>
+            </div>
             <div id="peopleList" class="people-list"></div>
           </aside>
 
@@ -86,7 +116,7 @@
         </div>
       </section>
 
-      <section class="panel" id="sources">
+      <section class="list-view" id="sources">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Provenance</p>
@@ -100,7 +130,7 @@
         <div id="sourceGrid" class="source-grid"></div>
       </section>
 
-      <section class="panel" id="events">
+      <section class="list-view" id="events">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Context</p>
@@ -111,37 +141,39 @@
             causation, legality, ethics, or investment performance.
           </p>
         </div>
-        <div id="eventsList" class="events-list"></div>
+        <div id="eventsList" class="event-grid"></div>
       </section>
 
-      <section class="panel methodology" id="methodology">
-        <div>
-          <p class="eyebrow">Methodology</p>
-          <h2>What This Site Does and Does Not Claim</h2>
+      <section class="research-layout" id="methodology">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Methodology</p>
+            <h2>What This Site Does and Does Not Claim</h2>
+          </div>
         </div>
         <div class="method-grid">
-          <article>
+          <article class="research-block">
             <h3>Neutral Presentation</h3>
             <p>
               CivicLedger presents filing dates, reported ranges, disclosure lag,
               source context, and parser provenance without ranking or accusing officials.
             </p>
           </article>
-          <article>
+          <article class="research-block">
             <h3>Fixture Data</h3>
             <p>
               This Pages edition uses generated demo records. It is public-facing
               as a product preview, not a production public disclosure database.
             </p>
           </article>
-          <article>
+          <article class="research-block">
             <h3>Source Separation</h3>
             <p>
               House, Senate, OGE, and judiciary records remain branch-aware because
               their forms, access workflows, and disclosure rules differ.
             </p>
           </article>
-          <article>
+          <article class="research-block">
             <h3>Provenance First</h3>
             <p>
               The full app stores raw documents before parser output and requires
@@ -150,12 +182,12 @@
           </article>
         </div>
       </section>
-    </main>
 
-    <footer class="footer">
-      <span>CivicLedger public demo</span>
-      <span id="footerVersion"></span>
-    </footer>
+      <footer class="footer">
+        <span>CivicLedger public demo</span>
+        <span id="footerVersion"></span>
+      </footer>
+    </div>
 
     <script src="./app.js" type="module"></script>
   </body>
