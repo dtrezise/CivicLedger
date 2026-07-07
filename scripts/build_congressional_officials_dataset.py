@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a Congress.gov-backed public-official roster for 115th-119th Congresses."""
+"""Build a Congress.gov-backed public-official roster for 111th-119th Congresses."""
 
 from __future__ import annotations
 
@@ -32,6 +32,34 @@ from app.services.congress_sources import (  # noqa: E402
 
 OUTPUT = ROOT / "data" / "public_officials" / "congressional_service_terms.json"
 CONGRESSES = {
+    111: {
+        "label": "111th Congress",
+        "presidential_term": "obama-44",
+        "administration": "Barack Obama Administration",
+        "congress_start": "2009-01-03",
+        "congress_end": "2011-01-03",
+    },
+    112: {
+        "label": "112th Congress",
+        "presidential_term": "obama-44",
+        "administration": "Barack Obama Administration",
+        "congress_start": "2011-01-03",
+        "congress_end": "2013-01-03",
+    },
+    113: {
+        "label": "113th Congress",
+        "presidential_term": "obama-44",
+        "administration": "Barack Obama Administration",
+        "congress_start": "2013-01-03",
+        "congress_end": "2015-01-03",
+    },
+    114: {
+        "label": "114th Congress",
+        "presidential_term": "obama-44",
+        "administration": "Barack Obama Administration",
+        "congress_start": "2015-01-03",
+        "congress_end": "2017-01-03",
+    },
     115: {
         "label": "115th Congress",
         "presidential_term": "trump-45",
@@ -99,15 +127,17 @@ def source_info(source_id: str) -> dict:
 
 def role_start_for_member(member: dict, congress: dict) -> str:
     terms = member.get("terms", {}).get("item", [])
-    years = [
-        term.get("startYear")
+    years = sorted(
+        int(term.get("startYear"))
         for term in terms
         if term.get("startYear") and chamber_label(term.get("chamber")) in {"House", "Senate"}
-    ]
+    )
     if not years:
         return congress["congress_start"]
-    start_year = int(max(years))
     congress_start_year = int(congress["congress_start"][:4])
+    congress_end_year = int(congress["congress_end"][:4])
+    eligible_years = [year for year in years if congress_start_year <= year < congress_end_year]
+    start_year = eligible_years[0] if eligible_years else congress_start_year
     if start_year > congress_start_year:
         return f"{start_year}-01-03"
     return congress["congress_start"]
@@ -226,7 +256,7 @@ def build_dataset(api_key: str | None = None) -> dict:
             "congress_numbers": list(CONGRESSES),
             "congresses": CONGRESSES,
             "description": (
-                "Congressional public-official service roster for the 115th through "
+                "Congressional public-official service roster for the 111th through "
                 "119th Congresses, generated from Congress.gov member records."
             ),
         },

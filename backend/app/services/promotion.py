@@ -148,6 +148,8 @@ def promote_preview_artifact(
             "promoted_from_artifact_id": str(preview.id),
             "person_name": person_name,
             "branch": branch,
+            "record_status": "reviewed_promoted",
+            "confidence_label": "Reviewed promoted filing",
         },
         confidence=preview.confidence,
     )
@@ -194,6 +196,8 @@ def promote_preview_artifact(
                 parser_output={
                     "reviewed_by": reviewer,
                     "promoted_from_artifact_id": str(preview.id),
+                    "record_status": "reviewed_promoted",
+                    "confidence_label": "Reviewed promoted trade",
                     "row": row,
                 },
                 confidence=confidence,

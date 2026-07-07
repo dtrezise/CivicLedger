@@ -1,0 +1,94 @@
+{
+  "context_label": "Presidential OGE disclosure status records identify source readiness only. They are not trade records and do not imply any transaction activity.",
+  "generated_at": "2026-07-07",
+  "ingestion_policy": {
+    "parser_source_id": "oge-individual-disclosures",
+    "preserve_use_restrictions": true,
+    "raw_document_required": true,
+    "review_required_before_public_trade": true,
+    "supported_forms": [
+      "OGE Form 278e",
+      "OGE Form 278-T"
+    ]
+  },
+  "officials": [
+    {
+      "availability_note": "Historical presidential public financial disclosure records may require official archive review or OGE Form 201/agency request workflows.",
+      "expected_forms": [
+        "OGE Form 278e",
+        "OGE Form 278-T"
+      ],
+      "full_name": "Barack Obama",
+      "official_id": "exec:barack-obama",
+      "presidential_term": "obama-44",
+      "reviewed_trade_count": 0,
+      "service_end": "2017-01-20",
+      "service_start": "2009-01-20",
+      "source_status": "historical_request_or_archive_required",
+      "term_label": "Obama 44"
+    },
+    {
+      "availability_note": "OGE individual disclosures should be searched and archived before any normalized presidential trade rows are promoted.",
+      "expected_forms": [
+        "OGE Form 278e",
+        "OGE Form 278-T"
+      ],
+      "full_name": "Donald J. Trump",
+      "official_id": "exec:donald-j-trump",
+      "presidential_term": "trump-45",
+      "reviewed_trade_count": 0,
+      "service_end": "2021-01-20",
+      "service_start": "2017-01-20",
+      "source_status": "oge_collection_search_required",
+      "term_label": "Trump 45"
+    },
+    {
+      "availability_note": "OGE individual disclosures should be searched and archived before any normalized presidential trade rows are promoted.",
+      "expected_forms": [
+        "OGE Form 278e",
+        "OGE Form 278-T"
+      ],
+      "full_name": "Joseph R. Biden",
+      "official_id": "exec:joseph-r-biden",
+      "presidential_term": "biden-46",
+      "reviewed_trade_count": 0,
+      "service_end": "2025-01-20",
+      "service_start": "2021-01-20",
+      "source_status": "oge_collection_search_required",
+      "term_label": "Biden 46"
+    },
+    {
+      "availability_note": "Current-term disclosures require scheduled OGE collection review and reviewer promotion before becoming production trade rows.",
+      "expected_forms": [
+        "OGE Form 278e",
+        "OGE Form 278-T"
+      ],
+      "full_name": "Donald J. Trump",
+      "official_id": "exec:donald-j-trump",
+      "presidential_term": "trump-47",
+      "reviewed_trade_count": 0,
+      "service_end": null,
+      "service_start": "2025-01-20",
+      "source_status": "live_tracking_required",
+      "term_label": "Trump 47"
+    }
+  ],
+  "schema_version": "presidential-oge-disclosure-status-v1",
+  "source": {
+    "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
+    "faq_url": "https://www.oge.gov/web/oge.nsf/publicresources_disclosure-faq",
+    "financial_disclosure_url": "https://www.oge.gov/web/oge.nsf/ethicsofficials_financial-disc",
+    "id": "oge-individual-disclosures",
+    "name": "OGE Officials' Individual Disclosures",
+    "source_tier": "official"
+  },
+  "summary": {
+    "official_status_count": 4,
+    "reviewed_trade_count": 0,
+    "source_status_counts": {
+      "historical_request_or_archive_required": 1,
+      "live_tracking_required": 1,
+      "oge_collection_search_required": 2
+    }
+  }
+}

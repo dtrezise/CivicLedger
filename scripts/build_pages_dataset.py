@@ -29,6 +29,8 @@ PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.j
 FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 CRYPTO_PRICES = ROOT / "data" / "context" / "crypto_prices.json"
+CURATED_TIMELINE_EVENTS = ROOT / "data" / "context" / "timeline_events.json"
+PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
 
@@ -286,7 +288,22 @@ def market_snapshot(series: list[dict], metadata: dict) -> dict:
 
 def load_events() -> list[dict]:
     with (FIXTURES / "events" / "events.json").open() as handle:
-        return json.load(handle)
+        fixture_events = json.load(handle)
+    if not CURATED_TIMELINE_EVENTS.exists():
+        return fixture_events
+    curated = json.loads(CURATED_TIMELINE_EVENTS.read_text())
+    return fixture_events + curated.get("events", [])
+
+
+def load_presidential_oge_status() -> dict:
+    if not PRESIDENTIAL_OGE_STATUS.exists():
+        return {
+            "context_label": "Presidential OGE disclosure source status has not been generated.",
+            "summary": {"official_status_count": 0, "reviewed_trade_count": 0},
+            "officials": [],
+            "source": {},
+        }
+    return json.loads(PRESIDENTIAL_OGE_STATUS.read_text())
 
 
 def load_public_officials() -> dict:
@@ -456,9 +473,14 @@ def timeline_event_rows(fred_context: dict, civic_events: list[dict]) -> list[di
                 "label": event["label"],
                 "event_type": event["event_type"],
                 "description": event.get("description") or "",
-                "source": "CivicLedger fixture event",
+                "source": event.get("source") or "CivicLedger fixture event",
                 "relevance": "general",
                 "source_urls": event.get("sources", []),
+                "branch_scope": event.get("branch_scope", []),
+                "sector_scope": event.get("sector_scope", []),
+                "asset_scope": event.get("asset_scope", []),
+                "jurisdiction_scope": event.get("jurisdiction_scope", []),
+                "editor_status": event.get("editor_status", "fixture"),
             }
         )
     for index, event in enumerate(fred_context.get("release_events", []), start=1):
@@ -472,6 +494,11 @@ def timeline_event_rows(fred_context: dict, civic_events: list[dict]) -> list[di
                 "source": event.get("source", "FRED"),
                 "relevance": "macro",
                 "source_urls": event.get("source_urls", []),
+                "branch_scope": ["Executive", "Legislative", "Judicial"],
+                "sector_scope": ["Broad Market"],
+                "asset_scope": [],
+                "jurisdiction_scope": ["macro"],
+                "editor_status": "system_generated",
             }
         )
     return sorted(rows, key=lambda item: (item["date"], item["id"]))
@@ -509,6 +536,9 @@ def timeline_trade_row(trade: dict, anchor: str | None, crypto_points_by_symbol:
         "value_range_label": trade["value_range_label"],
         "value_midpoint": midpoint,
         "disclosure_lag_days": trade["disclosure_lag_days"],
+        "record_status": trade.get("record_status", "fixture_demo"),
+        "confidence_label": trade.get("confidence_label", "Fixture/demo trade"),
+        "parsing_confidence": trade.get("parsing_confidence"),
     }
     if row["asset_class"] == "crypto":
         row["price_window"] = crypto_price_window(row["ticker"], row["date"], crypto_points_by_symbol)
@@ -520,9 +550,41 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
     reasons = []
     event_type = event.get("event_type", "")
     branch = official.get("branch")
+    sectors = {trade.get("sector") for trade in trades if trade.get("sector")}
+    asset_classes = {trade.get("asset_class") for trade in trades if trade.get("asset_class")}
+    branch_scope = set(event.get("branch_scope") or [])
+    sector_scope = set(event.get("sector_scope") or [])
+    asset_scope = set(event.get("asset_scope") or [])
+    jurisdiction_scope = {str(item).lower() for item in event.get("jurisdiction_scope") or []}
+    roles = official.get("roles") or []
+    role_text = " ".join(
+        str(value)
+        for role in roles
+        for value in [
+            role.get("role_title"),
+            role.get("office"),
+            role.get("agency"),
+            role.get("court"),
+            role.get("source_metadata", {}).get("committee"),
+            role.get("source_metadata", {}).get("chamber"),
+        ]
+        if value
+    ).lower()
     if event.get("relevance") == "macro":
         score += 20
         reasons.append("macro context")
+    if branch_scope and branch in branch_scope:
+        score += 18
+        reasons.append("branch scope match")
+    if sector_scope and sectors.intersection(sector_scope):
+        score += 16
+        reasons.append("sector overlap")
+    if asset_scope and asset_classes.intersection(asset_scope):
+        score += 16
+        reasons.append("asset-class overlap")
+    if jurisdiction_scope and any(scope in role_text for scope in jurisdiction_scope):
+        score += 12
+        reasons.append("office or jurisdiction overlap")
     if branch == "Executive" and event_type in {"executive_order", "policy_change", "macro_release"}:
         score += 18
         reasons.append("executive-adjacent event")
@@ -605,6 +667,7 @@ def career_trade_timeline(
     fred_context: dict,
     civic_events: list[dict],
     crypto_prices: dict,
+    presidential_oge_status: dict,
 ) -> dict:
     roles_by_person = public_roles_by_person(public_officials)
     trades_by_person = defaultdict(list)
@@ -615,6 +678,9 @@ def career_trade_timeline(
     president_ids = []
     official_rows = []
     events = timeline_event_rows(fred_context, civic_events)
+    oge_by_official = defaultdict(list)
+    for status in presidential_oge_status.get("officials", []):
+        oge_by_official[status["official_id"]].append(status)
     crypto_points_by_symbol = {
         symbol: series.get("points", [])
         for symbol, series in crypto_prices.get("series", {}).items()
@@ -641,12 +707,13 @@ def career_trade_timeline(
                 "service_end": end,
                 "roles": presidential_roles,
                 "trades": [],
+                "disclosure_sources": oge_by_official.get(external_id, []),
                 "events": timeline_event_positions(
                     events,
                     start,
                     start,
                     end,
-                    {"branch": "Executive"},
+                    {"branch": "Executive", "roles": presidential_roles},
                     [],
                 ),
                 "trade_clusters": [],
@@ -656,7 +723,13 @@ def career_trade_timeline(
                     "sell_count": 0,
                     "crypto_count": 0,
                     "total_value_midpoint": 0,
-                    "disclosure_status": "No reviewed presidential trade disclosures ingested yet",
+                    "disclosure_status": (
+                        "OGE source identified; no reviewed presidential trade disclosures promoted yet"
+                        if oge_by_official.get(external_id)
+                        else "No reviewed presidential trade disclosures ingested yet"
+                    ),
+                    "record_status": "source_status_only",
+                    "confidence_label": "Source status only",
                 },
             }
         )
@@ -694,6 +767,7 @@ def career_trade_timeline(
                     }
                 ],
                 "trades": timeline_trades,
+                "disclosure_sources": [],
                 "events": timeline_event_positions(events, start, start, end, person, timeline_trades),
                 "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
@@ -703,6 +777,8 @@ def career_trade_timeline(
                     "crypto_count": sum(1 for trade in timeline_trades if trade["asset_class"] == "crypto"),
                     "total_value_midpoint": round(sum(trade["value_midpoint"] or 0 for trade in timeline_trades), 2),
                     "disclosure_status": "Fixture trade preview",
+                    "record_status": "fixture_demo",
+                    "confidence_label": "Fixture/demo trades",
                 },
             }
         )
@@ -752,6 +828,8 @@ def career_trade_timeline(
             "trade_count": sum(len(official["trades"]) for official in official_rows),
             "event_count": len(events),
             "crypto_trade_count": sum(official["stats"]["crypto_count"] for official in official_rows),
+            "trade_cluster_count": sum(len(official.get("trade_clusters", [])) for official in official_rows),
+            "presidential_oge_status_count": presidential_oge_status.get("summary", {}).get("official_status_count", 0),
         },
         "officials": official_rows,
         "events": events,
@@ -761,6 +839,11 @@ def career_trade_timeline(
             "context_label": crypto_prices.get("context_label"),
             "summary": crypto_prices.get("summary", {}),
             "coverage_report": crypto_prices.get("coverage_report", {}),
+        },
+        "presidential_oge_status": {
+            "context_label": presidential_oge_status.get("context_label"),
+            "summary": presidential_oge_status.get("summary", {}),
+            "source": presidential_oge_status.get("source", {}),
         },
     }
 
@@ -885,6 +968,7 @@ def build_dataset() -> dict:
     civic_events = load_events()
     market_series, market_metadata = load_market_prices()
     crypto_prices = load_crypto_prices()
+    presidential_oge_status = load_presidential_oge_status()
     people = create_people()
     all_people = []
     all_filings = []
@@ -921,6 +1005,8 @@ def build_dataset() -> dict:
                 "value_range_max": number(trade.value_range_max),
                 "disclosure_lag_days": trade.disclosure_lag_days,
                 "parsing_confidence": number(trade.parsing_confidence),
+                "record_status": "fixture_demo",
+                "confidence_label": "Fixture/demo parser output",
             }
             static_trades.append(row)
             all_trades.append(row)
@@ -1000,19 +1086,25 @@ def build_dataset() -> dict:
         fred_context,
         civic_events,
         crypto_prices,
+        presidential_oge_status,
     )
     sources = []
     for source in OFFICIAL_SOURCES:
         counts = source_counts[source["id"]]
+        status_label = {
+            "parser_preview_ready": "Parser preview ready",
+            "source_index_ready": "Source index ready",
+            "planned": "Planned",
+        }.get(source.get("ingestion_status"), source.get("ingestion_status", "Planned"))
         sources.append(
             {
                 **source,
                 "fixture_counts": counts,
                 "readiness": {
-                    "status": "preview",
-                    "label": "Static demo data",
+                    "status": source.get("ingestion_status", "planned"),
+                    "label": status_label,
                     "missing_capabilities": [
-                        "production official-source ingestion",
+                        "reviewed production official-source ingestion",
                         "reviewed public filing promotion",
                     ],
                 },
@@ -1047,6 +1139,8 @@ def build_dataset() -> dict:
             "career_timeline_default_official_count": career_timeline["summary"]["default_official_count"],
             "career_timeline_trade_count": career_timeline["summary"]["trade_count"],
             "career_timeline_crypto_trade_count": career_timeline["summary"]["crypto_trade_count"],
+            "career_timeline_trade_cluster_count": career_timeline["summary"]["trade_cluster_count"],
+            "presidential_oge_source_status_count": career_timeline["summary"]["presidential_oge_status_count"],
             "branch_counts": dict(sorted(branch_counts.items())),
             "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
             "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
@@ -1066,6 +1160,11 @@ def build_dataset() -> dict:
             "summary": crypto_prices.get("summary", {}),
             "source": crypto_prices.get("source", {}),
             "coverage_report": crypto_prices.get("coverage_report", {}),
+        },
+        "presidential_oge_status": {
+            "context_label": presidential_oge_status.get("context_label"),
+            "summary": presidential_oge_status.get("summary", {}),
+            "source": presidential_oge_status.get("source", {}),
         },
         "fred_context": fred_context,
         "career_trade_timeline": career_timeline,

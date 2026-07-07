@@ -37,6 +37,8 @@ def test_source_specific_parser_extracts_transaction(
     assert preview.transactions[0].amount
     assert preview.transactions[0].confidence >= 0.8
     assert preview.transactions[0].field_confidence["asset"] >= 0.9
+    assert preview.output["record_status"] == "parser_preview"
+    assert preview.output["review_required_before_promotion"] is True
     assert preview.warnings[0].startswith("Parser preview only")
 
 

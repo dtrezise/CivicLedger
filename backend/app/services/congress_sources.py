@@ -2,8 +2,12 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from datetime import date
+from http.client import IncompleteRead
+import json
+import time
 from typing import Iterable
 from urllib.parse import urlencode
+from urllib.error import URLError
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
 
@@ -248,15 +252,22 @@ class CongressGovClient:
         self.api_key = api_key or settings.CONGRESS_GOV_API_KEY
         self.base_url = base_url.rstrip("/")
 
-    def _get_json(self, path: str, params: dict | None = None) -> dict:
+    def _get_json(self, path: str, params: dict | None = None, retries: int = 3) -> dict:
         if not self.api_key:
             raise RuntimeError("CONGRESS_GOV_API_KEY is required for live Congress.gov refreshes")
         query = urlencode({**(params or {}), "api_key": self.api_key})
         request = Request(f"{self.base_url}{path}?{query}", headers={"User-Agent": USER_AGENT})
-        with urlopen(request, timeout=45) as response:
-            import json
-
-            return json.loads(response.read().decode("utf-8"))
+        last_error: Exception | None = None
+        for attempt in range(1, retries + 1):
+            try:
+                with urlopen(request, timeout=60) as response:
+                    return json.loads(response.read().decode("utf-8"))
+            except (IncompleteRead, TimeoutError, URLError) as exc:
+                last_error = exc
+                if attempt == retries:
+                    break
+                time.sleep(attempt * 1.5)
+        raise RuntimeError(f"Congress.gov request failed after {retries} attempts: {path}") from last_error
 
     def members_by_congress(self, congress_number: int, limit: int = 250) -> list[dict]:
         members: list[dict] = []

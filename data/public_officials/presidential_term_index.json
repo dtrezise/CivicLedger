@@ -1,0 +1,138 @@
+{
+  "context_label": "Term-level public-official index for migration-friendly historical backfills. Prior terms can be treated as static after review, while active terms remain refresh targets.",
+  "generated_at": "2026-07-07",
+  "schema_version": "presidential-term-index-v1",
+  "summary": {
+    "active_term_count": 1,
+    "role_count": 5914,
+    "static_term_count": 3,
+    "term_count": 4
+  },
+  "terms": [
+    {
+      "administration": "Barack Obama Administration",
+      "label": "Obama 44",
+      "person_count": 1187,
+      "president": "Barack Obama",
+      "role_count": 2566,
+      "role_counts_by_branch": {
+        "Executive": 23,
+        "Judicial": 330,
+        "Legislative": 2213
+      },
+      "role_counts_by_category": {
+        "article_iii_judge": 328,
+        "cabinet": 15,
+        "cabinet_level": 5,
+        "delegate": 20,
+        "elected_executive": 3,
+        "representative": 1701,
+        "resident_commissioner": 4,
+        "senator": 488,
+        "supreme_court": 2
+      },
+      "source_ids": [
+        "congress-gov-member-roster",
+        "fjc-article-iii-service",
+        "obama-44-cabinet-archive"
+      ],
+      "static_after_term_end": true,
+      "term_end": "2017-01-20",
+      "term_id": "obama-44",
+      "term_start": "2009-01-20"
+    },
+    {
+      "administration": "Donald J. Trump Administration",
+      "label": "Trump 45",
+      "person_count": 916,
+      "president": "Donald J. Trump",
+      "role_count": 1372,
+      "role_counts_by_branch": {
+        "Executive": 24,
+        "Judicial": 237,
+        "Legislative": 1111
+      },
+      "role_counts_by_category": {
+        "article_iii_judge": 234,
+        "cabinet": 15,
+        "cabinet_level": 6,
+        "delegate": 10,
+        "elected_executive": 3,
+        "representative": 865,
+        "resident_commissioner": 2,
+        "senator": 234,
+        "supreme_court": 3
+      },
+      "source_ids": [
+        "congress-gov-member-roster",
+        "fjc-article-iii-service",
+        "trump-45-cabinet-archive"
+      ],
+      "static_after_term_end": true,
+      "term_end": "2021-01-20",
+      "term_id": "trump-45",
+      "term_start": "2017-01-20"
+    },
+    {
+      "administration": "Joseph R. Biden Administration",
+      "label": "Biden 46",
+      "person_count": 906,
+      "president": "Joseph R. Biden",
+      "role_count": 1374,
+      "role_counts_by_branch": {
+        "Executive": 28,
+        "Judicial": 235,
+        "Legislative": 1111
+      },
+      "role_counts_by_category": {
+        "article_iii_judge": 234,
+        "cabinet": 14,
+        "cabinet_level": 11,
+        "delegate": 10,
+        "elected_executive": 3,
+        "representative": 877,
+        "resident_commissioner": 2,
+        "senator": 222,
+        "supreme_court": 1
+      },
+      "source_ids": [
+        "biden-46-cabinet-archive",
+        "congress-gov-member-roster",
+        "fjc-article-iii-service"
+      ],
+      "static_after_term_end": true,
+      "term_end": "2025-01-20",
+      "term_id": "biden-46",
+      "term_start": "2021-01-20"
+    },
+    {
+      "administration": "Donald J. Trump Administration",
+      "label": "Trump 47",
+      "person_count": 601,
+      "president": "Donald J. Trump",
+      "role_count": 602,
+      "role_counts_by_branch": {
+        "Executive": 2,
+        "Judicial": 48,
+        "Legislative": 552
+      },
+      "role_counts_by_category": {
+        "article_iii_judge": 48,
+        "delegate": 5,
+        "elected_executive": 2,
+        "representative": 443,
+        "resident_commissioner": 1,
+        "senator": 103
+      },
+      "source_ids": [
+        "congress-gov-member-roster",
+        "fjc-article-iii-service",
+        "trump-47-current-cabinet"
+      ],
+      "static_after_term_end": false,
+      "term_end": null,
+      "term_id": "trump-47",
+      "term_start": "2025-01-20"
+    }
+  ]
+}

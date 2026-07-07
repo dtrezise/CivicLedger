@@ -16,6 +16,7 @@ const state = {
   timelineZoom: "full",
   timelineOfficialQuery: "",
   timelineAssetClass: "",
+  timelineOverlay: "all",
   timelineEventType: "",
   activeTimelineEventId: null,
 };
@@ -514,6 +515,10 @@ function hydrateControls() {
     state.timelineAssetClass = event.target.value;
     renderCareerTimeline();
   });
+  $("timelineOverlayFilter").addEventListener("change", (event) => {
+    state.timelineOverlay = event.target.value;
+    renderCareerTimeline();
+  });
   $("timelineEventFilter").addEventListener("change", (event) => {
     state.timelineEventType = event.target.value;
     renderCareerTimeline();
@@ -673,11 +678,22 @@ function selectedTimelineOfficials() {
   const timelineQuery = state.timelineOfficialQuery.trim().toLowerCase();
   if (!timelineQuery) return rows;
   const existing = new Set(rows.map((official) => official.id));
-  const matches = state.explorerPeople
+  const timelineMatches = (state.data.career_trade_timeline?.officials || [])
+    .filter(
+      (official) =>
+        !existing.has(official.id) &&
+        [official.full_name, official.branch, official.timeline_group]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .includes(timelineQuery)
+    );
+  for (const official of timelineMatches) existing.add(official.id);
+  const explorerMatches = state.explorerPeople
     .filter((person) => !existing.has(person.id) && personMatchesQuery(person, timelineQuery))
     .slice(0, Math.max(0, 6 - rows.length))
     .map((person) => timelineById.get(person.id) || timelinePlaceholderOfficial(person));
-  return rows.concat(matches).slice(0, 6);
+  return rows.concat(timelineMatches, explorerMatches).slice(0, 6);
 }
 
 function timelineTradeVisible(trade) {
@@ -746,6 +762,32 @@ function timelineEventById(eventId) {
   return (state.data.career_trade_timeline?.events || []).find((event) => event.id === eventId) || null;
 }
 
+function selectedEventRelatedTrades(event) {
+  if (!event) return [];
+  const eventDay = dateToDay(event.date);
+  return selectedTimelineOfficials()
+    .flatMap((official) =>
+      (official.trades || [])
+        .filter((trade) => Math.abs(dateToDay(trade.date) - eventDay) <= (event.window_days || 180))
+        .map((trade) => ({
+          official: official.full_name,
+          ...trade,
+          days_from_event: dateToDay(trade.date) - eventDay,
+        }))
+    )
+    .sort((a, b) => Math.abs(a.days_from_event) - Math.abs(b.days_from_event))
+    .slice(0, 12);
+}
+
+function sourceLinks(event) {
+  return (event?.source_urls || [])
+    .map(
+      (url, index) =>
+        `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}</a>`
+    )
+    .join("");
+}
+
 function careerTimelineSvg(officials) {
   const width = 1120;
   const laneHeight = 104;
@@ -780,9 +822,17 @@ function careerTimelineSvg(officials) {
               : dateToDay(official.service_end);
           const visibleTrades = (official.trades || []).filter(timelineTradeVisible);
           const visibleEvents = (official.events || []).filter(timelineEventVisible);
+          const visibleClusters = (official.trade_clusters || []).filter((cluster) =>
+            visibleTrades.some((trade) => trade.date >= cluster.start_date && trade.date <= cluster.end_date)
+          );
+          const sourceStatuses = (official.disclosure_sources || [])
+            .map((source) => source.source_status)
+            .filter(Boolean)
+            .join(" / ");
           return `
             <text x="24" y="${y - 22}" fill="#17201d" font-size="14" font-weight="800">${escapeHtml(official.full_name)}</text>
             <text x="24" y="${y - 4}" fill="#64706a" font-size="12">${escapeHtml(official.stats?.disclosure_status || official.branch)}</text>
+            <text x="24" y="${y + 14}" fill="#8a5a12" font-size="11">${escapeHtml(official.stats?.confidence_label || sourceStatuses || "Source status pending")}</text>
             <line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}" stroke="#edf4ef" stroke-width="12" stroke-linecap="round"></line>
             ${
               Number.isFinite(startValue) && Number.isFinite(endValue)
@@ -797,16 +847,35 @@ function careerTimelineSvg(officials) {
                       if (!Number.isFinite(value)) return "";
                       const radius = Math.max(5, Math.min(14, Math.sqrt((trade.value_midpoint || 0) / 5000)));
                       const fill = trade.asset_class === "crypto" ? "#b66a1d" : trade.action === "SELL" ? "#9f3a3a" : "#0b6b8f";
-                      const priceLabel = trade.price_window?.closest_close ? ` / close ${trade.price_window.closest_close}` : "";
+                      const showPrice = state.timelineOverlay !== "hide-prices" && (state.timelineOverlay !== "crypto" || trade.asset_class === "crypto");
+                      const priceLabel = showPrice && trade.price_window?.closest_close ? ` / close ${trade.price_window.closest_close}` : "";
                       return `
                         <circle cx="${xFor(value)}" cy="${y}" r="${radius.toFixed(1)}" fill="${fill}" stroke="#fff" stroke-width="2">
-                          <title>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker} ${trade.value_range_label} on ${shortDate(trade.date)}${priceLabel}`)}</title>
+                          <title>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker} ${trade.value_range_label} on ${shortDate(trade.date)}${priceLabel} / ${trade.confidence_label || official.stats?.confidence_label || "confidence pending"}`)}</title>
                         </circle>
                       `;
                     })
                     .join("")
                 : `<text x="${left}" y="${y + 28}" fill="#64706a" font-size="12">No reviewed trade rows in this snapshot</text>`
             }
+            ${visibleClusters
+              .map((cluster) => {
+                const clusterValue =
+                  state.timelineAxis !== "calendar"
+                    ? dateToDay(cluster.start_date) - dateToDay(official.service_start)
+                    : dateToDay(cluster.start_date);
+                if (!Number.isFinite(clusterValue)) return "";
+                const x = xFor(clusterValue);
+                return `
+                  <g>
+                    <rect x="${x - 24}" y="${y + 20}" width="48" height="18" rx="6" fill="#17212b">
+                      <title>${escapeHtml(`${cluster.trade_count} trades from ${shortDate(cluster.start_date)} to ${shortDate(cluster.end_date)}: ${cluster.tickers.join(", ")}`)}</title>
+                    </rect>
+                    <text x="${x - 18}" y="${y + 33}" fill="#ffffff" font-size="11" font-weight="800">${cluster.trade_count} trades</text>
+                  </g>
+                `;
+              })
+              .join("")}
             ${visibleEvents
               .map((event) => {
                 const value = state.timelineAxis !== "calendar" ? event.career_day : dateToDay(event.date);
@@ -828,6 +897,7 @@ function careerTimelineSvg(officials) {
 
 function renderTimelineEventDetail() {
   const event = state.activeTimelineEventId ? timelineEventById(state.activeTimelineEventId) : null;
+  const relatedTrades = selectedEventRelatedTrades(event);
   $("timelineEventDetail").innerHTML = event
     ? `
       <div>
@@ -836,6 +906,20 @@ function renderTimelineEventDetail() {
         <p>${escapeHtml(event.description || "No event description available.")}</p>
         <small>${escapeHtml(event.source || "CivicLedger event context")} / ${escapeHtml(event.relevance || "general")} / relevance ${fmt.format(event.relevance_score || 0)}</small>
         <p>${escapeHtml(event.relevance_reason || "General public context")}</p>
+        <div class="event-detail-links">${sourceLinks(event) || '<span class="muted">No source link recorded.</span>'}</div>
+        <div class="event-related-trades">
+          <strong>Related selected-lane trades</strong>
+          ${
+            relatedTrades.length
+              ? relatedTrades
+                  .map(
+                    (trade) =>
+                      `<span>${escapeHtml(trade.official)}: ${escapeHtml(trade.action)} ${escapeHtml(trade.ticker || trade.asset_display_name)} ${escapeHtml(trade.value_range_label)} (${trade.days_from_event > 0 ? "+" : ""}${fmt.format(trade.days_from_event)}d)</span>`
+                  )
+                  .join("")
+              : '<span>No selected-lane trades within this event window.</span>'
+          }
+        </div>
       </div>
     `
     : `
@@ -858,6 +942,7 @@ function renderCareerTimeline() {
     ["Compared Lanes", officials.length],
     ["Timeline Trades", officials.reduce((total, official) => total + (official.trades || []).filter(timelineTradeVisible).length, 0)],
     ["Crypto Trades", officials.reduce((total, official) => total + (official.trades || []).filter((trade) => timelineTradeVisible(trade) && trade.asset_class === "crypto").length, 0)],
+    ["Clusters", officials.reduce((total, official) => total + (official.trade_clusters || []).length, 0)],
     ["Event Markers", officials.reduce((total, official) => total + (official.events || []).filter(timelineEventVisible).length, 0)],
   ]
     .map(
@@ -1007,9 +1092,11 @@ function renderSources() {
             <span class="badge">${fmt.format(source.fixture_counts.raw_documents)} raw docs</span>
             <span class="badge">${fmt.format(source.fixture_counts.filings)} filings</span>
             <span class="badge">${fmt.format(source.fixture_counts.trades)} trades</span>
+            <span class="badge gold">${escapeHtml(source.readiness.status)}</span>
           </div>
           <p><strong>Access mode:</strong> ${escapeHtml(source.access_mode)}</p>
           <p><strong>Readiness:</strong> ${escapeHtml(source.readiness.label)}</p>
+          <p><strong>Missing:</strong> ${escapeHtml((source.readiness.missing_capabilities || []).join(" / ") || "n/a")}</p>
           <p><a href="${escapeHtml(source.source_url)}" target="_blank" rel="noopener noreferrer">Official source</a></p>
         </article>
       `

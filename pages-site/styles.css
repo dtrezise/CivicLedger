@@ -1003,7 +1003,7 @@ svg {
 
 .timeline-controls {
   display: grid;
-  grid-template-columns: auto repeat(4, minmax(150px, 1fr)) auto;
+  grid-template-columns: auto repeat(5, minmax(140px, 1fr)) auto;
   gap: 12px;
   align-items: end;
 }
@@ -1061,7 +1061,7 @@ svg {
 
 .timeline-summary {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
 }
 
@@ -1082,7 +1082,7 @@ svg {
 }
 
 .event-detail {
-  max-height: 190px;
+  max-height: 280px;
   overflow: auto;
   padding: 16px;
   border-left: 5px solid var(--judicial);
@@ -1097,6 +1097,28 @@ svg {
 .event-detail p {
   margin: 0 0 8px;
   color: var(--muted);
+}
+
+.event-detail-links,
+.event-related-trades {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.event-detail-links a,
+.event-related-trades span {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  min-height: 30px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .research-block {

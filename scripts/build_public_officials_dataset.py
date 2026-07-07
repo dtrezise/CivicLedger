@@ -21,6 +21,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "public_officials" / "public_official_roles.json"
+TERM_INDEX_OUTPUT = ROOT / "data" / "public_officials" / "presidential_term_index.json"
 CONGRESSIONAL_OUTPUT = ROOT / "data" / "public_officials" / "congressional_service_terms.json"
 
 FJC_SERVICE_CSV = "https://www.fjc.gov/sites/default/files/history/federal-judicial-service.csv"
@@ -593,10 +594,48 @@ def build_dataset() -> dict:
     }
 
 
+def build_term_index(dataset: dict) -> dict:
+    roles = dataset["roles"]
+    term_rows = []
+    for term_id, term in TERMS.items():
+        term_roles = [role for role in roles if role["presidential_term"] == term_id]
+        people = {role["external_person_id"] for role in term_roles}
+        term_rows.append(
+            {
+                "term_id": term_id,
+                **term,
+                "static_after_term_end": bool(term["term_end"]),
+                "role_count": len(term_roles),
+                "person_count": len(people),
+                "role_counts_by_branch": dict(Counter(role["branch"] for role in term_roles)),
+                "role_counts_by_category": dict(Counter(role["role_category"] for role in term_roles)),
+                "source_ids": sorted({role["source_id"] for role in term_roles}),
+            }
+        )
+    return {
+        "generated_at": dataset["generated_at"],
+        "schema_version": "presidential-term-index-v1",
+        "context_label": (
+            "Term-level public-official index for migration-friendly historical backfills. "
+            "Prior terms can be treated as static after review, while active terms remain refresh targets."
+        ),
+        "terms": term_rows,
+        "summary": {
+            "term_count": len(term_rows),
+            "static_term_count": sum(1 for row in term_rows if row["static_after_term_end"]),
+            "active_term_count": sum(1 for row in term_rows if not row["static_after_term_end"]),
+            "role_count": sum(row["role_count"] for row in term_rows),
+        },
+    }
+
+
 def main() -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(build_dataset(), indent=2, sort_keys=True) + "\n")
+    dataset = build_dataset()
+    OUTPUT.write_text(json.dumps(dataset, indent=2, sort_keys=True) + "\n")
+    TERM_INDEX_OUTPUT.write_text(json.dumps(build_term_index(dataset), indent=2, sort_keys=True) + "\n")
     print(f"Wrote {OUTPUT}")
+    print(f"Wrote {TERM_INDEX_OUTPUT}")
 
 
 if __name__ == "__main__":

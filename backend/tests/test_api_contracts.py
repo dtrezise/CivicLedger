@@ -65,7 +65,12 @@ def test_meta_sources_contract(client):
         "Executive",
         "Judicial",
     }
-    assert all(source["ingestion_status"] == "planned" for source in payload["sources"])
+    assert {source["id"]: source["ingestion_status"] for source in payload["sources"]} == {
+        "house-financial-disclosure": "parser_preview_ready",
+        "senate-public-financial-disclosure": "parser_preview_ready",
+        "oge-individual-disclosures": "source_index_ready",
+        "judicial-financial-disclosure": "parser_preview_ready",
+    }
     assert all(source["provenance_requirements"] for source in payload["sources"])
     assert all("access_mode" in source for source in payload["sources"])
 
