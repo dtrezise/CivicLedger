@@ -10,6 +10,13 @@ class Settings(BaseSettings):
     DATASET_VERSION: str = "seed-v1"
     PARSER_VERSION: str = "1.0.0"
     CONGRESS_GOV_API_KEY: str | None = None
+    FRED_API_KEY: str | None = None
+    FEC_API_KEY: str | None = None
+    DATA_GOV_API_KEY: str | None = None
+    CENSUS_API_KEY: str | None = None
+    BLS_API_KEY: str | None = None
+    USASPENDING_API_DOCS_URL: str = "https://api.usaspending.gov/docs/endpoints"
+    TREASURY_FISCALDATA_API_DOCS_URL: str = "https://fiscaldata.treasury.gov/api-documentation/"
 
     @property
     def cors_origins_list(self) -> list[str]:
