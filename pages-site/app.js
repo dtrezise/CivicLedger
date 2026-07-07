@@ -257,6 +257,7 @@ function renderSummary() {
     ["Judicial Roles", summary.public_official_role_counts_by_branch.Judicial || 0],
     ["Demo Filings", summary.filing_count],
     ["Demo Trades", summary.trade_count],
+    ["Market Price Points", summary.market_price_point_count || 0],
   ]
     .map(
       ([label, value]) => `
@@ -745,7 +746,7 @@ function renderTradeContext() {
           <tr>
             <td>
               <strong>${escapeHtml(row.person_name)}</strong>
-              <small>${escapeHtml(row.context_label)}</small>
+              <small>${escapeHtml(row.market_provider || "market")} prices / ${escapeHtml(row.context_label)}</small>
             </td>
             <td>${shortDate(row.trade_date)}<br /><small>Reported ${shortDate(row.reported_date)} / ${fmt.format(row.disclosure_lag_days)}d lag</small></td>
             <td>${escapeHtml(row.action)} ${escapeHtml(row.asset_display_name)}<br /><small>${escapeHtml(row.value_range_label)}</small></td>

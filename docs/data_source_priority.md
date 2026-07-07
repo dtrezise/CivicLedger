@@ -4,6 +4,23 @@ CivicLedger's core focus is public officials' stock-market trades, related filin
 
 ## Active
 
+### Tiingo
+
+Status: active
+
+Tiingo is the production market-price provider for ETF and ticker overlays. CivicLedger uses Tiingo end-of-day adjusted close values for neutral post-trade market movement context around trade dates and report dates.
+
+Initial overlay symbols:
+
+- SPY
+- QQQ
+- DIA
+- XLK
+- XLF
+- XLE
+- XLV
+- XLI
+
 ### FRED
 
 Status: active
@@ -49,4 +66,4 @@ USAspending could become highly relevant after CivicLedger can map ticker symbol
 
 ## Market Price Data
 
-The public Pages demo currently uses fixture market-index overlays for SPY, QQQ, DIA, and sector ETFs. These should be replaced with a production market-data provider before any public analytical claims are made from market movement.
+The public Pages demo now uses Tiingo adjusted close values for SPY, QQQ, DIA, and sector ETFs. Market-price overlays remain context only and must not imply causation, intent, legality, ethics, or investment performance.

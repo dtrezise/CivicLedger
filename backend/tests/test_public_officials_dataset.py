@@ -5,6 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DATASET = ROOT / "data" / "public_officials" / "public_official_roles.json"
 FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
+MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 
 
 def test_public_officials_dataset_has_expected_initial_scope():
@@ -56,3 +57,14 @@ def test_fred_context_dataset_has_trade_relevant_macro_scope():
     assert data["summary"]["active_context_source"] == "FRED"
     assert set(data["summary"]["deferred_sources"]) == {"FEC", "USAspending"}
     assert data["context_label"].startswith("Context only")
+
+
+def test_market_price_dataset_uses_tiingo_adjusted_close_scope():
+    data = json.loads(MARKET_PRICES.read_text())
+
+    assert data["summary"]["active_market_price_provider"] == "Tiingo"
+    assert data["summary"]["series_count"] == 8
+    assert data["summary"]["price_point_count"] >= 6000
+    assert data["scope"]["symbols"] == ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
+    assert data["series"]["SPY"]["price_field_for_overlays"] == "adj_close"
+    assert data["context_label"].startswith("Market-price overlays use Tiingo")

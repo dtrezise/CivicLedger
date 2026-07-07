@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     PARSER_VERSION: str = "1.0.0"
     CONGRESS_GOV_API_KEY: str | None = None
     FRED_API_KEY: str | None = None
+    TIINGO_API_KEY: str | None = None
     FEC_API_KEY: str | None = None
     DATA_GOV_API_KEY: str | None = None
     CENSUS_API_KEY: str | None = None

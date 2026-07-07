@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "pages-site" / "data" / "civicledger-static.json"
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
 FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
+MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
 
@@ -110,7 +111,7 @@ def scorecard(branch: str, filing_count: int, trades: list[dict]) -> dict:
     }
 
 
-def generate_context_market_series() -> list[dict]:
+def generate_fixture_market_series() -> list[dict]:
     seed_points = generate_market_series()
     by_date = defaultdict(dict)
     for point in seed_points:
@@ -151,14 +152,47 @@ def generate_context_market_series() -> list[dict]:
     return rows
 
 
-def market_snapshot(series: list[dict]) -> dict:
+def load_market_prices() -> tuple[list[dict], dict]:
+    if not MARKET_PRICES.exists():
+        return generate_fixture_market_series(), {
+            "provider": "fixture",
+            "context_label": "Market overlays are fixture data in this public demo.",
+            "summary": {"active_market_price_provider": "fixture", "price_point_count": 0},
+        }
+    data = json.loads(MARKET_PRICES.read_text())
+    rows = []
+    for symbol, series in data.get("series", {}).items():
+        for point in series.get("points", []):
+            value = point.get("adj_close") if point.get("adj_close") is not None else point.get("close")
+            if value is None:
+                continue
+            rows.append(
+                {
+                    "symbol": symbol,
+                    "date": parse_iso_date(point["date"]),
+                    "value": value,
+                    "source": "tiingo",
+                }
+            )
+    return rows, {
+        "provider": data.get("source", {}).get("id", "tiingo-eod"),
+        "context_label": data.get("context_label", "Market overlays use production market-price data."),
+        "summary": data.get("summary", {}),
+        "source": data.get("source", {}),
+    }
+
+
+def market_snapshot(series: list[dict], metadata: dict) -> dict:
     monthly = defaultdict(dict)
     for point in series:
         month = point["date"].strftime("%Y-%m")
         monthly[month][point["symbol"]] = float(point["value"])
     return {
         "symbols": MARKET_SYMBOLS,
-        "context_label": "Market overlays are fixture data in this public demo.",
+        "provider": metadata["provider"],
+        "context_label": metadata["context_label"],
+        "summary": metadata["summary"],
+        "source": metadata.get("source", {}),
         "monthly": [
             {"month": month, **values}
             for month, values in sorted(monthly.items())
@@ -284,6 +318,7 @@ def trade_context_rows(
     all_people: list[dict],
     all_trades: list[dict],
     market_series: list[dict],
+    market_metadata: dict,
     fred_context: dict,
     civic_events: list[dict],
 ) -> list[dict]:
@@ -331,6 +366,11 @@ def trade_context_rows(
                     ]
                     if move
                 ],
+                "market_provider": market_metadata["summary"].get(
+                    "active_market_price_provider",
+                    market_metadata["provider"],
+                ),
+                "market_context_label": market_metadata["context_label"],
                 "macro_snapshot": macro_snapshot,
                 "nearby_events": nearby_context_events(fred_context, civic_events, trade_date),
                 "context_label": fred_context.get(
@@ -347,7 +387,7 @@ def build_dataset() -> dict:
     public_officials = load_public_officials()
     fred_context = load_fred_context()
     civic_events = load_events()
-    market_series = generate_context_market_series()
+    market_series, market_metadata = load_market_prices()
     people = create_people()
     all_people = []
     all_filings = []
@@ -495,6 +535,8 @@ def build_dataset() -> dict:
             "event_count": len(civic_events),
             "macro_series_count": fred_context["summary"].get("series_count", 0),
             "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
+            "market_price_provider": market_metadata["summary"].get("active_market_price_provider", market_metadata["provider"]),
+            "market_price_point_count": market_metadata["summary"].get("price_point_count", 0),
             "branch_counts": dict(sorted(branch_counts.items())),
             "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
             "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
@@ -507,7 +549,7 @@ def build_dataset() -> dict:
         "raw_documents": all_raw_documents,
         "sources": sources,
         "events": civic_events,
-        "market": market_snapshot(market_series),
+        "market": market_snapshot(market_series, market_metadata),
         "fred_context": fred_context,
         "trade_context": {
             "context_label": fred_context.get(
@@ -518,6 +560,7 @@ def build_dataset() -> dict:
                 all_people,
                 all_trades,
                 market_series,
+                market_metadata,
                 fred_context,
                 civic_events,
             ),
