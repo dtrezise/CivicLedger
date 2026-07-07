@@ -39,8 +39,8 @@
       </header>
 
       <nav class="mode-tabs" aria-label="Dashboard sections">
-        <a class="active" href="#explore">Explore</a>
-        <a href="#officials">Officials</a>
+        <a class="active" href="#overview">Overview</a>
+        <a href="#explore">Compare</a>
         <a href="#sources">Sources</a>
         <a href="#events">Events</a>
         <a href="#methodology">Methodology</a>
@@ -50,13 +50,12 @@
 
       <section class="source-note" id="demoNotice"></section>
 
-      <section class="chart-panel">
+      <section class="chart-panel" id="overview">
         <div class="chart-head">
           <div>
-            <h2>Branch Coverage</h2>
-          <p>
-            Source-backed executive and judicial public-official roster, grouped by branch
-            for public interface evaluation.
+            <h2>Global Branch Overview</h2>
+            <p>
+              Start broad, then filter into branch, term, role type, and individual-official comparisons.
             </p>
           </div>
           <div class="readout">
@@ -66,63 +65,28 @@
           </div>
         </div>
         <div id="branchChart" class="branch-chart"></div>
-        <div class="legend-row">
-          <span class="legend legislative">Legislative</span>
-          <span class="legend executive">Executive</span>
-          <span class="legend judicial">Judicial</span>
+        <div class="overview-grid">
+          <div class="branch-cards" id="branchCards"></div>
+          <div class="role-breakdown" id="globalRoleBreakdown"></div>
         </div>
-      </section>
-
-      <section class="list-view" id="officials">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Public officials database</p>
-            <h2>Executive and Judicial Buildout</h2>
-          </div>
-          <p>
-            Source-backed role roster for Cabinet, Cabinet-level, and Article III judicial
-            service across the Trump 45, Biden 46, and Trump 47 presidential terms.
-          </p>
-        </div>
-        <div class="officials-summary" id="officialsSummary"></div>
-        <div class="controls-band">
-          <label>
-            <span>Search Roles</span>
-            <input id="officialSearchInput" type="search" placeholder="Name, court, agency, role..." />
-          </label>
-          <label>
-            <span>Branch</span>
-            <select id="officialBranchFilter">
-              <option value="">All branches</option>
-            </select>
-          </label>
-          <label>
-            <span>Presidential Term</span>
-            <select id="officialTermFilter">
-              <option value="">All terms</option>
-            </select>
-          </label>
-        </div>
-        <div class="role-list" id="officialRoleList"></div>
       </section>
 
       <section class="workspace" id="explore">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Interactive data</p>
-            <h2>Explore Officials</h2>
+            <p class="eyebrow">Comparison workspace</p>
+            <h2>Search, Filter, and Overlay Officials</h2>
           </div>
           <p>
-            Search the public-official roster. Selecting an official updates
-            the profile with role history, source provenance, and demo disclosure data
-            when available.
+            Use branch, term, and role filters to narrow the roster. Add officials
+            to the comparison graph to see role timelines side by side.
           </p>
         </div>
 
         <div class="controls-band">
           <label>
             <span>Search</span>
-            <input id="searchInput" type="search" placeholder="Name, agency, court, asset..." />
+            <input id="searchInput" type="search" placeholder="Name, agency, court, role..." />
           </label>
           <label>
             <span>Branch</span>
@@ -132,22 +96,43 @@
           </label>
           <label>
             <span>Role Type</span>
-            <select id="assetFilter">
+            <select id="roleFilter">
               <option value="">All role types</option>
             </select>
           </label>
+          <label>
+            <span>Term</span>
+            <select id="termFilter">
+              <option value="">All terms</option>
+            </select>
+          </label>
+          <button class="clear-button" id="clearFilters" type="button">Clear</button>
         </div>
 
-        <div class="explorer">
+        <div class="explorer comparison-layout">
           <aside class="directory" aria-label="Official directory">
             <div class="directory-heading">
-              <h3>Directory</h3>
-              <span id="directoryCount">0 officials</span>
+              <div>
+                <h3>Filtered Results</h3>
+                <small id="directoryHint">Select officials to compare.</small>
+              </div>
+              <span id="directoryCount">0 matches</span>
             </div>
             <div id="peopleList" class="people-list"></div>
           </aside>
 
-          <section class="profile" id="profilePanel" aria-live="polite"></section>
+          <section class="comparison-panel">
+            <div class="compare-head">
+              <div>
+                <p class="eyebrow">Overlay graph</p>
+                <h3>Selected Officials</h3>
+              </div>
+              <span class="badge" id="comparisonCount">0 selected</span>
+            </div>
+            <div class="selected-chips" id="selectedChips"></div>
+            <div class="comparison-graph" id="comparisonGraph"></div>
+            <section class="profile" id="profilePanel" aria-live="polite"></section>
+          </section>
         </div>
       </section>
 
