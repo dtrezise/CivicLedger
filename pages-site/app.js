@@ -1,9 +1,10 @@
 const state = {
   data: null,
+  explorerPeople: [],
   selectedId: null,
   query: "",
   branch: "",
-  assetClass: "",
+  roleCategory: "",
   officialQuery: "",
   officialBranch: "",
   officialTerm: "",
@@ -49,6 +50,15 @@ function shortDate(value) {
 }
 
 function affiliation(person) {
+  if (person.primary_role) {
+    return compact([
+      person.branch,
+      termLabel(person.primary_role.presidential_term),
+      person.primary_role.office,
+      person.primary_role.agency,
+      person.primary_role.court,
+    ]);
+  }
   return compact([
     person.branch,
     person.chamber,
@@ -64,28 +74,76 @@ function termLabel(termId) {
   return state.data.public_officials?.scope?.presidential_terms?.[termId]?.label || termId;
 }
 
+function roleSortValue(role) {
+  return role.service_start || "0000-00-00";
+}
+
+function branchPeopleCounts() {
+  return state.explorerPeople.reduce((counts, person) => {
+    counts[person.branch] = (counts[person.branch] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+function buildExplorerPeople() {
+  const rolesByPerson = new Map();
+  for (const role of state.data.public_officials.roles) {
+    if (!rolesByPerson.has(role.external_person_id)) {
+      rolesByPerson.set(role.external_person_id, []);
+    }
+    rolesByPerson.get(role.external_person_id).push(role);
+  }
+
+  state.explorerPeople = state.data.public_officials.people
+    .map((person) => {
+      const roles = [...(rolesByPerson.get(person.external_person_id) || [])].sort((a, b) =>
+        roleSortValue(b).localeCompare(roleSortValue(a))
+      );
+      const currentRole = roles.find((role) => !role.service_end) || roles[0] || null;
+      return {
+        id: person.external_person_id,
+        full_name: person.full_name,
+        branch: person.branch,
+        roles,
+        primary_role: currentRole,
+        trades: [],
+        filings: [],
+        demo_disclosure_profile: false,
+      };
+    })
+    .sort((a, b) => {
+      const branchCompare = a.branch.localeCompare(b.branch);
+      return branchCompare || a.full_name.localeCompare(b.full_name);
+    });
+}
+
 function filteredPeople() {
   const query = state.query.trim().toLowerCase();
-  return state.data.people.filter((person) => {
+  return state.explorerPeople.filter((person) => {
     const branchOk = !state.branch || person.branch === state.branch;
-    const assetOk =
-      !state.assetClass ||
-      person.trades.some((trade) => trade.asset_class === state.assetClass);
+    const roleOk =
+      !state.roleCategory ||
+      person.roles.some((role) => role.role_category === state.roleCategory);
     const haystack = [
       person.full_name,
       person.branch,
-      person.chamber,
-      person.office,
-      person.agency,
-      person.court,
-      person.state,
-      person.party,
-      ...person.trades.map((trade) => `${trade.asset_display_name} ${trade.ticker}`),
+      ...person.roles.flatMap((role) => [
+        role.presidential_term,
+        termLabel(role.presidential_term),
+        role.administration,
+        role.role_category,
+        role.role_title,
+        role.office,
+        role.agency,
+        role.court,
+        role.appointing_president,
+        role.source_name,
+      ]),
     ]
       .filter(Boolean)
       .join(" ")
       .toLowerCase();
-    return branchOk && assetOk && (!query || haystack.includes(query));
+    return branchOk && roleOk && (!query || haystack.includes(query));
   });
 }
 
@@ -96,7 +154,7 @@ function renderSummary() {
     <span>${escapeHtml(state.data.disclaimer)}</span>
   `;
   $("summaryMetrics").innerHTML = [
-    ["Officials", summary.official_count],
+    ["Demo Disclosure Profiles", summary.official_count],
     ["Tracked Public Officials", summary.tracked_public_official_count],
     ["Official Roles", summary.public_official_role_count],
     ["Filings", summary.filing_count],
@@ -119,7 +177,7 @@ function renderSummary() {
 }
 
 function renderBranchChart() {
-  const entries = Object.entries(state.data.summary.branch_counts);
+  const entries = Object.entries(branchPeopleCounts()).sort(([a], [b]) => a.localeCompare(b));
   const max = Math.max(...entries.map(([, count]) => count));
   $("branchChart").innerHTML = `
     <svg viewBox="0 0 520 330" role="img" aria-label="Official count by branch">
@@ -137,24 +195,25 @@ function renderBranchChart() {
           `;
         })
         .join("")}
-      <text x="24" y="296" fill="#64706a" font-size="15">Generated fixture data used for public UI evaluation.</text>
+      <text x="24" y="296" fill="#64706a" font-size="15">Public-official roster. Disclosure records are still being attached source by source.</text>
     </svg>
   `;
 }
 
 function hydrateControls() {
-  const branches = [...new Set(state.data.people.map((person) => person.branch))].sort();
+  const branches = [...new Set(state.explorerPeople.map((person) => person.branch))].sort();
   $("branchFilter").innerHTML =
     '<option value="">All branches</option>' +
     branches.map((branch) => `<option value="${branch}">${branch}</option>`).join("");
 
-  const assets = [
-    ...new Set(state.data.trades.map((trade) => trade.asset_class).filter(Boolean)),
-  ].sort();
   $("assetFilter").innerHTML =
-    '<option value="">All assets</option>' +
-    assets
-      .map((asset) => `<option value="${asset}">${asset.replaceAll("_", " ")}</option>`)
+    '<option value="">All role types</option>' +
+    [...new Set(state.data.public_officials.roles.map((role) => role.role_category))]
+      .sort()
+      .map(
+        (category) =>
+          `<option value="${escapeHtml(category)}">${escapeHtml(category.replaceAll("_", " "))}</option>`
+      )
       .join("");
 
   const officialBranches = [
@@ -178,7 +237,7 @@ function hydrateControls() {
     renderExplorer();
   });
   $("assetFilter").addEventListener("change", (event) => {
-    state.assetClass = event.target.value;
+    state.roleCategory = event.target.value;
     renderExplorer();
   });
   $("officialSearchInput").addEventListener("input", (event) => {
@@ -207,6 +266,7 @@ function renderPeopleList(people) {
           <button class="person-button ${person.id === state.selectedId ? "active" : ""}" data-person-id="${person.id}">
             <strong>${escapeHtml(person.full_name)}</strong>
             <span>${escapeHtml(affiliation(person))}</span>
+            <small>${fmt.format(person.roles.length)} role${person.roles.length === 1 ? "" : "s"}</small>
           </button>
         `
       )
@@ -251,6 +311,47 @@ function timelineSvg(person) {
   `;
 }
 
+function roleTimelineSvg(person) {
+  const roles = [...person.roles].sort((a, b) => roleSortValue(a).localeCompare(roleSortValue(b)));
+  const width = 760;
+  const height = Math.max(150, 74 + roles.length * 34);
+  const padding = 42;
+  const dates = roles
+    .flatMap((role) => [role.service_start, role.service_end].filter(Boolean))
+    .sort();
+  const minYear = dates[0] ? Number(dates[0].slice(0, 4)) : 2017;
+  const maxYear = Math.max(
+    dates.at(-1) ? Number(dates.at(-1).slice(0, 4)) : new Date().getFullYear(),
+    new Date().getFullYear()
+  );
+  const yearSpan = Math.max(1, maxYear - minYear + 1);
+  const xFor = (value) => {
+    const year = value ? Number(value.slice(0, 4)) : maxYear;
+    return padding + ((year - minYear) / yearSpan) * (width - padding * 2);
+  };
+  return `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Official role timeline">
+      <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#d9e2dc"></line>
+      <text x="${padding}" y="${height - 14}" fill="#64706a" font-size="13">${minYear}</text>
+      <text x="${width - padding - 34}" y="${height - 14}" fill="#64706a" font-size="13">${maxYear}</text>
+      ${roles
+        .map((role, index) => {
+          const y = 36 + index * 34;
+          const x1 = xFor(role.service_start);
+          const x2 = Math.max(x1 + 18, xFor(role.service_end));
+          const color = branchColors[role.branch] || "#0f766e";
+          return `
+            <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="8" stroke-linecap="round"></line>
+            <circle cx="${x1}" cy="${y}" r="6" fill="${color}"></circle>
+            <text x="${padding}" y="${y - 11}" fill="#17201d" font-size="13" font-weight="800">${escapeHtml(termLabel(role.presidential_term))}</text>
+            <text x="${Math.min(width - 250, x1 + 12)}" y="${y + 5}" fill="#64706a" font-size="12">${escapeHtml(role.role_category.replaceAll("_", " "))}</text>
+          `;
+        })
+        .join("")}
+    </svg>
+  `;
+}
+
 function marketSvg() {
   const rows = state.data.market.monthly;
   const width = 760;
@@ -277,10 +378,11 @@ function marketSvg() {
 }
 
 function renderProfile(person) {
-  const recentTrades = [...person.trades]
+  const recentTrades = [...(person.trades || [])]
     .sort((a, b) => b.trade_date.localeCompare(a.trade_date))
     .slice(0, 10);
-  const score = person.scorecard;
+  const latestRole = person.primary_role;
+  const hasTrades = recentTrades.length > 0;
   $("profilePanel").innerHTML = `
     <div class="profile-header">
       <div>
@@ -288,48 +390,58 @@ function renderProfile(person) {
         <h2>${escapeHtml(person.full_name)}</h2>
         <p>${escapeHtml(affiliation(person))}</p>
       </div>
-      <span class="badge gold">Grade ${score.grade} / ${score.score}</span>
+      <span class="badge gold">${hasTrades ? "Demo disclosure profile" : "Role roster profile"}</span>
     </div>
 
     <div class="profile-grid">
-      <div class="mini-stat"><strong>${fmt.format(person.stats.trade_count)}</strong><span>Trades</span></div>
-      <div class="mini-stat"><strong>${fmt.format(person.stats.filing_count)}</strong><span>Filings</span></div>
-      <div class="mini-stat"><strong>${score.median_lag_days ?? "n/a"}</strong><span>Median lag days</span></div>
-      <div class="mini-stat"><strong>${money.format(person.stats.total_reported_min)}</strong><span>Minimum reported range</span></div>
+      <div class="mini-stat"><strong>${fmt.format(person.roles.length)}</strong><span>Tracked roles</span></div>
+      <div class="mini-stat"><strong>${escapeHtml(latestRole ? termLabel(latestRole.presidential_term) : "n/a")}</strong><span>Latest term</span></div>
+      <div class="mini-stat"><strong>${escapeHtml(latestRole?.role_category?.replaceAll("_", " ") || "n/a")}</strong><span>Role category</span></div>
+      <div class="mini-stat"><strong>${hasTrades ? fmt.format(recentTrades.length) : "Pending"}</strong><span>Disclosure rows</span></div>
     </div>
 
     <div class="chart-shell">
-      <div class="chart-title"><span>Monthly Transaction Timeline</span><span>${person.stats.buy_count} buys / ${person.stats.sell_count} sells</span></div>
-      ${timelineSvg(person)}
+      <div class="chart-title"><span>Role Timeline</span><span>${fmt.format(person.roles.length)} source-backed role${person.roles.length === 1 ? "" : "s"}</span></div>
+      ${roleTimelineSvg(person)}
     </div>
 
-    <div class="chart-shell">
-      <div class="chart-title"><span>Market Context</span><span>SPY and DIA fixture overlay</span></div>
-      ${marketSvg()}
-    </div>
+    ${
+      hasTrades
+        ? `
+          <div class="chart-shell">
+            <div class="chart-title"><span>Monthly Transaction Timeline</span><span>Demo disclosure rows</span></div>
+            ${timelineSvg(person)}
+          </div>
+          <div class="chart-shell">
+            <div class="chart-title"><span>Market Context</span><span>SPY and DIA fixture overlay</span></div>
+            ${marketSvg()}
+          </div>
+        `
+        : ""
+    }
 
     <div class="chart-shell">
-      <div class="chart-title"><span>Recent Transaction Rows</span><span>Top 10 by trade date</span></div>
-      <table class="trade-table">
+      <div class="chart-title"><span>Official Role Records</span><span>Source-backed roster data</span></div>
+      <table class="trade-table role-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Action</th>
-            <th>Asset</th>
-            <th>Range</th>
-            <th>Lag</th>
+            <th>Term</th>
+            <th>Role</th>
+            <th>Agency / Court</th>
+            <th>Start</th>
+            <th>Source</th>
           </tr>
         </thead>
         <tbody>
-          ${recentTrades
+          ${person.roles
             .map(
-              (trade) => `
+              (role) => `
                 <tr>
-                  <td>${shortDate(trade.trade_date)}</td>
-                  <td>${trade.action}</td>
-                  <td>${escapeHtml(trade.asset_display_name)} ${trade.ticker ? `(${trade.ticker})` : ""}</td>
-                  <td>${escapeHtml(trade.value_range_label)}</td>
-                  <td>${trade.disclosure_lag_days}d</td>
+                  <td>${escapeHtml(termLabel(role.presidential_term))}</td>
+                  <td>${escapeHtml(role.role_title)}</td>
+                  <td>${escapeHtml(role.court || role.agency || role.administration)}</td>
+                  <td>${shortDate(role.service_start)}</td>
+                  <td><a href="${escapeHtml(role.source_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(role.source_tier)}</a></td>
                 </tr>
               `
             )
@@ -337,16 +449,52 @@ function renderProfile(person) {
         </tbody>
       </table>
     </div>
+
+    ${
+      hasTrades
+        ? `
+          <div class="chart-shell">
+            <div class="chart-title"><span>Recent Transaction Rows</span><span>Top 10 by trade date</span></div>
+            <table class="trade-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Asset</th>
+                  <th>Range</th>
+                  <th>Lag</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${recentTrades
+                  .map(
+                    (trade) => `
+                      <tr>
+                        <td>${shortDate(trade.trade_date)}</td>
+                        <td>${trade.action}</td>
+                        <td>${escapeHtml(trade.asset_display_name)} ${trade.ticker ? `(${trade.ticker})` : ""}</td>
+                        <td>${escapeHtml(trade.value_range_label)}</td>
+                        <td>${trade.disclosure_lag_days}d</td>
+                      </tr>
+                    `
+                  )
+                  .join("")}
+              </tbody>
+            </table>
+          </div>
+        `
+        : ""
+    }
   `;
 }
 
 function renderExplorer() {
   const people = filteredPeople();
   if (!people.some((person) => person.id === state.selectedId)) {
-    state.selectedId = people[0]?.id || state.data.people[0]?.id || null;
+    state.selectedId = people[0]?.id || state.explorerPeople[0]?.id || null;
   }
   renderPeopleList(people);
-  const selected = state.data.people.find((person) => person.id === state.selectedId);
+  const selected = state.explorerPeople.find((person) => person.id === state.selectedId);
   if (selected) renderProfile(selected);
 }
 
@@ -474,7 +622,8 @@ function renderEvents() {
 async function boot() {
   const response = await fetch("./data/civicledger-static.json");
   state.data = await response.json();
-  state.selectedId = state.data.people[0]?.id || null;
+  buildExplorerPeople();
+  state.selectedId = state.explorerPeople[0]?.id || null;
   renderSummary();
   renderBranchChart();
   hydrateControls();

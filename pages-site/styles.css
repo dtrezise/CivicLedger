@@ -478,14 +478,20 @@ select {
 }
 
 .person-button strong,
-.person-button span {
+.person-button span,
+.person-button small {
   display: block;
 }
 
-.person-button span {
+.person-button span,
+.person-button small {
   margin-top: 4px;
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+.person-button small {
+  font-weight: 800;
 }
 
 .profile-header {
@@ -597,6 +603,11 @@ svg {
   color: var(--muted);
   font-size: 0.74rem;
   text-transform: uppercase;
+}
+
+.role-table td:nth-child(2),
+.role-table td:nth-child(3) {
+  min-width: 12rem;
 }
 
 .source-grid,
