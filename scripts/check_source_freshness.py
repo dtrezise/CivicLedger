@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FILES = [
     ROOT / "data" / "public_officials" / "public_official_roles.json",
     ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json",
+    ROOT / "data" / "disclosures" / "presidential_oge_documents.json",
+    ROOT / "data" / "disclosures" / "presidential_oge_transactions.json",
     ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json",
     ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json",
     ROOT / "data" / "disclosures" / "production_trade_promotions.json",

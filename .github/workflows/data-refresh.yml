@@ -51,6 +51,10 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_presidential_oge_disclosure_index.py
+      - name: Refresh presidential OGE disclosure documents
+        env:
+          PYTHONPATH: backend
+        run: python scripts/build_presidential_oge_documents.py --refresh
       - name: Rebuild disclosure source pipeline artifacts
         env:
           PYTHONPATH: backend

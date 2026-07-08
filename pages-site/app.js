@@ -851,12 +851,12 @@ function careerTimelineSvg(officials) {
                       const priceLabel = showPrice && trade.price_window?.closest_close ? ` / close ${trade.price_window.closest_close}` : "";
                       return `
                         <circle cx="${xFor(value)}" cy="${y}" r="${radius.toFixed(1)}" fill="${fill}" stroke="#fff" stroke-width="2">
-                          <title>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker} ${trade.value_range_label} on ${shortDate(trade.date)}${priceLabel} / ${trade.confidence_label || official.stats?.confidence_label || "confidence pending"}`)}</title>
+                          <title>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker || trade.asset_display_name} ${trade.value_range_label} on ${shortDate(trade.date)}${priceLabel} / ${trade.confidence_label || official.stats?.confidence_label || "confidence pending"}`)}</title>
                         </circle>
                       `;
                     })
                     .join("")
-                : `<text x="${left}" y="${y + 28}" fill="#64706a" font-size="12">No reviewed trade rows in this snapshot</text>`
+                : `<text x="${left}" y="${y + 28}" fill="#64706a" font-size="12">No reviewed or parser-preview trade rows in this snapshot</text>`
             }
             ${visibleClusters
               .map((cluster) => {
@@ -941,6 +941,8 @@ function renderCareerTimeline() {
     ["Baseline Officials", timeline.summary?.default_official_count || 0],
     ["Compared Lanes", officials.length],
     ["Timeline Trades", officials.reduce((total, official) => total + (official.trades || []).filter(timelineTradeVisible).length, 0)],
+    ["OGE Docs", timeline.summary?.presidential_oge_document_count || 0],
+    ["OGE Preview", timeline.summary?.presidential_oge_parser_preview_transaction_count || 0],
     ["Crypto Trades", officials.reduce((total, official) => total + (official.trades || []).filter((trade) => timelineTradeVisible(trade) && trade.asset_class === "crypto").length, 0)],
     ["Clusters", officials.reduce((total, official) => total + (official.trade_clusters || []).length, 0)],
     ["Event Markers", officials.reduce((total, official) => total + (official.events || []).filter(timelineEventVisible).length, 0)],

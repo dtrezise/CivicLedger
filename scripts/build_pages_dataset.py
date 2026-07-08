@@ -35,6 +35,8 @@ CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_m
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
 COMPANY_ENTITY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
+PRESIDENTIAL_OGE_DOCUMENTS = ROOT / "data" / "disclosures" / "presidential_oge_documents.json"
+PRESIDENTIAL_OGE_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
 DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
@@ -452,6 +454,36 @@ def load_presidential_oge_status() -> dict:
     return json.loads(PRESIDENTIAL_OGE_STATUS.read_text())
 
 
+def load_presidential_oge_documents() -> dict:
+    if not PRESIDENTIAL_OGE_DOCUMENTS.exists():
+        return {
+            "context_label": "Presidential OGE disclosure documents have not been generated.",
+            "summary": {
+                "document_count": 0,
+                "parser_preview_transaction_count": 0,
+                "public_production_trade_count": 0,
+            },
+            "documents": [],
+            "unavailable_documents": [],
+            "source": {},
+        }
+    return json.loads(PRESIDENTIAL_OGE_DOCUMENTS.read_text())
+
+
+def load_presidential_oge_transactions() -> dict:
+    if not PRESIDENTIAL_OGE_TRANSACTIONS.exists():
+        return {
+            "context_label": "Presidential OGE parser-preview transactions have not been generated.",
+            "summary": {
+                "parser_preview_transaction_count": 0,
+                "public_production_trade_count": 0,
+                "review_required_transaction_count": 0,
+            },
+            "transactions": [],
+        }
+    return json.loads(PRESIDENTIAL_OGE_TRANSACTIONS.read_text())
+
+
 def load_public_officials() -> dict:
     if not PUBLIC_OFFICIALS.exists():
         return {
@@ -697,10 +729,15 @@ def timeline_trade_row(trade: dict, anchor: str | None, crypto_points_by_symbol:
         "sector": reference.get("sector", "Unmapped"),
         "value_range_label": trade["value_range_label"],
         "value_midpoint": midpoint,
-        "disclosure_lag_days": trade["disclosure_lag_days"],
+        "disclosure_lag_days": trade.get("disclosure_lag_days"),
         "record_status": trade.get("record_status", "fixture_demo"),
         "confidence_label": trade.get("confidence_label", "Fixture/demo trade"),
         "parsing_confidence": trade.get("parsing_confidence"),
+        "document_id": trade.get("document_id"),
+        "source_url": trade.get("source_url"),
+        "source_page": trade.get("source_page"),
+        "review_required_before_public_trade": trade.get("review_required_before_public_trade", False),
+        "public_production_trade": trade.get("public_production_trade"),
     }
     if row["asset_class"] == "crypto":
         row["price_window"] = crypto_price_window(row["ticker"], row["date"], crypto_points_by_symbol)
@@ -839,6 +876,8 @@ def career_trade_timeline(
     civic_events: list[dict],
     crypto_prices: dict,
     presidential_oge_status: dict,
+    presidential_oge_documents: dict,
+    presidential_oge_transactions: dict,
     event_entity_map: dict,
     company_reference: dict,
 ) -> dict:
@@ -854,6 +893,15 @@ def career_trade_timeline(
     oge_by_official = defaultdict(list)
     for status in presidential_oge_status.get("officials", []):
         oge_by_official[status["official_id"]].append(status)
+    oge_documents_by_official = defaultdict(list)
+    for document in presidential_oge_documents.get("documents", []):
+        oge_documents_by_official[document["official_id"]].append(document)
+    oge_unavailable_by_official = defaultdict(list)
+    for unavailable in presidential_oge_documents.get("unavailable_documents", []):
+        oge_unavailable_by_official[unavailable["official_id"]].append(unavailable)
+    oge_transactions_by_official = defaultdict(list)
+    for transaction in presidential_oge_transactions.get("transactions", []):
+        oge_transactions_by_official[transaction["official_id"]].append(transaction)
     crypto_points_by_symbol = {
         symbol: series.get("points", [])
         for symbol, series in crypto_prices.get("series", {}).items()
@@ -868,7 +916,35 @@ def career_trade_timeline(
         if not presidential_roles:
             continue
         person = public_people_by_id.get(external_id, {})
-        start, end = service_bounds(presidential_roles, [])
+        preview_trade_source_rows = sorted(
+            oge_transactions_by_official.get(external_id, []),
+            key=lambda item: (item["trade_date"], item["id"]),
+        )
+        start, end = service_bounds(presidential_roles, preview_trade_source_rows)
+        timeline_trades = [
+            timeline_trade_row(trade, start, crypto_points_by_symbol)
+            for trade in preview_trade_source_rows
+        ]
+        disclosure_documents = oge_documents_by_official.get(external_id, [])
+        unavailable_documents = oge_unavailable_by_official.get(external_id, [])
+        document_count = len(disclosure_documents)
+        preview_trade_count = len(timeline_trades)
+        disclosure_status = "No reviewed presidential trade disclosures ingested yet"
+        record_status = "source_status_only"
+        confidence_label = "Source status only"
+        if preview_trade_count:
+            disclosure_status = (
+                f"{document_count} official OGE documents indexed; "
+                f"{preview_trade_count} parser-preview 278-T transactions require review before production promotion"
+            )
+            record_status = "official_oge_parser_preview_not_promoted"
+            confidence_label = "Official OGE parser preview; review required"
+        elif document_count:
+            disclosure_status = f"{document_count} official OGE documents indexed; no parser-preview transactions detected"
+            record_status = "official_oge_documents_indexed"
+            confidence_label = "Official OGE documents indexed"
+        elif unavailable_documents:
+            disclosure_status = "Historical OGE records require official archive/request workflow"
         president_ids.append(external_id)
         official_rows.append(
             {
@@ -879,30 +955,32 @@ def career_trade_timeline(
                 "service_start": start,
                 "service_end": end,
                 "roles": presidential_roles,
-                "trades": [],
+                "trades": timeline_trades,
                 "disclosure_sources": oge_by_official.get(external_id, []),
+                "disclosure_documents": disclosure_documents,
+                "unavailable_disclosure_documents": unavailable_documents,
                 "events": timeline_event_positions(
                     events,
                     start,
                     start,
                     end,
                     {"branch": "Executive", "roles": presidential_roles},
-                    [],
+                    timeline_trades,
                 ),
-                "trade_clusters": [],
+                "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
-                    "trade_count": 0,
-                    "buy_count": 0,
-                    "sell_count": 0,
-                    "crypto_count": 0,
-                    "total_value_midpoint": 0,
-                    "disclosure_status": (
-                        "OGE source identified; no reviewed presidential trade disclosures promoted yet"
-                        if oge_by_official.get(external_id)
-                        else "No reviewed presidential trade disclosures ingested yet"
-                    ),
-                    "record_status": "source_status_only",
-                    "confidence_label": "Source status only",
+                    "trade_count": preview_trade_count,
+                    "parser_preview_trade_count": preview_trade_count,
+                    "document_count": document_count,
+                    "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
+                    "sell_count": sum(1 for trade in timeline_trades if trade["action"] == "SELL"),
+                    "crypto_count": sum(1 for trade in timeline_trades if trade["asset_class"] == "crypto"),
+                    "total_value_midpoint": round(sum(trade["value_midpoint"] or 0 for trade in timeline_trades), 2),
+                    "disclosure_status": disclosure_status,
+                    "record_status": record_status,
+                    "confidence_label": confidence_label,
+                    "public_production_trade_count": 0,
+                    "review_required_before_public_trade": preview_trade_count > 0 or document_count > 0,
                 },
             }
         )
@@ -1003,6 +1081,15 @@ def career_trade_timeline(
             "crypto_trade_count": sum(official["stats"]["crypto_count"] for official in official_rows),
             "trade_cluster_count": sum(len(official.get("trade_clusters", [])) for official in official_rows),
             "presidential_oge_status_count": presidential_oge_status.get("summary", {}).get("official_status_count", 0),
+            "presidential_oge_document_count": presidential_oge_documents.get("summary", {}).get("document_count", 0),
+            "presidential_oge_parser_preview_transaction_count": presidential_oge_transactions.get("summary", {}).get(
+                "parser_preview_transaction_count",
+                0,
+            ),
+            "presidential_oge_public_production_trade_count": presidential_oge_transactions.get("summary", {}).get(
+                "public_production_trade_count",
+                0,
+            ),
         },
         "officials": official_rows,
         "events": events,
@@ -1017,6 +1104,16 @@ def career_trade_timeline(
             "context_label": presidential_oge_status.get("context_label"),
             "summary": presidential_oge_status.get("summary", {}),
             "source": presidential_oge_status.get("source", {}),
+        },
+        "presidential_oge_documents": {
+            "context_label": presidential_oge_documents.get("context_label"),
+            "summary": presidential_oge_documents.get("summary", {}),
+            "source": presidential_oge_documents.get("source", {}),
+            "unavailable_documents": presidential_oge_documents.get("unavailable_documents", []),
+        },
+        "presidential_oge_transactions": {
+            "context_label": presidential_oge_transactions.get("context_label"),
+            "summary": presidential_oge_transactions.get("summary", {}),
         },
         "event_entity_map": {
             "schema_version": event_entity_map.get("schema_version"),
@@ -1150,6 +1247,8 @@ def build_dataset() -> dict:
     market_series, market_metadata = load_market_prices()
     crypto_prices = load_crypto_prices()
     presidential_oge_status = load_presidential_oge_status()
+    presidential_oge_documents = load_presidential_oge_documents()
+    presidential_oge_transactions = load_presidential_oge_transactions()
     people = create_people()
     all_people = []
     all_filings = []
@@ -1268,6 +1367,8 @@ def build_dataset() -> dict:
         civic_events,
         crypto_prices,
         presidential_oge_status,
+        presidential_oge_documents,
+        presidential_oge_transactions,
         context_maps["event_entity_map"],
         context_maps["company_entity_reference"],
     )
@@ -1324,6 +1425,13 @@ def build_dataset() -> dict:
             "career_timeline_crypto_trade_count": career_timeline["summary"]["crypto_trade_count"],
             "career_timeline_trade_cluster_count": career_timeline["summary"]["trade_cluster_count"],
             "presidential_oge_source_status_count": career_timeline["summary"]["presidential_oge_status_count"],
+            "presidential_oge_document_count": career_timeline["summary"]["presidential_oge_document_count"],
+            "presidential_oge_parser_preview_transaction_count": career_timeline["summary"][
+                "presidential_oge_parser_preview_transaction_count"
+            ],
+            "presidential_oge_public_production_trade_count": career_timeline["summary"][
+                "presidential_oge_public_production_trade_count"
+            ],
             "disclosure_queue_item_count": disclosure_artifacts["ingestion_queue"].get("summary", {}).get("queue_item_count", 0),
             "archived_source_document_count": disclosure_artifacts["raw_archive_index"].get("summary", {}).get("archived_document_count", 0),
             "reviewed_fixture_promotion_count": disclosure_artifacts["reviewed_promotions"].get("summary", {}).get("reviewed_fixture_promotion_count", 0),
@@ -1352,6 +1460,18 @@ def build_dataset() -> dict:
             "context_label": presidential_oge_status.get("context_label"),
             "summary": presidential_oge_status.get("summary", {}),
             "source": presidential_oge_status.get("source", {}),
+        },
+        "presidential_oge_documents": {
+            "context_label": presidential_oge_documents.get("context_label"),
+            "summary": presidential_oge_documents.get("summary", {}),
+            "source": presidential_oge_documents.get("source", {}),
+            "unavailable_documents": presidential_oge_documents.get("unavailable_documents", []),
+            "documents": presidential_oge_documents.get("documents", []),
+        },
+        "presidential_oge_transactions": {
+            "context_label": presidential_oge_transactions.get("context_label"),
+            "summary": presidential_oge_transactions.get("summary", {}),
+            "transactions": presidential_oge_transactions.get("transactions", []),
         },
         "disclosure_pipeline": public_disclosure_artifacts(disclosure_artifacts),
         "context_maps": context_maps,
