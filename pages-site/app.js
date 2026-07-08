@@ -1104,6 +1104,66 @@ function renderSources() {
     .join("");
 }
 
+function renderCompleteness() {
+  const dashboard = state.data.disclosure_pipeline?.completeness_dashboard || {};
+  const summary = dashboard.summary || {};
+  const branches = dashboard.branches || [];
+  const rows = dashboard.rows || [];
+  $("completenessSummary").innerHTML = [
+    ["Queue Items", summary.queue_item_count || 0],
+    ["Raw Documents", summary.archived_raw_document_count || 0],
+    ["Reviewed Fixtures", summary.reviewed_fixture_promotion_count || 0],
+    ["Public Trade Rows", summary.reviewed_public_trade_count || 0],
+  ]
+    .map(
+      ([label, value]) => `
+        <div class="mini-stat">
+          <strong>${fmt.format(value)}</strong>
+          <span>${escapeHtml(label)}</span>
+        </div>
+      `
+    )
+    .join("");
+
+  $("completenessGrid").innerHTML =
+    branches
+      .map((branch) => {
+        const branchClass = String(branch.branch || "").toLowerCase();
+        return `
+          <article class="completeness-card ${escapeHtml(branchClass)}">
+            <span>${escapeHtml(branch.branch)}</span>
+            <strong>${fmt.format(branch.queue_item_count || 0)} queued</strong>
+            <small>${fmt.format(branch.official_count || 0)} officials / ${fmt.format(branch.role_count || 0)} roles</small>
+            <small>${fmt.format(branch.archived_raw_document_count || 0)} raw docs / ${fmt.format(branch.reviewed_public_trade_count || 0)} reviewed public trades</small>
+            <span class="readiness-chip ${escapeHtml(branch.readiness_status || "")}">${escapeHtml(roleCategoryLabel(branch.readiness_status || "pending"))}</span>
+          </article>
+        `;
+      })
+      .join("") || '<p class="muted">No completeness dashboard rows generated yet.</p>';
+
+  $("completenessCount").textContent = `${fmt.format(rows.length)} rows`;
+  $("completenessRows").innerHTML =
+    rows
+      .slice(0, 96)
+      .map(
+        (row) => `
+          <tr>
+            <td>
+              <strong>${escapeHtml(row.branch)}</strong>
+              <small>${escapeHtml(termLabel(row.presidential_term))}</small>
+            </td>
+            <td>${escapeHtml(row.source_id)}</td>
+            <td>${fmt.format(row.official_count || 0)} officials<br /><small>${fmt.format(row.role_count || 0)} roles</small></td>
+            <td>${fmt.format(row.queue_item_count || 0)}<br /><small>${fmt.format(row.current_queue_item_count || 0)} current</small></td>
+            <td>${fmt.format(row.archived_raw_document_count || 0)}</td>
+            <td>${fmt.format(row.reviewed_public_trade_count || 0)}</td>
+            <td><span class="readiness-chip ${escapeHtml(row.readiness_status || "")}">${escapeHtml(roleCategoryLabel(row.readiness_status || "pending"))}</span></td>
+          </tr>
+        `
+      )
+      .join("");
+}
+
 function renderEvents() {
   $("eventsList").innerHTML = state.data.events
     .map(
@@ -1228,6 +1288,7 @@ async function boot() {
   renderBranchChart();
   hydrateControls();
   renderExplorer();
+  renderCompleteness();
   renderSources();
   renderEvents();
   renderTradeContext();

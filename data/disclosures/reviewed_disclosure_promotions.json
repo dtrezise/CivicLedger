@@ -1,0 +1,38 @@
+{
+  "context_label": "Promotion workflow proof using parser fixtures. These rows verify review mechanics and are not public production official trade records.",
+  "generated_at": "2026-07-08",
+  "promotions": [
+    {
+      "action": "BUY",
+      "asset_display_name": "Example Infrastructure Fund",
+      "confidence_label": "Reviewed fixture promotion; not a public production official trade",
+      "field_confidence": {
+        "amount": 0.9,
+        "asset": 0.95,
+        "ticker": 0.8,
+        "transaction_date": 0.95,
+        "transaction_type": 0.9
+      },
+      "filer_name": "Secretary Example",
+      "filing_date": "2024-07-03",
+      "fixture_path": "backend/tests/fixtures/parsers/oge_278t.csv",
+      "parser_confidence": 0.93,
+      "promotion_id": "fixture-oge-reviewed-001",
+      "public_production_trade": false,
+      "record_status": "reviewed_fixture_not_public_production",
+      "report_type": "OGE Form 278-T",
+      "review_required_before_public_trade": true,
+      "review_status": "reviewed_fixture_promotion",
+      "source_id": "oge-individual-disclosures",
+      "ticker": "EIF",
+      "trade_date": "2024-06-11",
+      "value_range_label": "$50,001 - $100,000"
+    }
+  ],
+  "schema_version": "reviewed-disclosure-promotions-v1",
+  "summary": {
+    "public_production_trade_count": 0,
+    "review_required_before_public_trade": true,
+    "reviewed_fixture_promotion_count": 1
+  }
+}

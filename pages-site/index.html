@@ -40,6 +40,7 @@
 
       <nav class="mode-tabs" aria-label="Dashboard sections">
         <a class="active" href="#overview">Overview</a>
+        <a href="#completeness">Completeness</a>
         <a href="#career-timeline">Career Timeline</a>
         <a href="#explore">Compare</a>
         <a href="#trade-context">Trade Context</a>
@@ -70,6 +71,43 @@
         <div class="overview-grid">
           <div class="branch-cards" id="branchCards"></div>
           <div class="role-breakdown" id="globalRoleBreakdown"></div>
+        </div>
+      </section>
+
+      <section class="list-view" id="completeness">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Data completeness</p>
+            <h2>Branch, Term, and Source Readiness</h2>
+          </div>
+          <p>
+            Track the buildout from source-backed official rosters to queued disclosure searches,
+            archived raw documents, and reviewed public trade rows.
+          </p>
+        </div>
+        <div id="completenessSummary" class="completeness-summary"></div>
+        <div id="completenessGrid" class="completeness-grid"></div>
+        <div class="chart-shell">
+          <div class="chart-title">
+            <span>Completeness by Branch, Term, and Source</span>
+            <span id="completenessCount">0 rows</span>
+          </div>
+          <div class="table-scroll">
+            <table class="trade-table">
+              <thead>
+                <tr>
+                  <th>Branch / Term</th>
+                  <th>Source</th>
+                  <th>Officials / Roles</th>
+                  <th>Queue</th>
+                  <th>Raw Docs</th>
+                  <th>Reviewed Trades</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="completenessRows"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -333,6 +371,6 @@
       </footer>
     </div>
 
-    <script src="./app.js?v=2026-07-07-career-timeline" type="module"></script>
+    <script src="./app.js?v=2026-07-08-completeness" type="module"></script>
   </body>
 </html>

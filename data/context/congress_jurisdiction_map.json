@@ -1,0 +1,132 @@
+{
+  "context_label": "Congressional committee jurisdiction map for event and trade-context relevance scoring. Mappings are contextual only and do not imply causation, intent, legality, ethics, or investment performance.",
+  "schema_version": "congress-jurisdiction-map-v1",
+  "committee_maps": [
+    {
+      "chamber": "House",
+      "committee": "Agriculture",
+      "jurisdiction_scope": ["agriculture", "commodities", "nutrition", "rural development"],
+      "sector_scope": ["Consumer Staples", "Materials"],
+      "ticker_scope": ["SPY", "XLP"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Appropriations",
+      "jurisdiction_scope": ["appropriations", "federal funding", "budget"],
+      "sector_scope": ["Broad Market", "Industrials", "Health Care", "Defense"],
+      "ticker_scope": ["SPY", "DIA", "XLI", "XLV"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Armed Services",
+      "jurisdiction_scope": ["defense", "military", "national security"],
+      "sector_scope": ["Industrials", "Defense"],
+      "ticker_scope": ["XLI", "DIA"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Energy and Commerce",
+      "jurisdiction_scope": ["energy", "health", "telecommunications", "consumer protection", "technology"],
+      "sector_scope": ["Energy", "Health Care", "Information Technology", "Communication Services"],
+      "ticker_scope": ["XLE", "XLV", "XLK", "QQQ"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Financial Services",
+      "jurisdiction_scope": ["banking", "securities", "housing finance", "financial markets"],
+      "sector_scope": ["Financials", "Broad Market"],
+      "ticker_scope": ["XLF", "SPY"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Judiciary",
+      "jurisdiction_scope": ["antitrust", "courts", "intellectual property", "immigration"],
+      "sector_scope": ["Information Technology", "Communication Services", "Broad Market"],
+      "ticker_scope": ["XLK", "QQQ", "SPY"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Science, Space, and Technology",
+      "jurisdiction_scope": ["science", "space", "research", "semiconductors"],
+      "sector_scope": ["Information Technology", "Industrials"],
+      "ticker_scope": ["XLK", "QQQ", "XLI"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Transportation and Infrastructure",
+      "jurisdiction_scope": ["transportation", "infrastructure", "aviation", "water resources"],
+      "sector_scope": ["Industrials", "Energy", "Broad Market"],
+      "ticker_scope": ["XLI", "XLE", "SPY"]
+    },
+    {
+      "chamber": "House",
+      "committee": "Ways and Means",
+      "jurisdiction_scope": ["tax", "trade", "social security", "medicare"],
+      "sector_scope": ["Broad Market", "Health Care", "Financials"],
+      "ticker_scope": ["SPY", "XLV", "XLF"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Agriculture, Nutrition, and Forestry",
+      "jurisdiction_scope": ["agriculture", "commodities", "nutrition", "forestry"],
+      "sector_scope": ["Consumer Staples", "Materials"],
+      "ticker_scope": ["SPY", "XLP"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Appropriations",
+      "jurisdiction_scope": ["appropriations", "federal funding", "budget"],
+      "sector_scope": ["Broad Market", "Industrials", "Health Care", "Defense"],
+      "ticker_scope": ["SPY", "DIA", "XLI", "XLV"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Armed Services",
+      "jurisdiction_scope": ["defense", "military", "national security"],
+      "sector_scope": ["Industrials", "Defense"],
+      "ticker_scope": ["XLI", "DIA"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Banking, Housing, and Urban Affairs",
+      "jurisdiction_scope": ["banking", "securities", "housing finance", "financial markets"],
+      "sector_scope": ["Financials", "Broad Market"],
+      "ticker_scope": ["XLF", "SPY"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Commerce, Science, and Transportation",
+      "jurisdiction_scope": ["commerce", "science", "transportation", "telecommunications", "technology"],
+      "sector_scope": ["Information Technology", "Industrials", "Communication Services"],
+      "ticker_scope": ["XLK", "QQQ", "XLI"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Energy and Natural Resources",
+      "jurisdiction_scope": ["energy", "public lands", "natural resources"],
+      "sector_scope": ["Energy", "Utilities", "Materials"],
+      "ticker_scope": ["XLE", "SPY"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Finance",
+      "jurisdiction_scope": ["tax", "trade", "health care", "entitlements"],
+      "sector_scope": ["Broad Market", "Financials", "Health Care"],
+      "ticker_scope": ["SPY", "XLF", "XLV"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Health, Education, Labor, and Pensions",
+      "jurisdiction_scope": ["health", "education", "labor", "workforce"],
+      "sector_scope": ["Health Care", "Consumer Discretionary", "Broad Market"],
+      "ticker_scope": ["XLV", "SPY"]
+    },
+    {
+      "chamber": "Senate",
+      "committee": "Judiciary",
+      "jurisdiction_scope": ["antitrust", "courts", "intellectual property", "immigration"],
+      "sector_scope": ["Information Technology", "Communication Services", "Broad Market"],
+      "ticker_scope": ["XLK", "QQQ", "SPY"]
+    }
+  ]
+}

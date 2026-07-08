@@ -1,0 +1,63 @@
+{
+  "context_label": "Event-to-entity and ticker mapping for CivicLedger relevance scoring. The mapping helps sort contextual markers and does not imply causation, intent, legality, ethics, or investment performance.",
+  "schema_version": "event-entity-map-v1",
+  "default_ticker_scope": ["SPY", "QQQ", "DIA"],
+  "event_maps": [
+    {
+      "match_labels": ["Affordable Care Act Signed", "NFIB v. Sebelius Decided"],
+      "entity_scope": ["HHS", "CMS", "health insurers", "pharmaceuticals", "hospitals"],
+      "jurisdiction_scope": ["health", "health care", "medicare", "medicaid"],
+      "sector_scope": ["Health Care"],
+      "ticker_scope": ["XLV", "JNJ"]
+    },
+    {
+      "match_labels": ["Dodd-Frank Signed", "Spot Bitcoin ETPs Approved"],
+      "entity_scope": ["SEC", "CFTC", "banks", "broker dealers", "crypto exchanges"],
+      "jurisdiction_scope": ["securities", "banking", "financial markets", "crypto"],
+      "sector_scope": ["Financials", "Crypto"],
+      "ticker_scope": ["XLF", "SPY", "BTCUSD", "ETHUSD"]
+    },
+    {
+      "match_labels": ["Budget Control Act Signed", "Tax Cuts and Jobs Act Signed"],
+      "entity_scope": ["Treasury", "IRS", "federal budget"],
+      "jurisdiction_scope": ["tax", "budget", "debt", "treasury"],
+      "sector_scope": ["Broad Market", "Financials", "Fixed Income"],
+      "ticker_scope": ["SPY", "DIA", "XLF", "BND"]
+    },
+    {
+      "match_labels": ["JOBS Act Signed"],
+      "entity_scope": ["SEC", "emerging growth companies", "capital markets"],
+      "jurisdiction_scope": ["securities", "capital markets", "small business"],
+      "sector_scope": ["Financials", "Information Technology"],
+      "ticker_scope": ["XLF", "XLK", "QQQ"]
+    },
+    {
+      "match_labels": ["CARES Act Signed"],
+      "entity_scope": ["Treasury", "SBA", "HHS", "Federal Reserve", "airlines", "health care"],
+      "jurisdiction_scope": ["appropriations", "small business", "health", "lending"],
+      "sector_scope": ["Broad Market", "Health Care", "Financials", "Industrials"],
+      "ticker_scope": ["SPY", "XLV", "XLF", "XLI"]
+    },
+    {
+      "match_labels": ["Supply Chain Executive Order", "Infrastructure Investment and Jobs Act Signed"],
+      "entity_scope": ["Commerce", "Transportation", "Energy", "supply chains", "infrastructure"],
+      "jurisdiction_scope": ["commerce", "transportation", "energy", "infrastructure", "supply chain"],
+      "sector_scope": ["Industrials", "Energy", "Information Technology"],
+      "ticker_scope": ["XLI", "XLE", "XLK", "QQQ"]
+    },
+    {
+      "match_labels": ["West Virginia v. EPA Decided", "Inflation Reduction Act Signed"],
+      "entity_scope": ["EPA", "Energy", "Treasury", "utilities", "renewables"],
+      "jurisdiction_scope": ["energy", "environment", "climate", "tax"],
+      "sector_scope": ["Energy", "Utilities", "Broad Market"],
+      "ticker_scope": ["XLE", "SPY"]
+    },
+    {
+      "match_labels": ["CHIPS and Science Act Signed", "AI Executive Order"],
+      "entity_scope": ["Commerce", "NIST", "semiconductors", "AI developers", "cloud computing"],
+      "jurisdiction_scope": ["semiconductors", "technology", "artificial intelligence", "commerce"],
+      "sector_scope": ["Information Technology", "Communication Services", "Industrials"],
+      "ticker_scope": ["XLK", "QQQ", "NVDA", "MSFT", "GOOGL"]
+    }
+  ]
+}

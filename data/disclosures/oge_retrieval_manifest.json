@@ -1,0 +1,88 @@
+{
+  "context_label": "OGE retrieval workflow for presidential and senior executive financial disclosure source documents. Public trade rows require raw-document archive, parser preview, and human review before promotion.",
+  "generated_by": "CivicLedger",
+  "schema_version": "oge-retrieval-manifest-v1",
+  "source": {
+    "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
+    "id": "oge-individual-disclosures",
+    "name": "OGE Officials' Individual Disclosures",
+    "public_sample_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
+    "source_tier": "official"
+  },
+  "retrieval_policy": {
+    "archive_raw_document_before_parsing": true,
+    "document_hash_required": true,
+    "preserve_access_notice": true,
+    "review_required_before_public_trade": true,
+    "supported_forms": [
+      "OGE Form 278e",
+      "OGE Form 278-T"
+    ]
+  },
+  "documents": [
+    {
+      "access_acknowledged": true,
+      "auto_download_allowed": true,
+      "document_id": "oge-public-278e-sample",
+      "document_type": "OGE Form 278e",
+      "expected_official_id": null,
+      "expected_official_name": "OGE public sample",
+      "notes": "Official OGE sample form used for parser regression and raw-document archive plumbing; not a production official filing.",
+      "retrieval_mode": "direct_public_sample",
+      "source_status": "downloadable_public_sample",
+      "source_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open="
+    },
+    {
+      "access_acknowledged": false,
+      "auto_download_allowed": false,
+      "document_id": "president-obama-oge-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:barack-obama",
+      "expected_official_name": "Barack Obama",
+      "notes": "Historical presidential disclosures may require OGE collection search, archive review, or request workflow before raw documents can be promoted into parser review.",
+      "presidential_term": "obama-44",
+      "retrieval_mode": "official_collection_search_or_archive_request",
+      "source_status": "historical_request_or_archive_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    },
+    {
+      "access_acknowledged": false,
+      "auto_download_allowed": false,
+      "document_id": "president-trump-45-oge-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:donald-j-trump",
+      "expected_official_name": "Donald J. Trump",
+      "notes": "Search and archive official OGE collection results before normalized presidential rows are reviewed.",
+      "presidential_term": "trump-45",
+      "retrieval_mode": "official_collection_search",
+      "source_status": "oge_collection_search_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    },
+    {
+      "access_acknowledged": false,
+      "auto_download_allowed": false,
+      "document_id": "president-biden-46-oge-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:joseph-r-biden",
+      "expected_official_name": "Joseph R. Biden",
+      "notes": "Search and archive official OGE collection results before normalized presidential rows are reviewed.",
+      "presidential_term": "biden-46",
+      "retrieval_mode": "official_collection_search",
+      "source_status": "oge_collection_search_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    },
+    {
+      "access_acknowledged": false,
+      "auto_download_allowed": false,
+      "document_id": "president-trump-47-oge-live-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:donald-j-trump",
+      "expected_official_name": "Donald J. Trump",
+      "notes": "Current-term disclosures require scheduled OGE collection review and reviewer promotion before becoming production trade rows.",
+      "presidential_term": "trump-47",
+      "retrieval_mode": "scheduled_official_collection_search",
+      "source_status": "live_tracking_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    }
+  ]
+}

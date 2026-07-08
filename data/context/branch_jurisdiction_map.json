@@ -1,0 +1,98 @@
+{
+  "context_label": "Executive agency and judicial court jurisdiction map for event and trade-context relevance scoring. Mappings are contextual only and do not imply causation, intent, legality, ethics, or investment performance.",
+  "schema_version": "branch-jurisdiction-map-v1",
+  "executive_maps": [
+    {
+      "agency_or_office": "Department of Agriculture",
+      "jurisdiction_scope": ["agriculture", "nutrition", "food safety", "rural development"],
+      "sector_scope": ["Consumer Staples", "Materials"],
+      "ticker_scope": ["SPY", "XLP"]
+    },
+    {
+      "agency_or_office": "Department of Commerce",
+      "jurisdiction_scope": ["commerce", "semiconductors", "trade", "technology", "weather"],
+      "sector_scope": ["Information Technology", "Industrials", "Communication Services"],
+      "ticker_scope": ["XLK", "QQQ", "XLI"]
+    },
+    {
+      "agency_or_office": "Department of Defense",
+      "jurisdiction_scope": ["defense", "military", "national security", "procurement"],
+      "sector_scope": ["Industrials", "Defense"],
+      "ticker_scope": ["XLI", "DIA"]
+    },
+    {
+      "agency_or_office": "Department of Energy",
+      "jurisdiction_scope": ["energy", "electric grid", "nuclear", "climate", "critical minerals"],
+      "sector_scope": ["Energy", "Utilities", "Materials"],
+      "ticker_scope": ["XLE", "SPY"]
+    },
+    {
+      "agency_or_office": "Department of Health and Human Services",
+      "jurisdiction_scope": ["health", "medicare", "medicaid", "public health", "pharmaceuticals"],
+      "sector_scope": ["Health Care"],
+      "ticker_scope": ["XLV", "JNJ"]
+    },
+    {
+      "agency_or_office": "Department of Transportation",
+      "jurisdiction_scope": ["transportation", "aviation", "infrastructure", "rail", "highways"],
+      "sector_scope": ["Industrials", "Energy", "Broad Market"],
+      "ticker_scope": ["XLI", "XLE", "SPY"]
+    },
+    {
+      "agency_or_office": "Department of the Treasury",
+      "jurisdiction_scope": ["tax", "banking", "sanctions", "debt", "financial markets"],
+      "sector_scope": ["Financials", "Broad Market", "Fixed Income"],
+      "ticker_scope": ["XLF", "SPY", "BND"]
+    },
+    {
+      "agency_or_office": "Environmental Protection Agency",
+      "jurisdiction_scope": ["environment", "climate", "clean air", "clean water", "energy"],
+      "sector_scope": ["Energy", "Utilities", "Materials"],
+      "ticker_scope": ["XLE", "SPY"]
+    },
+    {
+      "agency_or_office": "Securities and Exchange Commission",
+      "jurisdiction_scope": ["securities", "capital markets", "crypto", "disclosure"],
+      "sector_scope": ["Financials", "Crypto", "Broad Market"],
+      "ticker_scope": ["XLF", "SPY", "BTCUSD", "ETHUSD"]
+    },
+    {
+      "agency_or_office": "White House",
+      "jurisdiction_scope": ["executive order", "budget", "national policy", "interagency"],
+      "sector_scope": ["Broad Market"],
+      "ticker_scope": ["SPY", "QQQ", "DIA"]
+    }
+  ],
+  "judicial_maps": [
+    {
+      "court_or_body": "Supreme Court of the United States",
+      "jurisdiction_scope": ["supreme court", "constitutional law", "administrative law", "agency authority"],
+      "sector_scope": ["Broad Market", "Health Care", "Energy", "Information Technology", "Financials"],
+      "ticker_scope": ["SPY", "XLV", "XLE", "XLK", "XLF"]
+    },
+    {
+      "court_or_body": "United States Courts of Appeals",
+      "jurisdiction_scope": ["appellate", "administrative law", "federal regulation", "antitrust"],
+      "sector_scope": ["Broad Market", "Information Technology", "Communication Services", "Financials"],
+      "ticker_scope": ["SPY", "QQQ", "XLK", "XLF"]
+    },
+    {
+      "court_or_body": "United States District Courts",
+      "jurisdiction_scope": ["trial court", "civil litigation", "criminal litigation", "patent", "antitrust"],
+      "sector_scope": ["Broad Market", "Information Technology", "Communication Services"],
+      "ticker_scope": ["SPY", "QQQ", "XLK"]
+    },
+    {
+      "court_or_body": "Court of International Trade",
+      "jurisdiction_scope": ["trade", "tariffs", "customs"],
+      "sector_scope": ["Industrials", "Consumer Discretionary", "Broad Market"],
+      "ticker_scope": ["XLI", "SPY"]
+    },
+    {
+      "court_or_body": "Court of Federal Claims",
+      "jurisdiction_scope": ["federal claims", "procurement", "contracts", "takings"],
+      "sector_scope": ["Industrials", "Defense", "Broad Market"],
+      "ticker_scope": ["XLI", "DIA", "SPY"]
+    }
+  ]
+}

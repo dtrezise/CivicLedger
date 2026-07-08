@@ -1,0 +1,91 @@
+{
+  "context_label": "Raw disclosure artifacts are archived with hashes before parser output or public trade rows. Pending rows require official-source retrieval and review.",
+  "documents": [
+    {
+      "archive_status": "archived",
+      "byte_count": 3994653,
+      "content_type": "application/pdf",
+      "document_id": "oge-public-278e-sample",
+      "document_type": "OGE Form 278e",
+      "expected_official_id": null,
+      "expected_official_name": "OGE public sample",
+      "file_hash": "90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6",
+      "hash_algorithm": "sha256",
+      "notes": "Official OGE sample form used for parser regression and raw-document archive plumbing; not a production official filing.",
+      "retrieval_mode": "direct_public_sample",
+      "retrieved_at": "2026-07-08T14:24:22+00:00",
+      "review_required_before_public_trade": true,
+      "source_id": "oge-individual-disclosures",
+      "source_status": "downloadable_public_sample",
+      "source_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
+      "storage_path": "data/raw_documents/oge-individual-disclosures/90dd3da72f4913a4-oge-public-278e-sample.pdf"
+    },
+    {
+      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "document_id": "president-obama-oge-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:barack-obama",
+      "expected_official_name": "Barack Obama",
+      "notes": "Historical presidential disclosures may require OGE collection search, archive review, or request workflow before raw documents can be promoted into parser review.",
+      "retrieval_mode": "official_collection_search_or_archive_request",
+      "review_required_before_public_trade": true,
+      "source_id": "oge-individual-disclosures",
+      "source_status": "historical_request_or_archive_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    },
+    {
+      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "document_id": "president-trump-45-oge-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:donald-j-trump",
+      "expected_official_name": "Donald J. Trump",
+      "notes": "Search and archive official OGE collection results before normalized presidential rows are reviewed.",
+      "retrieval_mode": "official_collection_search",
+      "review_required_before_public_trade": true,
+      "source_id": "oge-individual-disclosures",
+      "source_status": "oge_collection_search_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    },
+    {
+      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "document_id": "president-biden-46-oge-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:joseph-r-biden",
+      "expected_official_name": "Joseph R. Biden",
+      "notes": "Search and archive official OGE collection results before normalized presidential rows are reviewed.",
+      "retrieval_mode": "official_collection_search",
+      "review_required_before_public_trade": true,
+      "source_id": "oge-individual-disclosures",
+      "source_status": "oge_collection_search_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    },
+    {
+      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "document_id": "president-trump-47-oge-live-index",
+      "document_type": "OGE Form 278e or 278-T",
+      "expected_official_id": "exec:donald-j-trump",
+      "expected_official_name": "Donald J. Trump",
+      "notes": "Current-term disclosures require scheduled OGE collection review and reviewer promotion before becoming production trade rows.",
+      "retrieval_mode": "scheduled_official_collection_search",
+      "review_required_before_public_trade": true,
+      "source_id": "oge-individual-disclosures",
+      "source_status": "live_tracking_required",
+      "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
+    }
+  ],
+  "generated_at": "2026-07-08T14:24:23+00:00",
+  "schema_version": "raw-document-archive-index-v1",
+  "source": {
+    "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
+    "id": "oge-individual-disclosures",
+    "name": "OGE Officials' Individual Disclosures",
+    "public_sample_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
+    "source_tier": "official"
+  },
+  "summary": {
+    "archived_document_count": 1,
+    "document_count": 5,
+    "pending_document_count": 4,
+    "review_required_before_public_trade": true
+  }
+}

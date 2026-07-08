@@ -8,6 +8,13 @@ FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 TERM_INDEX = ROOT / "data" / "public_officials" / "presidential_term_index.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
+DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
+RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
+REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
+DISCLOSURE_COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
+EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
+CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
+BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
 
 
 def test_public_officials_dataset_has_expected_initial_scope():
@@ -142,3 +149,60 @@ def test_presidential_oge_status_tracks_source_readiness_without_trade_claims():
     assert data["summary"]["reviewed_trade_count"] == 0
     assert data["ingestion_policy"]["review_required_before_public_trade"] is True
     assert {"OGE Form 278e", "OGE Form 278-T"} <= set(data["ingestion_policy"]["supported_forms"])
+
+
+def test_disclosure_ingestion_queue_covers_all_branches_and_congress_scope():
+    data = json.loads(DISCLOSURE_QUEUE.read_text())
+    summary = data["summary"]
+
+    assert data["schema_version"] == "disclosure-ingestion-queue-v1"
+    assert summary["queue_item_count"] >= 5800
+    assert summary["counts_by_source"]["house-financial-disclosure"] >= 3900
+    assert summary["counts_by_source"]["senate-public-financial-disclosure"] >= 900
+    assert summary["counts_by_source"]["oge-individual-disclosures"] >= 70
+    assert summary["counts_by_source"]["judicial-financial-disclosure"] >= 800
+    assert set(summary["counts_by_congress"]) == {"111", "112", "113", "114", "115", "116", "117", "118", "119"}
+    assert all(row["review_required"] is True for row in data["entries"][:250])
+    assert all(row["promotion_status"] == "raw_document_required" for row in data["entries"][:250])
+
+
+def test_raw_archive_and_reviewed_promotion_keep_fixture_boundary_clear():
+    raw_archive = json.loads(RAW_ARCHIVE_INDEX.read_text())
+    promotions = json.loads(REVIEWED_PROMOTIONS.read_text())
+
+    assert raw_archive["schema_version"] == "raw-document-archive-index-v1"
+    assert raw_archive["summary"]["archived_document_count"] >= 1
+    sample = next(row for row in raw_archive["documents"] if row["document_id"] == "oge-public-278e-sample")
+    assert sample["archive_status"] == "archived"
+    assert sample["file_hash"]
+    assert sample["review_required_before_public_trade"] is True
+
+    assert promotions["schema_version"] == "reviewed-disclosure-promotions-v1"
+    assert promotions["summary"]["reviewed_fixture_promotion_count"] == 1
+    assert promotions["summary"]["public_production_trade_count"] == 0
+    promotion = promotions["promotions"][0]
+    assert promotion["record_status"] == "reviewed_fixture_not_public_production"
+    assert promotion["public_production_trade"] is False
+    assert promotion["review_required_before_public_trade"] is True
+
+
+def test_context_maps_and_pages_completeness_are_available():
+    event_map = json.loads(EVENT_ENTITY_MAP.read_text())
+    congress_map = json.loads(CONGRESS_JURISDICTION_MAP.read_text())
+    branch_map = json.loads(BRANCH_JURISDICTION_MAP.read_text())
+    completeness = json.loads(DISCLOSURE_COMPLETENESS.read_text())
+    pages = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
+
+    assert event_map["schema_version"] == "event-entity-map-v1"
+    assert any("BTCUSD" in mapping["ticker_scope"] for mapping in event_map["event_maps"])
+    assert congress_map["schema_version"] == "congress-jurisdiction-map-v1"
+    assert len(congress_map["committee_maps"]) >= 12
+    assert branch_map["schema_version"] == "branch-jurisdiction-map-v1"
+    assert branch_map["executive_maps"]
+    assert branch_map["judicial_maps"]
+
+    assert completeness["schema_version"] == "disclosure-completeness-dashboard-v1"
+    assert completeness["summary"]["branch_count"] == 3
+    assert completeness["summary"]["reviewed_public_trade_count"] == 0
+    assert pages["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
+    assert pages["career_trade_timeline"]["events"][0]["ticker_scope"] is not None

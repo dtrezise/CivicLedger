@@ -6,6 +6,7 @@
   --paper: #f6f4ef;
   --surface: #ffffff;
   --surface-strong: #eef3f6;
+  --panel: rgba(255, 255, 255, 0.92);
   --ink-panel: #17212b;
   --gold: #d7a84f;
   --civic: #0b6b8f;
@@ -807,6 +808,83 @@ svg {
   margin-bottom: 12px;
 }
 
+.completeness-summary,
+.completeness-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.completeness-summary {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.completeness-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.completeness-card {
+  min-height: 142px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-top: 5px solid var(--civic);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.completeness-card.executive {
+  border-top-color: var(--executive);
+}
+
+.completeness-card.judicial {
+  border-top-color: var(--judicial);
+}
+
+.completeness-card span,
+.completeness-card small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.completeness-card strong {
+  display: block;
+  margin: 6px 0;
+  font-size: 1.45rem;
+}
+
+.readiness-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #edf4ef;
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.readiness-chip.raw_archive_started {
+  border-color: rgba(111, 143, 43, 0.28);
+  background: #eef7df;
+  color: #4f661d;
+}
+
+.readiness-chip.source_pipeline_started {
+  border-color: rgba(11, 107, 143, 0.28);
+  background: #edf9fb;
+  color: #074b65;
+}
+
+.readiness-chip.needs_raw_documents {
+  border-color: rgba(215, 168, 79, 0.42);
+  background: #fff6dc;
+  color: #7a4b00;
+}
+
 .macro-card {
   min-height: 116px;
   padding: 14px;
@@ -1147,6 +1225,10 @@ svg {
   .event-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .completeness-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1208,6 +1290,7 @@ svg {
   .profile-grid,
   .timeline-summary,
   .role-breakdown,
+  .completeness-summary,
   .source-grid,
   .method-grid,
   .event-grid {

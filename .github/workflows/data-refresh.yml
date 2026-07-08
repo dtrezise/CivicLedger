@@ -51,6 +51,14 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_presidential_oge_disclosure_index.py
+      - name: Rebuild disclosure source pipeline artifacts
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/archive_disclosure_documents.py
+          python scripts/build_disclosure_ingestion_queue.py
+          python scripts/build_reviewed_disclosure_promotions.py
+          python scripts/build_disclosure_completeness_dashboard.py
       - name: Refresh FRED trade context
         env:
           PYTHONPATH: backend
@@ -68,18 +76,20 @@ jobs:
         run: python scripts/build_crypto_price_dataset.py --start 2023-01-01
       - name: Check market price coverage
         run: python scripts/check_market_price_dataset.py
+      - name: Check source freshness
+        run: python scripts/check_source_freshness.py
       - name: Rebuild Pages data
         env:
           PYTHONPATH: backend
         run: python scripts/build_pages_dataset.py
       - name: Commit refreshed generated data
         run: |
-          if git diff --quiet -- data pages-site/data; then
+          if git diff --quiet -- data pages-site/data backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
             echo "No generated data changes to commit."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data pages-site/data
+            git add data pages-site/data backend/tests/fixtures/parsers/oge_public_sample_fixture.json
             git commit -m "Refresh live context data"
             git push
           fi

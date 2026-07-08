@@ -30,7 +30,14 @@ FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 CRYPTO_PRICES = ROOT / "data" / "context" / "crypto_prices.json"
 CURATED_TIMELINE_EVENTS = ROOT / "data" / "context" / "timeline_events.json"
+EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
+CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
+BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
+DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
+RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
+REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
+DISCLOSURE_COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
 
@@ -295,6 +302,98 @@ def load_events() -> list[dict]:
     return fixture_events + curated.get("events", [])
 
 
+def load_json_file(path: Path, fallback: dict) -> dict:
+    if not path.exists():
+        return fallback
+    return json.loads(path.read_text())
+
+
+def load_event_entity_map() -> dict:
+    return load_json_file(
+        EVENT_ENTITY_MAP,
+        {
+            "schema_version": "event-entity-map-v1",
+            "context_label": "Event-to-entity mappings have not been generated.",
+            "default_ticker_scope": ["SPY", "QQQ", "DIA"],
+            "event_maps": [],
+        },
+    )
+
+
+def event_mapping_for(event: dict, event_entity_map: dict) -> dict:
+    label = event.get("label", "")
+    lowered = label.lower()
+    for mapping in event_entity_map.get("event_maps", []):
+        labels = [item.lower() for item in mapping.get("match_labels", [])]
+        if lowered in labels or any(item and item in lowered for item in labels):
+            return mapping
+    return {}
+
+
+def load_context_maps() -> dict:
+    return {
+        "event_entity_map": load_event_entity_map(),
+        "congress_jurisdiction_map": load_json_file(
+            CONGRESS_JURISDICTION_MAP,
+            {"schema_version": "congress-jurisdiction-map-v1", "committee_maps": []},
+        ),
+        "branch_jurisdiction_map": load_json_file(
+            BRANCH_JURISDICTION_MAP,
+            {"schema_version": "branch-jurisdiction-map-v1", "executive_maps": [], "judicial_maps": []},
+        ),
+    }
+
+
+def load_disclosure_artifacts() -> dict:
+    return {
+        "ingestion_queue": load_json_file(
+            DISCLOSURE_QUEUE,
+            {"schema_version": "disclosure-ingestion-queue-v1", "summary": {}, "entries": []},
+        ),
+        "raw_archive_index": load_json_file(
+            RAW_ARCHIVE_INDEX,
+            {"schema_version": "raw-document-archive-index-v1", "summary": {}, "documents": []},
+        ),
+        "reviewed_promotions": load_json_file(
+            REVIEWED_PROMOTIONS,
+            {"schema_version": "reviewed-disclosure-promotions-v1", "summary": {}, "promotions": []},
+        ),
+        "completeness_dashboard": load_json_file(
+            DISCLOSURE_COMPLETENESS,
+            {"schema_version": "disclosure-completeness-dashboard-v1", "summary": {}, "branches": [], "rows": []},
+        ),
+    }
+
+
+def public_disclosure_artifacts(artifacts: dict) -> dict:
+    queue = artifacts["ingestion_queue"]
+    raw_archive = artifacts["raw_archive_index"]
+    promotions = artifacts["reviewed_promotions"]
+    return {
+        "ingestion_queue": {
+            "schema_version": queue.get("schema_version"),
+            "context_label": queue.get("context_label"),
+            "generated_at": queue.get("generated_at"),
+            "summary": queue.get("summary", {}),
+        },
+        "raw_archive_index": {
+            "schema_version": raw_archive.get("schema_version"),
+            "context_label": raw_archive.get("context_label"),
+            "generated_at": raw_archive.get("generated_at"),
+            "summary": raw_archive.get("summary", {}),
+            "documents": raw_archive.get("documents", []),
+        },
+        "reviewed_promotions": {
+            "schema_version": promotions.get("schema_version"),
+            "context_label": promotions.get("context_label"),
+            "generated_at": promotions.get("generated_at"),
+            "summary": promotions.get("summary", {}),
+            "promotions": promotions.get("promotions", []),
+        },
+        "completeness_dashboard": artifacts["completeness_dashboard"],
+    }
+
+
 def load_presidential_oge_status() -> dict:
     if not PRESIDENTIAL_OGE_STATUS.exists():
         return {
@@ -463,9 +562,10 @@ def public_roles_by_person(public_officials: dict) -> dict[str, list[dict]]:
     return roles
 
 
-def timeline_event_rows(fred_context: dict, civic_events: list[dict]) -> list[dict]:
+def timeline_event_rows(fred_context: dict, civic_events: list[dict], event_entity_map: dict) -> list[dict]:
     rows = []
     for index, event in enumerate(civic_events, start=1):
+        mapped = event_mapping_for(event, event_entity_map)
         rows.append(
             {
                 "id": f"civic-event-{index:03d}",
@@ -477,9 +577,13 @@ def timeline_event_rows(fred_context: dict, civic_events: list[dict]) -> list[di
                 "relevance": "general",
                 "source_urls": event.get("sources", []),
                 "branch_scope": event.get("branch_scope", []),
-                "sector_scope": event.get("sector_scope", []),
+                "sector_scope": sorted(set(event.get("sector_scope", []) + mapped.get("sector_scope", []))),
                 "asset_scope": event.get("asset_scope", []),
-                "jurisdiction_scope": event.get("jurisdiction_scope", []),
+                "jurisdiction_scope": sorted(
+                    set(event.get("jurisdiction_scope", []) + mapped.get("jurisdiction_scope", []))
+                ),
+                "entity_scope": mapped.get("entity_scope", []),
+                "ticker_scope": mapped.get("ticker_scope", []),
                 "editor_status": event.get("editor_status", "fixture"),
             }
         )
@@ -498,6 +602,8 @@ def timeline_event_rows(fred_context: dict, civic_events: list[dict]) -> list[di
                 "sector_scope": ["Broad Market"],
                 "asset_scope": [],
                 "jurisdiction_scope": ["macro"],
+                "entity_scope": ["Federal Reserve", "Bureau of Labor Statistics", "Treasury"],
+                "ticker_scope": event_entity_map.get("default_ticker_scope", ["SPY", "QQQ", "DIA"]),
                 "editor_status": "system_generated",
             }
         )
@@ -552,10 +658,13 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
     branch = official.get("branch")
     sectors = {trade.get("sector") for trade in trades if trade.get("sector")}
     asset_classes = {trade.get("asset_class") for trade in trades if trade.get("asset_class")}
+    tickers = {trade.get("ticker") for trade in trades if trade.get("ticker")}
     branch_scope = set(event.get("branch_scope") or [])
     sector_scope = set(event.get("sector_scope") or [])
     asset_scope = set(event.get("asset_scope") or [])
+    ticker_scope = set(event.get("ticker_scope") or [])
     jurisdiction_scope = {str(item).lower() for item in event.get("jurisdiction_scope") or []}
+    entity_scope = {str(item).lower() for item in event.get("entity_scope") or []}
     roles = official.get("roles") or []
     role_text = " ".join(
         str(value)
@@ -582,9 +691,15 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
     if asset_scope and asset_classes.intersection(asset_scope):
         score += 16
         reasons.append("asset-class overlap")
+    if ticker_scope and tickers.intersection(ticker_scope):
+        score += 22
+        reasons.append("ticker/entity overlap")
     if jurisdiction_scope and any(scope in role_text for scope in jurisdiction_scope):
         score += 12
         reasons.append("office or jurisdiction overlap")
+    if entity_scope and any(scope in role_text for scope in entity_scope):
+        score += 10
+        reasons.append("agency/entity overlap")
     if branch == "Executive" and event_type in {"executive_order", "policy_change", "macro_release"}:
         score += 18
         reasons.append("executive-adjacent event")
@@ -668,6 +783,7 @@ def career_trade_timeline(
     civic_events: list[dict],
     crypto_prices: dict,
     presidential_oge_status: dict,
+    event_entity_map: dict,
 ) -> dict:
     roles_by_person = public_roles_by_person(public_officials)
     trades_by_person = defaultdict(list)
@@ -677,7 +793,7 @@ def career_trade_timeline(
     public_people_by_id = {person["external_person_id"]: person for person in public_officials.get("people", [])}
     president_ids = []
     official_rows = []
-    events = timeline_event_rows(fred_context, civic_events)
+    events = timeline_event_rows(fred_context, civic_events, event_entity_map)
     oge_by_official = defaultdict(list)
     for status in presidential_oge_status.get("officials", []):
         oge_by_official[status["official_id"]].append(status)
@@ -845,6 +961,11 @@ def career_trade_timeline(
             "summary": presidential_oge_status.get("summary", {}),
             "source": presidential_oge_status.get("source", {}),
         },
+        "event_entity_map": {
+            "schema_version": event_entity_map.get("schema_version"),
+            "context_label": event_entity_map.get("context_label"),
+            "mapped_event_count": len(event_entity_map.get("event_maps", [])),
+        },
     }
 
 
@@ -966,6 +1087,8 @@ def build_dataset() -> dict:
     public_officials = load_public_officials()
     fred_context = load_fred_context()
     civic_events = load_events()
+    context_maps = load_context_maps()
+    disclosure_artifacts = load_disclosure_artifacts()
     market_series, market_metadata = load_market_prices()
     crypto_prices = load_crypto_prices()
     presidential_oge_status = load_presidential_oge_status()
@@ -1087,6 +1210,7 @@ def build_dataset() -> dict:
         civic_events,
         crypto_prices,
         presidential_oge_status,
+        context_maps["event_entity_map"],
     )
     sources = []
     for source in OFFICIAL_SOURCES:
@@ -1141,6 +1265,10 @@ def build_dataset() -> dict:
             "career_timeline_crypto_trade_count": career_timeline["summary"]["crypto_trade_count"],
             "career_timeline_trade_cluster_count": career_timeline["summary"]["trade_cluster_count"],
             "presidential_oge_source_status_count": career_timeline["summary"]["presidential_oge_status_count"],
+            "disclosure_queue_item_count": disclosure_artifacts["ingestion_queue"].get("summary", {}).get("queue_item_count", 0),
+            "archived_source_document_count": disclosure_artifacts["raw_archive_index"].get("summary", {}).get("archived_document_count", 0),
+            "reviewed_fixture_promotion_count": disclosure_artifacts["reviewed_promotions"].get("summary", {}).get("reviewed_fixture_promotion_count", 0),
+            "reviewed_public_trade_count": disclosure_artifacts["completeness_dashboard"].get("summary", {}).get("reviewed_public_trade_count", 0),
             "branch_counts": dict(sorted(branch_counts.items())),
             "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
             "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
@@ -1166,6 +1294,8 @@ def build_dataset() -> dict:
             "summary": presidential_oge_status.get("summary", {}),
             "source": presidential_oge_status.get("source", {}),
         },
+        "disclosure_pipeline": public_disclosure_artifacts(disclosure_artifacts),
+        "context_maps": context_maps,
         "fred_context": fred_context,
         "career_trade_timeline": career_timeline,
         "trade_context": {

@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 import pytest
 
@@ -49,3 +50,14 @@ def test_supported_source_ids_cover_all_branches():
         "oge-individual-disclosures",
         "senate-public-financial-disclosure",
     ]
+
+
+def test_real_oge_public_sample_fixture_is_hash_backed_parser_preview():
+    fixture = json.loads((FIXTURES / "oge_public_sample_fixture.json").read_text())
+
+    assert fixture["schema_version"] == "oge-public-sample-parser-fixture-v1"
+    assert fixture["source_id"] == "oge-individual-disclosures"
+    assert fixture["file_hash"]
+    assert fixture["byte_count"] > 1000
+    assert fixture["review_status"] == "parser_fixture_not_public_production"
+    assert "review" in " ".join(fixture["warnings"]).lower()
