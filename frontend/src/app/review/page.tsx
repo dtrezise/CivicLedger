@@ -95,6 +95,14 @@ export default function ReviewPage() {
 
   if (loading) return <p className="text-gray-400">Loading...</p>;
 
+  const canPromote = Boolean(selected && form.reviewer.trim() && form.person_name.trim() && form.branch.trim());
+  const selectedWarnings = Array.isArray(selected?.parser_output.warnings)
+    ? selected.parser_output.warnings
+    : [];
+  const selectedTransactions = Array.isArray(selected?.parser_output.transactions)
+    ? selected.parser_output.transactions
+    : [];
+
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <section>
@@ -144,15 +152,38 @@ export default function ReviewPage() {
       </section>
 
       <aside className="rounded-lg border border-gray-200 bg-white p-5">
-        <h2 className="font-semibold text-gray-900">Promote Preview</h2>
+        <h2 className="font-semibold text-gray-900">Raw Document Review Actions</h2>
         {selected ? (
           <>
-            <Link
-              href={`/raw-documents/${selected.raw_document_id}`}
-              className="mt-2 inline-block text-sm text-civic-700 underline"
-            >
-              View raw document
-            </Link>
+            <div className="mt-3 grid gap-2">
+              <Link
+                href={`/raw-documents/${selected.raw_document_id}`}
+                className="rounded-md border border-civic-200 bg-civic-50 px-3 py-2 text-sm font-medium text-civic-800"
+              >
+                Inspect raw document and parser artifacts
+              </Link>
+              <Link
+                href={`/evidence?q=${encodeURIComponent(String(selected.raw_document_id))}`}
+                className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700"
+              >
+                Search filing evidence trail
+              </Link>
+            </div>
+            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+              Promote only after the source document, parser fields, filer identity,
+              and transaction rows have been reviewed against the raw evidence.
+            </div>
+            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+              <p className="font-semibold text-gray-800">Parser preview</p>
+              <p>{selectedTransactions.length} normalized rows detected.</p>
+              {selectedWarnings.length ? (
+                <ul className="mt-2 list-disc space-y-1 pl-4">
+                  {selectedWarnings.slice(0, 3).map((warning) => (
+                    <li key={String(warning)}>{String(warning)}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
             <div className="mt-4 space-y-3">
               {[
                 ["Reviewer", "reviewer"],
@@ -189,9 +220,10 @@ export default function ReviewPage() {
               </label>
               <button
                 onClick={promote}
-                className="w-full rounded-md bg-civic-700 px-4 py-2 text-sm font-medium text-white"
+                disabled={!canPromote}
+                className="w-full rounded-md bg-civic-700 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
               >
-                Promote
+                Promote parsed rows
               </button>
               {message ? <p className="text-sm text-gray-600">{message}</p> : null}
             </div>

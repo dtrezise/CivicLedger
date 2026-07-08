@@ -14,6 +14,9 @@ PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.j
 QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
+PRODUCTION_PROMOTIONS = ROOT / "data" / "disclosures" / "production_trade_promotions.json"
+RETRIEVAL_BATCHES = ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json"
+STALE_ALERTS = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
 OUTPUT = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 
 
@@ -52,6 +55,9 @@ def build_dataset() -> dict:
     queue = read_json(QUEUE, {"entries": [], "summary": {}})
     raw_archive = read_json(RAW_ARCHIVE, {"documents": [], "summary": {}})
     promotions = read_json(PROMOTIONS, {"promotions": [], "summary": {}})
+    production_promotions = read_json(PRODUCTION_PROMOTIONS, {"summary": {}})
+    retrieval_batches = read_json(RETRIEVAL_BATCHES, {"batches": [], "summary": {}})
+    stale_alerts = read_json(STALE_ALERTS, {"alerts": [], "summary": {}})
 
     role_counts = Counter(key_for(role, role_row=True) for role in officials.get("roles", []))
     people_by_key = defaultdict(set)
@@ -66,7 +72,9 @@ def build_dataset() -> dict:
     raw_counts_by_source = Counter(
         row.get("source_id") for row in raw_archive.get("documents", []) if row.get("archive_status") == "archived"
     )
-    reviewed_count = promotions.get("summary", {}).get("public_production_trade_count", 0)
+    reviewed_count = production_promotions.get("summary", {}).get("reviewed_public_trade_count", 0)
+    batch_by_source = {batch["source_id"]: batch for batch in retrieval_batches.get("batches", [])}
+    alerts_by_source = Counter(row.get("source_id") or "global" for row in stale_alerts.get("alerts", []) if row.get("status") == "open")
 
     rows = []
     all_keys = sorted(set(role_counts) | set(queue_counts))
@@ -95,6 +103,9 @@ def build_dataset() -> dict:
                 "reviewed_public_trade_count": 0,
                 "readiness_status": readiness,
                 "source_pipeline_started": source_pipeline_started,
+                "retrieval_batch_status": batch_by_source.get(source_id, {}).get("batch_status", "not_batched"),
+                "retrieval_candidate_count": batch_by_source.get(source_id, {}).get("candidate_count", 0),
+                "open_alert_count": alerts_by_source[source_id] + alerts_by_source["global"],
                 "review_required_before_public_trade": True,
             }
         )
@@ -106,6 +117,10 @@ def build_dataset() -> dict:
     for branch in sorted({row["branch"] for row in rows}):
         branch_items = [row for row in rows if row["branch"] == branch]
         branch_raw_count = sum(raw_counts_by_source[source_id] for source_id in branch_sources[branch])
+        branch_candidate_count = sum(
+            batch_by_source.get(source_id, {}).get("candidate_count", 0)
+            for source_id in branch_sources[branch]
+        )
         branch_rows.append(
             {
                 "branch": branch,
@@ -114,6 +129,8 @@ def build_dataset() -> dict:
                 "queue_item_count": sum(row["queue_item_count"] for row in branch_items),
                 "archived_raw_document_count": branch_raw_count,
                 "reviewed_public_trade_count": sum(row["reviewed_public_trade_count"] for row in branch_items),
+                "retrieval_candidate_count": branch_candidate_count,
+                "open_alert_count": sum(row["open_alert_count"] for row in branch_items),
                 "readiness_status": "raw_archive_started"
                 if branch_raw_count
                 else "needs_raw_documents",
@@ -133,7 +150,10 @@ def build_dataset() -> dict:
             "queue_item_count": queue.get("summary", {}).get("queue_item_count", 0),
             "archived_raw_document_count": raw_archive.get("summary", {}).get("archived_document_count", 0),
             "reviewed_fixture_promotion_count": promotions.get("summary", {}).get("reviewed_fixture_promotion_count", 0),
-            "reviewed_public_trade_count": 0,
+            "reviewed_public_trade_count": reviewed_count,
+            "retrieval_batch_count": retrieval_batches.get("summary", {}).get("batch_count", 0),
+            "retrieval_candidate_count": retrieval_batches.get("summary", {}).get("candidate_count", 0),
+            "open_warning_count": stale_alerts.get("summary", {}).get("open_warning_count", 0),
             "review_required_before_public_trade": True,
         },
         "branches": branch_rows,

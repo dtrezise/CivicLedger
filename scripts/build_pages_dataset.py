@@ -33,10 +33,14 @@ CURATED_TIMELINE_EVENTS = ROOT / "data" / "context" / "timeline_events.json"
 EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
 CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
+COMPANY_ENTITY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
 DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
+PRODUCTION_PROMOTIONS = ROOT / "data" / "disclosures" / "production_trade_promotions.json"
+RETRIEVAL_BATCHES = ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json"
+SOURCE_STALENESS_ALERTS = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
 DISCLOSURE_COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
@@ -330,6 +334,30 @@ def event_mapping_for(event: dict, event_entity_map: dict) -> dict:
     return {}
 
 
+def company_entities_for_event(event: dict, company_reference: dict) -> list[dict]:
+    text = " ".join(
+        [
+            event.get("label", ""),
+            event.get("description", ""),
+            " ".join(event.get("jurisdiction_scope", []) or []),
+            " ".join(event.get("sector_scope", []) or []),
+        ]
+    ).lower()
+    matches = []
+    for entity in company_reference.get("entities", []):
+        aliases = [str(alias).lower() for alias in entity.get("aliases", [])]
+        if any(alias and alias in text for alias in aliases):
+            matches.append(
+                {
+                    "entity_id": entity.get("entity_id"),
+                    "issuer_name": entity.get("issuer_name"),
+                    "ticker_scope": entity.get("ticker_scope", []),
+                    "sector_scope": entity.get("sector_scope", []),
+                }
+            )
+    return matches
+
+
 def load_context_maps() -> dict:
     return {
         "event_entity_map": load_event_entity_map(),
@@ -340,6 +368,10 @@ def load_context_maps() -> dict:
         "branch_jurisdiction_map": load_json_file(
             BRANCH_JURISDICTION_MAP,
             {"schema_version": "branch-jurisdiction-map-v1", "executive_maps": [], "judicial_maps": []},
+        ),
+        "company_entity_reference": load_json_file(
+            COMPANY_ENTITY_REFERENCE,
+            {"schema_version": "company-entity-reference-v1", "entities": []},
         ),
     }
 
@@ -357,6 +389,18 @@ def load_disclosure_artifacts() -> dict:
         "reviewed_promotions": load_json_file(
             REVIEWED_PROMOTIONS,
             {"schema_version": "reviewed-disclosure-promotions-v1", "summary": {}, "promotions": []},
+        ),
+        "production_promotions": load_json_file(
+            PRODUCTION_PROMOTIONS,
+            {"schema_version": "production-trade-promotions-v1", "summary": {}, "public_trade_rows": []},
+        ),
+        "retrieval_batches": load_json_file(
+            RETRIEVAL_BATCHES,
+            {"schema_version": "disclosure-retrieval-batches-v1", "summary": {}, "batches": []},
+        ),
+        "source_staleness_alerts": load_json_file(
+            SOURCE_STALENESS_ALERTS,
+            {"schema_version": "source-staleness-alerts-v1", "summary": {}, "alerts": []},
         ),
         "completeness_dashboard": load_json_file(
             DISCLOSURE_COMPLETENESS,
@@ -390,6 +434,9 @@ def public_disclosure_artifacts(artifacts: dict) -> dict:
             "summary": promotions.get("summary", {}),
             "promotions": promotions.get("promotions", []),
         },
+        "production_promotions": artifacts["production_promotions"],
+        "retrieval_batches": artifacts["retrieval_batches"],
+        "source_staleness_alerts": artifacts["source_staleness_alerts"],
         "completeness_dashboard": artifacts["completeness_dashboard"],
     }
 
@@ -562,10 +609,17 @@ def public_roles_by_person(public_officials: dict) -> dict[str, list[dict]]:
     return roles
 
 
-def timeline_event_rows(fred_context: dict, civic_events: list[dict], event_entity_map: dict) -> list[dict]:
+def timeline_event_rows(
+    fred_context: dict,
+    civic_events: list[dict],
+    event_entity_map: dict,
+    company_reference: dict,
+) -> list[dict]:
     rows = []
     for index, event in enumerate(civic_events, start=1):
         mapped = event_mapping_for(event, event_entity_map)
+        matched_entities = company_entities_for_event(event, company_reference)
+        company_tickers = sorted({ticker for entity in matched_entities for ticker in entity.get("ticker_scope", [])})
         rows.append(
             {
                 "id": f"civic-event-{index:03d}",
@@ -583,7 +637,8 @@ def timeline_event_rows(fred_context: dict, civic_events: list[dict], event_enti
                     set(event.get("jurisdiction_scope", []) + mapped.get("jurisdiction_scope", []))
                 ),
                 "entity_scope": mapped.get("entity_scope", []),
-                "ticker_scope": mapped.get("ticker_scope", []),
+                "ticker_scope": sorted(set(mapped.get("ticker_scope", []) + company_tickers)),
+                "company_entity_scope": matched_entities,
                 "editor_status": event.get("editor_status", "fixture"),
             }
         )
@@ -604,6 +659,7 @@ def timeline_event_rows(fred_context: dict, civic_events: list[dict], event_enti
                 "jurisdiction_scope": ["macro"],
                 "entity_scope": ["Federal Reserve", "Bureau of Labor Statistics", "Treasury"],
                 "ticker_scope": event_entity_map.get("default_ticker_scope", ["SPY", "QQQ", "DIA"]),
+                "company_entity_scope": [],
                 "editor_status": "system_generated",
             }
         )
@@ -784,6 +840,7 @@ def career_trade_timeline(
     crypto_prices: dict,
     presidential_oge_status: dict,
     event_entity_map: dict,
+    company_reference: dict,
 ) -> dict:
     roles_by_person = public_roles_by_person(public_officials)
     trades_by_person = defaultdict(list)
@@ -793,7 +850,7 @@ def career_trade_timeline(
     public_people_by_id = {person["external_person_id"]: person for person in public_officials.get("people", [])}
     president_ids = []
     official_rows = []
-    events = timeline_event_rows(fred_context, civic_events, event_entity_map)
+    events = timeline_event_rows(fred_context, civic_events, event_entity_map, company_reference)
     oge_by_official = defaultdict(list)
     for status in presidential_oge_status.get("officials", []):
         oge_by_official[status["official_id"]].append(status)
@@ -965,6 +1022,7 @@ def career_trade_timeline(
             "schema_version": event_entity_map.get("schema_version"),
             "context_label": event_entity_map.get("context_label"),
             "mapped_event_count": len(event_entity_map.get("event_maps", [])),
+            "company_entity_count": len(company_reference.get("entities", [])),
         },
     }
 
@@ -1211,6 +1269,7 @@ def build_dataset() -> dict:
         crypto_prices,
         presidential_oge_status,
         context_maps["event_entity_map"],
+        context_maps["company_entity_reference"],
     )
     sources = []
     for source in OFFICIAL_SOURCES:

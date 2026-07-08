@@ -1,0 +1,21 @@
+{
+  "blocked_rows": [
+    {
+      "blocked_reason": "reviewed fixture or non-production source; real public trade promotion requires official raw document review",
+      "promotion_id": "fixture-oge-reviewed-001",
+      "record_status": "reviewed_fixture_not_public_production",
+      "source_id": "oge-individual-disclosures"
+    }
+  ],
+  "context_label": "Production trade promotion gate. Rows appear only after official raw documents are archived, parsed, reviewed, and explicitly marked public production.",
+  "generated_at": "2026-07-08",
+  "production_ready_raw_documents": [],
+  "public_trade_rows": [],
+  "schema_version": "production-trade-promotions-v1",
+  "summary": {
+    "blocked_non_production_review_count": 1,
+    "production_ready_raw_document_count": 0,
+    "review_required_before_public_trade": true,
+    "reviewed_public_trade_count": 0
+  }
+}

@@ -14,6 +14,9 @@ FILES = [
     ROOT / "data" / "public_officials" / "public_official_roles.json",
     ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json",
     ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json",
+    ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json",
+    ROOT / "data" / "disclosures" / "production_trade_promotions.json",
+    ROOT / "data" / "disclosures" / "source_staleness_alerts.json",
     ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json",
     ROOT / "data" / "context" / "market_prices.json",
     ROOT / "data" / "context" / "crypto_prices.json",
@@ -56,6 +59,12 @@ def main() -> None:
         market = json.loads(market_path.read_text())
         if market.get("summary", {}).get("missing_symbol_count", 0) != 0:
             warnings.append("Market overlay coverage has missing symbols")
+
+    alerts_path = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
+    if alerts_path.exists():
+        alerts = json.loads(alerts_path.read_text())
+        if alerts.get("summary", {}).get("high_alert_count", 0) > 0:
+            failures.append("Source staleness alerts contain high-severity alerts")
 
     for warning in warnings:
         print(f"WARNING: {warning}")

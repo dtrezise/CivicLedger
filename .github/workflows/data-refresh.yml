@@ -58,6 +58,10 @@ jobs:
           python scripts/archive_disclosure_documents.py
           python scripts/build_disclosure_ingestion_queue.py
           python scripts/build_reviewed_disclosure_promotions.py
+          python scripts/build_disclosure_retrieval_batches.py
+          python scripts/build_production_trade_promotions.py
+          python scripts/build_disclosure_completeness_dashboard.py
+          python scripts/build_source_staleness_alerts.py
           python scripts/build_disclosure_completeness_dashboard.py
       - name: Refresh FRED trade context
         env:

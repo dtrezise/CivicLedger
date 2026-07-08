@@ -1,0 +1,62 @@
+{
+  "alerts": [
+    {
+      "affected_count": 449,
+      "alert_id": "house-financial-disclosure:current-raw-documents-missing",
+      "message": "Current official/current-term queue has no archived raw disclosure documents yet.",
+      "severity": "warning",
+      "source_id": "house-financial-disclosure",
+      "status": "open"
+    },
+    {
+      "affected_count": 794,
+      "alert_id": "judicial-financial-disclosure:current-raw-documents-missing",
+      "message": "Current official/current-term queue has no archived raw disclosure documents yet.",
+      "severity": "warning",
+      "source_id": "judicial-financial-disclosure",
+      "status": "open"
+    },
+    {
+      "affected_count": 1,
+      "alert_id": "oge-individual-disclosures:current-raw-documents-started",
+      "message": "Current source lane has at least one archived raw disclosure document.",
+      "severity": "info",
+      "source_id": "oge-individual-disclosures",
+      "status": "monitoring"
+    },
+    {
+      "affected_count": 103,
+      "alert_id": "senate-public-financial-disclosure:current-raw-documents-missing",
+      "message": "Current official/current-term queue has no archived raw disclosure documents yet.",
+      "severity": "warning",
+      "source_id": "senate-public-financial-disclosure",
+      "status": "open"
+    },
+    {
+      "affected_count": 0,
+      "alert_id": "public-production-trades:none",
+      "message": "No reviewed public production trade rows exist yet; keep public UI labeled as demo/source-status.",
+      "severity": "warning",
+      "source_id": null,
+      "status": "open"
+    },
+    {
+      "affected_count": 2159,
+      "alert_id": "public-official-roster:freshness",
+      "message": "Public official roster generated 0 day(s) ago.",
+      "severity": "info",
+      "source_id": null,
+      "status": "monitoring"
+    }
+  ],
+  "context_label": "Scheduled stale-source alerts for current officials and live source lanes. Warnings identify work queues; they are not allegations or trade findings.",
+  "generated_at": "2026-07-08",
+  "schema_version": "source-staleness-alerts-v1",
+  "summary": {
+    "alert_count": 6,
+    "current_queue_item_count": 1349,
+    "high_alert_count": 0,
+    "open_warning_count": 4,
+    "reviewed_public_trade_count": 0
+  }
+}

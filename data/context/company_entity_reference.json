@@ -1,0 +1,62 @@
+{
+  "context_label": "Company and entity reference map for event-to-ticker resolution. This supports contextual overlays only and does not imply causation, intent, legality, ethics, or investment performance.",
+  "schema_version": "company-entity-reference-v1",
+  "entities": [
+    {
+      "entity_id": "apple-inc",
+      "issuer_name": "Apple Inc.",
+      "aliases": ["Apple", "AAPL"],
+      "ticker_scope": ["AAPL", "XLK", "QQQ"],
+      "sector_scope": ["Information Technology"]
+    },
+    {
+      "entity_id": "microsoft-corp",
+      "issuer_name": "Microsoft Corporation",
+      "aliases": ["Microsoft", "MSFT", "OpenAI partner"],
+      "ticker_scope": ["MSFT", "XLK", "QQQ"],
+      "sector_scope": ["Information Technology"]
+    },
+    {
+      "entity_id": "alphabet-inc",
+      "issuer_name": "Alphabet Inc.",
+      "aliases": ["Google", "Alphabet", "GOOGL"],
+      "ticker_scope": ["GOOGL", "QQQ"],
+      "sector_scope": ["Communication Services", "Information Technology"]
+    },
+    {
+      "entity_id": "nvidia-corp",
+      "issuer_name": "NVIDIA Corporation",
+      "aliases": ["NVIDIA", "NVDA", "semiconductors", "AI chips"],
+      "ticker_scope": ["NVDA", "XLK", "QQQ"],
+      "sector_scope": ["Information Technology"]
+    },
+    {
+      "entity_id": "johnson-johnson",
+      "issuer_name": "Johnson & Johnson",
+      "aliases": ["Johnson & Johnson", "JNJ", "pharmaceuticals", "medical devices"],
+      "ticker_scope": ["JNJ", "XLV"],
+      "sector_scope": ["Health Care"]
+    },
+    {
+      "entity_id": "jpmorgan-chase",
+      "issuer_name": "JPMorgan Chase & Co.",
+      "aliases": ["JPMorgan", "JPM", "banks"],
+      "ticker_scope": ["JPM", "XLF"],
+      "sector_scope": ["Financials"]
+    },
+    {
+      "entity_id": "bitcoin",
+      "issuer_name": "Bitcoin",
+      "aliases": ["Bitcoin", "BTC", "BTCUSD", "spot Bitcoin ETP"],
+      "ticker_scope": ["BTCUSD"],
+      "sector_scope": ["Crypto"]
+    },
+    {
+      "entity_id": "ethereum",
+      "issuer_name": "Ethereum",
+      "aliases": ["Ethereum", "ETH", "ETHUSD"],
+      "ticker_scope": ["ETHUSD"],
+      "sector_scope": ["Crypto"]
+    }
+  ]
+}

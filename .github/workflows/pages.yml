@@ -13,8 +13,11 @@ on:
       - "scripts/build_presidential_oge_disclosure_index.py"
       - "scripts/archive_disclosure_documents.py"
       - "scripts/build_disclosure_ingestion_queue.py"
+      - "scripts/build_disclosure_retrieval_batches.py"
       - "scripts/build_reviewed_disclosure_promotions.py"
+      - "scripts/build_production_trade_promotions.py"
       - "scripts/build_disclosure_completeness_dashboard.py"
+      - "scripts/build_source_staleness_alerts.py"
       - "scripts/check_source_freshness.py"
       - "data/public_officials/**"
       - "data/context/**"
@@ -54,6 +57,10 @@ jobs:
         run: |
           python scripts/build_disclosure_ingestion_queue.py
           python scripts/build_reviewed_disclosure_promotions.py
+          python scripts/build_disclosure_retrieval_batches.py
+          python scripts/build_production_trade_promotions.py
+          python scripts/build_disclosure_completeness_dashboard.py
+          python scripts/build_source_staleness_alerts.py
           python scripts/build_disclosure_completeness_dashboard.py
       - name: Check source freshness
         run: python scripts/check_source_freshness.py

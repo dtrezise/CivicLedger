@@ -12,7 +12,11 @@ DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.j
 RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
 DISCLOSURE_COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
+RETRIEVAL_BATCHES = ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json"
+PRODUCTION_PROMOTIONS = ROOT / "data" / "disclosures" / "production_trade_promotions.json"
+SOURCE_STALENESS_ALERTS = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
 EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
+COMPANY_ENTITY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference.json"
 CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
 
@@ -188,6 +192,7 @@ def test_raw_archive_and_reviewed_promotion_keep_fixture_boundary_clear():
 
 def test_context_maps_and_pages_completeness_are_available():
     event_map = json.loads(EVENT_ENTITY_MAP.read_text())
+    company_reference = json.loads(COMPANY_ENTITY_REFERENCE.read_text())
     congress_map = json.loads(CONGRESS_JURISDICTION_MAP.read_text())
     branch_map = json.loads(BRANCH_JURISDICTION_MAP.read_text())
     completeness = json.loads(DISCLOSURE_COMPLETENESS.read_text())
@@ -195,6 +200,8 @@ def test_context_maps_and_pages_completeness_are_available():
 
     assert event_map["schema_version"] == "event-entity-map-v1"
     assert any("BTCUSD" in mapping["ticker_scope"] for mapping in event_map["event_maps"])
+    assert company_reference["schema_version"] == "company-entity-reference-v1"
+    assert any("NVDA" in entity["ticker_scope"] for entity in company_reference["entities"])
     assert congress_map["schema_version"] == "congress-jurisdiction-map-v1"
     assert len(congress_map["committee_maps"]) >= 12
     assert branch_map["schema_version"] == "branch-jurisdiction-map-v1"
@@ -206,3 +213,34 @@ def test_context_maps_and_pages_completeness_are_available():
     assert completeness["summary"]["reviewed_public_trade_count"] == 0
     assert pages["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
     assert pages["career_trade_timeline"]["events"][0]["ticker_scope"] is not None
+    assert pages["career_trade_timeline"]["event_entity_map"]["company_entity_count"] >= 8
+
+
+def test_retrieval_batches_and_staleness_alerts_cover_first_pass_sources():
+    batches = json.loads(RETRIEVAL_BATCHES.read_text())
+    production = json.loads(PRODUCTION_PROMOTIONS.read_text())
+    alerts = json.loads(SOURCE_STALENESS_ALERTS.read_text())
+    pages = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
+
+    assert batches["schema_version"] == "disclosure-retrieval-batches-v1"
+    assert batches["summary"]["batch_count"] == 4
+    assert batches["summary"]["candidate_count"] == 96
+    assert {batch["source_id"] for batch in batches["batches"]} == {
+        "house-financial-disclosure",
+        "senate-public-financial-disclosure",
+        "oge-individual-disclosures",
+        "judicial-financial-disclosure",
+    }
+    house = next(batch for batch in batches["batches"] if batch["source_id"] == "house-financial-disclosure")
+    assert house["batch_status"] == "ready_for_official_source_search"
+    assert house["candidates"]
+    assert all(candidate["review_required"] is True for candidate in house["candidates"])
+
+    assert production["schema_version"] == "production-trade-promotions-v1"
+    assert production["summary"]["reviewed_public_trade_count"] == 0
+    assert production["summary"]["blocked_non_production_review_count"] >= 1
+    assert alerts["schema_version"] == "source-staleness-alerts-v1"
+    assert alerts["summary"]["alert_count"] >= 4
+    assert alerts["summary"]["high_alert_count"] == 0
+    assert pages["disclosure_pipeline"]["retrieval_batches"]["summary"]["batch_count"] == 4
+    assert pages["disclosure_pipeline"]["source_staleness_alerts"]["summary"]["open_warning_count"] >= 1

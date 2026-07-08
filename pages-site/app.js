@@ -1109,11 +1109,17 @@ function renderCompleteness() {
   const summary = dashboard.summary || {};
   const branches = dashboard.branches || [];
   const rows = dashboard.rows || [];
+  const batches = state.data.disclosure_pipeline?.retrieval_batches?.batches || [];
+  const alerts = state.data.disclosure_pipeline?.source_staleness_alerts?.alerts || [];
+  const production = state.data.disclosure_pipeline?.production_promotions || {};
   $("completenessSummary").innerHTML = [
     ["Queue Items", summary.queue_item_count || 0],
+    ["Retrieval Batches", summary.retrieval_batch_count || 0],
+    ["Batch Candidates", summary.retrieval_candidate_count || 0],
     ["Raw Documents", summary.archived_raw_document_count || 0],
     ["Reviewed Fixtures", summary.reviewed_fixture_promotion_count || 0],
     ["Public Trade Rows", summary.reviewed_public_trade_count || 0],
+    ["Open Alerts", summary.open_warning_count || 0],
   ]
     .map(
       ([label, value]) => `
@@ -1135,6 +1141,7 @@ function renderCompleteness() {
             <strong>${fmt.format(branch.queue_item_count || 0)} queued</strong>
             <small>${fmt.format(branch.official_count || 0)} officials / ${fmt.format(branch.role_count || 0)} roles</small>
             <small>${fmt.format(branch.archived_raw_document_count || 0)} raw docs / ${fmt.format(branch.reviewed_public_trade_count || 0)} reviewed public trades</small>
+            <small>${fmt.format(branch.retrieval_candidate_count || 0)} batch candidates / ${fmt.format(branch.open_alert_count || 0)} alerts</small>
             <span class="readiness-chip ${escapeHtml(branch.readiness_status || "")}">${escapeHtml(roleCategoryLabel(branch.readiness_status || "pending"))}</span>
           </article>
         `;
@@ -1146,7 +1153,9 @@ function renderCompleteness() {
     rows
       .slice(0, 96)
       .map(
-        (row) => `
+        (row) => {
+          const taskKey = `${row.source_id}|${row.presidential_term}`;
+          return `
           <tr>
             <td>
               <strong>${escapeHtml(row.branch)}</strong>
@@ -1158,10 +1167,72 @@ function renderCompleteness() {
             <td>${fmt.format(row.archived_raw_document_count || 0)}</td>
             <td>${fmt.format(row.reviewed_public_trade_count || 0)}</td>
             <td><span class="readiness-chip ${escapeHtml(row.readiness_status || "")}">${escapeHtml(roleCategoryLabel(row.readiness_status || "pending"))}</span></td>
+            <td><button class="row-action" data-source-task="${escapeHtml(taskKey)}">Details</button></td>
           </tr>
-        `
+        `;
+        }
       )
       .join("");
+
+  function renderTask(row) {
+    const batch = batches.find((item) => item.source_id === row.source_id);
+    const sourceAlerts = alerts.filter((item) => !item.source_id || item.source_id === row.source_id);
+    const candidates = (batch?.candidates || []).slice(0, 6);
+    $("sourceTaskDetail").innerHTML = `
+      <div>
+        <p class="eyebrow">Source task detail</p>
+        <h3>${escapeHtml(row.source_id)} / ${escapeHtml(termLabel(row.presidential_term))}</h3>
+        <p>${escapeHtml(batch?.instruction || "No retrieval batch generated for this source yet.")}</p>
+        <div class="source-task-meta">
+          <span class="readiness-chip ${escapeHtml(row.retrieval_batch_status || "")}">${escapeHtml(roleCategoryLabel(row.retrieval_batch_status || "not_batched"))}</span>
+          <span>${fmt.format(row.queue_item_count || 0)} queued</span>
+          <span>${fmt.format(row.retrieval_candidate_count || 0)} first-pass candidates</span>
+          <span>${fmt.format(production.summary?.reviewed_public_trade_count || 0)} reviewed public trades</span>
+        </div>
+        <div class="task-columns">
+          <div>
+            <strong>First candidates</strong>
+            ${
+              candidates.length
+                ? candidates
+                    .map(
+                      (candidate) =>
+                        `<p>${escapeHtml(candidate.full_name)} <small>${escapeHtml(compact([
+                          candidate.chamber,
+                          candidate.congress_number ? `${candidate.congress_number}th Congress` : null,
+                          candidate.state,
+                          candidate.court,
+                          candidate.agency,
+                        ]))}</small></p>`
+                    )
+                    .join("")
+                : '<p class="muted">No candidates available.</p>'
+            }
+          </div>
+          <div>
+            <strong>Open alerts</strong>
+            ${
+              sourceAlerts.length
+                ? sourceAlerts
+                    .map((alert) => `<p>${escapeHtml(alert.severity)}: ${escapeHtml(alert.message)}</p>`)
+                    .join("")
+                : '<p class="muted">No open source alerts.</p>'
+            }
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const defaultRow = rows.find((row) => row.source_id === "house-financial-disclosure") || rows[0];
+  if (defaultRow) renderTask(defaultRow);
+  document.querySelectorAll("[data-source-task]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const [sourceId, termId] = button.getAttribute("data-source-task").split("|");
+      const row = rows.find((item) => item.source_id === sourceId && item.presidential_term === termId);
+      if (row) renderTask(row);
+    });
+  });
 }
 
 function renderEvents() {
