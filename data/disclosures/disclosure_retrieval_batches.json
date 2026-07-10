@@ -3,7 +3,7 @@
     {
       "access_acknowledgement_required": false,
       "access_mode": "public_portal",
-      "batch_id": "house-financial-disclosure:first-pass:2026-07-09",
+      "batch_id": "house-financial-disclosure:first-pass:2026-07-10",
       "batch_status": "ready_for_official_source_search",
       "branch": "Legislative",
       "candidate_count": 24,
@@ -753,7 +753,7 @@
           "state": "FL"
         }
       ],
-      "generated_at": "2026-07-09",
+      "generated_at": "2026-07-10",
       "instruction": "Use House Clerk disclosure search for the named member and current Congress, then archive raw PDF before parsing.",
       "review_required_before_public_trade": true,
       "rights_note": "The House search page states statutory restrictions on use of financial disclosure information and notes redaction of certain personally identifiable information. CivicLedger must preserve this notice before ingesting or exporting records.",
@@ -766,7 +766,7 @@
     {
       "access_acknowledgement_required": true,
       "access_mode": "public_portal_acknowledged",
-      "batch_id": "senate-public-financial-disclosure:first-pass:2026-07-09",
+      "batch_id": "senate-public-financial-disclosure:first-pass:2026-07-10",
       "batch_status": "blocked_pending_human_access_acknowledgement",
       "branch": "Legislative",
       "candidate_count": 24,
@@ -1492,7 +1492,7 @@
           "state": "AK"
         }
       ],
-      "generated_at": "2026-07-09",
+      "generated_at": "2026-07-10",
       "instruction": "After source terms are acknowledged, search the Senate public disclosure system for the named senator and archive raw reports before parsing.",
       "review_required_before_public_trade": true,
       "rights_note": "The Senate public disclosure page identifies the Senate Public Financial Disclosure Database as the public search entry point and describes STOCK Act transaction reporting for Senators and senior staff.",
@@ -1505,7 +1505,7 @@
     {
       "access_acknowledgement_required": true,
       "access_mode": "direct_public_document_or_acknowledged_portal",
-      "batch_id": "oge-individual-disclosures:first-pass:2026-07-09",
+      "batch_id": "oge-individual-disclosures:first-pass:2026-07-10",
       "batch_status": "blocked_pending_human_access_acknowledgement",
       "branch": "Executive",
       "candidate_count": 24,
@@ -2191,7 +2191,7 @@
           "state": null
         }
       ],
-      "generated_at": "2026-07-09",
+      "generated_at": "2026-07-10",
       "instruction": "Search OGE individual disclosures by official name; archive released 278e or 278-T files before parser review.",
       "review_required_before_public_trade": true,
       "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
@@ -2204,7 +2204,7 @@
     {
       "access_acknowledgement_required": true,
       "access_mode": "public_portal_acknowledged",
-      "batch_id": "judicial-financial-disclosure:first-pass:2026-07-09",
+      "batch_id": "judicial-financial-disclosure:first-pass:2026-07-10",
       "batch_status": "blocked_pending_human_access_acknowledgement",
       "branch": "Judicial",
       "candidate_count": 24,
@@ -2906,7 +2906,7 @@
           "state": null
         }
       ],
-      "generated_at": "2026-07-09",
+      "generated_at": "2026-07-10",
       "instruction": "After judiciary access terms are acknowledged, request/search JEFS records by judge name and court before parser review.",
       "review_required_before_public_trade": true,
       "rights_note": "The judicial database requires requester information and acknowledgement of statutory access and use restrictions. CivicLedger must not automate around those access requirements.",
@@ -2918,7 +2918,7 @@
     }
   ],
   "context_label": "First-pass retrieval batches select real source-backed officials from the disclosure queue. They do not bypass official access acknowledgements and do not create public trade rows.",
-  "generated_at": "2026-07-09",
+  "generated_at": "2026-07-10",
   "schema_version": "disclosure-retrieval-batches-v1",
   "summary": {
     "batch_count": 4,
