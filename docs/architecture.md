@@ -1,40 +1,62 @@
 # Architecture
 
-## Current Stack
+## Product Surfaces
 
-- Frontend: Next.js 14, TypeScript, TailwindCSS, Recharts.
+CivicLedger has two intentional frontend surfaces:
+
+1. `pages-site/` is the canonical public comparison workbench and long-term public frontend.
+2. `frontend/` is the authenticated-capable Docker/FastAPI companion for ingestion review, evidence inspection, and operational workflows.
+
+The shared public data contract is `pages-site/data/manifest.json` plus its hashed partitions. Public features must consume this contract rather than create a second interpretation of generated data.
+
+## Runtime Stack
+
+- Public workbench: static HTML/CSS/JavaScript, ECharts 5.6, GitHub Pages.
+- Review frontend: Next.js 14, TypeScript, TailwindCSS, Recharts.
 - Backend: FastAPI, SQLAlchemy, Pydantic.
-- Database: PostgreSQL.
+- Database: PostgreSQL managed through Alembic migrations.
 - Local orchestration: Docker Compose.
+- Scheduled generation: GitHub Actions plus source-specific Python builders.
 
-## Runtime Services
+## Data Flow
 
-- `frontend`: user interface on port 3000.
-- `backend`: FastAPI service on port 8000.
-- `db`: PostgreSQL database with schema from `db/init.sql`.
+1. Official roster and source indexes are retrieved with source metadata.
+2. Raw documents or source snapshots are hashed before parser output is promoted.
+3. Parsers emit review-gated preview records with row/page evidence and confidence.
+4. Normalizers resolve people, dated roles, assets, service periods, and event context.
+5. Validators enforce service-time, provenance, record-state, coverage, and partition-hash contracts.
+6. The Pages builder writes a small manifest and query-oriented partitions.
+7. The browser loads overview data first, then selected officials and market symbols on demand.
 
-## System Layers
+## Public Partition Contract
 
-1. Data layer: raw source documents, fixture data, normalized tables.
-2. Entity layer: people, offices, organizations, assets.
-3. Filing layer: official filing metadata and retrieval provenance.
-4. Trade layer: normalized transaction rows and parser confidence.
-5. Temporal layer: trade dates, reported dates, service periods, event timelines.
-6. Methodology layer: scoring rules, lag thresholds, benchmark rules.
-7. Presentation layer: browse, profile, timeline, detail, methodology, and share-card views.
+- `overview`: dataset versions, methodology, public claims, and summary counts.
+- `officials_index`: all searchable federal officials and dated role facets.
+- `timeline_index`: only officials with source-backed transaction timeline lanes.
+- `events`: curated anchors, official laws/orders/opinions, and macro releases.
+- `coverage`: branch/source/year/record-state counts and known blockers.
+- `officials/*`: one detailed transaction/event relationship timeline per official.
+- `market/*`: one price-series partition per supported symbol or crypto pair.
 
-## API Contract Priorities
+Every manifest entry carries byte size and SHA-256. The release validator rejects unsafe paths, missing partitions, hash drift, fixture contamination, out-of-service plotting, and initial-load budget violations.
 
-- Prefer stable explicit IDs such as `person_id`, `filing_id`, `trade_id`, and `event_id`.
-- Include range metadata on timeline responses.
-- Keep scorecard fields tied to disclosure completeness and data quality.
-- Never expose a UI-only interpretation as if it were source data.
+## Temporal Semantics
+
+- Career mode uses cumulative active-service days and preserves nonconsecutive terms.
+- Calendar mode uses real dates and leaves inactive gaps visible.
+- Event mode requires an explicit event and centers a configurable before/after window.
+- Transactions outside an official's dated service periods are withheld from that official's public timeline.
+- Event relationships communicate evidence tiers and reasons, never causal conclusions.
 
 ## Release Gates
 
-- Backend Python syntax passes.
-- Frontend typecheck/build passes.
-- Docker Compose boots all services.
-- API/frontend contracts are aligned.
-- Fixture data is visibly labeled.
-- Share-card disclaimers render in public-facing output.
+- Alembic upgrades an empty PostgreSQL database through the current revision.
+- Backend tests and parser fixtures pass.
+- Frontend production build passes.
+- Public data and market validators pass.
+- Docker Compose smoke test passes.
+- No fixture row appears in a public transaction timeline.
+- No preview record is labeled as reviewed or production.
+- Every public partition matches its manifest hash and size.
+- Coverage cannot silently drop below committed baselines.
+- GitHub Pages deploys and serves the manifest and a representative official partition.

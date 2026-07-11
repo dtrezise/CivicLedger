@@ -21,6 +21,7 @@ ACTION_WORDS = {
     "exchange": "EXCHANGE",
     "exchanged": "EXCHANGE",
 }
+HOUSE_ACTIONS = {"P": "BUY", "S": "SELL", "E": "EXCHANGE"}
 
 
 def normalize_date(value: str) -> str:
@@ -252,8 +253,250 @@ class SourceSpecificTransactionParser(DisclosureParser):
         )
 
 
+def clean_pdf_word(value: str) -> str:
+    return re.sub(r"\s+", " ", value.replace("\x00", "")).strip()
+
+
+def words_in_column(words: list[dict], start: float, end: float, top: float, bottom: float) -> list[dict]:
+    return [
+        word
+        for word in words
+        if start <= float(word["x0"]) < end and top <= float(word["top"]) < bottom
+    ]
+
+
+def joined_words(words: list[dict]) -> str | None:
+    value = " ".join(clean_pdf_word(word["text"]) for word in sorted(words, key=lambda word: (word["top"], word["x0"])))
+    return clean(value)
+
+
+def house_table_columns(words: list[dict]) -> tuple[dict[str, float], float] | None:
+    for owner in words:
+        if clean_pdf_word(owner["text"]).lower() != "owner":
+            continue
+        top = float(owner["top"])
+        header = [word for word in words if abs(float(word["top"]) - top) <= 2]
+
+        def x_for(label: str, *, after: float = 0) -> float | None:
+            matches = [
+                float(word["x0"])
+                for word in header
+                if clean_pdf_word(word["text"]).lower() == label and float(word["x0"]) > after
+            ]
+            return min(matches) if matches else None
+
+        owner_x = float(owner["x0"])
+        asset_x = x_for("asset", after=owner_x)
+        transaction_x = x_for("transaction", after=asset_x or owner_x)
+        date_x = x_for("date", after=transaction_x or owner_x)
+        notification_x = x_for("notification", after=date_x or owner_x)
+        amount_x = x_for("amount", after=notification_x or owner_x)
+        cap_x = x_for("cap.", after=amount_x or owner_x) or x_for("cap", after=amount_x or owner_x)
+        if all(value is not None for value in [asset_x, transaction_x, date_x, notification_x, amount_x]):
+            return (
+                {
+                    "id": 0,
+                    "owner": owner_x,
+                    "asset": asset_x,
+                    "action": transaction_x,
+                    "date": date_x,
+                    "notification": notification_x,
+                    "amount": amount_x,
+                    "cap": cap_x or max(float(word["x1"]) for word in words),
+                    "right": max(float(word["x1"]) for word in words) + 1,
+                },
+                max(float(word["bottom"]) for word in words if abs(float(word["top"]) - top) <= 16),
+            )
+    return None
+
+
+def house_footer_top(words: list[dict], header_bottom: float, page_height: float) -> float:
+    candidates = []
+    for word in words:
+        text = clean_pdf_word(word["text"]).lower()
+        top = float(word["top"])
+        if top <= header_bottom:
+            continue
+        if (text == "*" and float(word["x0"]) < 45) or text in {"initial", "certification"}:
+            candidates.append(top)
+        if text == "i" and float(word["x0"]) < 55:
+            line = joined_words([item for item in words if abs(float(item["top"]) - top) <= 2]) or ""
+            if "certify" in line.lower():
+                candidates.append(top)
+    return min(candidates) if candidates else page_height
+
+
+def house_filer_name(words: list[dict]) -> str | None:
+    for word in words:
+        if clean_pdf_word(word["text"]).lower() != "name:":
+            continue
+        top = float(word["top"])
+        row = [
+            item
+            for item in words
+            if abs(float(item["top"]) - top) <= 2 and float(item["x0"]) > float(word["x1"])
+        ]
+        return joined_words(row)
+    return None
+
+
+def house_filing_date(text: str) -> str | None:
+    match = re.search(r"Digitally Signed:.*?,\s*(\d{1,2}/\d{1,2}/\d{4})", text, re.IGNORECASE)
+    return normalize_date(match.group(1)) if match else None
+
+
+def extract_house_pdf_transactions(content: bytes) -> tuple[list[ParsedTransaction], dict, list[str]]:
+    import pdfplumber
+
+    transactions = []
+    warnings = []
+    filer_name = None
+    filing_date = None
+    page_count = 0
+    embedded_text_character_count = 0
+    with pdfplumber.open(io.BytesIO(content)) as document:
+        page_count = len(document.pages)
+        for page_number, page in enumerate(document.pages, start=1):
+            words = page.extract_words(x_tolerance=2, y_tolerance=2)
+            text = page.extract_text() or ""
+            embedded_text_character_count += len(text.strip())
+            filer_name = filer_name or house_filer_name(words)
+            filing_date = filing_date or house_filing_date(text)
+            table = house_table_columns(words)
+            if not table:
+                continue
+            columns, header_bottom = table
+            footer_top = house_footer_top(words, header_bottom, float(page.height))
+            date_words = [
+                word
+                for word in words
+                if columns["date"] - 5 <= float(word["x0"]) < columns["notification"] - 5
+                and header_bottom < float(word["top"]) < footer_top
+                and DATE_RE.fullmatch(clean_pdf_word(word["text"]))
+            ]
+            for page_row, date_word in enumerate(sorted(date_words, key=lambda word: word["top"]), start=1):
+                row_top = float(date_word["top"]) - 2
+                following = [float(word["top"]) for word in date_words if float(word["top"]) > float(date_word["top"]) + 2]
+                row_bottom = min(following) - 2 if following else footer_top
+                asset_words = words_in_column(
+                    words, columns["asset"] - 5, columns["action"] - 5, row_top, row_bottom
+                )
+                asset_lines = []
+                for line_top in sorted({round(float(word["top"]), 1) for word in asset_words}):
+                    line = joined_words([word for word in asset_words if abs(float(word["top"]) - line_top) <= 0.2])
+                    normalized_line = clean_pdf_word(line or "")
+                    if re.fullmatch(r"F\s+S:?\s*(New|Amendment)?", normalized_line, re.IGNORECASE):
+                        continue
+                    if normalized_line:
+                        asset_lines.append(normalized_line)
+                asset = clean(" ".join(asset_lines))
+                action_raw = joined_words(
+                    words_in_column(words, columns["action"] - 5, columns["date"] - 5, row_top, row_top + 14)
+                )
+                amount = joined_words(
+                    words_in_column(words, columns["amount"] - 5, columns["cap"] - 5, row_top, row_top + 18)
+                )
+                owner = joined_words(
+                    words_in_column(words, columns["owner"] - 5, columns["asset"] - 5, row_top, row_top + 18)
+                )
+                notification = joined_words(
+                    words_in_column(
+                        words,
+                        columns["notification"] - 5,
+                        columns["amount"] - 5,
+                        row_top,
+                        row_top + 18,
+                    )
+                )
+                row_id = joined_words(
+                    words_in_column(words, columns["id"], columns["owner"] - 5, row_top, row_top + 18)
+                )
+                action_code = clean_pdf_word(action_raw or "").upper()[:1]
+                action = HOUSE_ACTIONS.get(action_code)
+                transaction_date = normalize_date(clean_pdf_word(date_word["text"]))
+                if not asset or not action or not amount:
+                    warnings.append(
+                        f"Page {page_number} row {page_row} was not normalized because required columns were incomplete."
+                    )
+                    continue
+                ticker_match = re.search(r"\(([A-Z][A-Z0-9.\-]{0,9})\)", asset)
+                ticker = ticker_match.group(1) if ticker_match else None
+                confidence, field_confidence = transaction_confidence(
+                    asset=asset,
+                    date=transaction_date,
+                    amount=amount,
+                    action=action,
+                    ticker=ticker,
+                )
+                comment_parts = []
+                if notification and DATE_RE.search(notification):
+                    comment_parts.append(f"Notification date: {normalize_date(DATE_RE.search(notification).group(1))}")
+                if row_id:
+                    comment_parts.append(f"House row ID: {row_id}")
+                transactions.append(
+                    ParsedTransaction(
+                        owner=owner,
+                        asset=asset,
+                        ticker=ticker,
+                        transaction_type=action,
+                        transaction_date=transaction_date,
+                        amount=amount,
+                        comment="; ".join(comment_parts) or None,
+                        row_number=len(transactions) + 1,
+                        confidence=confidence,
+                        field_confidence={**field_confidence, "source_page": page_number},
+                    )
+                )
+    return transactions, {
+        "filer_name": filer_name,
+        "filing_date": filing_date,
+        "page_count": page_count,
+        "embedded_text_character_count": embedded_text_character_count,
+        "ocr_required": not transactions and embedded_text_character_count < 80,
+    }, warnings
+
+
+class HouseFinancialDisclosureParser(SourceSpecificTransactionParser):
+    def preview(self, content: bytes, *, filename: str, content_type: str) -> ParserPreview:
+        if not content_type.startswith("application/pdf") and not filename.lower().endswith(".pdf"):
+            return super().preview(content, filename=filename, content_type=content_type)
+
+        transactions, metadata, warnings = extract_house_pdf_transactions(content)
+        warnings.extend(
+            [
+                "Parser preview only: normalized records require explicit review before promotion.",
+                "Human review is required before creating public-facing filings or trades.",
+            ]
+        )
+        if not transactions:
+            warnings.append("No House PTR transaction rows were detected.")
+        return ParserPreview(
+            source_id=self.source_id,
+            document_type=self.document_type,
+            normalized_record_count=len(transactions),
+            filer_name=metadata.get("filer_name"),
+            report_type="Periodic Transaction Report",
+            filing_date=metadata.get("filing_date"),
+            transactions=transactions,
+            warnings=warnings,
+            output={
+                "branch": self.branch,
+                "filename": filename,
+                "content_type": content_type,
+                "byte_count": len(content),
+                "page_count": metadata.get("page_count"),
+                "record_status": "parser_preview",
+                "confidence_label": "House Clerk PTR parser preview",
+                "review_required_before_promotion": True,
+                "extraction_method": "pdfplumber_position_aware_house_ptr_v1",
+                "metadata": metadata,
+                "transactions": [transaction.to_dict() for transaction in transactions],
+            },
+        )
+
+
 PARSERS = {
-    "house-financial-disclosure": SourceSpecificTransactionParser(
+    "house-financial-disclosure": HouseFinancialDisclosureParser(
         "house-financial-disclosure", "legislative_financial_disclosure", "Legislative"
     ),
     "senate-public-financial-disclosure": SourceSpecificTransactionParser(

@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import random
 import re
+import shutil
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
 from decimal import Decimal
@@ -25,11 +27,14 @@ from app.services.market_prices import crypto_reference, normalize_asset_symbol,
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "pages-site" / "data" / "civicledger-static.json"
+PUBLIC_MANIFEST = ROOT / "pages-site" / "data" / "manifest.json"
+PUBLIC_PARTITIONS = ROOT / "pages-site" / "data" / "partitions"
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
 FRED_CONTEXT = ROOT / "data" / "context" / "fred_market_context.json"
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 CRYPTO_PRICES = ROOT / "data" / "context" / "crypto_prices.json"
 CURATED_TIMELINE_EVENTS = ROOT / "data" / "context" / "timeline_events.json"
+FEDERAL_EVENTS = ROOT / "data" / "context" / "federal_events.json"
 EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
 CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
@@ -37,6 +42,8 @@ COMPANY_ENTITY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
 PRESIDENTIAL_OGE_DOCUMENTS = ROOT / "data" / "disclosures" / "presidential_oge_documents.json"
 PRESIDENTIAL_OGE_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
+HOUSE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
+HOUSE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
@@ -69,6 +76,10 @@ def iso(value) -> str | None:
 
 def parse_iso_date(value: str) -> date:
     return datetime.strptime(value, "%Y-%m-%d").date()
+
+
+def public_slug(value: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9._-]+", "-", value).strip("-").lower()
 
 
 def median(values: list[int]) -> float | None:
@@ -300,12 +311,24 @@ def market_snapshot(series: list[dict], metadata: dict) -> dict:
 
 
 def load_events() -> list[dict]:
-    with (FIXTURES / "events" / "events.json").open() as handle:
-        fixture_events = json.load(handle)
-    if not CURATED_TIMELINE_EVENTS.exists():
-        return fixture_events
-    curated = json.loads(CURATED_TIMELINE_EVENTS.read_text())
-    return fixture_events + curated.get("events", [])
+    curated = load_json_file(CURATED_TIMELINE_EVENTS, {"events": []}).get("events", [])
+    federal = load_json_file(FEDERAL_EVENTS, {"events": []}).get("events", [])
+    rows = []
+    seen_ids = set()
+    seen_primary_urls = set()
+    for event in [*curated, *federal]:
+        event_id = event.get("id")
+        primary_url = next(iter(event.get("sources", [])), None)
+        if event_id and event_id in seen_ids:
+            continue
+        if primary_url and primary_url in seen_primary_urls:
+            continue
+        rows.append(event)
+        if event_id:
+            seen_ids.add(event_id)
+        if primary_url:
+            seen_primary_urls.add(primary_url)
+    return rows
 
 
 def load_json_file(path: Path, fallback: dict) -> dict:
@@ -484,6 +507,33 @@ def load_presidential_oge_transactions() -> dict:
     return json.loads(PRESIDENTIAL_OGE_TRANSACTIONS.read_text())
 
 
+def load_house_ptr_transactions() -> dict:
+    if not HOUSE_PTR_TRANSACTIONS.exists():
+        return {
+            "manifest": {},
+            "documents": [],
+            "transactions": [],
+            "summary": {"processed_document_count": 0, "parser_preview_transaction_count": 0},
+        }
+    manifest = json.loads(HOUSE_PTR_TRANSACTIONS.read_text())
+    documents = []
+    transactions = []
+    if manifest.get("schema_version") == "house-ptr-transactions-manifest-v2":
+        for record in manifest.get("year_partitions", {}).values():
+            partition = json.loads((ROOT / record["path"]).read_text())
+            documents.extend(partition.get("documents", []))
+            transactions.extend(partition.get("transactions", []))
+    else:
+        documents = manifest.get("documents", [])
+        transactions = manifest.get("transactions", [])
+    return {
+        "manifest": manifest,
+        "documents": documents,
+        "transactions": transactions,
+        "summary": manifest.get("summary", {}),
+    }
+
+
 def load_public_officials() -> dict:
     if not PUBLIC_OFFICIALS.exists():
         return {
@@ -654,7 +704,7 @@ def timeline_event_rows(
         company_tickers = sorted({ticker for entity in matched_entities for ticker in entity.get("ticker_scope", [])})
         rows.append(
             {
-                "id": f"civic-event-{index:03d}",
+                "id": event.get("id") or f"curated-event-{index:03d}",
                 "date": event["date"],
                 "label": event["label"],
                 "event_type": event["event_type"],
@@ -671,7 +721,18 @@ def timeline_event_rows(
                 "entity_scope": mapped.get("entity_scope", []),
                 "ticker_scope": sorted(set(mapped.get("ticker_scope", []) + company_tickers)),
                 "company_entity_scope": matched_entities,
+                "market_topic_ids": event.get("market_topic_ids", []),
                 "editor_status": event.get("editor_status", "fixture"),
+                "market_relevance": event.get("market_relevance"),
+                "announcement_date": event.get("announcement_date"),
+                "effective_date": event.get("effective_date"),
+                "publication_date": event.get("publication_date"),
+                "source_tier": event.get("source_tier", "official"),
+                "law_number": event.get("law_number"),
+                "executive_order_number": event.get("executive_order_number"),
+                "docket_number": event.get("docket_number"),
+                "citation": event.get("citation"),
+                "term_year": event.get("term_year"),
             }
         )
     for index, event in enumerate(fred_context.get("release_events", []), start=1):
@@ -684,7 +745,8 @@ def timeline_event_rows(
                 "description": event.get("description") or event.get("label") or "",
                 "source": event.get("source", "FRED"),
                 "relevance": "macro",
-                "source_urls": event.get("source_urls", []),
+                "source_urls": event.get("source_urls")
+                or ([event["source_url"]] if event.get("source_url") else []),
                 "branch_scope": ["Executive", "Legislative", "Judicial"],
                 "sector_scope": ["Broad Market"],
                 "asset_scope": [],
@@ -692,35 +754,133 @@ def timeline_event_rows(
                 "entity_scope": ["Federal Reserve", "Bureau of Labor Statistics", "Treasury"],
                 "ticker_scope": event_entity_map.get("default_ticker_scope", ["SPY", "QQQ", "DIA"]),
                 "company_entity_scope": [],
+                "market_topic_ids": [],
                 "editor_status": "system_generated",
             }
         )
     return sorted(rows, key=lambda item: (item["date"], item["id"]))
 
 
-def service_bounds(roles: list[dict], trades: list[dict]) -> tuple[str | None, str | None]:
-    starts = [role.get("service_start") for role in roles if role.get("service_start")]
-    starts += [trade.get("trade_date") for trade in trades if trade.get("trade_date")]
-    ends = [role.get("service_end") for role in roles if role.get("service_end")]
-    ends += [trade.get("trade_date") for trade in trades if trade.get("trade_date")]
-    if any(role.get("service_start") and not role.get("service_end") for role in roles):
-        ends.append(date.today().isoformat())
-    return (min(starts) if starts else None, max(ends) if ends else None)
+def service_periods(roles: list[dict], trades: list[dict]) -> list[dict]:
+    periods = []
+    today = date.today().isoformat()
+    for role in roles:
+        start = role.get("service_start")
+        if not start:
+            continue
+        periods.append(
+            {
+                "start": start,
+                "end": role.get("service_end") or today,
+                "active": not bool(role.get("service_end")),
+                "role_title": role.get("role_title"),
+                "presidential_term": role.get("presidential_term"),
+                "source_tier": role.get("source_tier"),
+            }
+        )
+    if not periods and trades:
+        trade_dates = sorted(trade.get("trade_date") for trade in trades if trade.get("trade_date"))
+        if trade_dates:
+            periods.append(
+                {
+                    "start": trade_dates[0],
+                    "end": trade_dates[-1],
+                    "active": False,
+                    "role_title": "Disclosure activity",
+                    "presidential_term": None,
+                    "source_tier": "derived",
+                }
+            )
+
+    merged = []
+    for period in sorted(periods, key=lambda row: (row["start"], row["end"])):
+        if not merged:
+            merged.append({**period})
+            continue
+        previous = merged[-1]
+        gap = (parse_iso_date(period["start"]) - parse_iso_date(previous["end"])).days
+        if gap <= 1:
+            previous["end"] = max(previous["end"], period["end"])
+            previous["active"] = previous["active"] or period["active"]
+            previous["role_title"] = previous.get("role_title") or period.get("role_title")
+            continue
+        merged.append({**period})
+
+    cumulative_days = 0
+    for period in merged:
+        period["career_start_day"] = cumulative_days
+        duration = max(0, (parse_iso_date(period["end"]) - parse_iso_date(period["start"])).days)
+        period["career_end_day"] = cumulative_days + duration
+        cumulative_days += duration + 1
+    return merged
 
 
-def days_from_anchor(value: str | None, anchor: str | None) -> int | None:
-    if not value or not anchor:
+def service_bounds(periods: list[dict]) -> tuple[str | None, str | None]:
+    if not periods:
+        return None, None
+    return periods[0]["start"], periods[-1]["end"]
+
+
+def active_service_day(value: str | None, periods: list[dict]) -> int | None:
+    if not value:
         return None
-    return (parse_iso_date(value) - parse_iso_date(anchor)).days
+    target = parse_iso_date(value)
+    for period in periods:
+        start = parse_iso_date(period["start"])
+        end = parse_iso_date(period["end"])
+        if start <= target <= end:
+            return period["career_start_day"] + (target - start).days
+    return None
 
 
-def timeline_trade_row(trade: dict, anchor: str | None, crypto_points_by_symbol: dict[str, list[dict]]) -> dict:
+def market_price_window(
+    symbol: str | None,
+    trade_date: str | None,
+    points_by_symbol: dict[str, list[dict]],
+    provider: str,
+) -> dict | None:
+    if not symbol or not trade_date:
+        return None
+    points = points_by_symbol.get(normalize_asset_symbol(symbol), [])
+    if not points:
+        return None
+    trade_day = parse_iso_date(trade_date)
+    rows = []
+    for point in points:
+        point_date = point["date"] if isinstance(point["date"], date) else parse_iso_date(point["date"])
+        days_from_trade = (point_date - trade_day).days
+        if abs(days_from_trade) <= 30:
+            rows.append(
+                {
+                    "date": point_date.isoformat(),
+                    "value": round(float(point["value"]), 4),
+                    "days_from_trade": days_from_trade,
+                }
+            )
+    if not rows:
+        return None
+    closest = min(rows, key=lambda row: (abs(row["days_from_trade"]), row["date"]))
+    return {
+        "provider": provider,
+        "symbol": normalize_asset_symbol(symbol),
+        "window_days": 30,
+        "closest_close": closest["value"],
+        "closest_date": closest["date"],
+    }
+
+
+def timeline_trade_row(
+    trade: dict,
+    periods: list[dict],
+    market_points_by_symbol: dict[str, list[dict]],
+    crypto_points_by_symbol: dict[str, list[dict]],
+) -> dict:
     reference = asset_reference(trade.get("ticker"), trade.get("asset_class"))
     midpoint = value_midpoint(trade)
     row = {
         "id": trade["id"],
         "date": trade["trade_date"],
-        "career_day": days_from_anchor(trade.get("trade_date"), anchor),
+        "career_day": active_service_day(trade.get("trade_date"), periods),
         "reported_date": trade["reported_date"],
         "action": trade["action"],
         "ticker": normalize_asset_symbol(trade.get("ticker")),
@@ -728,6 +888,8 @@ def timeline_trade_row(trade: dict, anchor: str | None, crypto_points_by_symbol:
         "asset_class": reference.get("asset_class") or trade.get("asset_class") or "unknown",
         "sector": reference.get("sector", "Unmapped"),
         "value_range_label": trade["value_range_label"],
+        "value_range_min": trade.get("value_range_min"),
+        "value_range_max": trade.get("value_range_max"),
         "value_midpoint": midpoint,
         "disclosure_lag_days": trade.get("disclosure_lag_days"),
         "record_status": trade.get("record_status", "fixture_demo"),
@@ -738,14 +900,21 @@ def timeline_trade_row(trade: dict, anchor: str | None, crypto_points_by_symbol:
         "source_page": trade.get("source_page"),
         "review_required_before_public_trade": trade.get("review_required_before_public_trade", False),
         "public_production_trade": trade.get("public_production_trade"),
+        "benchmark_symbol": reference.get("benchmark_symbol", "SPY"),
     }
     if row["asset_class"] == "crypto":
         row["price_window"] = crypto_price_window(row["ticker"], row["date"], crypto_points_by_symbol)
+    else:
+        row["price_window"] = market_price_window(
+            row["ticker"], row["date"], market_points_by_symbol, "Tiingo"
+        )
+    row["benchmark_price_window"] = market_price_window(
+        row["benchmark_symbol"], row["date"], market_points_by_symbol, "Tiingo"
+    )
     return row
 
 
 def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
-    score = 35
     reasons = []
     event_type = event.get("event_type", "")
     branch = official.get("branch")
@@ -772,72 +941,95 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
         ]
         if value
     ).lower()
-    if event.get("relevance") == "macro":
-        score += 20
-        reasons.append("macro context")
+    ticker_match = sorted(tickers.intersection(ticker_scope))
+    sector_match = sorted(sectors.intersection(sector_scope))
+    asset_match = sorted(asset_classes.intersection(asset_scope))
+    jurisdiction_match = sorted(scope for scope in jurisdiction_scope if scope in role_text)
+    entity_match = sorted(scope for scope in entity_scope if scope in role_text)
+
+    inferred_from_title = event.get("market_relevance") == "title_keyword_match"
+    if ticker_match:
+        reasons.append(f"asset or ticker scope: {', '.join(ticker_match)}")
+    if jurisdiction_match:
+        reasons.append(f"office jurisdiction: {', '.join(jurisdiction_match[:3])}")
+    if entity_match:
+        reasons.append(f"agency or entity scope: {', '.join(entity_match[:3])}")
+    if sector_match:
+        reasons.append(f"sector scope: {', '.join(sector_match)}")
+    if asset_match:
+        reasons.append(f"asset class: {', '.join(asset_match)}")
     if branch_scope and branch in branch_scope:
-        score += 18
-        reasons.append("branch scope match")
-    if sector_scope and sectors.intersection(sector_scope):
-        score += 16
-        reasons.append("sector overlap")
-    if asset_scope and asset_classes.intersection(asset_scope):
-        score += 16
-        reasons.append("asset-class overlap")
-    if ticker_scope and tickers.intersection(ticker_scope):
-        score += 22
-        reasons.append("ticker/entity overlap")
-    if jurisdiction_scope and any(scope in role_text for scope in jurisdiction_scope):
-        score += 12
-        reasons.append("office or jurisdiction overlap")
-    if entity_scope and any(scope in role_text for scope in entity_scope):
-        score += 10
-        reasons.append("agency/entity overlap")
-    if branch == "Executive" and event_type in {"executive_order", "policy_change", "macro_release"}:
-        score += 18
-        reasons.append("executive-adjacent event")
-    if branch == "Legislative" and event_type in {"bill", "funding", "macro_release"}:
-        score += 18
-        reasons.append("legislative-adjacent event")
-    if branch == "Judicial" and event_type in {"court_decision", "ruling"}:
-        score += 18
-        reasons.append("judicial-adjacent event")
-    if trades and any(trade.get("asset_class") == "crypto" for trade in trades) and "crypto" in event_type:
-        score += 20
-        reasons.append("crypto asset overlap")
-    if trades and not reasons:
-        reasons.append("selected official has reviewed trades")
+        reasons.append(f"{branch.lower()} branch scope")
+
+    institutional = False
+    if branch == "Executive" and event_type in {"executive_order", "presidential_document", "agency_rule"}:
+        institutional = True
+    if branch == "Legislative" and event_type in {"legislation", "bill_action", "vote", "funding"}:
+        institutional = True
+    if branch == "Judicial" and event_type == "court_decision":
+        institutional = True
+    if institutional:
+        reasons.append("institutional event type")
+
+    if event.get("relevance") == "macro":
+        tier = "general_macro"
+        reasons.append("general macro context")
+    elif ticker_match and not inferred_from_title:
+        tier = "asset_specific"
+    elif jurisdiction_match or entity_match:
+        tier = "jurisdictional"
+    elif institutional and branch in branch_scope:
+        tier = "institutional"
+    elif ticker_match or sector_match or asset_match:
+        tier = "sector_context"
+    else:
+        tier = "general_context"
+        if not reasons:
+            reasons.append("global public context")
+
+    tier_rank = {
+        "direct": 6,
+        "asset_specific": 5,
+        "jurisdictional": 4,
+        "institutional": 3,
+        "sector_context": 2,
+        "general_macro": 1,
+        "general_context": 0,
+    }
     return {
-        "score": min(score, 100),
-        "reason": ", ".join(reasons) if reasons else "general public context",
+        "tier": tier,
+        "tier_rank": tier_rank[tier],
+        "reasons": reasons,
+        "display_default": tier in {"direct", "asset_specific", "jurisdictional"}
+        or (tier == "institutional" and event.get("editor_status") == "curated"),
     }
 
 
 def timeline_event_positions(
     events: list[dict],
-    anchor: str | None,
-    start: str | None,
-    end: str | None,
+    periods: list[dict],
     official: dict,
     trades: list[dict],
 ) -> list[dict]:
-    if not start or not end:
+    if not periods:
         return []
-    start_date = parse_iso_date(start)
-    end_date = parse_iso_date(end)
     rows = []
     for event in events:
-        event_date = parse_iso_date(event["date"])
-        if start_date - timedelta(days=180) <= event_date <= end_date + timedelta(days=180):
-            relevance = event_relevance(event, official, trades)
-            rows.append(
-                {
-                    **event,
-                    "career_day": days_from_anchor(event["date"], anchor),
-                    "relevance_score": relevance["score"],
-                    "relevance_reason": relevance["reason"],
-                }
-            )
+        career_day = active_service_day(event["date"], periods)
+        if career_day is None:
+            continue
+        relevance = event_relevance(event, official, trades)
+        rows.append(
+            {
+                "id": event["id"],
+                "date": event["date"],
+                "career_day": career_day,
+                "relationship_tier": relevance["tier"],
+                "relationship_tier_rank": relevance["tier_rank"],
+                "relationship_reasons": relevance["reasons"],
+                "display_default": relevance["display_default"],
+            }
+        )
     return rows
 
 
@@ -872,14 +1064,17 @@ def career_trade_timeline(
     public_officials: dict,
     fixture_people: list[dict],
     all_trades: list[dict],
+    market_series: list[dict],
     fred_context: dict,
     civic_events: list[dict],
     crypto_prices: dict,
     presidential_oge_status: dict,
     presidential_oge_documents: dict,
     presidential_oge_transactions: dict,
+    house_ptr_transactions: dict,
     event_entity_map: dict,
     company_reference: dict,
+    include_fixture_timelines: bool = False,
 ) -> dict:
     roles_by_person = public_roles_by_person(public_officials)
     trades_by_person = defaultdict(list)
@@ -902,10 +1097,20 @@ def career_trade_timeline(
     oge_transactions_by_official = defaultdict(list)
     for transaction in presidential_oge_transactions.get("transactions", []):
         oge_transactions_by_official[transaction["official_id"]].append(transaction)
+    house_transactions_by_official = defaultdict(list)
+    for transaction in house_ptr_transactions.get("transactions", []):
+        house_transactions_by_official[transaction["official_id"]].append(transaction)
+    house_documents_by_official = defaultdict(list)
+    for document in house_ptr_transactions.get("documents", []):
+        if document.get("official_id"):
+            house_documents_by_official[document["official_id"]].append(document)
     crypto_points_by_symbol = {
         symbol: series.get("points", [])
         for symbol, series in crypto_prices.get("series", {}).items()
     }
+    market_points_by_symbol = defaultdict(list)
+    for point in market_series:
+        market_points_by_symbol[point["symbol"]].append(point)
 
     for external_id, roles in roles_by_person.items():
         presidential_roles = [
@@ -920,9 +1125,10 @@ def career_trade_timeline(
             oge_transactions_by_official.get(external_id, []),
             key=lambda item: (item["trade_date"], item["id"]),
         )
-        start, end = service_bounds(presidential_roles, preview_trade_source_rows)
+        periods = service_periods(presidential_roles, preview_trade_source_rows)
+        start, end = service_bounds(periods)
         timeline_trades = [
-            timeline_trade_row(trade, start, crypto_points_by_symbol)
+            timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
             for trade in preview_trade_source_rows
         ]
         disclosure_documents = oge_documents_by_official.get(external_id, [])
@@ -954,6 +1160,8 @@ def career_trade_timeline(
                 "timeline_group": "presidential_baseline",
                 "service_start": start,
                 "service_end": end,
+                "service_periods": periods,
+                "active_service_days": periods[-1]["career_end_day"] + 1 if periods else 0,
                 "roles": presidential_roles,
                 "trades": timeline_trades,
                 "disclosure_sources": oge_by_official.get(external_id, []),
@@ -961,9 +1169,7 @@ def career_trade_timeline(
                 "unavailable_disclosure_documents": unavailable_documents,
                 "events": timeline_event_positions(
                     events,
-                    start,
-                    start,
-                    end,
+                    periods,
                     {"branch": "Executive", "roles": presidential_roles},
                     timeline_trades,
                 ),
@@ -985,21 +1191,85 @@ def career_trade_timeline(
             }
         )
 
-    for person in fixture_people:
-        person_trades = sorted(trades_by_person.get(person["id"], []), key=lambda item: (item["trade_date"], item["id"]))
-        start, end = service_bounds(
-            [
-                {
-                    "service_start": person.get("service_start"),
-                    "service_end": person.get("service_end"),
-                    "role_title": person.get("office") or person.get("chamber") or person.get("branch"),
-                    "role_category": "fixture_trade_official",
-                    "source_tier": "fixture",
-                }
-            ],
-            person_trades,
+    house_out_of_service_trade_count = 0
+    for external_id, source_rows in sorted(house_transactions_by_official.items()):
+        roles = roles_by_person.get(external_id, [])
+        if not roles:
+            continue
+        person = public_people_by_id.get(external_id, {})
+        periods = service_periods(roles, source_rows)
+        start, end = service_bounds(periods)
+        timeline_trades = []
+        for trade in sorted(source_rows, key=lambda item: (item["trade_date"], item["id"])):
+            row = timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
+            if row["career_day"] is None:
+                house_out_of_service_trade_count += 1
+                continue
+            timeline_trades.append(row)
+        documents = house_documents_by_official.get(external_id, [])
+        official_rows.append(
+            {
+                "id": external_id,
+                "full_name": person.get("full_name", external_id),
+                "branch": "Legislative",
+                "timeline_group": "official_house_ptr_preview",
+                "service_start": start,
+                "service_end": end,
+                "service_periods": periods,
+                "active_service_days": periods[-1]["career_end_day"] + 1 if periods else 0,
+                "roles": roles,
+                "trades": timeline_trades,
+                "disclosure_sources": [
+                    {
+                        "source_id": "house-financial-disclosure",
+                        "source_url": "https://disclosures-clerk.house.gov/financialdisclosure",
+                        "record_status": "official_house_parser_preview_not_promoted",
+                    }
+                ],
+                "events": timeline_event_positions(
+                    events,
+                    periods,
+                    {"branch": "Legislative", "roles": roles},
+                    timeline_trades,
+                ),
+                "trade_clusters": trade_clusters(timeline_trades),
+                "stats": {
+                    "trade_count": len(timeline_trades),
+                    "parser_preview_trade_count": len(timeline_trades),
+                    "document_count": len(documents),
+                    "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
+                    "sell_count": sum(1 for trade in timeline_trades if trade["action"] == "SELL"),
+                    "crypto_count": sum(1 for trade in timeline_trades if trade["asset_class"] == "crypto"),
+                    "total_value_midpoint": round(sum(trade["value_midpoint"] or 0 for trade in timeline_trades), 2),
+                    "disclosure_status": (
+                        f"{len(documents)} official House PTR documents; "
+                        f"{len(timeline_trades)} parser-preview transactions require review"
+                    ),
+                    "record_status": "official_house_parser_preview_not_promoted",
+                    "confidence_label": "Official House Clerk PTR parser preview; review required",
+                    "public_production_trade_count": 0,
+                    "review_required_before_public_trade": True,
+                },
+            }
         )
-        timeline_trades = [timeline_trade_row(trade, start, crypto_points_by_symbol) for trade in person_trades]
+
+    for person in fixture_people if include_fixture_timelines else []:
+        person_trades = sorted(trades_by_person.get(person["id"], []), key=lambda item: (item["trade_date"], item["id"]))
+        fixture_roles = [
+            {
+                "service_start": person.get("service_start"),
+                "service_end": person.get("service_end"),
+                "role_title": person.get("office") or person.get("chamber") or person.get("branch"),
+                "role_category": "fixture_trade_official",
+                "source_tier": "fixture",
+            }
+        ]
+        periods = service_periods(fixture_roles, person_trades)
+        start, end = service_bounds(periods)
+        timeline_trades = [
+            timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
+            for trade in person_trades
+        ]
         official_rows.append(
             {
                 "id": person["id"],
@@ -1008,18 +1278,12 @@ def career_trade_timeline(
                 "timeline_group": "fixture_trade_preview",
                 "service_start": start,
                 "service_end": end,
-                "roles": [
-                    {
-                        "service_start": person.get("service_start"),
-                        "service_end": person.get("service_end"),
-                        "role_title": person.get("office") or person.get("chamber") or person.get("branch"),
-                        "role_category": "fixture_trade_official",
-                        "source_tier": "fixture",
-                    }
-                ],
+                "service_periods": periods,
+                "active_service_days": periods[-1]["career_end_day"] + 1 if periods else 0,
+                "roles": fixture_roles,
                 "trades": timeline_trades,
                 "disclosure_sources": [],
-                "events": timeline_event_positions(events, start, start, end, person, timeline_trades),
+                "events": timeline_event_positions(events, periods, person, timeline_trades),
                 "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
                     "trade_count": len(timeline_trades),
@@ -1034,24 +1298,6 @@ def career_trade_timeline(
             }
         )
 
-    event_windows = []
-    for event in events:
-        event_date = parse_iso_date(event["date"])
-        event_windows.append(
-            {
-                **event,
-                "window_days": 180,
-                "official_trade_counts": {
-                    official["id"]: sum(
-                        1
-                        for trade in official["trades"]
-                        if abs((parse_iso_date(trade["date"]) - event_date).days) <= 180
-                    )
-                    for official in official_rows
-                },
-            }
-        )
-
     asset_classes = sorted(
         {
             trade["asset_class"]
@@ -1061,7 +1307,8 @@ def career_trade_timeline(
         }
     )
     return {
-        "schema_version": "career-trade-timeline-v1",
+        "schema_version": "career-trade-timeline-v2",
+        "event_relationship_methodology_version": "event-relevance-v2",
         "default_axis": "career",
         "axis_modes": ["career", "calendar", "event_window"],
         "zoom_presets": [
@@ -1090,10 +1337,21 @@ def career_trade_timeline(
                 "public_production_trade_count",
                 0,
             ),
+            "house_ptr_document_count": house_ptr_transactions.get("summary", {}).get(
+                "processed_document_count", 0
+            ),
+            "house_ptr_parser_preview_transaction_count": house_ptr_transactions.get("summary", {}).get(
+                "parser_preview_transaction_count", 0
+            ),
+            "house_ptr_timeline_transaction_count": sum(
+                len(official["trades"])
+                for official in official_rows
+                if official["timeline_group"] == "official_house_ptr_preview"
+            ),
+            "house_ptr_out_of_service_trade_count": house_out_of_service_trade_count,
         },
         "officials": official_rows,
         "events": events,
-        "event_windows": event_windows,
         "crypto_market": {
             "provider": crypto_prices.get("provider"),
             "context_label": crypto_prices.get("context_label"),
@@ -1242,6 +1500,7 @@ def build_dataset() -> dict:
     public_officials = load_public_officials()
     fred_context = load_fred_context()
     civic_events = load_events()
+    federal_event_context = load_json_file(FEDERAL_EVENTS, {"summary": {}, "sources": []})
     context_maps = load_context_maps()
     disclosure_artifacts = load_disclosure_artifacts()
     market_series, market_metadata = load_market_prices()
@@ -1249,6 +1508,8 @@ def build_dataset() -> dict:
     presidential_oge_status = load_presidential_oge_status()
     presidential_oge_documents = load_presidential_oge_documents()
     presidential_oge_transactions = load_presidential_oge_transactions()
+    house_ptr_transactions = load_house_ptr_transactions()
+    house_disclosure_index = load_json_file(HOUSE_DISCLOSURE_INDEX, {"summary": {}})
     people = create_people()
     all_people = []
     all_filings = []
@@ -1358,39 +1619,53 @@ def build_dataset() -> dict:
             }
         )
 
-    branch_counts = Counter(person["branch"] for person in all_people)
+    fixture_branch_counts = Counter(person["branch"] for person in all_people)
     career_timeline = career_trade_timeline(
         public_officials,
         all_people,
         all_trades,
+        market_series,
         fred_context,
         civic_events,
         crypto_prices,
         presidential_oge_status,
         presidential_oge_documents,
         presidential_oge_transactions,
+        house_ptr_transactions,
         context_maps["event_entity_map"],
         context_maps["company_entity_reference"],
     )
+    branch_counts = Counter(official["branch"] for official in career_timeline["officials"])
     sources = []
     for source in OFFICIAL_SOURCES:
         counts = source_counts[source["id"]]
+        source_status = source.get("ingestion_status", "planned")
+        missing_capabilities = [
+            "reviewed production official-source ingestion",
+            "reviewed public filing promotion",
+        ]
+        if source["id"] == "house-financial-disclosure" and house_ptr_transactions["summary"].get(
+            "processed_document_count"
+        ):
+            source_status = "official_index_and_parser_preview"
+            missing_capabilities = [
+                "OCR extraction and validation for image-only filings",
+                "reviewed public filing promotion",
+            ]
         status_label = {
             "parser_preview_ready": "Parser preview ready",
             "source_index_ready": "Source index ready",
+            "official_index_and_parser_preview": "Official index and parser previews ready",
             "planned": "Planned",
-        }.get(source.get("ingestion_status"), source.get("ingestion_status", "Planned"))
+        }.get(source_status, source_status)
         sources.append(
             {
                 **source,
                 "fixture_counts": counts,
                 "readiness": {
-                    "status": source.get("ingestion_status", "planned"),
+                    "status": source_status,
                     "label": status_label,
-                    "missing_capabilities": [
-                        "reviewed production official-source ingestion",
-                        "reviewed public filing promotion",
-                    ],
+                    "missing_capabilities": missing_capabilities,
                 },
             }
         )
@@ -1400,20 +1675,24 @@ def build_dataset() -> dict:
         "dataset_version": settings.DATASET_VERSION,
         "methodology_version": settings.METHODOLOGY_VERSION,
         "parser_version": settings.PARSER_VERSION,
-        "site_mode": "public_static_demo",
+        "site_mode": "public_research_preview",
         "disclaimer": (
-            "This public GitHub Pages edition combines fixture/demo financial-disclosure records with "
-            "a source-backed public-official role roster for legislative, executive, and judicial branch buildout. "
-            "It demonstrates the interface and provenance approach, not a production public disclosure database."
+            "This public research preview combines source-backed official rosters, official House Clerk and OGE "
+            "parser previews, and market context. Development fixtures are excluded from public timelines. "
+            "Parser previews require review and are not reviewed public-production trades."
         ),
         "summary": {
-            "official_count": len(all_people),
+            "official_count": career_timeline["summary"]["official_count"],
+            "fixture_demo_official_count": len(all_people),
             "tracked_public_official_count": public_officials["summary"]["person_count"],
             "public_official_role_count": public_officials["summary"]["role_count"],
             "filing_count": len(all_filings),
             "trade_count": len(all_trades),
             "raw_document_count": len(all_raw_documents),
             "event_count": len(civic_events),
+            "source_ingested_federal_event_count": federal_event_context.get("summary", {}).get(
+                "event_count", 0
+            ),
             "macro_series_count": fred_context["summary"].get("series_count", 0),
             "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
             "market_price_provider": market_metadata["summary"].get("active_market_price_provider", market_metadata["provider"]),
@@ -1432,11 +1711,34 @@ def build_dataset() -> dict:
             "presidential_oge_public_production_trade_count": career_timeline["summary"][
                 "presidential_oge_public_production_trade_count"
             ],
+            "house_ptr_indexed_document_count": house_disclosure_index.get("summary", {})
+            .get("member_ptr_document_count", 0),
+            "house_ptr_processed_document_count": house_ptr_transactions["summary"].get(
+                "processed_document_count", 0
+            ),
+            "house_ptr_machine_readable_document_count": house_ptr_transactions["summary"]
+            .get("document_status_counts", {})
+            .get("parser_preview", 0),
+            "house_ptr_ocr_required_document_count": house_ptr_transactions["summary"]
+            .get("document_status_counts", {})
+            .get("ocr_required", 0),
+            "house_ptr_parser_preview_transaction_count": house_ptr_transactions["summary"].get(
+                "parser_preview_transaction_count", 0
+            ),
+            "house_ptr_timeline_transaction_count": career_timeline["summary"].get(
+                "house_ptr_timeline_transaction_count", 0
+            ),
+            "house_ptr_timeline_official_count": sum(
+                1
+                for official in career_timeline["officials"]
+                if official["timeline_group"] == "official_house_ptr_preview"
+            ),
             "disclosure_queue_item_count": disclosure_artifacts["ingestion_queue"].get("summary", {}).get("queue_item_count", 0),
             "archived_source_document_count": disclosure_artifacts["raw_archive_index"].get("summary", {}).get("archived_document_count", 0),
             "reviewed_fixture_promotion_count": disclosure_artifacts["reviewed_promotions"].get("summary", {}).get("reviewed_fixture_promotion_count", 0),
             "reviewed_public_trade_count": disclosure_artifacts["completeness_dashboard"].get("summary", {}).get("reviewed_public_trade_count", 0),
             "branch_counts": dict(sorted(branch_counts.items())),
+            "fixture_branch_counts": dict(sorted(fixture_branch_counts.items())),
             "public_official_role_counts_by_branch": public_officials["summary"]["role_counts_by_branch"],
             "public_official_role_counts_by_term": public_officials["summary"]["role_counts_by_term"],
             "public_official_role_counts_by_category": public_officials["summary"]["role_counts_by_category"],
@@ -1448,6 +1750,14 @@ def build_dataset() -> dict:
         "raw_documents": all_raw_documents,
         "sources": sources,
         "events": civic_events,
+        "federal_event_context": {
+            "schema_version": federal_event_context.get("schema_version"),
+            "generated_at": federal_event_context.get("generated_at"),
+            "scope": federal_event_context.get("scope", {}),
+            "sources": federal_event_context.get("sources", []),
+            "summary": federal_event_context.get("summary", {}),
+            "context_label": federal_event_context.get("context_label"),
+        },
         "market": market_snapshot(market_series, market_metadata),
         "crypto_market": {
             "provider": crypto_prices.get("provider"),
@@ -1473,6 +1783,16 @@ def build_dataset() -> dict:
             "summary": presidential_oge_transactions.get("summary", {}),
             "transactions": presidential_oge_transactions.get("transactions", []),
         },
+        "house_disclosures": {
+            "index": {
+                "schema_version": house_disclosure_index.get("schema_version"),
+                "generated_at": house_disclosure_index.get("generated_at"),
+                "source": house_disclosure_index.get("source", {}),
+                "scope": house_disclosure_index.get("scope", {}),
+                "summary": house_disclosure_index.get("summary", {}),
+            },
+            "transactions_manifest": house_ptr_transactions.get("manifest", {}),
+        },
         "disclosure_pipeline": public_disclosure_artifacts(disclosure_artifacts),
         "context_maps": context_maps,
         "fred_context": fred_context,
@@ -1494,10 +1814,355 @@ def build_dataset() -> dict:
     }
 
 
+def compact_role(role: dict) -> dict:
+    metadata = role.get("source_metadata") or {}
+    return {
+        "id": role.get("external_role_id"),
+        "presidential_term": role.get("presidential_term"),
+        "role_category": role.get("role_category"),
+        "role_title": role.get("role_title"),
+        "office": role.get("office"),
+        "agency": role.get("agency"),
+        "court": role.get("court"),
+        "service_start": role.get("service_start"),
+        "service_end": role.get("service_end"),
+        "source_id": role.get("source_id"),
+        "source_tier": role.get("source_tier"),
+        "source_url": role.get("source_url"),
+        "chamber": metadata.get("chamber"),
+        "congress_number": metadata.get("congress_number"),
+        "party": metadata.get("party"),
+        "state": metadata.get("state"),
+        "district": metadata.get("district"),
+        "bioguide_id": metadata.get("bioguide_id"),
+    }
+
+
+def compact_official_index(public_officials: dict) -> tuple[list[dict], dict[str, list[dict]]]:
+    roles_by_person = public_roles_by_person(public_officials)
+    details = {}
+    rows = []
+    for person in public_officials.get("people", []):
+        external_id = person["external_person_id"]
+        roles = sorted(
+            roles_by_person.get(external_id, []),
+            key=lambda role: (role.get("service_start") or "", role.get("external_role_id") or ""),
+        )
+        compact_roles = [compact_role(role) for role in roles]
+        details[external_id] = compact_roles
+        primary = next((role for role in reversed(compact_roles) if not role.get("service_end")), None)
+        primary = primary or (compact_roles[-1] if compact_roles else None)
+        periods = service_periods(roles, [])
+        rows.append(
+            {
+                "id": external_id,
+                "full_name": person["full_name"],
+                "branch": person["branch"],
+                "role_count": len(compact_roles),
+                "primary_role": primary,
+                "service_periods": periods,
+                "terms": sorted({role["presidential_term"] for role in compact_roles if role.get("presidential_term")}),
+                "role_categories": sorted({role["role_category"] for role in compact_roles if role.get("role_category")}),
+                "chambers": sorted({role["chamber"] for role in compact_roles if role.get("chamber")}),
+                "congresses": sorted({role["congress_number"] for role in compact_roles if role.get("congress_number")}),
+                "parties": sorted({role["party"] for role in compact_roles if role.get("party")}),
+                "states": sorted({role["state"] for role in compact_roles if role.get("state")}),
+                "districts": sorted({str(role["district"]) for role in compact_roles if role.get("district") is not None}),
+            }
+        )
+    return sorted(rows, key=lambda row: (row["branch"], row["full_name"])), details
+
+
+def coverage_payload(dataset: dict) -> dict:
+    timeline_officials = dataset["career_trade_timeline"].get("officials", [])
+    record_states = Counter(
+        trade.get("record_status", "unknown")
+        for official in timeline_officials
+        for trade in official.get("trades", [])
+    )
+    event_types = Counter(event.get("event_type", "other") for event in dataset["career_trade_timeline"].get("events", []))
+    event_editor_states = Counter(
+        event.get("editor_status", "unknown") for event in dataset["career_trade_timeline"].get("events", [])
+    )
+    timeline_by_branch = defaultdict(lambda: Counter({"officials": 0, "trades": 0, "production_trades": 0}))
+    for official in timeline_officials:
+        row = timeline_by_branch[official["branch"]]
+        row["officials"] += 1
+        row["trades"] += len(official.get("trades", []))
+        row["production_trades"] += sum(
+            1 for trade in official.get("trades", []) if trade.get("public_production_trade") is True
+        )
+    return {
+        "schema_version": "civicledger-coverage-v1",
+        "generated_at": dataset["generated_at"],
+        "historical_scope": {
+            "start_date": "2009-01-20",
+            "congresses": list(range(111, 120)),
+            "presidential_terms": ["obama-44", "trump-45", "biden-46", "trump-47"],
+        },
+        "summary": dataset["summary"],
+        "record_states": dict(sorted(record_states.items())),
+        "timeline_by_branch": {branch: dict(counts) for branch, counts in sorted(timeline_by_branch.items())},
+        "event_types": dict(sorted(event_types.items())),
+        "event_editor_states": dict(sorted(event_editor_states.items())),
+        "sources": [
+            {
+                "id": source["id"],
+                "branch": source["branch"],
+                "ingestion_status": source.get("ingestion_status"),
+                "readiness": source.get("readiness"),
+            }
+            for source in dataset.get("sources", [])
+        ],
+        "release_blockers": [
+            *(
+                ["No reviewed public production trade rows exist yet."]
+                if dataset["summary"].get("reviewed_public_trade_count", 0) == 0
+                else []
+            ),
+            *(
+                [
+                    f"{dataset['summary'].get('house_ptr_ocr_required_document_count', 0):,} indexed House PTRs are image-only and remain in the OCR/review queue."
+                ]
+                if dataset["summary"].get("house_ptr_ocr_required_document_count", 0)
+                else []
+            ),
+            "Senate disclosure documents are not ingested because the official portal acknowledgement workflow is not automated.",
+            "Judicial disclosure documents are not ingested; the official JEFS requester and acknowledgement workflow remains external.",
+            "Executive disclosure coverage beyond the presidential OGE index is incomplete.",
+            "The House Clerk's structured periodic-transaction index in this dataset begins in 2015; earlier Obama-era House transaction backfill remains incomplete.",
+            "Structured Supreme Court slip-opinion ingestion begins with October Term 2017; official bound-volume backfill for 2009-2016 remains pending.",
+        ],
+    }
+
+
+def compact_public_event(event: dict) -> dict:
+    keys = [
+        "id",
+        "date",
+        "label",
+        "event_type",
+        "description",
+        "source",
+        "source_urls",
+        "source_tier",
+        "editor_status",
+        "branch_scope",
+        "sector_scope",
+        "asset_scope",
+        "jurisdiction_scope",
+        "ticker_scope",
+        "entity_scope",
+        "company_entity_scope",
+        "market_topic_ids",
+        "market_relevance",
+        "law_number",
+        "executive_order_number",
+        "docket_number",
+        "citation",
+        "term_year",
+    ]
+    row = {key: event.get(key) for key in keys if event.get(key) not in (None, "", [], {})}
+    for key in ["announcement_date", "effective_date", "publication_date"]:
+        value = event.get(key)
+        if value and value != event.get("date"):
+            row[key] = value
+    return row
+
+
+def write_partition(relative_path: str, payload) -> dict:
+    path = ROOT / "pages-site" / "data" / relative_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    encoded = (json.dumps(payload, separators=(",", ":"), sort_keys=True) + "\n").encode()
+    path.write_bytes(encoded)
+    return {
+        "path": relative_path,
+        "bytes": len(encoded),
+        "sha256": hashlib.sha256(encoded).hexdigest(),
+    }
+
+
+def write_public_partitions(dataset: dict) -> None:
+    if PUBLIC_PARTITIONS.exists():
+        shutil.rmtree(PUBLIC_PARTITIONS)
+    PUBLIC_PARTITIONS.mkdir(parents=True, exist_ok=True)
+
+    officials, role_details = compact_official_index(dataset["public_officials"])
+    files = {}
+    files["overview"] = write_partition(
+        "partitions/overview.json",
+        {
+            "generated_at": dataset["generated_at"],
+            "dataset_version": dataset["dataset_version"],
+            "methodology_version": dataset["methodology_version"],
+            "parser_version": dataset["parser_version"],
+            "site_mode": dataset["site_mode"],
+            "disclaimer": dataset["disclaimer"],
+            "summary": dataset["summary"],
+            "sources": dataset["sources"],
+            "disclosure_pipeline": dataset["disclosure_pipeline"],
+            "presidential_oge_status": dataset["presidential_oge_status"],
+            "presidential_oge_documents": {
+                "context_label": dataset["presidential_oge_documents"].get("context_label"),
+                "summary": dataset["presidential_oge_documents"].get("summary", {}),
+                "unavailable_documents": dataset["presidential_oge_documents"].get("unavailable_documents", []),
+            },
+            "house_disclosures": dataset.get("house_disclosures", {}),
+            "federal_event_context": dataset.get("federal_event_context", {}),
+        },
+    )
+    files["officials_index"] = write_partition(
+        "partitions/officials-index.json",
+        {"schema_version": "official-index-v1", "officials": officials},
+    )
+    files["coverage"] = write_partition("partitions/coverage.json", coverage_payload(dataset))
+    files["events"] = write_partition(
+        "partitions/events.json",
+        {
+            "schema_version": "timeline-events-v2",
+            "methodology_version": dataset["career_trade_timeline"].get(
+                "event_relationship_methodology_version"
+            ),
+            "events": [
+                compact_public_event(event)
+                for event in dataset["career_trade_timeline"].get("events", [])
+            ],
+        },
+    )
+
+    timeline_partitions = {}
+    timeline_official_summaries = []
+    for official in dataset["career_trade_timeline"].get("officials", []):
+        relative = f"partitions/timelines/{public_slug(official['id'])}.json"
+        timeline_partitions[official["id"]] = write_partition(
+            relative,
+            {
+                "schema_version": dataset["career_trade_timeline"]["schema_version"],
+                "official": official,
+            },
+        )
+        timeline_official_summaries.append(
+            {
+                "id": official["id"],
+                "full_name": official["full_name"],
+                "branch": official["branch"],
+                "timeline_group": official["timeline_group"],
+                "record_status": official.get("stats", {}).get("record_status"),
+                "trade_count": len(official.get("trades", [])),
+                "event_count": len(official.get("events", [])),
+                "service_periods": official.get("service_periods", []),
+            }
+        )
+    files["timeline_index"] = write_partition(
+        "partitions/timeline-index.json",
+        {
+            "schema_version": dataset["career_trade_timeline"]["schema_version"],
+            "default_official_ids": dataset["career_trade_timeline"]["default_official_ids"],
+            "asset_classes": dataset["career_trade_timeline"]["asset_classes"],
+            "event_types": dataset["career_trade_timeline"]["event_types"],
+            "summary": dataset["career_trade_timeline"]["summary"],
+            "officials": timeline_official_summaries,
+        },
+    )
+
+    role_partitions = {}
+    for branch in ["Legislative", "Executive", "Judicial"]:
+        branch_ids = {official["id"] for official in officials if official["branch"] == branch}
+        relative = f"partitions/roles/{branch.lower()}.json"
+        role_partitions[branch] = write_partition(
+            relative,
+            {
+                "schema_version": "official-role-details-v1",
+                "branch": branch,
+                "roles_by_official": {
+                    official_id: role_details[official_id]
+                    for official_id in sorted(branch_ids)
+                },
+            },
+        )
+
+    market_partitions = {}
+    market_data = load_json_file(MARKET_PRICES, {"series": {}})
+    for symbol, series in sorted(market_data.get("series", {}).items()):
+        relative = f"partitions/market/{public_slug(symbol)}.json"
+        market_partitions[symbol] = write_partition(
+            relative,
+            {"symbol": symbol, "source": market_data.get("source", {}), **series},
+        )
+    crypto_data = load_json_file(CRYPTO_PRICES, {"series": {}})
+    for symbol, series in sorted(crypto_data.get("series", {}).items()):
+        relative = f"partitions/market/{public_slug(symbol)}.json"
+        market_partitions[symbol] = write_partition(
+            relative,
+            {"symbol": symbol, "source": crypto_data.get("source", {}), **series},
+        )
+    files["market_index"] = write_partition(
+        "partitions/market-index.json",
+        {
+            "schema_version": "market-partition-index-v1",
+            "symbols": sorted(market_partitions),
+            "market_summary": market_data.get("summary", {}),
+            "crypto_summary": crypto_data.get("summary", {}),
+        },
+    )
+
+    manifest = {
+        "schema_version": "civicledger-public-manifest-v1",
+        "generated_at": dataset["generated_at"],
+        "dataset_version": dataset["dataset_version"],
+        "methodology_version": dataset["methodology_version"],
+        "event_relationship_methodology_version": dataset["career_trade_timeline"].get(
+            "event_relationship_methodology_version"
+        ),
+        "files": files,
+        "partitions": {
+            "timelines": timeline_partitions,
+            "roles": role_partitions,
+            "market": market_partitions,
+        },
+    }
+    PUBLIC_MANIFEST.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+
+
+def compatibility_snapshot(dataset: dict) -> dict:
+    """Keep the retired monolith useful without duplicating every public partition."""
+    timeline = dataset["career_trade_timeline"]
+    default_ids = set(timeline["default_official_ids"])
+    compact_timeline = {
+        key: value
+        for key, value in timeline.items()
+        if key not in {"officials", "event_windows"}
+    }
+    compact_timeline["officials"] = [
+        official for official in timeline["officials"] if official["id"] in default_ids
+    ]
+    return {
+        "schema_version": "civicledger-static-compat-v2",
+        "generated_at": dataset["generated_at"],
+        "dataset_version": dataset["dataset_version"],
+        "methodology_version": dataset["methodology_version"],
+        "parser_version": dataset["parser_version"],
+        "site_mode": dataset["site_mode"],
+        "disclaimer": dataset["disclaimer"],
+        "summary": dataset["summary"],
+        "sources": dataset["sources"],
+        "presidential_oge_status": dataset["presidential_oge_status"],
+        "presidential_oge_documents": dataset["presidential_oge_documents"],
+        "presidential_oge_transactions": dataset["presidential_oge_transactions"],
+        "house_disclosures": dataset["house_disclosures"],
+        "disclosure_pipeline": dataset["disclosure_pipeline"],
+        "career_trade_timeline": compact_timeline,
+        "manifest_path": "manifest.json",
+    }
+
+
 def main() -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(build_dataset(), indent=2, sort_keys=True) + "\n")
+    dataset = build_dataset()
+    write_public_partitions(dataset)
+    OUTPUT.write_text(json.dumps(compatibility_snapshot(dataset), indent=2, sort_keys=True) + "\n")
     print(f"Wrote {OUTPUT}")
+    print(f"Wrote {PUBLIC_MANIFEST}")
 
 
 if __name__ == "__main__":

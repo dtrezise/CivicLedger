@@ -3,376 +3,250 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CivicLedger Public Demo</title>
+    <meta name="theme-color" content="#17212b" />
+    <title>CivicLedger Federal Trade Explorer</title>
     <meta
       name="description"
-      content="Interactive public demo for CivicLedger federal financial disclosure transparency data."
+      content="Compare source-linked federal financial disclosure activity with market and government event context."
     />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script defer src="./app.js"></script>
   </head>
   <body>
-    <div class="app-shell">
-      <header class="topbar" id="top">
-        <div>
-          <p class="eyebrow">Federal disclosure transparency</p>
-          <h1>CivicLedger public demo</h1>
-          <p class="subtitle">
-            Fixture-data preview of disclosure timelines, reporting lag, source
-            readiness, and provenance across the legislative, executive, and
-            judicial branches.
-          </p>
-        </div>
-        <div class="status-cluster" aria-label="Project status">
-          <a class="trust-pill" href="https://github.com/dtrezise/CivicLedger">
-            Repository
-          </a>
-          <div class="data-status-pill">
-            <span>Mode</span>
-            <strong>Public demo</strong>
-          </div>
-          <div class="data-status-pill">
-            <span>Publishing</span>
-            <strong>GitHub Pages</strong>
-          </div>
-        </div>
-      </header>
-
-      <nav class="mode-tabs" aria-label="Dashboard sections">
-        <a class="active" href="#overview">Overview</a>
-        <a href="#completeness">Completeness</a>
-        <a href="#career-timeline">Career Timeline</a>
-        <a href="#explore">Compare</a>
-        <a href="#trade-context">Trade Context</a>
-        <a href="#sources">Sources</a>
-        <a href="#events">Events</a>
+    <header class="site-header">
+      <a class="brand" href="#explorer" aria-label="CivicLedger trade explorer home">
+        <span class="brand-mark" aria-hidden="true">CL</span>
+        <span>
+          <strong>CivicLedger</strong>
+          <small>Federal Trade Explorer</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a class="active" href="#explorer">Explorer</a>
+        <a href="#data-status">Data Status</a>
         <a href="#methodology">Methodology</a>
+        <a href="https://github.com/dtrezise/CivicLedger">Repository</a>
       </nav>
+      <div class="header-status" id="headerStatus" aria-live="polite">
+        <span class="status-dot"></span>
+        <span>Loading dataset</span>
+      </div>
+    </header>
 
-      <section class="metric-strip" id="summaryMetrics" aria-label="Dataset summary"></section>
-
-      <section class="source-note" id="demoNotice"></section>
-
-      <section class="chart-panel" id="overview">
-        <div class="chart-head">
+    <main>
+      <section class="explorer-band" id="explorer">
+        <div class="section-intro explorer-intro">
           <div>
-            <h2>Global Branch Overview</h2>
-            <p>
-              Start broad, then filter into branch, term, role type, and individual-official comparisons.
-            </p>
-          </div>
-          <div class="readout">
-            <span>Dataset</span>
-            <strong id="datasetReadout">seed-v1</strong>
-            <small>fixture snapshot</small>
-          </div>
-        </div>
-        <div id="branchChart" class="branch-chart"></div>
-        <div class="overview-grid">
-          <div class="branch-cards" id="branchCards"></div>
-          <div class="role-breakdown" id="globalRoleBreakdown"></div>
-        </div>
-      </section>
-
-      <section class="list-view" id="completeness">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Data completeness</p>
-            <h2>Branch, Term, and Source Readiness</h2>
+            <p class="eyebrow">Source-linked disclosure research</p>
+            <h1>Compare federal officials across trades, service, and events</h1>
           </div>
           <p>
-            Track the buildout from source-backed official rosters to queued disclosure searches,
-            archived raw documents, and reviewed public trade rows.
-          </p>
-        </div>
-        <div id="completenessSummary" class="completeness-summary"></div>
-        <div id="completenessGrid" class="completeness-grid"></div>
-        <div id="sourceTaskDetail" class="source-task-detail"></div>
-        <div class="chart-shell">
-          <div class="chart-title">
-            <span>Completeness by Branch, Term, and Source</span>
-            <span id="completenessCount">0 rows</span>
-          </div>
-          <div class="table-scroll">
-            <table class="trade-table">
-              <thead>
-                <tr>
-                  <th>Branch / Term</th>
-                  <th>Source</th>
-                  <th>Officials / Roles</th>
-                  <th>Queue</th>
-                  <th>Raw Docs</th>
-                  <th>Reviewed Trades</th>
-                  <th>Status</th>
-                  <th>Task</th>
-                </tr>
-              </thead>
-              <tbody id="completenessRows"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section class="timeline-workspace" id="career-timeline">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Career trade timeline</p>
-            <h2>Presidential Baseline and Official Comparisons</h2>
-          </div>
-          <p>
-            Presidents are the default baseline. Add officials from the comparison workspace to overlay reviewed
-            trade activity against events, policy changes, bills, rulings, funding, and macro context.
+            Presidents form the default baseline. Add officials from any branch, zoom into reported
+            transactions, and inspect the filing and event evidence without implying causation or intent.
           </p>
         </div>
 
-        <div class="timeline-controls">
-          <div class="segmented" role="group" aria-label="Timeline axis">
-            <button class="active" id="careerAxisButton" type="button">Career</button>
-            <button id="calendarAxisButton" type="button">Calendar</button>
-            <button id="eventWindowAxisButton" type="button">Event</button>
+        <div class="data-notice" id="dataNotice" role="status"></div>
+
+        <div class="selection-row">
+          <div class="official-picker">
+            <label for="officialSearch">Officials</label>
+            <div class="search-wrap">
+              <input
+                id="officialSearch"
+                type="search"
+                autocomplete="off"
+                placeholder="Search name, branch, state, agency, court..."
+                aria-controls="officialResults"
+                aria-expanded="false"
+              />
+              <div class="search-results" id="officialResults" role="listbox" hidden></div>
+            </div>
           </div>
-          <label>
-            <span>Zoom</span>
-            <select id="timelineZoomFilter">
-              <option value="full">Full career</option>
-            </select>
-          </label>
-          <label>
-            <span>Timeline search</span>
-            <input id="timelineOfficialSearch" type="search" placeholder="Add official by name" />
-          </label>
-          <label>
-            <span>Assets</span>
-            <select id="timelineAssetFilter">
-              <option value="">All asset classes</option>
-            </select>
-          </label>
-          <label>
-            <span>Overlay</span>
-            <select id="timelineOverlayFilter">
-              <option value="all">All overlays</option>
-              <option value="crypto">Crypto prices</option>
-              <option value="hide-prices">Hide prices</option>
-            </select>
-          </label>
-          <label>
-            <span>Events</span>
-            <select id="timelineEventFilter">
-              <option value="">All event types</option>
-            </select>
-          </label>
-          <button class="clear-button" id="presidentBaselineButton" type="button">Presidents</button>
-        </div>
-
-        <div class="timeline-summary" id="careerTimelineSummary"></div>
-        <div class="career-chart" id="careerTimelineChart"></div>
-        <div class="event-detail" id="timelineEventDetail"></div>
-      </section>
-
-      <section class="workspace" id="explore">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Comparison workspace</p>
-            <h2>Search, Filter, and Overlay Officials</h2>
-          </div>
-          <p>
-            Use branch, chamber, Congress, term, and role filters to narrow the roster.
-            Add officials to the comparison graph to see role timelines side by side.
-          </p>
-        </div>
-
-        <div class="controls-band">
-          <label>
-            <span>Search</span>
-            <input id="searchInput" type="search" placeholder="Name, agency, court, role..." />
-          </label>
           <label>
             <span>Branch</span>
             <select id="branchFilter">
               <option value="">All branches</option>
+              <option value="Legislative">Legislative</option>
+              <option value="Executive">Executive</option>
+              <option value="Judicial">Judicial</option>
             </select>
           </label>
-          <label>
-            <span>Role Type</span>
-            <select id="roleFilter">
-              <option value="">All role types</option>
-            </select>
-          </label>
-          <label>
-            <span>Term</span>
-            <select id="termFilter">
-              <option value="">All terms</option>
-            </select>
-          </label>
-          <label>
-            <span>Chamber</span>
-            <select id="chamberFilter">
-              <option value="">All chambers</option>
-            </select>
-          </label>
-          <label>
-            <span>Congress</span>
-            <select id="congressFilter">
-              <option value="">All Congresses</option>
-            </select>
-          </label>
-          <label>
-            <span>Party</span>
-            <select id="partyFilter">
-              <option value="">All parties</option>
-            </select>
-          </label>
-          <label>
-            <span>State</span>
-            <select id="stateFilter">
-              <option value="">All states</option>
-            </select>
-          </label>
-          <label>
-            <span>District</span>
-            <select id="districtFilter">
-              <option value="">All districts</option>
-            </select>
-          </label>
-          <button class="clear-button" id="clearFilters" type="button">Clear</button>
+          <button class="secondary-command" id="presidentBaselineButton" type="button">Presidents</button>
         </div>
 
-        <div class="explorer comparison-layout">
-          <aside class="directory" aria-label="Official directory">
-            <div class="directory-heading">
-              <div>
-                <h3>Filtered Results</h3>
-                <small id="directoryHint">Select officials to compare.</small>
-              </div>
-              <span id="directoryCount">0 matches</span>
-            </div>
-            <div id="peopleList" class="people-list"></div>
-          </aside>
+        <div class="selected-officials" id="selectedOfficials" aria-label="Selected officials"></div>
 
-          <section class="comparison-panel">
-            <div class="compare-head">
-              <div>
-                <p class="eyebrow">Overlay graph</p>
-                <h3>Selected Officials</h3>
-              </div>
-              <span class="badge" id="comparisonCount">0 selected</span>
+        <div class="toolbar" aria-label="Comparison controls">
+          <div class="segmented" role="group" aria-label="Timeline mode">
+            <button class="active" id="careerModeButton" type="button" data-mode="career">Career</button>
+            <button id="calendarModeButton" type="button" data-mode="calendar">Calendar</button>
+            <button id="eventModeButton" type="button" data-mode="event" disabled title="Select an event first">Event</button>
+          </div>
+          <label>
+            <span>Transactions</span>
+            <select id="assetFilter">
+              <option value="">All disclosed assets</option>
+            </select>
+          </label>
+          <div class="event-picker">
+            <label for="eventSearch">Event</label>
+            <div class="search-wrap">
+              <input
+                id="eventSearch"
+                type="search"
+                placeholder="Search laws, orders, decisions"
+                autocomplete="off"
+                aria-expanded="false"
+                aria-controls="eventResults"
+              >
+              <div class="search-results" id="eventResults" role="listbox" hidden></div>
             </div>
-            <div class="selected-chips" id="selectedChips"></div>
-            <div class="comparison-graph" id="comparisonGraph"></div>
-            <section class="profile" id="profilePanel" aria-live="polite"></section>
+          </div>
+          <label>
+            <span>Event context</span>
+            <select id="eventTierFilter">
+              <option value="focused">Focused evidence</option>
+              <option value="all">All non-macro context</option>
+              <option value="macro">Include macro context</option>
+              <option value="none">Hide events</option>
+            </select>
+          </label>
+          <label>
+            <span>Event window</span>
+            <select id="eventWindowFilter">
+              <option value="30">30 days</option>
+              <option value="90">90 days</option>
+              <option value="180" selected>180 days</option>
+              <option value="365">365 days</option>
+            </select>
+          </label>
+          <button class="secondary-command" id="resetViewButton" type="button">Reset view</button>
+        </div>
+
+        <div class="summary-strip" id="workbenchSummary" aria-label="Current comparison summary"></div>
+
+        <div class="visualization-shell">
+          <div class="chart-head">
+            <div>
+              <h2 id="chartTitle">Career trade activity</h2>
+              <p id="chartDescription">Active service time is cumulative; inactive gaps are excluded.</p>
+            </div>
+            <div class="record-key" aria-label="Record status legend">
+              <span><i class="key-dot buy"></i>Buy</span>
+              <span><i class="key-dot sell"></i>Sell</span>
+              <span><i class="key-diamond"></i>Event</span>
+              <span><i class="key-line"></i>Service</span>
+            </div>
+          </div>
+          <div class="trade-chart" id="tradeChart" role="img" aria-label="Selected officials trade comparison chart"></div>
+          <div class="chart-alternative" id="chartAlternative" aria-live="polite"></div>
+        </div>
+
+        <div class="market-shell" id="marketShell" hidden>
+          <div class="chart-head">
+            <div>
+              <p class="eyebrow">Market context</p>
+              <h2 id="marketTitle">Normalized asset and benchmark prices</h2>
+            </div>
+            <p>Indexed to 100 at the first available point. Context only, not portfolio performance.</p>
+          </div>
+          <div class="market-chart" id="marketChart" role="img" aria-label="Normalized market price comparison"></div>
+        </div>
+
+        <div class="detail-layout">
+          <section class="event-detail" id="eventDetail" aria-live="polite">
+            <p class="eyebrow">Event evidence</p>
+            <h2>Select an event marker</h2>
+            <p>Event evidence and transactions inside the chosen time window will appear here.</p>
+          </section>
+          <section class="record-detail" id="recordDetail" aria-live="polite">
+            <p class="eyebrow">Transaction evidence</p>
+            <h2>Select a transaction marker or row</h2>
+            <p>Source document, filing lag, record state, and parser evidence will appear here.</p>
           </section>
         </div>
-      </section>
 
-      <section class="list-view" id="trade-context">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Market context</p>
-            <h2>Trade Dates, Report Dates, and Macro Events</h2>
-          </div>
-          <p>
-            FRED macro overlays and Tiingo market-price overlays are context only.
-            They do not infer causation, intent, legality, ethics, or investment performance.
-          </p>
-        </div>
-        <div id="macroSummary" class="macro-grid"></div>
-        <div id="sourcePriority" class="source-priority"></div>
-        <div class="chart-shell">
-          <div class="chart-title">
-            <span>Demo Trade Timeline</span>
-            <span id="tradeContextCount">0 rows</span>
+        <section class="transactions-section">
+          <div class="table-heading">
+            <div>
+              <p class="eyebrow">Synchronized records</p>
+              <h2>Transactions in view</h2>
+            </div>
+            <span id="transactionCount">0 records</span>
           </div>
           <div class="table-scroll">
-            <table class="trade-table">
+            <table class="transactions-table">
               <thead>
                 <tr>
                   <th>Official</th>
-                  <th>Trade / Report</th>
+                  <th>Trade date</th>
+                  <th>Reported</th>
+                  <th>Action</th>
                   <th>Asset</th>
-                  <th>30-day market</th>
-                  <th>Macro snapshot</th>
-                  <th>Nearby events</th>
+                  <th>Disclosed range</th>
+                  <th>Lag</th>
+                  <th>Record state</th>
                 </tr>
               </thead>
-              <tbody id="tradeContextRows"></tbody>
+              <tbody id="transactionRows"></tbody>
             </table>
           </div>
-        </div>
+        </section>
       </section>
 
-      <section class="list-view" id="sources">
-        <div class="section-heading">
+      <section class="status-band" id="data-status">
+        <div class="section-intro">
           <div>
-            <p class="eyebrow">Provenance</p>
-            <h2>Source Readiness</h2>
+            <p class="eyebrow">Coverage and provenance</p>
+            <h2>Data Status</h2>
           </div>
           <p>
-            CivicLedger keeps legislative, executive, and judicial source lanes
-            separate and preserves access notes before normalized records are promoted.
+            Roster breadth is not the same as transaction coverage. These measures keep official roles,
+            archived documents, parser previews, and reviewed public records visibly separate.
           </p>
         </div>
-        <div id="sourceGrid" class="source-grid"></div>
+        <div class="coverage-metrics" id="coverageMetrics"></div>
+        <div class="branch-status" id="branchStatus"></div>
+        <div class="source-status" id="sourceStatus"></div>
+        <div class="release-blockers" id="releaseBlockers"></div>
       </section>
 
-      <section class="list-view" id="events">
-        <div class="section-heading">
+      <section class="methodology-band" id="methodology">
+        <div class="section-intro">
           <div>
-            <p class="eyebrow">Context</p>
-            <h2>Event Timeline</h2>
+            <p class="eyebrow">Interpretation boundaries</p>
+            <h2>Methodology</h2>
           </div>
-          <p>
-            Events are contextual anchors only. The demo does not infer intent,
-            causation, legality, ethics, or investment performance.
-          </p>
+          <p>What the visualization can establish, and what it deliberately does not claim.</p>
         </div>
-        <div id="eventsList" class="event-grid"></div>
-      </section>
-
-      <section class="research-layout" id="methodology">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Methodology</p>
-            <h2>What This Site Does and Does Not Claim</h2>
-          </div>
-        </div>
-        <div class="method-grid">
-          <article class="research-block">
-            <h3>Neutral Presentation</h3>
-            <p>
-              CivicLedger presents filing dates, reported ranges, disclosure lag,
-              source context, and parser provenance without ranking or accusing officials.
-            </p>
+        <div class="methodology-grid">
+          <article>
+            <h3>Reported activity</h3>
+            <p>Transactions reflect disclosed ranges and dates. A midpoint may size a marker but is never presented as an exact amount.</p>
           </article>
-          <article class="research-block">
-            <h3>Fixture Data</h3>
-            <p>
-              This Pages edition uses generated demo records. It is public-facing
-              as a product preview, not a production public disclosure database.
-            </p>
+          <article>
+            <h3>Service time</h3>
+            <p>Career mode counts active federal service only. Calendar mode preserves gaps between nonconsecutive roles.</p>
           </article>
-          <article class="research-block">
-            <h3>Source Separation</h3>
-            <p>
-              House, Senate, OGE, and judiciary records remain branch-aware because
-              their forms, access workflows, and disclosure rules differ.
-            </p>
+          <article>
+            <h3>Event evidence</h3>
+            <p>Relationship tiers describe source-backed institutional, jurisdictional, asset, or sector context. They do not establish causation.</p>
           </article>
-          <article class="research-block">
-            <h3>Provenance First</h3>
-            <p>
-              The full app stores raw documents before parser output and requires
-              human review before promoting normalized filings or trades.
-            </p>
+          <article>
+            <h3>Record states</h3>
+            <p>Fixture, parser preview, reviewed, and production records remain distinct throughout the interface and exported data.</p>
           </article>
         </div>
       </section>
+    </main>
 
-      <footer class="footer">
-        <span>CivicLedger public demo</span>
-        <span id="footerVersion"></span>
-      </footer>
-    </div>
-
-    <script src="./app.js?v=2026-07-08-completeness" type="module"></script>
+    <footer>
+      <strong>CivicLedger</strong>
+      <span id="footerDataset">Loading dataset metadata</span>
+      <span>No legal, ethics, causation, intent, or investment conclusion is made.</span>
+    </footer>
   </body>
 </html>

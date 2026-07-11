@@ -23,7 +23,7 @@ from app.services.market_prices import (  # noqa: E402
 
 
 OUTPUT = ROOT / "data" / "context" / "market_prices.json"
-DEFAULT_START = "2023-01-01"
+DEFAULT_START = "2009-01-20"
 
 
 def _load_existing_dataset() -> dict:

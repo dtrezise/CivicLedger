@@ -2,7 +2,23 @@
 
 Federal public financial disclosure tracker. View reporting timelines, disclosure completeness scorecards, and provenance data for officials across the legislative, executive, and judicial branches.
 
-> Current data is fixture/demo data. CivicLedger is a disclosure-transparency and provenance tool; it does not make legal, ethics, causation, insider-trading, or investment conclusions.
+> Current public data combines a source-backed 2009-present federal official
+> roster, official-source document indexes and parser previews, official civic
+> events, and production market context. Development fixtures are excluded from
+> public timelines. No parser preview is a reviewed public-production trade.
+> CivicLedger does not make legal, ethics, causation, insider-trading, or
+> investment conclusions.
+
+## Public Data Coverage
+
+- 2,159 federal officials and 5,914 dated roles across all three branches.
+- 111th-119th Congress coverage with Bioguide-keyed House and Senate service records.
+- 7,501 matched House periodic transaction reports from 2015-present.
+- 53,673 House parser-preview transactions for 295 officials; 1,983 image-only reports remain in the OCR queue.
+- 11 presidential OGE documents and 365 Trump parser-preview transactions; Obama and Biden currently remain document/status lanes where no reviewed transaction rows are available.
+- 926 selected official-source federal market-context events: enacted laws, executive orders, and Supreme Court opinions.
+- 91,092 equity/ETF market points, 14,215 crypto points, and 9,955 FRED observations backfilled to 2009 or provider inception.
+- Zero reviewed public-production trades. Every visible transaction remains a source-linked, review-gated parser preview.
 
 ## Prerequisites
 
@@ -60,14 +76,17 @@ On first startup the backend automatically seeds the database with:
 | `docs/provenance_policy.md` | Source, fixture, correction, and share-card rules |
 | `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
 | `docs/roadmap.md` | Stabilization and phased build plan |
+| `docs/release_readiness_120_steps.md` | 120-step release execution program |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
 
 ## Public GitHub Pages Demo
 
-The repository publishes a static public demo from `pages-site/` using GitHub
-Pages. It is intentionally separate from the Docker/FastAPI app: Pages serves a
-generated fixture-data JSON snapshot, then renders search, filters, timelines,
-market context, source readiness, and methodology in the browser.
+The repository publishes the public research workbench from `pages-site/` using
+GitHub Pages. It is intentionally separate from the Docker/FastAPI review app:
+Pages loads a small versioned manifest, official and event indexes, and
+official/market partitions on demand. The workbench supports career, calendar,
+and event-window comparison modes, branch-aware official search, transaction
+inspection, source evidence, and optional market overlays.
 
 ```bash
 # Rebuild the static Pages dataset locally

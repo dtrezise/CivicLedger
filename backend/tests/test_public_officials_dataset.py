@@ -21,6 +21,9 @@ EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
 COMPANY_ENTITY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference.json"
 CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
+FEDERAL_EVENTS = ROOT / "data" / "context" / "federal_events.json"
+HOUSE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
+HOUSE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 
 
 def test_public_officials_dataset_has_expected_initial_scope():
@@ -73,6 +76,20 @@ def test_congressional_dataset_has_111th_to_119th_counts():
     assert summary["role_counts_by_term"]["obama-44"] >= 2200
 
 
+def test_congressional_chambers_follow_historical_terms_not_current_chamber():
+    data = json.loads((ROOT / "data" / "public_officials" / "congressional_service_terms.json").read_text())
+
+    peter_welch = [role for role in data["roles"] if role["external_person_id"] == "congress:W000800"]
+    adam_schiff = [role for role in data["roles"] if role["external_person_id"] == "congress:S001150"]
+    welch_by_congress = {role["source_metadata"]["congress_number"]: role for role in peter_welch}
+    schiff_by_congress = {role["source_metadata"]["congress_number"]: role for role in adam_schiff}
+
+    assert welch_by_congress[114]["source_metadata"]["chamber"] == "House"
+    assert welch_by_congress[118]["source_metadata"]["chamber"] == "Senate"
+    assert schiff_by_congress[118]["source_metadata"]["chamber"] == "House"
+    assert schiff_by_congress[119]["source_metadata"]["chamber"] == "Senate"
+
+
 def test_fred_context_dataset_has_trade_relevant_macro_scope():
     data = json.loads(FRED_CONTEXT.read_text())
 
@@ -109,23 +126,63 @@ def test_market_price_dataset_uses_tiingo_adjusted_close_scope():
     assert data["context_label"].startswith("Market-price overlays prefer Tiingo")
 
 
+def test_house_archive_is_source_backed_review_gated_and_partitioned():
+    index = json.loads(HOUSE_DISCLOSURE_INDEX.read_text())
+    archive = json.loads(HOUSE_PTR_TRANSACTIONS.read_text())
+
+    assert index["summary"]["source_index_count"] >= 18
+    assert index["summary"]["source_index_row_count"] >= 47_000
+    assert index["summary"]["member_ptr_document_count"] >= 7_500
+    assert index["summary"]["ambiguous_member_ptr_document_count"] == 0
+    assert archive["schema_version"] == "house-ptr-transactions-manifest-v2"
+    assert archive["summary"]["processed_document_count"] >= 7_500
+    assert archive["summary"]["parser_preview_transaction_count"] >= 53_000
+    assert archive["summary"]["document_status_counts"]["parser_preview"] >= 5_500
+    assert archive["summary"]["document_status_counts"]["ocr_required"] >= 1_900
+    assert archive["summary"]["public_production_trade_count"] == 0
+    assert set(archive["year_partitions"]) == {str(year) for year in range(2015, 2027)}
+
+
+def test_federal_event_context_spans_all_branches_with_official_sources():
+    data = json.loads(FEDERAL_EVENTS.read_text())
+    summary = data["summary"]
+
+    assert summary["raw_public_law_count"] >= 2_800
+    assert summary["raw_executive_order_count"] >= 900
+    assert summary["raw_supreme_court_opinion_count"] >= 500
+    assert summary["event_count"] >= 900
+    assert summary["counts_by_type"]["legislation"] >= 400
+    assert summary["counts_by_type"]["executive_order"] >= 250
+    assert summary["counts_by_type"]["court_decision"] >= 100
+    assert data["scope"]["start_date"] == "2009-01-20"
+    assert data["scope"]["structured_supreme_court_term_range"][0] == 2017
+    assert data["scope"]["supreme_court_pre_2017_status"] == "official_bound_volume_backfill_pending"
+    assert all(event["source_tier"] == "official" for event in data["events"])
+    assert all(event["sources"] and event["sources"][0].startswith("https://") for event in data["events"])
+
+
 def test_pages_career_trade_timeline_defaults_to_presidents():
     data = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
     timeline = data["career_trade_timeline"]
 
-    assert timeline["schema_version"] == "career-trade-timeline-v1"
+    assert timeline["schema_version"] == "career-trade-timeline-v2"
+    assert timeline["event_relationship_methodology_version"] == "event-relevance-v2"
     assert {"exec:barack-obama", "exec:donald-j-trump", "exec:joseph-r-biden"} <= set(
         timeline["default_official_ids"]
     )
     assert "exec:kamala-harris" not in set(timeline["default_official_ids"])
     assert "exec:michael-r-pence" not in set(timeline["default_official_ids"])
     assert timeline["summary"]["default_official_count"] >= 3
-    assert timeline["summary"]["event_count"] >= 20
+    assert timeline["summary"]["event_count"] >= 1_100
     assert timeline["summary"]["trade_cluster_count"] >= 20
     assert timeline["summary"]["presidential_oge_status_count"] == 4
     assert timeline["summary"]["presidential_oge_document_count"] >= 11
     assert timeline["summary"]["presidential_oge_parser_preview_transaction_count"] >= 300
     assert timeline["summary"]["presidential_oge_public_production_trade_count"] == 0
+    assert timeline["summary"]["official_count"] >= 298
+    assert timeline["summary"]["trade_count"] >= 54_000
+    assert timeline["summary"]["house_ptr_timeline_transaction_count"] >= 53_000
+    assert timeline["summary"]["house_ptr_out_of_service_trade_count"] >= 1
     assert "crypto" in timeline["asset_classes"]
     assert "fixed_income" in timeline["asset_classes"]
     assert "event_window" in timeline["axis_modes"]
@@ -145,6 +202,24 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     assert biden["stats"]["record_status"] == "official_oge_documents_indexed"
     assert biden["stats"]["document_count"] >= 5
     assert obama["stats"]["record_status"] == "source_status_only"
+    assert len(trump["service_periods"]) == 2
+    assert trump["service_periods"][0]["end"] == "2021-01-20"
+    assert trump["service_periods"][1]["start"] == "2025-01-20"
+    assert all(trade["career_day"] is not None for trade in trump["trades"])
+    assert all(
+        not ("2021-01-21" <= event["date"] <= "2025-01-19")
+        for event in trump["events"]
+    )
+    assert all(
+        event["display_default"] is False
+        for event in trump["events"]
+        if event["relationship_tier"] == "general_macro"
+    )
+    assert all(
+        trade["record_status"] != "fixture"
+        for official in timeline["officials"]
+        for trade in official["trades"]
+    )
 
 
 def test_presidential_term_index_supports_historical_slices():

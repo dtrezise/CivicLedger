@@ -284,6 +284,21 @@ class CongressGovClient:
             offset += limit
         return members
 
+    def laws_by_congress(self, congress_number: int, limit: int = 250) -> list[dict]:
+        laws: list[dict] = []
+        offset = 0
+        while True:
+            payload = self._get_json(
+                f"/law/{congress_number}",
+                {"format": "json", "limit": limit, "offset": offset},
+            )
+            batch = payload.get("bills", [])
+            laws.extend(batch)
+            if not payload.get("pagination", {}).get("next") or not batch:
+                break
+            offset += limit
+        return laws
+
 
 def congressional_member_dicts(members: Iterable[CurrentCongressionalMember]) -> list[dict]:
     return [member.as_dict() for member in members]

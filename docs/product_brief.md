@@ -41,7 +41,7 @@ Initial official-source expansion order:
 - Executive: Office of Government Ethics public disclosure resources and request workflows.
 - Judicial: Administrative Office of the U.S. Courts financial disclosure database and request workflows.
 
-Current first-draft implementation includes fixture officials for all three branches, branch-aware browse filters, source-readiness filters, a manual official-source archive command, preview-only parser adapters, and parser artifact evidence surfaces. These are scaffolding and review tools, not a claim that official executive or judicial records have been fully ingested.
+The current public workbench contains a source-backed 2009-present roster for all three branches, official House and presidential OGE parser-preview lanes, official civic and macro event context, and production market overlays. Development fixtures remain available to backend tests and review tooling but are excluded from public transaction timelines. Senate, broader executive, and judicial disclosure acquisition remain measurable coverage gaps; the existence of a roster record must never be presented as transaction coverage.
 
 ## Language Policy
 

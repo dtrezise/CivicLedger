@@ -125,12 +125,33 @@ def source_info(source_id: str) -> dict:
     }[source_id]
 
 
-def role_start_for_member(member: dict, congress: dict) -> str:
+def chamber_for_congress(member: dict, congress: dict) -> str:
+    """Return the chamber occupied at the start of the requested Congress.
+
+    Congress.gov member-list rows describe a person's complete career. Using the
+    last term therefore rewrites historical House service when a member later
+    moves to the Senate. The list endpoint's district remains Congress-specific,
+    so selecting the term active on the Congress start year restores the correct
+    historical chamber without an extra member-detail request.
+    """
+    congress_start_year = int(congress["congress_start"][:4])
+    terms = member.get("terms", {}).get("item", [])
+    active_terms = []
+    for term in terms:
+        start_year = int(term.get("startYear") or 0)
+        end_year = int(term["endYear"]) if term.get("endYear") else None
+        if start_year <= congress_start_year and (end_year is None or end_year > congress_start_year):
+            active_terms.append(term)
+    selected = active_terms[-1] if active_terms else (terms[0] if terms else {})
+    return chamber_label(selected.get("chamber"))
+
+
+def role_start_for_member(member: dict, congress: dict, chamber: str) -> str:
     terms = member.get("terms", {}).get("item", [])
     years = sorted(
         int(term.get("startYear"))
         for term in terms
-        if term.get("startYear") and chamber_label(term.get("chamber")) in {"House", "Senate"}
+        if term.get("startYear") and chamber_label(term.get("chamber")) == chamber
     )
     if not years:
         return congress["congress_start"]
@@ -146,9 +167,15 @@ def role_start_for_member(member: dict, congress: dict) -> str:
 def role_from_member(member: dict, congress_number: int) -> dict:
     congress = CONGRESSES[congress_number]
     terms = member.get("terms", {}).get("item", [])
-    chamber = chamber_label(terms[-1].get("chamber") if terms else None)
+    chamber = chamber_for_congress(member, congress)
     state = state_code(member.get("state"))
-    district = None if chamber == "Senate" else str(member.get("district") or "At Large")
+    raw_district = member.get("district")
+    if chamber == "Senate" or raw_district is None:
+        district = None
+    elif str(raw_district) == "0":
+        district = "At Large"
+    else:
+        district = str(raw_district)
     role_category = role_category_for_chamber(chamber, state=state, district=district)
     source = source_info("congress-gov-member-roster")
     bioguide_id = member["bioguideId"]
@@ -166,7 +193,7 @@ def role_from_member(member: dict, congress_number: int) -> dict:
         "office": role_title_for_category(role_category),
         "agency": "United States Congress",
         "court": None,
-        "service_start": role_start_for_member(member, congress),
+        "service_start": role_start_for_member(member, congress, chamber),
         "service_end": None if congress_number == 119 else congress["congress_end"],
         "appointing_president": None,
         "source_id": source["id"],

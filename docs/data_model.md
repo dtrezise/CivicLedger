@@ -64,7 +64,21 @@ Stores parser evidence without promoting unreviewed data into public-facing tabl
 - `parser_output`
 - `confidence`
 
-## Near-Term Additions
+## Release Relationship Model
+
+Migration `0004_release_relationship_model` adds the release-grade temporal and relationship layer:
+
+- `service_periods`: explicit dated service segments, including nonconsecutive terms.
+- `issuers`: canonical organizations behind disclosed assets.
+- `assets`: normalized assets with raw labels, class, symbol, and mapping confidence.
+- `event_relationships`: typed event links with evidence reasons and methodology versions.
+- `trade_event_candidates`: explainable temporal/entity/jurisdiction candidate evidence.
+- `relationship_reviews`: accept, narrow, reject, and supersede decisions.
+- `data_quality_issues`: identity, parser, duplicate, page, and asset-mapping issues.
+
+Trades retain disclosed minimum and maximum values; no midpoint is presented as an exact amount. Events can preserve announcement, effective, publication, and retrieval dates separately.
+
+## Role Fields
 
 ### people branch fields
 
@@ -74,13 +88,13 @@ The root `people` table now treats `branch` as the primary branch discriminator.
 
 Congressional records use `bioguide_id` as the canonical legislative person key. The durable service grain is one person in one Congress/chamber/state/district combination. Public Pages data mirrors these fields into `public_official_roles.source_metadata` so the static explorer can filter by chamber, Congress, party, state, and district without requiring the FastAPI backend.
 
-### event_people
+### Event-to-official boundary
 
-Links a global event to specific people only when there is an explicit source-backed relevance rule. Until this exists, frontend views should label events as global context, not person-specific context.
+An event links to a person only for source-backed participation or institutional responsibility. Date proximity alone is labeled as a transaction within a selected window. Asset, jurisdiction, institutional, sector, macro, and general context remain distinct relationship tiers.
 
-### parser artifact coordinates
+### Parser artifact coordinates
 
-Promoted from near-term plan into the MVP schema. Next additions should include richer coordinates for PDFs and table cells once source-specific parsers move beyond preview mode.
+Parser artifacts preserve page and row references. The House electronic-PTR adapter additionally uses PDF table coordinates to keep owner, asset, action, dates, and amount columns aligned. Image-only reports remain `ocr_required` instead of being treated as no-activity filings.
 
 ## Derived Data Rules
 

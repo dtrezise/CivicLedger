@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KEEP_RUNNING="${KEEP_RUNNING:-0}"
+SKIP_BUILD="${SKIP_BUILD:-0}"
 COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-civicledger_smoke}"
 BACKEND_PORT="${BACKEND_PORT:-18080}"
 FRONTEND_PORT="${FRONTEND_PORT:-13000}"
@@ -12,7 +13,11 @@ export COMPOSE_PROJECT_NAME BACKEND_PORT FRONTEND_PORT POSTGRES_PORT
 cd "$ROOT_DIR"
 
 docker compose down --volumes --remove-orphans >/dev/null 2>&1 || true
-docker compose up --build -d
+if [[ "$SKIP_BUILD" == "1" ]]; then
+  docker compose up --no-build -d
+else
+  docker compose up --build -d
+fi
 
 for i in {1..40}; do
   if curl -fsS "http://localhost:${BACKEND_PORT}/meta/status" >/tmp/civicledger-backend-smoke.json; then

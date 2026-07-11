@@ -1,5 +1,11 @@
 # Roadmap
 
+The detailed release execution backlog is maintained in
+[`release_readiness_120_steps.md`](release_readiness_120_steps.md). It extends
+this phase roadmap through all-branch coverage from the Obama administration to
+the present, a comparison-first public experience, and measurable release
+gates.
+
 ## Phase 0 - Stabilize Scaffold
 
 - Align frontend and backend contracts.

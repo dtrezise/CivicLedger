@@ -44,6 +44,21 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_public_officials_dataset.py
+      - name: Refresh House Clerk disclosure index
+        env:
+          PYTHONPATH: backend
+        run: python scripts/build_house_disclosure_index.py --start-year 2009
+      - name: Ingest new current-year House PTRs
+        env:
+          PYTHONPATH: backend
+        run: |
+          current_year=$(date +%Y)
+          python scripts/build_house_ptr_transactions.py --start-year "$current_year" --end-year "$current_year"
+      - name: Refresh official federal event context
+        env:
+          PYTHONPATH: backend
+          CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
+        run: python scripts/build_federal_events_dataset.py --start 2009-01-20
       - name: Rebuild presidential OGE source index
         env:
           PYTHONPATH: backend
@@ -68,17 +83,17 @@ jobs:
         env:
           PYTHONPATH: backend
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        run: python scripts/build_fred_context_dataset.py --start 2023-01-01
+        run: python scripts/build_fred_context_dataset.py --start 2009-01-20
       - name: Refresh Tiingo market prices
         env:
           PYTHONPATH: backend
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-        run: python scripts/build_market_price_dataset.py --start 2023-01-01
+        run: python scripts/build_market_price_dataset.py --start 2009-01-20
       - name: Refresh Tiingo crypto prices
         env:
           PYTHONPATH: backend
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-        run: python scripts/build_crypto_price_dataset.py --start 2023-01-01
+        run: python scripts/build_crypto_price_dataset.py --start 2009-01-20
       - name: Check market price coverage
         run: python scripts/check_market_price_dataset.py
       - name: Check source freshness
@@ -87,6 +102,8 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_pages_dataset.py
+      - name: Validate public release contract
+        run: python scripts/check_public_release_dataset.py
       - name: Commit refreshed generated data
         run: |
           if git diff --quiet -- data pages-site/data backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then

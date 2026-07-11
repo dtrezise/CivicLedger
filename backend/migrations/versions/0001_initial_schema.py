@@ -16,13 +16,11 @@ depends_on = None
 
 
 def upgrade() -> None:
-    init_sql = Path(__file__).resolve().parents[3] / "db" / "init.sql"
+    init_sql = Path(__file__).resolve().parents[1] / "baseline_0001.sql"
     statements = [
         statement.strip()
         for statement in init_sql.read_text().split(";")
         if statement.strip()
-        and "public_official_roles" not in statement
-        and "congressional_service_terms" not in statement
     ]
     for statement in statements:
         op.execute(statement)

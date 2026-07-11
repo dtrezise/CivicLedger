@@ -24,7 +24,7 @@ from app.services.fred_context import (  # noqa: E402
 
 
 OUTPUT = ROOT / "data" / "context" / "fred_market_context.json"
-DEFAULT_START = "2023-01-01"
+DEFAULT_START = "2009-01-20"
 
 
 def build_dataset(api_key: str | None, start: str, end: str) -> dict:

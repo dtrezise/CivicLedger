@@ -1,39 +1,69 @@
-const state = {
-  data: null,
-  explorerPeople: [],
-  selectedId: null,
-  comparisonIds: [],
-  query: "",
-  branch: "",
-  roleCategory: "",
-  term: "",
-  chamber: "",
-  congressNumber: "",
-  party: "",
-  officialState: "",
-  district: "",
-  timelineAxis: "career",
-  timelineZoom: "full",
-  timelineOfficialQuery: "",
-  timelineAssetClass: "",
-  timelineOverlay: "all",
-  timelineEventType: "",
-  activeTimelineEventId: null,
-};
-
-const fmt = new Intl.NumberFormat("en-US");
+const $ = (id) => document.getElementById(id);
+const numberFormat = new Intl.NumberFormat("en-US");
+const compactNumber = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
+const dateFormat = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
 
 const branchColors = {
-  Legislative: "#0b6b8f",
-  Executive: "#b66a1d",
+  Legislative: "#0b6b78",
+  Executive: "#a96f12",
   Judicial: "#7154a6",
 };
 
-const branchOrder = ["Legislative", "Executive", "Judicial"];
+const actionColors = {
+  BUY: "#0b6b78",
+  SELL: "#a13e42",
+  EXCHANGE: "#7154a6",
+  OTHER: "#6d7a84",
+};
 
-function $(id) {
-  return document.getElementById(id);
-}
+const eventColors = {
+  direct: "#1f5d43",
+  asset_specific: "#7154a6",
+  jurisdictional: "#0b6b78",
+  institutional: "#a96f12",
+  sector_context: "#60747b",
+  general_macro: "#7d8991",
+  general_context: "#9aa4aa",
+};
+
+const tierLabels = {
+  direct: "Direct source link",
+  asset_specific: "Asset-specific context",
+  jurisdictional: "Jurisdictional context",
+  institutional: "Institutional context",
+  sector_context: "Sector context",
+  general_macro: "General macro context",
+  general_context: "General context",
+};
+
+const state = {
+  manifest: null,
+  overview: null,
+  coverage: null,
+  officials: [],
+  officialMap: new Map(),
+  timelineIndex: null,
+  eventCatalog: [],
+  eventMap: new Map(),
+  timelineCache: new Map(),
+  marketCache: new Map(),
+  selectedIds: [],
+  selectedTimelines: [],
+  mode: "career",
+  assetFilter: "",
+  eventTierFilter: "focused",
+  eventWindowDays: 180,
+  activeEventId: "",
+  activeEventContext: null,
+  selectedTradeId: "",
+  zoomPercent: null,
+  chartExtent: null,
+  tradeChart: null,
+  marketChart: null,
+  loadToken: 0,
+  marketToken: 0,
+  compactLayout: window.innerWidth <= 760,
+};
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -44,1330 +74,1227 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function compact(parts) {
-  return parts.filter(Boolean).join(" / ");
+function titleCase(value) {
+  return String(value || "")
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function shortDate(value) {
-  if (!value) return "Unknown";
-  return new Date(`${value}T00:00:00`).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+function formatDate(value) {
+  if (!value) return "Not available";
+  return dateFormat.format(new Date(`${value}T00:00:00Z`));
+}
+
+function dateMs(value) {
+  if (!value) return null;
+  return Date.parse(`${value}T00:00:00Z`);
+}
+
+function daysBetween(value, anchor) {
+  if (!value || !anchor) return null;
+  return Math.round((dateMs(value) - dateMs(anchor)) / 86400000);
+}
+
+function clamp(value, minimum, maximum) {
+  return Math.max(minimum, Math.min(maximum, value));
+}
+
+function recordState(trade) {
+  if (trade.public_production_trade === true) {
+    return { label: "Reviewed production", className: "production" };
+  }
+  if (trade.record_status === "fixture_demo") {
+    return { label: "Fixture", className: "fixture" };
+  }
+  if (String(trade.record_status || "").includes("preview")) {
+    return { label: "Official parser preview", className: "preview" };
+  }
+  return { label: titleCase(trade.record_status || "Source status"), className: "" };
+}
+
+function money(value) {
+  if (!Number.isFinite(Number(value))) return "Not available";
+  return `$${compactNumber.format(Number(value))}`;
+}
+
+function lagLabel(value) {
+  return value == null || !Number.isFinite(Number(value)) ? "Review" : `${numberFormat.format(Number(value))}d`;
+}
+
+function recordPath(record) {
+  return `./data/${record.path}`;
+}
+
+async function fetchJson(pathOrRecord) {
+  const path = typeof pathOrRecord === "string" ? pathOrRecord : recordPath(pathOrRecord);
+  const response = await fetch(path, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Unable to load ${path} (${response.status})`);
+  return response.json();
+}
+
+function setHeaderStatus(label, ready = false) {
+  $("headerStatus").classList.toggle("ready", ready);
+  $("headerStatus").querySelector("span:last-child").textContent = label;
+}
+
+function timelineSummary(id) {
+  return (state.timelineIndex?.officials || []).find((official) => official.id === id) || null;
+}
+
+function selectedEvent() {
+  if (state.activeEventContext) return state.activeEventContext;
+  return state.eventMap.get(state.activeEventId) || null;
+}
+
+function parseUrlState() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedIds = (params.get("officials") || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter((id) => state.officialMap.has(id))
+    .slice(0, 4);
+  state.selectedIds = requestedIds.length
+    ? requestedIds
+    : [...(state.timelineIndex.default_official_ids || [])].slice(0, 4);
+  const mode = params.get("mode");
+  state.mode = ["career", "calendar", "event"].includes(mode) ? mode : "career";
+  state.activeEventId = state.eventMap.has(params.get("event")) ? params.get("event") : "";
+  if (state.mode === "event" && !state.activeEventId) state.mode = "career";
+  state.assetFilter = params.get("asset") || "";
+  state.eventTierFilter = ["focused", "all", "macro", "none"].includes(params.get("context"))
+    ? params.get("context")
+    : "focused";
+  const windowDays = Number(params.get("window"));
+  state.eventWindowDays = [30, 90, 180, 365].includes(windowDays) ? windowDays : 180;
+}
+
+function syncUrl() {
+  const params = new URLSearchParams();
+  if (state.selectedIds.length) params.set("officials", state.selectedIds.join(","));
+  params.set("mode", state.mode);
+  if (state.assetFilter) params.set("asset", state.assetFilter);
+  if (state.activeEventId) params.set("event", state.activeEventId);
+  if (state.eventTierFilter !== "focused") params.set("context", state.eventTierFilter);
+  if (state.eventWindowDays !== 180) params.set("window", String(state.eventWindowDays));
+  const query = params.toString();
+  history.replaceState(null, "", `${location.pathname}${query ? `?${query}` : ""}${location.hash || ""}`);
+}
+
+async function loadData() {
+  try {
+    setHeaderStatus("Loading dataset");
+    state.manifest = await fetchJson("./data/manifest.json");
+    const [overview, officials, coverage, events, timelineIndex] = await Promise.all([
+      fetchJson(state.manifest.files.overview),
+      fetchJson(state.manifest.files.officials_index),
+      fetchJson(state.manifest.files.coverage),
+      fetchJson(state.manifest.files.events),
+      fetchJson(state.manifest.files.timeline_index),
+    ]);
+    state.overview = overview;
+    state.coverage = coverage;
+    state.officials = officials.officials || [];
+    state.officialMap = new Map(state.officials.map((official) => [official.id, official]));
+    state.eventCatalog = events.events || [];
+    state.eventMap = new Map(state.eventCatalog.map((event) => [event.id, event]));
+    state.timelineIndex = timelineIndex;
+    parseUrlState();
+    initializeControls();
+    renderDatasetStatus();
+    initializeCharts();
+    await loadSelectedTimelines();
+    setHeaderStatus(`Dataset ${state.overview.dataset_version} - ${state.overview.generated_at}`, true);
+  } catch (error) {
+    console.error(error);
+    setHeaderStatus("Dataset unavailable");
+    $("dataNotice").innerHTML = `<strong>Data unavailable</strong><span>${escapeHtml(error.message)}</span>`;
+    $("tradeChart").innerHTML = '<p class="empty-state">The public dataset could not be loaded.</p>';
+  }
+}
+
+function initializeControls() {
+  $("eventSearch").value = selectedEvent()?.label || "";
+  $("eventTierFilter").value = state.eventTierFilter;
+  $("eventWindowFilter").value = String(state.eventWindowDays);
+  bindControls();
+  updateModeControls();
+}
+
+function initializeCharts() {
+  if (!window.echarts) throw new Error("Interactive chart library did not load.");
+  state.tradeChart = window.echarts.init($("tradeChart"), null, { renderer: "canvas" });
+  state.tradeChart.on("click", handleChartClick);
+  state.tradeChart.on("datazoom", handleDataZoom);
+}
+
+function bindControls() {
+  $("officialSearch").addEventListener("input", renderOfficialResults);
+  $("officialSearch").addEventListener("focus", renderOfficialResults);
+  $("branchFilter").addEventListener("change", renderOfficialResults);
+  $("officialResults").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-official-id]");
+    if (!button) return;
+    addOfficial(button.dataset.officialId);
+  });
+  $("eventSearch").addEventListener("input", renderEventResults);
+  $("eventSearch").addEventListener("focus", renderEventResults);
+  $("eventResults").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-event-id]");
+    if (!button) return;
+    selectEvent(button.dataset.eventId);
+  });
+  $("selectedOfficials").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-remove-official]");
+    if (!button) return;
+    removeOfficial(button.dataset.removeOfficial);
+  });
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".official-picker")) hideOfficialResults();
+    if (!event.target.closest(".event-picker")) hideEventResults();
+  });
+  document.querySelectorAll("[data-mode]").forEach((button) => {
+    button.addEventListener("click", () => setMode(button.dataset.mode));
+  });
+  $("presidentBaselineButton").addEventListener("click", () => {
+    state.selectedIds = [...state.timelineIndex.default_official_ids].slice(0, 4);
+    state.selectedTradeId = "";
+    state.zoomPercent = null;
+    loadSelectedTimelines();
+  });
+  $("assetFilter").addEventListener("change", () => {
+    state.assetFilter = $("assetFilter").value;
+    state.zoomPercent = null;
+    renderWorkbench();
+  });
+  $("eventTierFilter").addEventListener("change", () => {
+    state.eventTierFilter = $("eventTierFilter").value;
+    renderWorkbench();
+  });
+  $("eventWindowFilter").addEventListener("change", () => {
+    state.eventWindowDays = Number($("eventWindowFilter").value);
+    state.zoomPercent = null;
+    renderWorkbench();
+  });
+  $("resetViewButton").addEventListener("click", () => {
+    state.mode = "career";
+    state.assetFilter = "";
+    state.eventTierFilter = "focused";
+    state.eventWindowDays = 180;
+    state.activeEventId = "";
+    state.activeEventContext = null;
+    state.selectedTradeId = "";
+    state.zoomPercent = null;
+    $("eventSearch").value = "";
+    $("eventTierFilter").value = "focused";
+    $("eventWindowFilter").value = "180";
+    updateAssetOptions();
+    updateModeControls();
+    renderWorkbench();
+  });
+  $("transactionRows").addEventListener("click", (event) => {
+    const row = event.target.closest("[data-trade-id]");
+    if (!row) return;
+    selectTrade(row.dataset.tradeId);
+  });
+  $("transactionRows").addEventListener("keydown", (event) => {
+    if (!["Enter", " "].includes(event.key)) return;
+    const row = event.target.closest("[data-trade-id]");
+    if (!row) return;
+    event.preventDefault();
+    selectTrade(row.dataset.tradeId);
+  });
+  $("eventDetail").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-window-trade]");
+    if (!button) return;
+    selectTrade(button.dataset.windowTrade);
+  });
+
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const compact = window.innerWidth <= 760;
+      state.tradeChart?.resize();
+      state.marketChart?.resize();
+      if (compact !== state.compactLayout) {
+        state.compactLayout = compact;
+        renderTradeChart();
+      }
+    }, 120);
   });
 }
 
-function termLabel(termId) {
-  return state.data.public_officials?.scope?.presidential_terms?.[termId]?.label || termId;
-}
-
-function roleSortValue(role) {
-  return role.service_start || "0000-00-00";
-}
-
-function roleCategoryLabel(value) {
-  return String(value || "").replaceAll("_", " ");
-}
-
-function signedPct(value) {
-  if (value === null || value === undefined) return "n/a";
-  const prefix = value > 0 ? "+" : "";
-  return `${prefix}${Number(value).toFixed(2)}%`;
-}
-
-function latestObservation(series) {
-  if (!series?.observations?.length) return null;
-  return [...series.observations].reverse().find((row) => row.value !== null && row.value !== undefined) || null;
-}
-
-function formatMacroValue(value, units) {
-  if (value === null || value === undefined) return "n/a";
-  if (units === "0 or 1") return Number(value) === 1 ? "Recession" : "Expansion";
-  return `${Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 })}${units === "Percent" ? "%" : ""}`;
-}
-
-function moveList(moves) {
-  return (moves || [])
-    .map((move) => `${move.horizon_days || move.label}: ${signedPct(move.pct_change)}`)
-    .join(" / ");
-}
-
-function sparkline(points, label) {
-  if (!points?.length) return '<span class="muted">No price path</span>';
-  const width = 190;
-  const height = 54;
-  const values = points.map((point) => Number(point.value)).filter(Number.isFinite);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = Math.max(0.0001, max - min);
-  const step = points.length > 1 ? width / (points.length - 1) : width;
-  const path = points
-    .map((point, index) => {
-      const x = index * step;
-      const y = height - 8 - ((Number(point.value) - min) / span) * (height - 16);
-      return `${index ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-  return `
-    <svg class="sparkline" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(label)}">
-      <path d="${path}" fill="none" stroke="#0b6b8f" stroke-width="2"></path>
-    </svg>
-  `;
-}
-
-function affiliation(person) {
-  if (!person.primary_role) return person.branch;
-  const metadata = person.primary_role.source_metadata || {};
-  return compact([
-    person.branch,
-    metadata.chamber,
-    metadata.congress_number ? `${metadata.congress_number}th Congress` : null,
-    metadata.state,
-    metadata.district ? `District ${metadata.district}` : null,
-    termLabel(person.primary_role.presidential_term),
-    person.primary_role.office,
-    person.primary_role.agency,
-    person.primary_role.court,
-  ]);
-}
-
-function buildExplorerPeople() {
-  const rolesByPerson = new Map();
-  for (const role of state.data.public_officials.roles) {
-    if (!rolesByPerson.has(role.external_person_id)) {
-      rolesByPerson.set(role.external_person_id, []);
-    }
-    rolesByPerson.get(role.external_person_id).push(role);
-  }
-
-  state.explorerPeople = state.data.public_officials.people
-    .map((person) => {
-      const roles = [...(rolesByPerson.get(person.external_person_id) || [])].sort((a, b) =>
-        roleSortValue(b).localeCompare(roleSortValue(a))
-      );
-      const primaryRole = roles.find((role) => !role.service_end) || roles[0] || null;
-      return {
-        id: person.external_person_id,
-        full_name: person.full_name,
-        branch: person.branch,
-        roles,
-        primary_role: primaryRole,
-        role_terms: [...new Set(roles.map((role) => role.presidential_term))],
-        role_categories: [...new Set(roles.map((role) => role.role_category))],
-        chambers: [...new Set(roles.map((role) => role.source_metadata?.chamber).filter(Boolean))],
-        congress_numbers: [...new Set(roles.map((role) => role.source_metadata?.congress_number).filter(Boolean))],
-        parties: [...new Set(roles.map((role) => role.source_metadata?.party).filter(Boolean))],
-        states: [...new Set(roles.map((role) => role.source_metadata?.state).filter(Boolean))],
-        districts: [...new Set(roles.map((role) => role.source_metadata?.district).filter(Boolean))],
-      };
-    })
-    .sort((a, b) => {
-      const branchCompare = a.branch.localeCompare(b.branch);
-      return branchCompare || a.full_name.localeCompare(b.full_name);
-    });
-}
-
-function branchPeopleCounts() {
-  const counts = Object.fromEntries(branchOrder.map((branch) => [branch, 0]));
-  for (const person of state.explorerPeople) {
-    counts[person.branch] = (counts[person.branch] || 0) + 1;
-  }
-  return counts;
-}
-
-function roleCategoryCounts() {
-  return state.data.public_officials.roles.reduce((counts, role) => {
-    counts[role.role_category] = (counts[role.role_category] || 0) + 1;
-    return counts;
-  }, {});
-}
-
-function personMatchesQuery(person, query) {
-  if (!query) return true;
-  const haystack = [
-    person.full_name,
-    person.branch,
-    ...person.roles.flatMap((role) => [
-      role.presidential_term,
-      termLabel(role.presidential_term),
-      role.administration,
-      role.role_category,
-      role.role_title,
-      role.office,
-      role.agency,
-      role.court,
-      role.appointing_president,
-      role.source_name,
-      role.source_metadata?.bioguide_id,
-      role.source_metadata?.congress_number,
-      role.source_metadata?.chamber,
-      role.source_metadata?.party,
-      role.source_metadata?.state,
-      role.source_metadata?.district,
-    ]),
+function officialSearchText(official) {
+  const role = official.primary_role || {};
+  return [
+    official.full_name,
+    official.branch,
+    ...official.terms,
+    ...official.role_categories,
+    ...official.chambers,
+    ...official.congresses,
+    ...official.parties,
+    ...official.states,
+    ...official.districts,
+    role.role_title,
+    role.office,
+    role.agency,
+    role.court,
   ]
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
-  return haystack.includes(query);
 }
 
-function roleMatchesFilters(role) {
-  const metadata = role.source_metadata || {};
-  return (
-    (!state.roleCategory || role.role_category === state.roleCategory) &&
-    (!state.term || role.presidential_term === state.term) &&
-    (!state.chamber || metadata.chamber === state.chamber) &&
-    (!state.congressNumber || String(metadata.congress_number) === state.congressNumber) &&
-    (!state.party || metadata.party === state.party) &&
-    (!state.officialState || metadata.state === state.officialState) &&
-    (!state.district || String(metadata.district || "") === state.district)
-  );
-}
-
-function filteredPeople() {
-  const query = state.query.trim().toLowerCase();
-  return state.explorerPeople.filter((person) => {
-    const branchOk = !state.branch || person.branch === state.branch;
-    const roleOk = person.roles.some((role) => roleMatchesFilters(role));
-    return branchOk && roleOk && personMatchesQuery(person, query);
-  });
-}
-
-function peopleByIds(ids) {
-  const byId = new Map(state.explorerPeople.map((person) => [person.id, person]));
-  return ids.map((id) => byId.get(id)).filter(Boolean);
-}
-
-function ensureComparisonHas(personId) {
-  if (!personId) return;
-  if (!state.comparisonIds.includes(personId)) {
-    state.comparisonIds = [personId, ...state.comparisonIds].slice(0, 6);
-  }
-}
-
-function toggleComparison(personId) {
-  if (state.comparisonIds.includes(personId)) {
-    state.comparisonIds = state.comparisonIds.filter((id) => id !== personId);
-  } else {
-    state.comparisonIds = [personId, ...state.comparisonIds].slice(0, 6);
-  }
-  if (!state.selectedId && state.comparisonIds.length) {
-    state.selectedId = state.comparisonIds[0];
-  }
-  renderExplorer();
-}
-
-function selectBranch(branch) {
-  state.branch = branch;
-  $("branchFilter").value = branch;
-  if (branch && branch !== "Legislative") {
-    clearCongressionalFilters();
-  }
-  renderExplorer();
-}
-
-function clearCongressionalFilters() {
-  state.chamber = "";
-  state.congressNumber = "";
-  state.party = "";
-  state.officialState = "";
-  state.district = "";
-  for (const id of ["chamberFilter", "congressFilter", "partyFilter", "stateFilter", "districtFilter"]) {
-    const control = $(id);
-    if (control) control.value = "";
-  }
-}
-
-function renderSummary() {
-  const summary = state.data.summary;
-  $("demoNotice").innerHTML = `
-    <strong>Data status</strong>
-    <span>${escapeHtml(state.data.disclaimer)}</span>
-  `;
-  $("summaryMetrics").innerHTML = [
-    ["Tracked Officials", summary.tracked_public_official_count],
-    ["Official Roles", summary.public_official_role_count],
-    ["Legislative Roles", summary.public_official_role_counts_by_branch.Legislative || 0],
-    ["Executive Roles", summary.public_official_role_counts_by_branch.Executive || 0],
-    ["Judicial Roles", summary.public_official_role_counts_by_branch.Judicial || 0],
-    ["Demo Filings", summary.filing_count],
-    ["Demo Trades", summary.trade_count],
-    ["Timeline Trades", summary.career_timeline_trade_count || 0],
-    ["Market Price Points", summary.market_price_point_count || 0],
+function officialAffiliation(official) {
+  const role = official.primary_role || {};
+  return [
+    official.branch,
+    role.chamber,
+    role.state,
+    role.district ? `District ${role.district}` : null,
+    role.office,
+    role.agency,
+    role.court,
   ]
-    .map(
-      ([label, value]) => `
-        <div class="metric">
-          <strong>${fmt.format(value)}</strong>
-          <span>${label}</span>
-        </div>
-      `
-    )
-    .join("");
-  $("footerVersion").textContent = `Dataset ${state.data.dataset_version} / generated ${state.data.generated_at}`;
-  const readout = $("datasetReadout");
-  if (readout) readout.textContent = state.data.dataset_version;
+    .filter(Boolean)
+    .join(" / ");
 }
 
-function renderBranchChart() {
-  const counts = branchPeopleCounts();
-  const max = Math.max(...Object.values(counts), 1);
-  $("branchChart").innerHTML = `
-    <svg viewBox="0 0 760 280" role="img" aria-label="Official count by branch">
-      <rect x="0" y="0" width="760" height="280" fill="transparent"></rect>
-      ${branchOrder
-        .map((branch, index) => {
-          const count = counts[branch] || 0;
-          const y = 46 + index * 70;
-          const width = count ? 520 * (count / max) : 4;
-          const color = branchColors[branch] || "#0f766e";
+function renderOfficialResults() {
+  const query = $("officialSearch").value.trim().toLowerCase();
+  const branch = $("branchFilter").value;
+  if (query.length < 2 && !branch) {
+    hideOfficialResults();
+    return;
+  }
+  const matches = state.officials
+    .filter((official) => (!branch || official.branch === branch) && (!query || officialSearchText(official).includes(query)))
+    .slice(0, 24);
+  $("officialResults").innerHTML = matches.length
+    ? matches
+        .map((official) => {
+          const selected = state.selectedIds.includes(official.id);
+          const timeline = timelineSummary(official.id);
+          const stateLabel = selected ? "Selected" : timeline?.trade_count ? `${timeline.trade_count} records` : "No trade rows";
           return `
-            <text x="28" y="${y}" fill="#17201d" font-size="18" font-weight="800">${branch}</text>
-            <rect x="170" y="${y - 16}" width="530" height="26" rx="6" fill="#edf4ef"></rect>
-            <rect x="170" y="${y - 16}" width="${width}" height="26" rx="6" fill="${color}"></rect>
-            <text x="${Math.min(708, 184 + width)}" y="${y + 3}" fill="#17201d" font-size="15" font-weight="800">${fmt.format(count)}</text>
-          `;
+            <button class="search-result" type="button" role="option" data-official-id="${escapeHtml(official.id)}" aria-selected="${selected}">
+              <span>
+                <strong>${escapeHtml(official.full_name)}</strong>
+                <small>${escapeHtml(officialAffiliation(official))}</small>
+              </span>
+              <span class="result-state">${escapeHtml(stateLabel)}</span>
+            </button>`;
         })
-        .join("")}
-      <text x="28" y="252" fill="#64706a" font-size="14">Branch overview across source-backed public-official roles.</text>
-    </svg>
-  `;
-
-  const roleCounts = roleCategoryCounts();
-  $("globalRoleBreakdown").innerHTML = Object.entries(roleCounts)
-    .sort(([, a], [, b]) => b - a)
-    .map(
-      ([category, count]) => `
-        <div class="mini-stat">
-          <strong>${fmt.format(count)}</strong>
-          <span>${escapeHtml(roleCategoryLabel(category))}</span>
-        </div>
-      `
-    )
-    .join("");
-
-  $("branchCards").innerHTML = branchOrder
-    .map(
-      (branch) => `
-        <button class="branch-card ${state.branch === branch ? "active" : ""}" data-branch-card="${escapeHtml(branch)}">
-          <span>${escapeHtml(branch)}</span>
-          <strong>${fmt.format(counts[branch] || 0)}</strong>
-          <small>${state.branch === branch ? "Filtering" : "Filter branch"}</small>
-        </button>
-      `
-    )
-    .join("");
-
-  document.querySelectorAll("[data-branch-card]").forEach((button) => {
-    button.addEventListener("click", () => selectBranch(button.getAttribute("data-branch-card")));
-  });
+        .join("")
+    : '<p class="empty-state">No officials match these filters.</p>';
+  $("officialResults").hidden = false;
+  $("officialSearch").setAttribute("aria-expanded", "true");
 }
 
-function hydrateControls() {
-  const branches = branchOrder.filter(
-    (branch) => branch === "Legislative" || state.explorerPeople.some((person) => person.branch === branch)
-  );
-  $("branchFilter").innerHTML =
-    '<option value="">All branches</option>' +
-    branches.map((branch) => `<option value="${branch}">${branch}</option>`).join("");
-
-  $("roleFilter").innerHTML =
-    '<option value="">All role types</option>' +
-    [...new Set(state.data.public_officials.roles.map((role) => role.role_category))]
-      .sort()
-      .map(
-        (category) =>
-          `<option value="${escapeHtml(category)}">${escapeHtml(roleCategoryLabel(category))}</option>`
-      )
-      .join("");
-
-  const terms = Object.entries(state.data.public_officials.scope.presidential_terms);
-  $("termFilter").innerHTML =
-    '<option value="">All terms</option>' +
-    terms.map(([id, term]) => `<option value="${id}">${escapeHtml(term.label)}</option>`).join("");
-
-  $("chamberFilter").innerHTML =
-    '<option value="">All chambers</option>' +
-    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.chamber).filter(Boolean))]
-      .sort()
-      .map((chamber) => `<option value="${escapeHtml(chamber)}">${escapeHtml(chamber)}</option>`)
-      .join("");
-
-  $("congressFilter").innerHTML =
-    '<option value="">All Congresses</option>' +
-    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.congress_number).filter(Boolean))]
-      .sort((a, b) => Number(a) - Number(b))
-      .map((congress) => `<option value="${escapeHtml(congress)}">${escapeHtml(congress)}th Congress</option>`)
-      .join("");
-
-  $("partyFilter").innerHTML =
-    '<option value="">All parties</option>' +
-    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.party).filter(Boolean))]
-      .sort()
-      .map((party) => `<option value="${escapeHtml(party)}">${escapeHtml(party)}</option>`)
-      .join("");
-
-  $("stateFilter").innerHTML =
-    '<option value="">All states</option>' +
-    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.state).filter(Boolean))]
-      .sort()
-      .map((officialState) => `<option value="${escapeHtml(officialState)}">${escapeHtml(officialState)}</option>`)
-      .join("");
-
-  $("districtFilter").innerHTML =
-    '<option value="">All districts</option>' +
-    [...new Set(state.data.public_officials.roles.map((role) => role.source_metadata?.district).filter(Boolean))]
-      .sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }))
-      .map((district) => `<option value="${escapeHtml(district)}">${escapeHtml(district)}</option>`)
-      .join("");
-
-  const timeline = state.data.career_trade_timeline || {};
-  $("timelineAssetFilter").innerHTML =
-    '<option value="">All asset classes</option>' +
-    (timeline.asset_classes || [])
-      .map((assetClass) => `<option value="${escapeHtml(assetClass)}">${escapeHtml(roleCategoryLabel(assetClass))}</option>`)
-      .join("");
-  $("timelineEventFilter").innerHTML =
-    '<option value="">All event types</option>' +
-    (timeline.event_types || [])
-      .map((eventType) => `<option value="${escapeHtml(eventType)}">${escapeHtml(roleCategoryLabel(eventType))}</option>`)
-      .join("");
-  $("timelineZoomFilter").innerHTML =
-    (timeline.zoom_presets || [{ id: "full", label: "Full career" }])
-      .map((preset) => `<option value="${escapeHtml(preset.id)}">${escapeHtml(preset.label)}</option>`)
-      .join("");
-
-  $("searchInput").addEventListener("input", (event) => {
-    state.query = event.target.value;
-    renderExplorer();
-  });
-  $("branchFilter").addEventListener("change", (event) => {
-    state.branch = event.target.value;
-    if (state.branch && state.branch !== "Legislative") {
-      clearCongressionalFilters();
-    }
-    renderExplorer();
-  });
-  $("roleFilter").addEventListener("change", (event) => {
-    state.roleCategory = event.target.value;
-    renderExplorer();
-  });
-  $("termFilter").addEventListener("change", (event) => {
-    state.term = event.target.value;
-    renderExplorer();
-  });
-  $("chamberFilter").addEventListener("change", (event) => {
-    state.chamber = event.target.value;
-    renderExplorer();
-  });
-  $("congressFilter").addEventListener("change", (event) => {
-    state.congressNumber = event.target.value;
-    renderExplorer();
-  });
-  $("partyFilter").addEventListener("change", (event) => {
-    state.party = event.target.value;
-    renderExplorer();
-  });
-  $("stateFilter").addEventListener("change", (event) => {
-    state.officialState = event.target.value;
-    renderExplorer();
-  });
-  $("districtFilter").addEventListener("change", (event) => {
-    state.district = event.target.value;
-    renderExplorer();
-  });
-  $("clearFilters").addEventListener("click", () => {
-    state.query = "";
-    state.branch = "";
-    state.roleCategory = "";
-    state.term = "";
-    clearCongressionalFilters();
-    $("searchInput").value = "";
-    $("branchFilter").value = "";
-    $("roleFilter").value = "";
-    $("termFilter").value = "";
-    renderExplorer();
-  });
-  $("careerAxisButton").addEventListener("click", () => {
-    state.timelineAxis = "career";
-    renderCareerTimeline();
-  });
-  $("calendarAxisButton").addEventListener("click", () => {
-    state.timelineAxis = "calendar";
-    renderCareerTimeline();
-  });
-  $("eventWindowAxisButton").addEventListener("click", () => {
-    state.timelineAxis = "event_window";
-    state.timelineZoom = "event-window";
-    $("timelineZoomFilter").value = "event-window";
-    renderCareerTimeline();
-  });
-  $("timelineZoomFilter").addEventListener("change", (event) => {
-    state.timelineZoom = event.target.value;
-    renderCareerTimeline();
-  });
-  $("timelineOfficialSearch").addEventListener("input", (event) => {
-    state.timelineOfficialQuery = event.target.value;
-    renderCareerTimeline();
-  });
-  $("timelineAssetFilter").addEventListener("change", (event) => {
-    state.timelineAssetClass = event.target.value;
-    renderCareerTimeline();
-  });
-  $("timelineOverlayFilter").addEventListener("change", (event) => {
-    state.timelineOverlay = event.target.value;
-    renderCareerTimeline();
-  });
-  $("timelineEventFilter").addEventListener("change", (event) => {
-    state.timelineEventType = event.target.value;
-    renderCareerTimeline();
-  });
-  $("presidentBaselineButton").addEventListener("click", () => {
-    const defaultIds = state.data.career_trade_timeline?.default_official_ids || [];
-    state.comparisonIds = defaultIds.length ? defaultIds : state.comparisonIds;
-    state.selectedId = state.comparisonIds[0] || state.selectedId;
-    renderExplorer();
-  });
+function hideOfficialResults() {
+  $("officialResults").hidden = true;
+  $("officialSearch").setAttribute("aria-expanded", "false");
 }
 
-function renderPeopleList(people) {
-  const directoryCount = $("directoryCount");
-  const limit = 120;
-  const shown = people.slice(0, limit);
-  directoryCount.textContent = `${fmt.format(people.length)} match${people.length === 1 ? "" : "es"}`;
-  $("directoryHint").textContent =
-    people.length > limit ? `Showing first ${fmt.format(limit)}. Refine search to narrow.` : "Select officials to compare.";
-  $("peopleList").innerHTML =
-    shown
-      .map((person) => {
-        const compared = state.comparisonIds.includes(person.id);
-        return `
-          <article class="person-row ${person.id === state.selectedId ? "active" : ""}">
-            <button class="person-button" data-person-id="${escapeHtml(person.id)}">
-              <strong>${escapeHtml(person.full_name)}</strong>
-              <span>${escapeHtml(affiliation(person))}</span>
-              <small>${fmt.format(person.roles.length)} role${person.roles.length === 1 ? "" : "s"}</small>
-            </button>
-            <button class="compare-toggle ${compared ? "active" : ""}" data-compare-id="${escapeHtml(person.id)}">
-              ${compared ? "Remove" : "Compare"}
-            </button>
-          </article>
-        `;
-      })
-      .join("") || '<p class="muted">No matching officials.</p>';
-
-  document.querySelectorAll("[data-person-id]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.selectedId = button.getAttribute("data-person-id");
-      ensureComparisonHas(state.selectedId);
-      renderExplorer();
-    });
-  });
-  document.querySelectorAll("[data-compare-id]").forEach((button) => {
-    button.addEventListener("click", () => toggleComparison(button.getAttribute("data-compare-id")));
-  });
+function eventSearchText(event) {
+  return [
+    event.label,
+    event.description,
+    event.date,
+    event.event_type,
+    event.source,
+    ...(event.market_topic_ids || []),
+    ...(event.sector_scope || []),
+    ...(event.jurisdiction_scope || []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
 }
 
-function graphExtent(people) {
-  const years = people
-    .flatMap((person) =>
-      person.roles.flatMap((role) => [role.service_start, role.service_end].filter(Boolean))
-    )
-    .map((value) => Number(value.slice(0, 4)))
-    .filter(Boolean);
-  const currentYear = new Date().getFullYear();
+function renderEventResults() {
+  const query = $("eventSearch").value.trim().toLowerCase();
+  const matches = state.eventCatalog
+    .filter((event) => !query || eventSearchText(event).includes(query))
+    .sort((a, b) => {
+      const curatedDifference = Number(b.editor_status === "curated") - Number(a.editor_status === "curated");
+      return curatedDifference || b.date.localeCompare(a.date) || a.label.localeCompare(b.label);
+    })
+    .slice(0, 40);
+  $("eventResults").innerHTML = matches.length
+    ? matches
+        .map(
+          (event) => `
+            <button class="search-result" type="button" role="option" data-event-id="${escapeHtml(event.id)}" aria-selected="${event.id === state.activeEventId}">
+              <span><strong>${escapeHtml(event.label)}</strong><small>${escapeHtml(`${formatDate(event.date)} / ${titleCase(event.event_type)} / ${event.source}`)}</small></span>
+              <span class="result-state">${escapeHtml(event.editor_status === "curated" ? "Curated anchor" : "Official source")}</span>
+            </button>`
+        )
+        .join("")
+    : '<p class="empty-state">No events match this search.</p>';
+  $("eventResults").hidden = false;
+  $("eventSearch").setAttribute("aria-expanded", "true");
+}
+
+function hideEventResults() {
+  $("eventResults").hidden = true;
+  $("eventSearch").setAttribute("aria-expanded", "false");
+}
+
+function selectEvent(id) {
+  state.activeEventId = id;
+  state.activeEventContext = null;
+  state.zoomPercent = null;
+  $("eventSearch").value = state.eventMap.get(id)?.label || "";
+  hideEventResults();
+  updateModeControls();
+  renderWorkbench();
+}
+
+function addOfficial(id) {
+  if (state.selectedIds.includes(id)) {
+    hideOfficialResults();
+    return;
+  }
+  if (state.selectedIds.length >= 4) {
+    $("dataNotice").innerHTML = "<strong>Comparison limit</strong><span>Remove one selected official before adding another.</span>";
+    return;
+  }
+  state.selectedIds.push(id);
+  state.selectedTradeId = "";
+  state.zoomPercent = null;
+  $("officialSearch").value = "";
+  hideOfficialResults();
+  loadSelectedTimelines();
+}
+
+function removeOfficial(id) {
+  state.selectedIds = state.selectedIds.filter((selectedId) => selectedId !== id);
+  state.selectedTradeId = "";
+  state.zoomPercent = null;
+  loadSelectedTimelines();
+}
+
+function placeholderTimeline(id) {
+  const official = state.officialMap.get(id);
+  const periods = official?.service_periods || [];
   return {
-    minYear: Math.min(2017, ...years),
-    maxYear: Math.max(currentYear, ...years),
-  };
-}
-
-function comparisonGraphSvg(people) {
-  const lanes = people.length ? people : state.explorerPeople.slice(0, 3);
-  const width = 980;
-  const laneHeight = 72;
-  const height = 92 + lanes.length * laneHeight;
-  const left = 180;
-  const right = 36;
-  const { minYear, maxYear } = graphExtent(lanes);
-  const yearSpan = Math.max(1, maxYear - minYear + 1);
-  const xFor = (value) => {
-    const year = value ? Number(value.slice(0, 4)) : maxYear;
-    return left + ((year - minYear) / yearSpan) * (width - left - right);
-  };
-
-  return `
-    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Selected official role comparison">
-      <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
-      ${Array.from({ length: maxYear - minYear + 1 }, (_, index) => minYear + index)
-        .map((year) => {
-          const x = left + ((year - minYear) / yearSpan) * (width - left - right);
-          return `
-            <line x1="${x}" y1="44" x2="${x}" y2="${height - 34}" stroke="#d9e0e6" stroke-width="1"></line>
-            <text x="${x - 12}" y="${height - 12}" fill="#64706a" font-size="12">${year}</text>
-          `;
-        })
-        .join("")}
-      ${lanes
-        .map((person, index) => {
-          const y = 64 + index * laneHeight;
-          const color = branchColors[person.branch] || "#0f766e";
-          return `
-            <text x="24" y="${y - 8}" fill="#17201d" font-size="14" font-weight="800">${escapeHtml(person.full_name)}</text>
-            <text x="24" y="${y + 12}" fill="#64706a" font-size="12">${escapeHtml(person.branch)}</text>
-            <line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}" stroke="#edf4ef" stroke-width="10" stroke-linecap="round"></line>
-            ${person.roles
-              .map((role) => {
-                const x1 = xFor(role.service_start);
-                const x2 = Math.max(x1 + 18, xFor(role.service_end));
-                return `
-                  <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="9" stroke-linecap="round">
-                    <title>${escapeHtml(`${person.full_name}: ${role.role_title}`)}</title>
-                  </line>
-                  <circle cx="${x1}" cy="${y}" r="5" fill="${color}"></circle>
-                `;
-              })
-              .join("")}
-          `;
-        })
-        .join("")}
-    </svg>
-  `;
-}
-
-function timelineOfficialsById() {
-  return new Map((state.data.career_trade_timeline?.officials || []).map((official) => [official.id, official]));
-}
-
-function timelinePlaceholderOfficial(person) {
-  const starts = person.roles.map((role) => role.service_start).filter(Boolean).sort();
-  const ends = person.roles.map((role) => role.service_end).filter(Boolean).sort();
-  const active = person.roles.some((role) => role.service_start && !role.service_end);
-  return {
-    id: person.id,
-    full_name: person.full_name,
-    branch: person.branch,
+    id,
+    full_name: official?.full_name || id,
+    branch: official?.branch || "Unknown",
     timeline_group: "source_backed_no_trades",
-    service_start: starts[0] || null,
-    service_end: active ? new Date().toISOString().slice(0, 10) : ends.at(-1) || starts[0] || null,
-    roles: person.roles,
+    service_periods: periods,
+    active_service_days: periods.length ? periods[periods.length - 1].career_end_day + 1 : 0,
+    roles: [],
     trades: [],
     events: [],
     stats: {
       trade_count: 0,
-      buy_count: 0,
-      sell_count: 0,
-      crypto_count: 0,
-      total_value_midpoint: 0,
-      disclosure_status: "No reviewed trade disclosures ingested yet",
+      record_status: "source_status_only",
+      disclosure_status: "No reviewed or parser-preview trade rows are available in this snapshot.",
+      confidence_label: "Source-backed official roster only",
     },
   };
 }
 
-function selectedTimelineOfficials() {
-  const timelineById = timelineOfficialsById();
-  const explorerById = new Map(state.explorerPeople.map((person) => [person.id, person]));
-  const selectedIds = state.comparisonIds.length
-    ? state.comparisonIds
-    : state.data.career_trade_timeline?.default_official_ids || [];
-  const rows = selectedIds
-    .map((id) => timelineById.get(id) || (explorerById.get(id) ? timelinePlaceholderOfficial(explorerById.get(id)) : null))
-    .filter(Boolean)
-    .slice(0, 6);
-  const timelineQuery = state.timelineOfficialQuery.trim().toLowerCase();
-  if (!timelineQuery) return rows;
-  const existing = new Set(rows.map((official) => official.id));
-  const timelineMatches = (state.data.career_trade_timeline?.officials || [])
-    .filter(
-      (official) =>
-        !existing.has(official.id) &&
-        [official.full_name, official.branch, official.timeline_group]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase()
-          .includes(timelineQuery)
-    );
-  for (const official of timelineMatches) existing.add(official.id);
-  const explorerMatches = state.explorerPeople
-    .filter((person) => !existing.has(person.id) && personMatchesQuery(person, timelineQuery))
-    .slice(0, Math.max(0, 6 - rows.length))
-    .map((person) => timelineById.get(person.id) || timelinePlaceholderOfficial(person));
-  return rows.concat(timelineMatches, explorerMatches).slice(0, 6);
+async function loadTimeline(id) {
+  if (state.timelineCache.has(id)) return state.timelineCache.get(id);
+  const partition = state.manifest.partitions.timelines[id];
+  if (!partition) {
+    const placeholder = placeholderTimeline(id);
+    state.timelineCache.set(id, placeholder);
+    return placeholder;
+  }
+  const payload = await fetchJson(partition);
+  state.timelineCache.set(id, payload.official);
+  return payload.official;
 }
 
-function timelineTradeVisible(trade) {
-  return !state.timelineAssetClass || trade.asset_class === state.timelineAssetClass;
+async function loadSelectedTimelines() {
+  const token = ++state.loadToken;
+  renderSelectedOfficials();
+  if (!state.selectedIds.length) {
+    state.selectedTimelines = [];
+    renderWorkbench();
+    return;
+  }
+  $("tradeChart").setAttribute("aria-busy", "true");
+  const timelines = await Promise.all(state.selectedIds.map(loadTimeline));
+  if (token !== state.loadToken) return;
+  state.selectedTimelines = timelines;
+  $("tradeChart").setAttribute("aria-busy", "false");
+  updateAssetOptions();
+  renderWorkbench();
 }
 
-function timelineEventVisible(event) {
-  return !state.timelineEventType || event.event_type === state.timelineEventType;
+function renderSelectedOfficials() {
+  $("selectedOfficials").innerHTML = state.selectedIds.length
+    ? state.selectedIds
+        .map((id) => {
+          const official = state.officialMap.get(id);
+          const timeline = timelineSummary(id);
+          const coverage = timeline?.trade_count ? `${numberFormat.format(timeline.trade_count)} records` : "Roster only";
+          return `
+            <div class="official-chip">
+              <span><strong>${escapeHtml(official?.full_name || id)}</strong><small>${escapeHtml(`${official?.branch || "Unknown"} / ${coverage}`)}</small></span>
+              <button type="button" data-remove-official="${escapeHtml(id)}" aria-label="Remove ${escapeHtml(official?.full_name || id)}">&times;</button>
+            </div>`;
+        })
+        .join("")
+    : '<span class="empty-state">Search for an official to begin a comparison.</span>';
 }
 
-function dateToDay(value) {
-  if (!value) return null;
-  return Math.round(new Date(`${value}T00:00:00`).getTime() / 86400000);
+function updateAssetOptions() {
+  const current = state.assetFilter;
+  const tickers = new Set();
+  const classes = new Set();
+  for (const official of state.selectedTimelines) {
+    for (const trade of official.trades || []) {
+      if (trade.ticker) tickers.add(trade.ticker);
+      if (trade.asset_class) classes.add(trade.asset_class);
+    }
+  }
+  $("assetFilter").innerHTML = [
+    '<option value="">All disclosed assets</option>',
+    classes.size
+      ? `<optgroup label="Asset classes">${[...classes]
+          .sort()
+          .map((value) => `<option value="class:${escapeHtml(value)}">${escapeHtml(titleCase(value))}</option>`)
+          .join("")}</optgroup>`
+      : "",
+    tickers.size
+      ? `<optgroup label="Tickers and pairs">${[...tickers]
+          .sort()
+          .map((value) => `<option value="ticker:${escapeHtml(value)}">${escapeHtml(value)}</option>`)
+          .join("")}</optgroup>`
+      : "",
+  ].join("");
+  const valid = [...$("assetFilter").options].some((option) => option.value === current);
+  state.assetFilter = valid ? current : "";
+  $("assetFilter").value = state.assetFilter;
 }
 
-function timelineExtent(officials) {
+function setMode(mode) {
+  if (mode === "event" && !selectedEvent()) return;
+  state.mode = mode;
+  state.zoomPercent = null;
+  updateModeControls();
+  renderWorkbench();
+}
+
+function updateModeControls() {
+  document.querySelectorAll("[data-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.mode === state.mode);
+  });
+  $("eventModeButton").disabled = !selectedEvent();
+  $("eventModeButton").title = selectedEvent() ? "Center comparison on the selected event" : "Select an event first";
+}
+
+function tradeMatchesAsset(trade) {
+  if (!state.assetFilter) return true;
+  const [kind, value] = state.assetFilter.split(":");
+  return kind === "ticker" ? trade.ticker === value : trade.asset_class === value;
+}
+
+function tradeInModeWindow(trade) {
+  if (state.mode !== "event") return true;
+  const event = selectedEvent();
+  if (!event) return false;
+  return Math.abs(daysBetween(trade.date, event.date)) <= state.eventWindowDays;
+}
+
+function filteredTrades(official) {
+  return (official.trades || []).filter((trade) => tradeMatchesAsset(trade) && tradeInModeWindow(trade));
+}
+
+function eventMatchesAsset(event) {
+  if (!state.assetFilter) return true;
+  const [kind, value] = state.assetFilter.split(":");
+  if (kind === "ticker") return (event.ticker_scope || []).includes(value) || event.id === state.activeEventId;
+  return (event.asset_scope || []).includes(value) || event.id === state.activeEventId;
+}
+
+function eventVisible(event) {
+  if (event.id === state.activeEventId) return true;
+  if (state.eventTierFilter === "none") return false;
+  if (!eventMatchesAsset(event)) return false;
+  if (state.eventTierFilter === "macro") return true;
+  if (event.relationship_tier === "general_macro") return false;
+  if (state.eventTierFilter === "all") return true;
+  return event.display_default === true;
+}
+
+function eventInModeWindow(event) {
+  if (state.mode !== "event") return true;
+  const selected = selectedEvent();
+  if (!selected) return false;
+  return Math.abs(daysBetween(event.date, selected.date)) <= state.eventWindowDays;
+}
+
+function xValueForTrade(trade) {
+  if (state.mode === "career") return trade.career_day;
+  if (state.mode === "calendar") return dateMs(trade.date);
+  return daysBetween(trade.date, selectedEvent()?.date);
+}
+
+function xValueForEvent(event) {
+  if (state.mode === "career") return event.career_day;
+  if (state.mode === "calendar") return dateMs(event.date);
+  return daysBetween(event.date, selectedEvent()?.date);
+}
+
+function periodExtent(period) {
+  if (state.mode === "career") return [period.career_start_day, period.career_end_day];
+  if (state.mode === "calendar") return [dateMs(period.start), dateMs(period.end)];
+  const event = selectedEvent();
+  return [daysBetween(period.start, event?.date), daysBetween(period.end, event?.date)];
+}
+
+function calculateExtent() {
+  if (state.mode === "event") {
+    return { min: -state.eventWindowDays, max: state.eventWindowDays };
+  }
   const values = [];
-  const zoomPreset = (state.data.career_trade_timeline?.zoom_presets || []).find((preset) => preset.id === state.timelineZoom);
-  for (const official of officials) {
-    if (state.timelineAxis !== "calendar") {
-      values.push(0);
-      values.push(dateToDay(official.service_end) - dateToDay(official.service_start));
-      for (const trade of official.trades.filter(timelineTradeVisible)) values.push(trade.career_day);
-      for (const event of (official.events || []).filter(timelineEventVisible)) values.push(event.career_day);
-    } else {
-      values.push(dateToDay(official.service_start));
-      values.push(dateToDay(official.service_end));
-      for (const trade of official.trades.filter(timelineTradeVisible)) values.push(dateToDay(trade.date));
-      for (const event of (official.events || []).filter(timelineEventVisible)) values.push(dateToDay(event.date));
-    }
+  for (const official of state.selectedTimelines) {
+    for (const period of official.service_periods || []) values.push(...periodExtent(period));
+    for (const trade of filteredTrades(official)) values.push(xValueForTrade(trade));
   }
-  const clean = values.filter((value) => Number.isFinite(value));
-  if (state.timelineAxis !== "calendar" && zoomPreset?.days) {
-    if (state.timelineAxis === "event_window" && state.activeTimelineEventId) {
-      const eventDays = officials
-        .flatMap((official) => (official.events || []).filter((event) => event.id === state.activeTimelineEventId))
-        .map((event) => event.career_day)
-        .filter((value) => Number.isFinite(value));
-      if (eventDays.length) {
-        const center = eventDays[0];
-        return { min: center - 180, max: center + 180 };
+  const clean = values.filter(Number.isFinite);
+  if (!clean.length) return state.mode === "calendar" ? { min: dateMs("2009-01-20"), max: Date.now() } : { min: 0, max: 365 };
+  return { min: Math.min(...clean), max: Math.max(...clean) };
+}
+
+function aggregateTradePoints(official, laneIndex) {
+  const trades = filteredTrades(official).filter((trade) => Number.isFinite(xValueForTrade(trade)));
+  const binSize = state.mode === "calendar" ? 30 * 86400000 : state.mode === "career" ? 14 : 7;
+  const groups = new Map();
+  for (const trade of trades) {
+    const x = xValueForTrade(trade);
+    const bucket = Math.floor(x / binSize);
+    const key = `${bucket}:${trade.action}`;
+    if (!groups.has(key)) groups.set(key, { xValues: [], trades: [], action: trade.action });
+    const group = groups.get(key);
+    group.xValues.push(x);
+    group.trades.push(trade);
+  }
+  return [...groups.values()].map((group) => {
+    const x = group.xValues.reduce((sum, value) => sum + value, 0) / group.xValues.length;
+    const yOffset = group.action === "BUY" ? -0.09 : group.action === "SELL" ? 0.09 : 0;
+    const midpoint = group.trades.reduce((sum, trade) => sum + Number(trade.value_midpoint || 0), 0);
+    const minimum = group.trades.reduce((sum, trade) => sum + Number(trade.value_range_min || 0), 0);
+    const maximum = group.trades.reduce((sum, trade) => sum + Number(trade.value_range_max || 0), 0);
+    return {
+      value: [x, laneIndex + yOffset, midpoint, group.trades.length],
+      kind: "trade",
+      action: group.action,
+      officialId: official.id,
+      officialName: official.full_name,
+      trades: group.trades,
+      minimum,
+      maximum,
+      itemStyle: { color: actionColors[group.action] || actionColors.OTHER },
+    };
+  });
+}
+
+function buildChartSeries() {
+  const serviceSeries = [];
+  const tradePoints = [];
+  const eventPoints = [];
+  const breakPoints = [];
+  const emptyPoints = [];
+  const extent = state.chartExtent;
+
+  state.selectedTimelines.forEach((official, laneIndex) => {
+    (official.service_periods || []).forEach((period, periodIndex) => {
+      let [start, end] = periodExtent(period);
+      if (!Number.isFinite(start) || !Number.isFinite(end)) return;
+      if (state.mode === "event") {
+        if (end < extent.min || start > extent.max) return;
+        start = clamp(start, extent.min, extent.max);
+        end = clamp(end, extent.min, extent.max);
       }
+      serviceSeries.push({
+        name: `${official.full_name} service`,
+        type: "line",
+        silent: true,
+        symbol: "none",
+        data: [[start, laneIndex], [end, laneIndex]],
+        lineStyle: { width: 7, color: branchColors[official.branch] || "#0b6b78", opacity: 0.66 },
+        emphasis: { disabled: true },
+        animation: false,
+        z: 1,
+      });
+      if (periodIndex > 0 && state.mode === "career") {
+        breakPoints.push({
+          value: [period.career_start_day, laneIndex],
+          officialName: official.full_name,
+          period,
+        });
+      }
+    });
+
+    const points = aggregateTradePoints(official, laneIndex);
+    tradePoints.push(...points);
+    if (!points.length) {
+      emptyPoints.push({
+        value: [extent.min + (extent.max - extent.min) * 0.08, laneIndex],
+        label: { formatter: "No trade records in this view" },
+      });
     }
-    return { min: 0, max: zoomPreset.days };
+
+    for (const relationship of official.events || []) {
+      const event = { ...(state.eventMap.get(relationship.id) || {}), ...relationship };
+      if (!eventVisible(event) || !eventInModeWindow(event)) continue;
+      const x = xValueForEvent(event);
+      if (!Number.isFinite(x)) continue;
+      eventPoints.push({
+        value: [x, laneIndex - 0.24, event.relationship_tier_rank || 0],
+        kind: "event",
+        officialId: official.id,
+        officialName: official.full_name,
+        event,
+        itemStyle: { color: eventColors[event.relationship_tier] || eventColors.general_context },
+      });
+    }
+  });
+
+  return [
+    ...serviceSeries,
+    {
+      name: "Term break",
+      type: "scatter",
+      silent: true,
+      data: breakPoints,
+      symbol: "rect",
+      symbolSize: [4, 22],
+      itemStyle: { color: "#ffffff", borderColor: "#17212b", borderWidth: 1 },
+      z: 3,
+    },
+    {
+      name: "Transactions",
+      type: "scatter",
+      data: tradePoints,
+      symbol: "circle",
+      symbolSize: (value) => clamp(8 + Math.log2(Math.max(1, value[3])) * 4 + Math.log10(Math.max(10, value[2])) * 0.7, 9, 25),
+      itemStyle: { borderColor: "#ffffff", borderWidth: 1.5, opacity: 0.88 },
+      emphasis: { scale: 1.35 },
+      z: 5,
+    },
+    {
+      name: "Events",
+      type: "scatter",
+      data: eventPoints,
+      symbol: "diamond",
+      symbolSize: (value) => clamp(10 + Number(value[2] || 0), 10, 17),
+      itemStyle: { borderColor: "#ffffff", borderWidth: 1 },
+      emphasis: { scale: 1.4 },
+      z: 4,
+    },
+    {
+      name: "Empty lanes",
+      type: "scatter",
+      silent: true,
+      data: emptyPoints,
+      symbolSize: 1,
+      itemStyle: { opacity: 0 },
+      label: { show: true, position: "right", color: "#6d7a84", fontSize: 11 },
+      z: 2,
+    },
+  ];
+}
+
+function axisLabel(value) {
+  if (state.mode === "career") {
+    if (value <= 0) return "Start";
+    const years = value / 365.25;
+    return years < 1 ? `${Math.round(value)}d` : `Y${years.toFixed(years >= 5 ? 0 : 1)}`;
   }
+  if (state.mode === "event") return value === 0 ? "Event" : `${value > 0 ? "+" : ""}${Math.round(value)}d`;
+  const date = new Date(value);
+  return state.chartExtent.max - state.chartExtent.min > 3 * 365 * 86400000
+    ? String(date.getUTCFullYear())
+    : date.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+}
+
+function tooltipFormatter(params) {
+  const data = params.data || {};
+  if (data.kind === "trade") {
+    const first = data.trades[0];
+    const dates = data.trades.map((trade) => trade.date).sort();
+    const stateInfo = recordState(first);
+    return `
+      <strong>${escapeHtml(data.officialName)}</strong><br>
+      ${escapeHtml(data.action)} / ${numberFormat.format(data.trades.length)} transaction${data.trades.length === 1 ? "" : "s"}<br>
+      ${escapeHtml(formatDate(dates[0]))}${dates.length > 1 ? ` to ${escapeHtml(formatDate(dates[dates.length - 1]))}` : ""}<br>
+      Disclosed aggregate range: ${escapeHtml(money(data.minimum))} to ${escapeHtml(money(data.maximum))}<br>
+      <span>${escapeHtml(stateInfo.label)}</span>`;
+  }
+  if (data.kind === "event") {
+    const event = data.event;
+    return `
+      <strong>${escapeHtml(event.label)}</strong><br>
+      ${escapeHtml(formatDate(event.date))} / ${escapeHtml(titleCase(event.event_type))}<br>
+      ${escapeHtml(tierLabels[event.relationship_tier] || "Context")}<br>
+      <span>${escapeHtml((event.relationship_reasons || []).join("; "))}</span>`;
+  }
+  return "";
+}
+
+function renderTradeChart() {
+  if (!state.tradeChart) return;
+  if (!state.selectedTimelines.length) {
+    state.tradeChart.clear();
+    state.tradeChart.setOption({
+      graphic: {
+        type: "text",
+        left: "center",
+        top: "middle",
+        style: {
+          text: "Select at least one official to build a comparison.",
+          fill: "#6d7a84",
+          font: "600 13px system-ui, sans-serif",
+          textAlign: "center",
+        },
+      },
+    });
+    return;
+  }
+  state.chartExtent = calculateExtent();
+  const names = state.selectedTimelines.map((official) => official.full_name);
+  const chartHeight = Math.max(state.compactLayout ? 430 : 440, 210 + names.length * (state.compactLayout ? 78 : 86));
+  $("tradeChart").style.height = `${chartHeight}px`;
+  state.tradeChart.resize();
+  const xAxis = {
+    type: state.mode === "calendar" ? "time" : "value",
+    min: state.chartExtent.min,
+    max: state.chartExtent.max,
+    axisLabel: { color: "#6d7a84", fontSize: 11, formatter: axisLabel, hideOverlap: true },
+    axisLine: { lineStyle: { color: "#aebdb6" } },
+    splitLine: { show: true, lineStyle: { color: "#e3e9e6" } },
+  };
+  const zoom = state.zoomPercent || { start: 0, end: 100 };
+  state.tradeChart.setOption(
+    {
+      animationDuration: 250,
+      grid: {
+        left: state.compactLayout ? 108 : 178,
+        right: state.compactLayout ? 18 : 32,
+        top: 34,
+        bottom: 88,
+        containLabel: false,
+      },
+      tooltip: {
+        trigger: "item",
+        confine: true,
+        backgroundColor: "#17212b",
+        borderWidth: 0,
+        textStyle: { color: "#ffffff", fontSize: 12 },
+        formatter: tooltipFormatter,
+      },
+      xAxis,
+      yAxis: {
+        type: "value",
+        inverse: true,
+        min: -0.55,
+        max: Math.max(0.55, names.length - 0.45),
+        interval: 1,
+        axisLabel: {
+          color: "#17212b",
+          fontSize: state.compactLayout ? 10 : 12,
+          fontWeight: 700,
+          width: state.compactLayout ? 92 : 155,
+          overflow: "truncate",
+          formatter: (value) => names[Math.round(value)] || "",
+        },
+        axisTick: { show: false },
+        axisLine: { show: false },
+        splitLine: { show: true, lineStyle: { color: "#eef2f0" } },
+      },
+      dataZoom: [
+        { type: "inside", xAxisIndex: 0, filterMode: "none", start: zoom.start, end: zoom.end },
+        {
+          type: "slider",
+          xAxisIndex: 0,
+          filterMode: "none",
+          start: zoom.start,
+          end: zoom.end,
+          bottom: 24,
+          height: 24,
+          borderColor: "#c5d1cc",
+          fillerColor: "rgba(11,107,120,0.16)",
+          handleStyle: { color: "#0b6b78" },
+          textStyle: { color: "#6d7a84", fontSize: 10 },
+        },
+      ],
+      series: buildChartSeries(),
+    },
+    true
+  );
+}
+
+function handleChartClick(params) {
+  const data = params.data || {};
+  if (data.kind === "event") {
+    state.activeEventId = data.event.id;
+    state.activeEventContext = data.event;
+    $("eventSearch").value = data.event.label || state.eventMap.get(data.event.id)?.label || "";
+    updateModeControls();
+    renderWorkbench();
+    return;
+  }
+  if (data.kind === "trade" && data.trades?.length) {
+    selectTrade(data.trades[0].id);
+  }
+}
+
+function handleDataZoom(event) {
+  const zoom = event.batch?.[0] || event;
+  if (!Number.isFinite(zoom.start) || !Number.isFinite(zoom.end)) return;
+  state.zoomPercent = { start: zoom.start, end: zoom.end };
+  renderTransactions();
+}
+
+function zoomedXRange() {
+  if (!state.chartExtent || !state.zoomPercent) return state.chartExtent;
+  const span = state.chartExtent.max - state.chartExtent.min;
   return {
-    min: Math.min(...clean, 0),
-    max: Math.max(...clean, 1),
+    min: state.chartExtent.min + (span * state.zoomPercent.start) / 100,
+    max: state.chartExtent.min + (span * state.zoomPercent.end) / 100,
   };
 }
 
-function timelineTickLabel(value, extent) {
-  if (state.timelineAxis !== "calendar") {
-    const years = Math.round(value / 365);
-    return years <= 0 ? "Start" : `Y${years}`;
-  }
-  const date = new Date(value * 86400000);
-  return String(date.getUTCFullYear());
-}
-
-function timelineEventById(eventId) {
-  for (const official of state.data.career_trade_timeline?.officials || []) {
-    const found = (official.events || []).find((event) => event.id === eventId);
-    if (found) return found;
-  }
-  return (state.data.career_trade_timeline?.events || []).find((event) => event.id === eventId) || null;
-}
-
-function selectedEventRelatedTrades(event) {
-  if (!event) return [];
-  const eventDay = dateToDay(event.date);
-  return selectedTimelineOfficials()
+function visibleTransactionRows() {
+  const zoom = zoomedXRange();
+  return state.selectedTimelines
     .flatMap((official) =>
-      (official.trades || [])
-        .filter((trade) => Math.abs(dateToDay(trade.date) - eventDay) <= (event.window_days || 180))
-        .map((trade) => ({
-          official: official.full_name,
-          ...trade,
-          days_from_event: dateToDay(trade.date) - eventDay,
-        }))
+      filteredTrades(official).map((trade) => ({ ...trade, officialId: official.id, officialName: official.full_name }))
     )
-    .sort((a, b) => Math.abs(a.days_from_event) - Math.abs(b.days_from_event))
-    .slice(0, 12);
+    .filter((trade) => {
+      const x = xValueForTrade(trade);
+      return !zoom || !Number.isFinite(x) || (x >= zoom.min && x <= zoom.max);
+    })
+    .sort((a, b) => b.date.localeCompare(a.date) || a.officialName.localeCompare(b.officialName));
 }
 
-function sourceLinks(event) {
-  return (event?.source_urls || [])
-    .map(
-      (url, index) =>
-        `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}</a>`
-    )
-    .join("");
-}
-
-function careerTimelineSvg(officials) {
-  const width = 1120;
-  const laneHeight = 104;
-  const height = 112 + Math.max(1, officials.length) * laneHeight;
-  const left = 190;
-  const right = 42;
-  const extent = timelineExtent(officials);
-  const span = Math.max(1, extent.max - extent.min);
-  const xFor = (value) => left + ((value - extent.min) / span) * (width - left - right);
-  const ticks = Array.from({ length: 6 }, (_, index) => extent.min + (span / 5) * index);
-
-  return `
-    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Career trade timeline">
-      <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
-      ${ticks
-        .map((tick) => {
-          const x = xFor(tick);
+function renderTransactions() {
+  const rows = visibleTransactionRows();
+  $("transactionCount").textContent = `${numberFormat.format(rows.length)} record${rows.length === 1 ? "" : "s"}`;
+  $("transactionRows").innerHTML = rows.length
+    ? rows
+        .slice(0, 500)
+        .map((trade) => {
+          const stateInfo = recordState(trade);
           return `
-            <line x1="${x}" y1="48" x2="${x}" y2="${height - 44}" stroke="#dbe4e0"></line>
-            <text x="${x - 16}" y="${height - 16}" fill="#64706a" font-size="12">${escapeHtml(timelineTickLabel(tick, extent))}</text>
-          `;
+            <tr data-trade-id="${escapeHtml(trade.id)}" class="${trade.id === state.selectedTradeId ? "selected" : ""}" tabindex="0" aria-selected="${trade.id === state.selectedTradeId}">
+              <td><strong>${escapeHtml(trade.officialName)}</strong><small>${escapeHtml(state.officialMap.get(trade.officialId)?.branch || "")}</small></td>
+              <td>${escapeHtml(formatDate(trade.date))}</td>
+              <td>${escapeHtml(formatDate(trade.reported_date))}</td>
+              <td><strong>${escapeHtml(trade.action)}</strong></td>
+              <td><strong>${escapeHtml(trade.ticker || trade.asset_display_name)}</strong><small>${escapeHtml(trade.asset_display_name)}</small></td>
+              <td>${escapeHtml(trade.value_range_label)}</td>
+              <td>${escapeHtml(lagLabel(trade.disclosure_lag_days))}</td>
+              <td><span class="state-label ${stateInfo.className}">${escapeHtml(stateInfo.label)}</span></td>
+            </tr>`;
         })
-        .join("")}
-      ${officials
-        .map((official, index) => {
-          const y = 74 + index * laneHeight;
-          const color = branchColors[official.branch] || "#0b6b8f";
-          const startValue = state.timelineAxis !== "calendar" ? 0 : dateToDay(official.service_start);
-          const endValue =
-            state.timelineAxis !== "calendar"
-              ? dateToDay(official.service_end) - dateToDay(official.service_start)
-              : dateToDay(official.service_end);
-          const visibleTrades = (official.trades || []).filter(timelineTradeVisible);
-          const visibleEvents = (official.events || []).filter(timelineEventVisible);
-          const visibleClusters = (official.trade_clusters || []).filter((cluster) =>
-            visibleTrades.some((trade) => trade.date >= cluster.start_date && trade.date <= cluster.end_date)
-          );
-          const sourceStatuses = (official.disclosure_sources || [])
-            .map((source) => source.source_status)
-            .filter(Boolean)
-            .join(" / ");
-          return `
-            <text x="24" y="${y - 22}" fill="#17201d" font-size="14" font-weight="800">${escapeHtml(official.full_name)}</text>
-            <text x="24" y="${y - 4}" fill="#64706a" font-size="12">${escapeHtml(official.stats?.disclosure_status || official.branch)}</text>
-            <text x="24" y="${y + 14}" fill="#8a5a12" font-size="11">${escapeHtml(official.stats?.confidence_label || sourceStatuses || "Source status pending")}</text>
-            <line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}" stroke="#edf4ef" stroke-width="12" stroke-linecap="round"></line>
-            ${
-              Number.isFinite(startValue) && Number.isFinite(endValue)
-                ? `<line x1="${xFor(startValue)}" y1="${y}" x2="${xFor(Math.max(endValue, startValue + 1))}" y2="${y}" stroke="${color}" stroke-width="7" stroke-linecap="round"></line>`
-                : ""
-            }
-            ${
-              visibleTrades.length
-                ? visibleTrades
-                    .map((trade) => {
-                      const value = state.timelineAxis !== "calendar" ? trade.career_day : dateToDay(trade.date);
-                      if (!Number.isFinite(value)) return "";
-                      const radius = Math.max(5, Math.min(14, Math.sqrt((trade.value_midpoint || 0) / 5000)));
-                      const fill = trade.asset_class === "crypto" ? "#b66a1d" : trade.action === "SELL" ? "#9f3a3a" : "#0b6b8f";
-                      const showPrice = state.timelineOverlay !== "hide-prices" && (state.timelineOverlay !== "crypto" || trade.asset_class === "crypto");
-                      const priceLabel = showPrice && trade.price_window?.closest_close ? ` / close ${trade.price_window.closest_close}` : "";
-                      return `
-                        <circle cx="${xFor(value)}" cy="${y}" r="${radius.toFixed(1)}" fill="${fill}" stroke="#fff" stroke-width="2">
-                          <title>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker || trade.asset_display_name} ${trade.value_range_label} on ${shortDate(trade.date)}${priceLabel} / ${trade.confidence_label || official.stats?.confidence_label || "confidence pending"}`)}</title>
-                        </circle>
-                      `;
-                    })
-                    .join("")
-                : `<text x="${left}" y="${y + 28}" fill="#64706a" font-size="12">No reviewed or parser-preview trade rows in this snapshot</text>`
-            }
-            ${visibleClusters
-              .map((cluster) => {
-                const clusterValue =
-                  state.timelineAxis !== "calendar"
-                    ? dateToDay(cluster.start_date) - dateToDay(official.service_start)
-                    : dateToDay(cluster.start_date);
-                if (!Number.isFinite(clusterValue)) return "";
-                const x = xFor(clusterValue);
-                return `
-                  <g>
-                    <rect x="${x - 24}" y="${y + 20}" width="48" height="18" rx="6" fill="#17212b">
-                      <title>${escapeHtml(`${cluster.trade_count} trades from ${shortDate(cluster.start_date)} to ${shortDate(cluster.end_date)}: ${cluster.tickers.join(", ")}`)}</title>
-                    </rect>
-                    <text x="${x - 18}" y="${y + 33}" fill="#ffffff" font-size="11" font-weight="800">${cluster.trade_count} trades</text>
-                  </g>
-                `;
-              })
-              .join("")}
-            ${visibleEvents
-              .map((event) => {
-                const value = state.timelineAxis !== "calendar" ? event.career_day : dateToDay(event.date);
-                if (!Number.isFinite(value)) return "";
-                const x = xFor(value);
-                return `
-                  <rect x="${x - 5}" y="${y - 36}" width="10" height="10" transform="rotate(45 ${x} ${y - 31})" fill="#7154a6" data-timeline-event="${escapeHtml(event.id)}">
-                    <title>${escapeHtml(`${event.label}: ${event.description}`)}</title>
-                  </rect>
-                `;
-              })
-              .join("")}
-          `;
-        })
-        .join("")}
-    </svg>
-  `;
+        .join("")
+    : '<tr><td colspan="8" class="empty-state">No transaction records match this view.</td></tr>';
 }
 
-function renderTimelineEventDetail() {
-  const event = state.activeTimelineEventId ? timelineEventById(state.activeTimelineEventId) : null;
-  const relatedTrades = selectedEventRelatedTrades(event);
-  $("timelineEventDetail").innerHTML = event
-    ? `
-      <div>
-        <p class="eyebrow">${escapeHtml(roleCategoryLabel(event.event_type))} / ${shortDate(event.date)}</p>
-        <h3>${escapeHtml(event.label)}</h3>
-        <p>${escapeHtml(event.description || "No event description available.")}</p>
-        <small>${escapeHtml(event.source || "CivicLedger event context")} / ${escapeHtml(event.relevance || "general")} / relevance ${fmt.format(event.relevance_score || 0)}</small>
-        <p>${escapeHtml(event.relevance_reason || "General public context")}</p>
-        <div class="event-detail-links">${sourceLinks(event) || '<span class="muted">No source link recorded.</span>'}</div>
-        <div class="event-related-trades">
-          <strong>Related selected-lane trades</strong>
-          ${
-            relatedTrades.length
-              ? relatedTrades
-                  .map(
-                    (trade) =>
-                      `<span>${escapeHtml(trade.official)}: ${escapeHtml(trade.action)} ${escapeHtml(trade.ticker || trade.asset_display_name)} ${escapeHtml(trade.value_range_label)} (${trade.days_from_event > 0 ? "+" : ""}${fmt.format(trade.days_from_event)}d)</span>`
-                  )
-                  .join("")
-              : '<span>No selected-lane trades within this event window.</span>'
-          }
-        </div>
-      </div>
-    `
-    : `
-      <div>
-        <p class="eyebrow">Event detail</p>
-        <h3>Select an event marker</h3>
-        <p>Event markers open here with a concise source-aware summary while the chart stays in view.</p>
-      </div>
-    `;
+function findTrade(id) {
+  for (const official of state.selectedTimelines) {
+    const trade = (official.trades || []).find((row) => row.id === id);
+    if (trade) return { trade, official };
+  }
+  return null;
 }
 
-function renderCareerTimeline() {
-  const timeline = state.data.career_trade_timeline || {};
-  const officials = selectedTimelineOfficials();
-  $("careerAxisButton").classList.toggle("active", state.timelineAxis === "career");
-  $("calendarAxisButton").classList.toggle("active", state.timelineAxis === "calendar");
-  $("eventWindowAxisButton").classList.toggle("active", state.timelineAxis === "event_window");
-  $("careerTimelineSummary").innerHTML = [
-    ["Baseline Officials", timeline.summary?.default_official_count || 0],
-    ["Compared Lanes", officials.length],
-    ["Timeline Trades", officials.reduce((total, official) => total + (official.trades || []).filter(timelineTradeVisible).length, 0)],
-    ["OGE Docs", timeline.summary?.presidential_oge_document_count || 0],
-    ["OGE Preview", timeline.summary?.presidential_oge_parser_preview_transaction_count || 0],
-    ["Crypto Trades", officials.reduce((total, official) => total + (official.trades || []).filter((trade) => timelineTradeVisible(trade) && trade.asset_class === "crypto").length, 0)],
-    ["Clusters", officials.reduce((total, official) => total + (official.trade_clusters || []).length, 0)],
-    ["Event Markers", officials.reduce((total, official) => total + (official.events || []).filter(timelineEventVisible).length, 0)],
-  ]
-    .map(
-      ([label, value]) => `
-        <div class="mini-stat">
-          <strong>${fmt.format(value)}</strong>
-          <span>${escapeHtml(label)}</span>
-        </div>
-      `
-    )
-    .join("");
-  $("careerTimelineChart").innerHTML = officials.length
-    ? careerTimelineSvg(officials)
-    : '<p class="muted">Select officials to build a timeline.</p>';
-  document.querySelectorAll("[data-timeline-event]").forEach((marker) => {
-    marker.addEventListener("click", () => {
-      state.activeTimelineEventId = marker.getAttribute("data-timeline-event");
-      renderTimelineEventDetail();
-    });
-  });
-  renderTimelineEventDetail();
+function selectTrade(id) {
+  state.selectedTradeId = id;
+  renderRecordDetail();
+  renderTransactions();
 }
 
-function renderSelectedChips(people) {
-  $("selectedChips").innerHTML =
-    people
-      .map(
-        (person) => `
-          <button class="selected-chip" data-remove-compare="${escapeHtml(person.id)}">
-            <span>${escapeHtml(person.full_name)}</span>
-            <small>${escapeHtml(person.branch)}</small>
-          </button>
-        `
-      )
-      .join("") || '<span class="muted">Select officials from the results list to overlay them.</span>';
-
-  document.querySelectorAll("[data-remove-compare]").forEach((button) => {
-    button.addEventListener("click", () => toggleComparison(button.getAttribute("data-remove-compare")));
-  });
-}
-
-function renderComparison() {
-  const compared = peopleByIds(state.comparisonIds);
-  renderSelectedChips(compared);
-  $("comparisonGraph").innerHTML = comparisonGraphSvg(compared);
-  $("comparisonCount").textContent = `${fmt.format(compared.length)} selected`;
-}
-
-function renderProfile(person) {
-  const latestRole = person.primary_role;
-  $("profilePanel").innerHTML = `
-    <div class="profile-header">
-      <div>
-        <p class="eyebrow">${escapeHtml(person.branch)}</p>
-        <h2>${escapeHtml(person.full_name)}</h2>
-        <p>${escapeHtml(affiliation(person))}</p>
-      </div>
-      <span class="badge gold">${fmt.format(person.roles.length)} role${person.roles.length === 1 ? "" : "s"}</span>
-    </div>
-
-    <div class="profile-grid">
-      <div class="mini-stat"><strong>${escapeHtml(latestRole ? termLabel(latestRole.presidential_term) : "n/a")}</strong><span>Latest term</span></div>
-      <div class="mini-stat"><strong>${escapeHtml(roleCategoryLabel(latestRole?.role_category || "n/a"))}</strong><span>Role type</span></div>
-      <div class="mini-stat"><strong>${escapeHtml(latestRole?.source_metadata?.chamber || latestRole?.source_metadata?.congress_number || "n/a")}</strong><span>Chamber / congress</span></div>
-      <div class="mini-stat"><strong>${shortDate(latestRole?.service_start)}</strong><span>Latest start</span></div>
-      <div class="mini-stat"><strong>${escapeHtml(latestRole?.source_tier || "n/a")}</strong><span>Source tier</span></div>
-    </div>
-
-    <div class="chart-shell">
-      <div class="chart-title"><span>Role Records</span><span>Source-backed official data</span></div>
-      <table class="trade-table role-table">
-        <thead>
-          <tr>
-            <th>Term</th>
-            <th>Chamber</th>
-            <th>Role</th>
-            <th>Agency / Court</th>
-            <th>Start</th>
-            <th>Source</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${person.roles
-            .map(
-              (role) => `
-                <tr>
-                  <td>${escapeHtml(termLabel(role.presidential_term))}</td>
-                  <td>${escapeHtml(compact([
-                    role.source_metadata?.chamber,
-                    role.source_metadata?.congress_number ? `${role.source_metadata.congress_number}th` : null,
-                    role.source_metadata?.state,
-                    role.source_metadata?.district,
-                  ]) || "n/a")}</td>
-                  <td>${escapeHtml(role.role_title)}</td>
-                  <td>${escapeHtml(role.court || role.agency || role.administration)}</td>
-                  <td>${shortDate(role.service_start)}</td>
-                  <td><a href="${escapeHtml(role.source_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(role.source_tier)}</a></td>
-                </tr>
-              `
-            )
-            .join("")}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-function renderExplorer() {
-  renderBranchChart();
-  const people = filteredPeople();
-  if (!people.length) {
-    renderPeopleList(people);
-    renderComparison();
-    renderCareerTimeline();
-    $("profilePanel").innerHTML = `
-      <div class="empty-state">
-        <h3>No officials match these filters</h3>
-        <p>Clear filters or choose another branch, term, role type, or search query.</p>
-      </div>
-    `;
+function renderRecordDetail() {
+  const found = findTrade(state.selectedTradeId);
+  if (!found) {
+    $("recordDetail").innerHTML = `
+      <p class="eyebrow">Transaction evidence</p>
+      <h2>Select a transaction marker or row</h2>
+      <p>Source document, filing lag, record state, and parser evidence will appear here.</p>`;
     return;
   }
-  if (!people.some((person) => person.id === state.selectedId)) {
-    state.selectedId = people[0].id;
-  }
-  ensureComparisonHas(state.selectedId);
-  renderPeopleList(people);
-  renderComparison();
-  renderCareerTimeline();
-  const selected = state.explorerPeople.find((person) => person.id === state.selectedId);
-  if (selected) renderProfile(selected);
+  const { trade, official } = found;
+  const stateInfo = recordState(trade);
+  const sourceLink = trade.source_url
+    ? `<a href="${escapeHtml(trade.source_url)}" target="_blank" rel="noopener noreferrer">Official source document</a>`
+    : "";
+  const price = trade.price_window?.closest_close;
+  const benchmark = trade.benchmark_price_window?.closest_close;
+  $("recordDetail").innerHTML = `
+    <p class="eyebrow">Transaction evidence</p>
+    <h2>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker || trade.asset_display_name}`)}</h2>
+    <p>${escapeHtml(trade.asset_display_name)} / ${escapeHtml(trade.value_range_label)}</p>
+    <div class="detail-meta">
+      <span>Trade ${escapeHtml(formatDate(trade.date))}</span>
+      <span>Reported ${escapeHtml(formatDate(trade.reported_date))}</span>
+      <span>${escapeHtml(lagLabel(trade.disclosure_lag_days))} filing lag</span>
+      <span>${escapeHtml(titleCase(trade.asset_class))}</span>
+      <span class="state-label ${stateInfo.className}">${escapeHtml(stateInfo.label)}</span>
+    </div>
+    <div class="detail-meta">
+      ${price ? `<span>${escapeHtml(trade.ticker)} close ${escapeHtml(price)}</span>` : ""}
+      ${benchmark ? `<span>${escapeHtml(trade.benchmark_symbol)} close ${escapeHtml(benchmark)}</span>` : ""}
+      ${trade.parsing_confidence != null ? `<span>Parser confidence ${Math.round(Number(trade.parsing_confidence) * 100)}%</span>` : ""}
+      ${trade.source_page ? `<span>Source page ${numberFormat.format(trade.source_page)}</span>` : ""}
+    </div>
+    <div class="evidence-links">${sourceLink || '<span class="state-label">Source link unavailable in this snapshot</span>'}</div>
+    <p>No causation, intent, ethics, legality, or investment conclusion is implied.</p>`;
 }
 
-function renderSources() {
-  $("sourceGrid").innerHTML = state.data.sources
-    .map(
-      (source) => `
-        <article class="source-card">
-          <div class="profile-header">
-            <div>
-              <h3>${escapeHtml(source.name)}</h3>
-              <p>${escapeHtml(source.records_scope)}</p>
-            </div>
-            <span class="badge">${escapeHtml(source.branch)}</span>
-          </div>
-          <div class="source-meta">
-            <span class="badge">${fmt.format(source.fixture_counts.raw_documents)} raw docs</span>
-            <span class="badge">${fmt.format(source.fixture_counts.filings)} filings</span>
-            <span class="badge">${fmt.format(source.fixture_counts.trades)} trades</span>
-            <span class="badge gold">${escapeHtml(source.readiness.status)}</span>
-          </div>
-          <p><strong>Access mode:</strong> ${escapeHtml(source.access_mode)}</p>
-          <p><strong>Readiness:</strong> ${escapeHtml(source.readiness.label)}</p>
-          <p><strong>Missing:</strong> ${escapeHtml((source.readiness.missing_capabilities || []).join(" / ") || "n/a")}</p>
-          <p><a href="${escapeHtml(source.source_url)}" target="_blank" rel="noopener noreferrer">Official source</a></p>
-        </article>
-      `
+function transactionsInsideEventWindow(event) {
+  if (!event) return [];
+  return state.selectedTimelines
+    .flatMap((official) =>
+      (official.trades || [])
+        .filter(tradeMatchesAsset)
+        .map((trade) => ({ ...trade, officialName: official.full_name, daysFromEvent: daysBetween(trade.date, event.date) }))
     )
+    .filter((trade) => Math.abs(trade.daysFromEvent) <= state.eventWindowDays)
+    .sort((a, b) => Math.abs(a.daysFromEvent) - Math.abs(b.daysFromEvent))
+    .slice(0, 16);
+}
+
+function renderEventDetail() {
+  const event = selectedEvent();
+  if (!event) {
+    $("eventDetail").innerHTML = `
+      <p class="eyebrow">Event evidence</p>
+      <h2>Select an event marker</h2>
+      <p>Event evidence and transactions inside the chosen time window will appear here.</p>`;
+    return;
+  }
+  const transactions = transactionsInsideEventWindow(event);
+  const sources = (event.source_urls || [])
+    .map((url, index) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}</a>`)
+    .join("");
+  const reasons = event.relationship_reasons || [];
+  const sourceReference = event.docket_number
+    ? `Docket ${event.docket_number}${event.citation ? ` / ${event.citation}` : ""}`
+    : event.law_number
+      ? `Public Law ${event.law_number}`
+      : event.executive_order_number
+        ? `Executive Order ${event.executive_order_number}`
+        : "";
+  $("eventDetail").innerHTML = `
+    <p class="eyebrow">${escapeHtml(titleCase(event.event_type))} / ${escapeHtml(formatDate(event.date))}</p>
+    <h2>${escapeHtml(event.label)}</h2>
+    <p>${escapeHtml(event.description || "No event summary is available.")}</p>
+    <div class="detail-meta">
+      <span>${escapeHtml(tierLabels[event.relationship_tier] || "Global context")}</span>
+      <span>${escapeHtml(event.editor_status || "source status")}</span>
+      <span>${escapeHtml(event.source || "CivicLedger event source")}</span>
+      ${sourceReference ? `<span>${escapeHtml(sourceReference)}</span>` : ""}
+    </div>
+    ${reasons.length ? `<p>${escapeHtml(reasons.join("; "))}</p>` : ""}
+    <div class="evidence-links">${sources || '<span class="state-label">No source link recorded</span>'}</div>
+    <div class="window-transactions">
+      <strong>Transactions within ${numberFormat.format(state.eventWindowDays)} days:</strong>
+      ${
+        transactions.length
+          ? transactions
+              .map(
+                (trade) =>
+                  `<button type="button" data-window-trade="${escapeHtml(trade.id)}">${escapeHtml(trade.officialName)} / ${escapeHtml(trade.action)} ${escapeHtml(trade.ticker || trade.asset_display_name)} / ${trade.daysFromEvent > 0 ? "+" : ""}${numberFormat.format(trade.daysFromEvent)}d</button>`
+              )
+              .join("")
+          : '<span class="state-label">None in selected lanes</span>'
+      }
+    </div>`;
+}
+
+function renderSummary() {
+  const trades = state.selectedTimelines.flatMap(filteredTrades);
+  const production = trades.filter((trade) => trade.public_production_trade === true).length;
+  const preview = trades.filter((trade) => String(trade.record_status || "").includes("preview")).length;
+  const tickerMapped = trades.filter((trade) => trade.ticker).length;
+  const events = state.selectedTimelines.reduce(
+    (total, official) => total + (official.events || []).filter(eventVisible).filter(eventInModeWindow).length,
+    0
+  );
+  const metrics = [
+    [state.selectedTimelines.length, "Officials"],
+    [trades.length, "Transactions"],
+    [production, "Reviewed production"],
+    [preview, "Official preview"],
+    [tickerMapped, "Ticker-mapped"],
+    [events, "Visible event markers"],
+  ];
+  $("workbenchSummary").innerHTML = metrics
+    .map(([value, label]) => `<div class="summary-item"><strong>${numberFormat.format(value)}</strong><span>${escapeHtml(label)}</span></div>`)
     .join("");
 }
 
-function renderCompleteness() {
-  const dashboard = state.data.disclosure_pipeline?.completeness_dashboard || {};
-  const summary = dashboard.summary || {};
-  const branches = dashboard.branches || [];
-  const rows = dashboard.rows || [];
-  const batches = state.data.disclosure_pipeline?.retrieval_batches?.batches || [];
-  const alerts = state.data.disclosure_pipeline?.source_staleness_alerts?.alerts || [];
-  const production = state.data.disclosure_pipeline?.production_promotions || {};
-  $("completenessSummary").innerHTML = [
-    ["Queue Items", summary.queue_item_count || 0],
-    ["Retrieval Batches", summary.retrieval_batch_count || 0],
-    ["Batch Candidates", summary.retrieval_candidate_count || 0],
-    ["Raw Documents", summary.archived_raw_document_count || 0],
-    ["Reviewed Fixtures", summary.reviewed_fixture_promotion_count || 0],
-    ["Public Trade Rows", summary.reviewed_public_trade_count || 0],
-    ["Open Alerts", summary.open_warning_count || 0],
-  ]
-    .map(
-      ([label, value]) => `
-        <div class="mini-stat">
-          <strong>${fmt.format(value)}</strong>
-          <span>${escapeHtml(label)}</span>
-        </div>
-      `
-    )
-    .join("");
+function renderChartHeader() {
+  const modeCopy = {
+    career: ["Career trade activity", "Active service time is cumulative; inactive gaps are excluded and term breaks remain visible."],
+    calendar: ["Calendar trade activity", "Officials, transactions, and events share actual dates; inactive service gaps remain visible."],
+    event: [
+      selectedEvent() ? `${selectedEvent().label} event window` : "Event window",
+      `The selected event is day 0; transactions are shown within ${numberFormat.format(state.eventWindowDays)} days before and after.`,
+    ],
+  };
+  $("chartTitle").textContent = modeCopy[state.mode][0];
+  $("chartDescription").textContent = modeCopy[state.mode][1];
+}
 
-  $("completenessGrid").innerHTML =
-    branches
-      .map((branch) => {
-        const branchClass = String(branch.branch || "").toLowerCase();
-        return `
-          <article class="completeness-card ${escapeHtml(branchClass)}">
-            <span>${escapeHtml(branch.branch)}</span>
-            <strong>${fmt.format(branch.queue_item_count || 0)} queued</strong>
-            <small>${fmt.format(branch.official_count || 0)} officials / ${fmt.format(branch.role_count || 0)} roles</small>
-            <small>${fmt.format(branch.archived_raw_document_count || 0)} raw docs / ${fmt.format(branch.reviewed_public_trade_count || 0)} reviewed public trades</small>
-            <small>${fmt.format(branch.retrieval_candidate_count || 0)} batch candidates / ${fmt.format(branch.open_alert_count || 0)} alerts</small>
-            <span class="readiness-chip ${escapeHtml(branch.readiness_status || "")}">${escapeHtml(roleCategoryLabel(branch.readiness_status || "pending"))}</span>
-          </article>
-        `;
-      })
-      .join("") || '<p class="muted">No completeness dashboard rows generated yet.</p>';
-
-  $("completenessCount").textContent = `${fmt.format(rows.length)} rows`;
-  $("completenessRows").innerHTML =
-    rows
-      .slice(0, 96)
-      .map(
-        (row) => {
-          const taskKey = `${row.source_id}|${row.presidential_term}`;
-          return `
-          <tr>
-            <td>
-              <strong>${escapeHtml(row.branch)}</strong>
-              <small>${escapeHtml(termLabel(row.presidential_term))}</small>
-            </td>
-            <td>${escapeHtml(row.source_id)}</td>
-            <td>${fmt.format(row.official_count || 0)} officials<br /><small>${fmt.format(row.role_count || 0)} roles</small></td>
-            <td>${fmt.format(row.queue_item_count || 0)}<br /><small>${fmt.format(row.current_queue_item_count || 0)} current</small></td>
-            <td>${fmt.format(row.archived_raw_document_count || 0)}</td>
-            <td>${fmt.format(row.reviewed_public_trade_count || 0)}</td>
-            <td><span class="readiness-chip ${escapeHtml(row.readiness_status || "")}">${escapeHtml(roleCategoryLabel(row.readiness_status || "pending"))}</span></td>
-            <td><button class="row-action" data-source-task="${escapeHtml(taskKey)}">Details</button></td>
-          </tr>
-        `;
-        }
-      )
-      .join("");
-
-  function renderTask(row) {
-    const batch = batches.find((item) => item.source_id === row.source_id);
-    const sourceAlerts = alerts.filter((item) => !item.source_id || item.source_id === row.source_id);
-    const candidates = (batch?.candidates || []).slice(0, 6);
-    $("sourceTaskDetail").innerHTML = `
-      <div>
-        <p class="eyebrow">Source task detail</p>
-        <h3>${escapeHtml(row.source_id)} / ${escapeHtml(termLabel(row.presidential_term))}</h3>
-        <p>${escapeHtml(batch?.instruction || "No retrieval batch generated for this source yet.")}</p>
-        <div class="source-task-meta">
-          <span class="readiness-chip ${escapeHtml(row.retrieval_batch_status || "")}">${escapeHtml(roleCategoryLabel(row.retrieval_batch_status || "not_batched"))}</span>
-          <span>${fmt.format(row.queue_item_count || 0)} queued</span>
-          <span>${fmt.format(row.retrieval_candidate_count || 0)} first-pass candidates</span>
-          <span>${fmt.format(production.summary?.reviewed_public_trade_count || 0)} reviewed public trades</span>
-        </div>
-        <div class="task-columns">
-          <div>
-            <strong>First candidates</strong>
-            ${
-              candidates.length
-                ? candidates
-                    .map(
-                      (candidate) =>
-                        `<p>${escapeHtml(candidate.full_name)} <small>${escapeHtml(compact([
-                          candidate.chamber,
-                          candidate.congress_number ? `${candidate.congress_number}th Congress` : null,
-                          candidate.state,
-                          candidate.court,
-                          candidate.agency,
-                        ]))}</small></p>`
-                    )
-                    .join("")
-                : '<p class="muted">No candidates available.</p>'
-            }
-          </div>
-          <div>
-            <strong>Open alerts</strong>
-            ${
-              sourceAlerts.length
-                ? sourceAlerts
-                    .map((alert) => `<p>${escapeHtml(alert.severity)}: ${escapeHtml(alert.message)}</p>`)
-                    .join("")
-                : '<p class="muted">No open source alerts.</p>'
-            }
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  const defaultRow = rows.find((row) => row.source_id === "house-financial-disclosure") || rows[0];
-  if (defaultRow) renderTask(defaultRow);
-  document.querySelectorAll("[data-source-task]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const [sourceId, termId] = button.getAttribute("data-source-task").split("|");
-      const row = rows.find((item) => item.source_id === sourceId && item.presidential_term === termId);
-      if (row) renderTask(row);
-    });
+function renderChartAlternative() {
+  const descriptions = state.selectedTimelines.map((official) => {
+    const trades = filteredTrades(official);
+    const buys = trades.filter((trade) => trade.action === "BUY").length;
+    const sells = trades.filter((trade) => trade.action === "SELL").length;
+    return `${official.full_name}, ${official.branch}: ${trades.length} displayed transactions, ${buys} buys, ${sells} sells, ${(official.service_periods || []).length} service periods.`;
   });
+  $("chartAlternative").textContent = descriptions.join(" ");
 }
 
-function renderEvents() {
-  $("eventsList").innerHTML = state.data.events
-    .map(
-      (event) => `
-        <article class="event-card">
-          <div class="event-date">${shortDate(event.date)}</div>
-          <div>
-            <h3>${escapeHtml(event.label)}</h3>
-            <p>${escapeHtml(event.description)}</p>
-          </div>
-        </article>
-      `
-    )
+async function loadMarket(symbol) {
+  if (!symbol) return null;
+  if (state.marketCache.has(symbol)) return state.marketCache.get(symbol);
+  const partition = state.manifest.partitions.market[symbol];
+  if (!partition) return null;
+  const payload = await fetchJson(partition);
+  state.marketCache.set(symbol, payload);
+  return payload;
+}
+
+function marketPointValue(point) {
+  return point.adj_close ?? point.close ?? point.value ?? null;
+}
+
+async function renderMarketChart() {
+  const token = ++state.marketToken;
+  const [kind, symbol] = state.assetFilter.split(":");
+  if (kind !== "ticker" || !symbol || state.mode === "career") {
+    $("marketShell").hidden = true;
+    return;
+  }
+  const matchingTrade = state.selectedTimelines
+    .flatMap((official) => official.trades || [])
+    .find((trade) => trade.ticker === symbol);
+  const benchmark = matchingTrade?.benchmark_symbol || "SPY";
+  const [assetData, benchmarkData] = await Promise.all([loadMarket(symbol), loadMarket(benchmark)]);
+  if (token !== state.marketToken) return;
+  $("marketShell").hidden = false;
+  if (!state.marketChart) state.marketChart = window.echarts.init($("marketChart"), null, { renderer: "canvas" });
+  state.marketChart.resize();
+  const event = selectedEvent();
+  const extent = state.mode === "event"
+    ? { min: dateMs(event.date) - state.eventWindowDays * 86400000, max: dateMs(event.date) + state.eventWindowDays * 86400000 }
+    : state.chartExtent;
+
+  function normalizedSeries(payload, name) {
+    const points = (payload?.points || [])
+      .map((point) => [dateMs(point.date), Number(marketPointValue(point))])
+      .filter(([dateValue, value]) => Number.isFinite(dateValue) && Number.isFinite(value) && dateValue >= extent.min && dateValue <= extent.max);
+    if (!points.length) return { name, data: [] };
+    const baseline = points[0][1];
+    return { name, data: points.map(([dateValue, value]) => [dateValue, Number(((value / baseline) * 100).toFixed(3))]) };
+  }
+
+  const assetSeries = normalizedSeries(assetData, symbol);
+  const benchmarkSeries = normalizedSeries(benchmarkData, benchmark);
+  $("marketTitle").textContent = `${symbol} and ${benchmark} normalized price context`;
+  state.marketChart.setOption(
+    {
+      animationDuration: 200,
+      grid: { left: state.compactLayout ? 48 : 64, right: 24, top: 28, bottom: 54 },
+      tooltip: { trigger: "axis", valueFormatter: (value) => Number(value).toFixed(2) },
+      legend: { top: 0, textStyle: { color: "#4f5d68" } },
+      xAxis: { type: "time", min: extent.min, max: extent.max, axisLabel: { color: "#6d7a84", hideOverlap: true } },
+      yAxis: { type: "value", name: "Indexed", axisLabel: { color: "#6d7a84" }, splitLine: { lineStyle: { color: "#e3e9e6" } } },
+      series: [
+        { type: "line", name: assetSeries.name, data: assetSeries.data, showSymbol: false, lineStyle: { width: 2.5, color: "#0b6b78" }, itemStyle: { color: "#0b6b78" } },
+        { type: "line", name: benchmarkSeries.name, data: benchmarkSeries.data, showSymbol: false, lineStyle: { width: 2, color: "#a96f12" }, itemStyle: { color: "#a96f12" } },
+      ],
+      graphic:
+        assetSeries.data.length || benchmarkSeries.data.length
+          ? []
+          : [{ type: "text", left: "center", top: "middle", style: { text: "No market data is available for this date range.", fill: "#6d7a84" } }],
+    },
+    true
+  );
+}
+
+function renderDatasetStatus() {
+  const summary = state.overview.summary;
+  $("dataNotice").innerHTML = `
+    <strong>Current record boundary</strong>
+    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}.</span>`;
+  $("footerDataset").textContent = `Dataset ${state.overview.dataset_version} / generated ${state.overview.generated_at}`;
+
+  const metrics = [
+    [summary.tracked_public_official_count, "Tracked officials"],
+    [summary.house_ptr_processed_document_count, "House PTR documents"],
+    [summary.house_ptr_machine_readable_document_count, "Machine-readable PTRs"],
+    [summary.house_ptr_parser_preview_transaction_count, "House preview rows"],
+    [summary.house_ptr_ocr_required_document_count, "OCR backlog"],
+    [summary.market_price_point_count + summary.crypto_price_point_count, "Market price points"],
+  ];
+  $("coverageMetrics").innerHTML = metrics
+    .map(([value, label]) => `<div class="coverage-card"><strong>${numberFormat.format(value || 0)}</strong><span>${escapeHtml(label)}</span></div>`)
     .join("");
-}
 
-function renderTradeContext() {
-  const fred = state.data.fred_context || {};
-  const series = fred.series || {};
-  const market = state.data.market || {};
-  const marketSummary = market.summary || {};
-  const generatedAt = state.data.generated_at || "";
-  const coveredSymbols = marketSummary.covered_symbol_count ?? marketSummary.series_count ?? 0;
-  const missingSymbols = marketSummary.missing_symbol_count ?? 0;
-  const anomalyCount = marketSummary.anomaly_count ?? (market.anomaly_report || []).length;
-  const macroIds = ["FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "USREC"];
-  const marketFreshnessCard = `
-    <article class="macro-card market-card">
-      <span>Market prices</span>
-      <strong>${escapeHtml(marketSummary.active_market_price_provider || market.provider || "market")}</strong>
-      <small>${fmt.format(marketSummary.price_point_count || 0)} price points / generated ${shortDate(generatedAt)}</small>
-      <small>${fmt.format(coveredSymbols)} covered symbols / ${fmt.format(missingSymbols)} missing / ${fmt.format(anomalyCount)} anomalies</small>
-    </article>
-  `;
-  const macroCards = macroIds
-    .map((seriesId) => {
-      const item = series[seriesId];
-      const latest = latestObservation(item);
-      if (!item || !latest) return "";
+  const peopleByBranch = state.officials.reduce((counts, official) => {
+    counts[official.branch] = (counts[official.branch] || 0) + 1;
+    return counts;
+  }, {});
+  $("branchStatus").innerHTML = ["Legislative", "Executive", "Judicial"]
+    .map((branch) => {
+      const timeline = state.coverage.timeline_by_branch[branch] || {};
+      const roles = summary.public_official_role_counts_by_branch[branch] || 0;
       return `
-        <article class="macro-card">
-          <span>${escapeHtml(item.category)}</span>
-          <strong>${escapeHtml(formatMacroValue(latest.value, item.units))}</strong>
-          <small>${escapeHtml(item.label)} / ${shortDate(latest.date)}</small>
-        </article>
-      `;
+        <article class="branch-card ${escapeHtml(branch)}">
+          <h3>${escapeHtml(branch)}</h3>
+          <dl>
+            <dt>Tracked officials</dt><dd>${numberFormat.format(peopleByBranch[branch] || 0)}</dd>
+            <dt>Role records</dt><dd>${numberFormat.format(roles)}</dd>
+            <dt>Timeline trade rows</dt><dd>${numberFormat.format(timeline.trades || 0)}</dd>
+            <dt>Reviewed production</dt><dd>${numberFormat.format(timeline.production_trades || 0)}</dd>
+          </dl>
+        </article>`;
     })
     .join("");
-  $("macroSummary").innerHTML = marketFreshnessCard + macroCards;
 
-  $("sourcePriority").innerHTML = (fred.source_priorities || [])
+  $("sourceStatus").innerHTML = state.overview.sources
     .map(
       (source) => `
-        <article class="priority-row ${escapeHtml(source.status)}">
-          <strong>${escapeHtml(source.source)}</strong>
-          <span>${escapeHtml(source.status)}</span>
-          <p>${escapeHtml(source.reason)}</p>
-        </article>
-      `
+        <article class="source-row">
+          <div><h3>${escapeHtml(source.name)}</h3><small>${escapeHtml(source.branch)}</small></div>
+          <span class="state-label">${escapeHtml(titleCase(source.ingestion_status))}</span>
+          <p>${escapeHtml((source.readiness?.missing_capabilities || []).join(" / ") || "No missing capability recorded")}</p>
+          <a href="${escapeHtml(source.source_url)}" target="_blank" rel="noopener noreferrer">Official source</a>
+        </article>`
     )
     .join("");
-
-  const rows = state.data.trade_context?.rows || [];
-  $("tradeContextCount").textContent = `${fmt.format(rows.length)} demo rows`;
-  $("tradeContextRows").innerHTML =
-    rows
-      .slice(0, 36)
-      .map((row) => {
-        const assetMoves = moveList(row.horizon_moves?.asset);
-        const benchmarkMoves = moveList(row.horizon_moves?.benchmark);
-        const reportMoves = (row.trade_to_report_moves || [])
-          .map((move) => `${move.symbol}: ${signedPct(move.pct_change)}`)
-          .join(" / ");
-        const macro = Object.entries(row.macro_snapshot || {})
-          .map(([, item]) => `${item.label}: ${formatMacroValue(item.value, item.units)}`)
-          .slice(0, 3)
-          .join(" / ");
-        const events =
-          (row.nearby_events || [])
-            .map((event) => `${event.label} (${event.days_from_trade > 0 ? "+" : ""}${event.days_from_trade}d)`)
-            .slice(0, 2)
-            .join(" / ") || "No nearby context events";
-        return `
-          <tr>
-            <td>
-              <strong>${escapeHtml(row.person_name)}</strong>
-              <small>${escapeHtml(row.market_provider || "market")} prices / ${escapeHtml(row.context_label)}</small>
-            </td>
-            <td>${shortDate(row.trade_date)}<br /><small>Reported ${shortDate(row.reported_date)} / ${fmt.format(row.disclosure_lag_days)}d lag</small></td>
-            <td>
-              ${escapeHtml(row.action)} ${escapeHtml(row.ticker || "")}
-              <small>${escapeHtml(row.issuer_reference?.issuer_name || row.asset_display_name)}</small>
-              <small>${escapeHtml(row.issuer_reference?.sector || "Unmapped")} / benchmark ${escapeHtml(row.issuer_reference?.benchmark_symbol || "SPY")}</small>
-              <small>${escapeHtml(row.value_range_label)}</small>
-            </td>
-            <td>
-              <strong>${escapeHtml(row.price_window?.asset?.symbol || row.ticker || "Asset")}</strong>
-              <small>7/30/90d ${escapeHtml(assetMoves || "n/a")}</small>
-              <small>Trade-report ${escapeHtml(reportMoves || "n/a")}</small>
-              ${sparkline(row.price_window?.asset?.points || [], `${row.ticker} price path`)}
-              <small>Benchmark ${escapeHtml(row.price_window?.benchmark?.symbol || "SPY")}: ${escapeHtml(benchmarkMoves || "n/a")}</small>
-            </td>
-            <td>${escapeHtml(macro || "n/a")}</td>
-            <td>${escapeHtml(events)}</td>
-          </tr>
-        `;
-      })
-      .join("");
+  $("releaseBlockers").innerHTML = `
+    <strong>Release blockers</strong>
+    <ul>${state.coverage.release_blockers.map((blocker) => `<li>${escapeHtml(blocker)}</li>`).join("")}</ul>`;
 }
 
-async function boot() {
-  const response = await fetch("./data/civicledger-static.json");
-  state.data = await response.json();
-  buildExplorerPeople();
-  state.comparisonIds = state.data.career_trade_timeline?.default_official_ids?.length
-    ? state.data.career_trade_timeline.default_official_ids
-    : branchOrder
-        .map((branch) => state.explorerPeople.find((person) => person.branch === branch)?.id)
-        .filter(Boolean);
-  state.selectedId = state.comparisonIds[0] || state.explorerPeople[0]?.id || null;
+function renderWorkbench() {
+  updateModeControls();
+  renderSelectedOfficials();
+  renderChartHeader();
   renderSummary();
-  renderBranchChart();
-  hydrateControls();
-  renderExplorer();
-  renderCompleteness();
-  renderSources();
-  renderEvents();
-  renderTradeContext();
+  renderTradeChart();
+  renderChartAlternative();
+  renderEventDetail();
+  renderRecordDetail();
+  renderTransactions();
+  renderMarketChart();
+  syncUrl();
 }
 
-boot().catch((error) => {
-  console.error(error);
-  document.body.innerHTML = `<main class="panel"><h1>CivicLedger</h1><p>Failed to load static demo data.</p></main>`;
-});
+loadData();

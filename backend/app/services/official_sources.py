@@ -12,7 +12,7 @@ OFFICIAL_SOURCES = [
         "download_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
         "access_mode": "public_portal",
         "public_sample_url": None,
-        "ingestion_status": "parser_preview_ready",
+        "ingestion_status": "official_index_and_parser_preview",
         "records_scope": "Member, staff, and candidate financial disclosure reports published by the Office of the Clerk.",
         "rights_note": (
             "The House search page states statutory restrictions on use of financial "

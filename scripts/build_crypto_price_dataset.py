@@ -15,12 +15,13 @@ from app.services.market_prices import CRYPTO_PRICE_SYMBOLS, CRYPTO_REFERENCE, T
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "context" / "crypto_prices.json"
+DEFAULT_START = "2009-01-20"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--api-key", default=os.environ.get("TIINGO_API_KEY"))
-    parser.add_argument("--start", default="2023-01-01", help="Inclusive start date in YYYY-MM-DD form.")
+    parser.add_argument("--start", default=DEFAULT_START, help="Inclusive start date in YYYY-MM-DD form.")
     parser.add_argument("--end", default=date.today().isoformat(), help="Inclusive end date in YYYY-MM-DD form.")
     return parser.parse_args()
 

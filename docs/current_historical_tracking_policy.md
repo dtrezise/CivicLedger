@@ -4,8 +4,9 @@ CivicLedger treats prior public service as a static historical record and curren
 
 ## Scope
 
-- Congressional foundation scope starts with the 115th through 119th Congresses.
-- Presidential-term scope currently uses Trump 45, Biden 46, and Trump 47.
+- Congressional foundation scope starts with the 111th through 119th Congresses.
+- Presidential-term scope begins with the Obama administration and currently
+  includes Obama 44, Trump 45, Biden 46, and Trump 47.
 - Congressional service is indexed by Bioguide ID, Congress number, chamber, state, district, and party.
 - Executive and judicial service remain indexed through official source-specific identifiers until a stronger cross-source identifier is available.
 
@@ -37,4 +38,4 @@ New or refreshed records should enter the system as raw or preview records first
 
 ## Refresh Rule
 
-Past Congresses and completed administrations should be refreshed only by explicit data-maintenance tasks. Current Congress and current administration records are eligible for periodic refresh jobs once the ingestion scheduler exists.
+Past Congresses and completed administrations should be refreshed only by explicit data-maintenance tasks. The current Congress and current administration are eligible for scheduled refreshes. Historical disclosure backfills remain versioned, resumable maintenance jobs rather than daily live-tracking work.

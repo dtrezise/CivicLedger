@@ -66,7 +66,7 @@ def test_meta_sources_contract(client):
         "Judicial",
     }
     assert {source["id"]: source["ingestion_status"] for source in payload["sources"]} == {
-        "house-financial-disclosure": "parser_preview_ready",
+        "house-financial-disclosure": "official_index_and_parser_preview",
         "senate-public-financial-disclosure": "parser_preview_ready",
         "oge-individual-disclosures": "source_index_ready",
         "judicial-financial-disclosure": "parser_preview_ready",
