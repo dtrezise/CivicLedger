@@ -32,6 +32,104 @@ OGE_PRESIDENT_2025_NOTICE = (
 
 CURATED_DOCUMENTS = [
     {
+        "document_id": "oge-obama-2009-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2009,
+        "filing_type": "annual_sf278",
+        "filing_label": "2009 Annual SF 278",
+        "reported_date": "2010-05-17",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/default/files/rss_viewer/potus-278-2009.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2010/05/17/president-vice-presidents-financial-disclosure-forms",
+        "expected_transaction_activity": "transaction_report",
+        "source_transaction_section_status": "source_reviewed_transactions_present",
+    },
+    {
+        "document_id": "oge-obama-2010-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2010,
+        "filing_type": "annual_sf278",
+        "filing_label": "2010 Annual SF 278",
+        "reported_date": "2011-05-16",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/default/files/rss_viewer/POTUS_OGE278_CY2010.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2011/05/16/president-vice-presidents-2010-financial-disclosure-forms",
+        "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
+    },
+    {
+        "document_id": "oge-obama-2011-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2011,
+        "filing_type": "annual_sf278",
+        "filing_label": "2011 Annual SF 278",
+        "reported_date": "2012-05-15",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/default/files/president_obama_2011_oge_form_278_certified.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2012/05/15/president-and-vice-presidents-2011-financial-disclosure-forms",
+        "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
+    },
+    {
+        "document_id": "oge-obama-2012-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2012,
+        "filing_type": "annual_sf278",
+        "filing_label": "2012 Annual SF 278",
+        "reported_date": "2013-05-15",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/default/files/docs/potus_278_certified_may_15_2013.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2013/05/15/president-and-vice-presidents-2012-financial-disclosure-forms",
+        "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
+    },
+    {
+        "document_id": "oge-obama-2013-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2013,
+        "filing_type": "annual_sf278",
+        "filing_label": "2013 Annual SF 278",
+        "reported_date": "2014-05-15",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/default/files/docs/potus_certified_278_cy2013_0.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2014/05/15/president-and-vice-president-s-2013-financial-disclosure-forms",
+        "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
+    },
+    {
+        "document_id": "oge-obama-2014-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2014,
+        "filing_type": "annual_sf278",
+        "filing_label": "2014 Annual SF 278",
+        "reported_date": "2015-05-15",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/default/files/docs/oge_278_cy_2014_obama.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2015/05/15/president-and-vice-president-s-2014-financial-disclosure-forms",
+        "expected_transaction_activity": "transaction_report",
+        "source_transaction_section_status": "source_reviewed_transactions_present",
+    },
+    {
+        "document_id": "oge-obama-2015-annual-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2015,
+        "filing_type": "annual_sf278",
+        "filing_label": "2015 Annual SF 278",
+        "reported_date": "2016-05-16",
+        "source_url": "https://obamawhitehouse.archives.gov/sites/whitehouse.gov/files/documents/oge_278_cy_2015_obama_051616.pdf",
+        "source_notice_url": "https://obamawhitehouse.archives.gov/blog/2016/05/16/president-and-vice-presidents-2015-financial-disclosure-forms",
+        "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
+    },
+    {
         "document_id": "oge-biden-2021-annual-278",
         "official_id": "exec:joseph-r-biden",
         "full_name": "Joseph R. Biden",
@@ -42,6 +140,7 @@ CURATED_DOCUMENTS = [
         "reported_date": "2021-05-17",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/9A9B9318751632FA852586D9002EC0F9/%24FILE/Biden%2C%20Joseph%20R.%20%202021%20Annual%20278.pdf",
         "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
     },
     {
         "document_id": "oge-biden-2022-annual-278",
@@ -53,7 +152,8 @@ CURATED_DOCUMENTS = [
         "filing_label": "2022 Annual OGE Form 278e",
         "reported_date": "2022-05-16",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/E53C72B0E534B2E7852588410074776C/%24FILE/Biden%2C%20Joseph%20R.%20%202022%20Annual%20278.pdf",
-        "expected_transaction_activity": "none_or_not_applicable",
+        "expected_transaction_activity": "transaction_report",
+        "source_transaction_section_status": "source_reviewed_transactions_present",
     },
     {
         "document_id": "oge-biden-2023-annual-278",
@@ -66,6 +166,7 @@ CURATED_DOCUMENTS = [
         "reported_date": "2023-05-15",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/E0E994CFA156D7CF852589B000789259/%24FILE/Biden%2C%20Joseph%20R.%202023%20Annual%20278.pdf",
         "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
     },
     {
         "document_id": "oge-biden-2024-annual-278",
@@ -78,6 +179,7 @@ CURATED_DOCUMENTS = [
         "reported_date": "2024-05-15",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/F19EEDB6A75522E785258B1E007CDCC6/%24FILE/Biden%2C%20Joseph%20R.%20%202024%20Annual%20278.pdf",
         "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
     },
     {
         "document_id": "oge-biden-2025-termination-278",
@@ -90,6 +192,7 @@ CURATED_DOCUMENTS = [
         "reported_date": "2025-01-20",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/34A58BA5A7439CA485258C1A00613D05/%24FILE/Biden%2C%20Joseph%20R.%20%202025%20Termination%20278.pdf",
         "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
     },
     {
         "document_id": "oge-trump-2020-annual-278",
@@ -163,21 +266,160 @@ CURATED_DOCUMENTS = [
         "reported_date": "2026-05-15",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/69AEAA9D7455ACD585258E27002DDEE1/%24FILE/Donald-J-Trump-2026-278ANNUAL.pdf",
         "expected_transaction_activity": "annual_report_review_required",
+        "transaction_parser_enabled": False,
+        "parser_deferral_note": (
+            "The annual transaction schedules require deduplication against the indexed 278-T "
+            "filings before timeline inclusion."
+        ),
     },
 ]
 
+MANUALLY_REVIEWED_TRANSACTIONS = {
+    "oge-obama-2009-annual-278": [
+        {
+            "source_page": 6,
+            "source_sequence": 1,
+            "trade_date": "2009-06-16",
+            "action": "SELL",
+            "asset_display_name": "Vanguard FTSE Social Index Fund",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 2,
+            "trade_date": "2009-06-15",
+            "action": "BUY",
+            "asset_display_name": "Vanguard 500 Index Fund",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 3,
+            "trade_date": "2009-07-09",
+            "action": "SELL",
+            "asset_display_name": "Vanguard FTSE Social Index Fund (S)",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 4,
+            "trade_date": "2009-07-09",
+            "action": "BUY",
+            "asset_display_name": "Vanguard 500 Index Fund (S)",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 5,
+            "trade_date": "2009-07-09",
+            "action": "SELL",
+            "asset_display_name": "Vanguard FTSE Social Index Fund (S)",
+            "value_range_label": "$15,001 - $50,000",
+        },
+        {
+            "source_page": 7,
+            "source_sequence": 1,
+            "trade_date": "2009-07-09",
+            "action": "BUY",
+            "asset_display_name": "Vanguard 500 Index Fund (S)",
+            "value_range_label": "$15,001 - $50,000",
+        },
+        {
+            "source_page": 7,
+            "source_sequence": 2,
+            "trade_date": "2009-01-05",
+            "action": "SELL",
+            "asset_display_name": "Hawaiian Tax-Free Trust Class A (inheritance from the Estate of Madelyn Dunham)",
+            "value_range_label": "$15,001 - $50,000",
+        },
+        {
+            "source_page": 7,
+            "source_sequence": 3,
+            "trade_date": "2009-01-29",
+            "action": "SELL",
+            "asset_display_name": "Bank Hawaii Corp. (inheritance from the Estate of Madelyn Dunham)",
+            "value_range_label": "$250,001 - $500,000",
+        },
+    ],
+    "oge-obama-2014-annual-278": [
+        {
+            "source_page": 5,
+            "source_sequence": 1,
+            "trade_date": "2014-11-18",
+            "action": "SELL",
+            "asset_display_name": "Bright Directions College Savings 529 Plan (DC) (PIMCO Total Return 529 Portfolio PTTRX)",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 5,
+            "source_sequence": 2,
+            "trade_date": "2014-11-18",
+            "action": "BUY",
+            "asset_display_name": "Bright Directions College Savings 529 Plan (DC) (Mainstay Total Return Bond 529 Fund MTMCX)",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 5,
+            "source_sequence": 3,
+            "trade_date": "2014-11-18",
+            "action": "SELL",
+            "asset_display_name": "Bright Directions College Savings 529 Plan (DC) (PIMCO Total Return 529 Portfolio PTTRX)",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 5,
+            "source_sequence": 4,
+            "trade_date": "2014-11-18",
+            "action": "BUY",
+            "asset_display_name": "Bright Directions College Savings 529 Plan (DC) (Mainstay Total Return Bond 529 Fund MTMCX)",
+            "value_range_label": "$50,001 - $100,000",
+        },
+        {
+            "source_page": 5,
+            "source_sequence": 5,
+            "trade_date": "2014-12-15",
+            "action": "SELL",
+            "asset_display_name": "Vanguard 500 Index Fund (Retirement)",
+            "value_range_label": "$100,001 - $250,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 1,
+            "trade_date": "2014-12-15",
+            "action": "BUY",
+            "asset_display_name": "Vanguard Institutional Index Fund (Retirement)",
+            "value_range_label": "$100,001 - $250,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 2,
+            "trade_date": "2014-12-15",
+            "action": "SELL",
+            "asset_display_name": "Vanguard 500 Index Fund (Retirement) (S)",
+            "value_range_label": "$100,001 - $250,000",
+        },
+        {
+            "source_page": 6,
+            "source_sequence": 3,
+            "trade_date": "2014-12-15",
+            "action": "BUY",
+            "asset_display_name": "Vanguard Institutional Index Fund (Retirement) (S)",
+            "value_range_label": "$100,001 - $250,000",
+        },
+    ],
+}
+
 UNAVAILABLE_DOCUMENTS = [
     {
+        "document_id": "oge-obama-2016-annual-or-termination-278",
         "official_id": "exec:barack-obama",
         "full_name": "Barack Obama",
         "presidential_term": "obama-44",
-        "service_start": "2009-01-20",
-        "service_end": "2017-01-20",
-        "availability_status": "official_archive_or_request_required",
+        "report_year": 2016,
+        "availability_status": "official_archive_gap",
         "availability_note": (
-            "OGE states most public financial disclosure reports are destroyed six to seven years "
-            "after creation unless needed for an ongoing investigation. Obama-term records therefore "
-            "need archival/request workflow before parser promotion."
+            "The Obama White House archive supplies annual reports for 2009 through 2015. "
+            "A 2016 annual or termination report has not yet been located in the official archive."
         ),
         "source_url": OGE_COLLECTION_URL,
     }
@@ -188,11 +430,17 @@ AMOUNT_RE = re.compile(
     re.IGNORECASE,
 )
 DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b")
+TEXT_DATE_RE = re.compile(r"\b(\d{1,2})-([A-Za-z]{3})-(\d{4})\b")
+DATE_TOKEN_RE = re.compile(r"\b(?:\d{1,2}/\d{1,2}/\d{2,4}|\d{1,2}-[A-Za-z]{3}-\d{4})\b")
 ACTION_RE = re.compile(
-    r"\b(purchase|purchas[eo]|ourch\w+|du?rch\w+|nurch\w+|sale|sold|exchange)\b",
+    r"\b(purchase|purchas[eo]|ourch\w+|du?rch\w+|nurch\w+|sales?|sold|exchange)\b",
     re.IGNORECASE,
 )
-ROW_PREFIX_RE = re.compile(r"^\s*(\d{1,4})\s+")
+ROW_PREFIX_RE = re.compile(r"^\s*(\d{1,4})[.)]?\s+")
+TRUSTEE_DECISION_AUTHORITY_NOTE = (
+    "J.P. Morgan is the sole Trustee. Donald J. Trump retains an income interest only in the "
+    "Family Trusts and has no investment decision authority."
+)
 
 TICKER_HINTS = {
     "ADOBE": "ADBE",
@@ -253,14 +501,33 @@ def normalize_amount_label(label: str) -> tuple[str, int | None, int | None]:
 
 def normalize_trade_date(value: str, report_year: int) -> tuple[str | None, bool]:
     match = DATE_RE.search(value)
-    if not match:
-        return (None, False)
-    month = int(match.group(1))
-    day = int(match.group(2))
-    year_token = match.group(3)
-    year = int(year_token)
-    if year < 100:
-        year += 2000
+    if match:
+        month = int(match.group(1))
+        day = int(match.group(2))
+        year = int(match.group(3))
+        if year < 100:
+            year += 2000
+    else:
+        text_match = TEXT_DATE_RE.search(value)
+        if not text_match:
+            return (None, False)
+        day = int(text_match.group(1))
+        month_names = {
+            "jan": 1,
+            "feb": 2,
+            "mar": 3,
+            "apr": 4,
+            "may": 5,
+            "jun": 6,
+            "jul": 7,
+            "aug": 8,
+            "sep": 9,
+            "oct": 10,
+            "nov": 11,
+            "dec": 12,
+        }
+        month = month_names[text_match.group(2).lower()]
+        year = int(text_match.group(3))
     corrected = False
     if year > report_year:
         year = report_year
@@ -276,7 +543,7 @@ def action_from_text(value: str) -> str:
     if not action:
         return "UNKNOWN"
     token = action.group(1).lower()
-    if token in {"sale", "sold"}:
+    if token in {"sale", "sales", "sold"}:
         return "SELL"
     if token == "exchange":
         return "EXCHANGE"
@@ -291,7 +558,7 @@ def asset_class_for(description: str) -> str:
         return "etf"
     if "DUE" in value or "B/E" in value or "BOND" in value or "REV" in value or "MUNI" in value or "GO " in value:
         return "fixed_income"
-    if "MONEY FUND" in value or "FUND" in value:
+    if "MONEY FUND" in value or "FUND" in value or re.search(r"\b(?:FD|VIF|VIT)\b", value):
         return "fund"
     return "equity"
 
@@ -316,20 +583,41 @@ def cleaned_description(value: str) -> str:
     return value[:220]
 
 
+def normalize_ocr_line(value: str) -> str:
+    value = re.sub(r"(?i)pur\s*cha\s*se", "Purchase", value)
+    value = re.sub(r"(?i)sa\s*le", "Sale", value)
+    value = re.sub(r"(\d{1,2}/\d{1,2}/\d{3})\s+(\d)\b", r"\1\2", value)
+    value = re.sub(r"(\d{1,2})\s*-\s*([A-Za-z]{3})\s*-\s*(\d{4})", r"\1-\2-\3", value)
+    return re.sub(r"\s+", " ", value).strip()
+
+
 def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[dict]:
-    if document["filing_type"] != "periodic_transaction_278t":
+    supported_types = {"periodic_transaction_278t", "annual_278e", "termination_278e"}
+    if document["filing_type"] not in supported_types or document.get("transaction_parser_enabled") is False:
         return []
     rows = []
     seen = set()
     for page in text_by_page:
+        page_text = page["text"]
+        if document["filing_type"] != "periodic_transaction_278t" and not re.search(
+            r"Part\s*7\s*:\s*Transactions", page_text, re.IGNORECASE
+        ):
+            continue
+        decision_authority_note = (
+            TRUSTEE_DECISION_AUTHORITY_NOTE
+            if "has no investment decision authority" in page_text
+            else None
+        )
         for line in page["text"].splitlines():
-            normalized_line = re.sub(r"(\d{1,2})/(\d)\.(\d)/(\d{4})", r"\1/\2\3/\4", line)
+            normalized_line = normalize_ocr_line(
+                re.sub(r"(\d{1,2})/(\d)\.(\d)/(\d{4})", r"\1/\2\3/\4", line)
+            )
             if "$" not in normalized_line and "S" not in normalized_line:
                 continue
             amount = AMOUNT_RE.search(normalized_line)
             action = ACTION_RE.search(normalized_line)
             date_matches = (
-                [match for match in DATE_RE.finditer(normalized_line) if match.start() < amount.start()]
+                [match for match in DATE_TOKEN_RE.finditer(normalized_line) if match.start() < amount.start()]
                 if amount
                 else []
             )
@@ -351,7 +639,14 @@ def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[di
             prefix = ROW_PREFIX_RE.search(line)
             if prefix:
                 source_sequence = int(prefix.group(1))
-            dedupe_key = (document["document_id"], source_sequence, description, trade_date, amount_label)
+            dedupe_key = (
+                document["document_id"],
+                page["page"],
+                source_sequence,
+                description,
+                trade_date,
+                amount_label,
+            )
             if dedupe_key in seen:
                 continue
             seen.add(dedupe_key)
@@ -363,6 +658,9 @@ def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[di
                     "official_id": document["official_id"],
                     "full_name": document["full_name"],
                     "presidential_term": document["presidential_term"],
+                    "filing_type": document["filing_type"],
+                    "filing_label": document["filing_label"],
+                    "form_section": "Part 7: Transactions",
                     "source_sequence": source_sequence,
                     "trade_date": trade_date,
                     "reported_date": document["reported_date"],
@@ -375,16 +673,84 @@ def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[di
                     "value_range_min": amount_min,
                     "value_range_max": amount_max,
                     "record_status": "official_oge_parser_preview_not_promoted",
-                    "confidence_label": "Official OGE 278-T parser preview; review required",
-                    "parsing_confidence": 0.58 if corrected else 0.7,
+                    "confidence_label": (
+                        "Official OGE 278-T parser preview; review required"
+                        if document["filing_type"] == "periodic_transaction_278t"
+                        else "Official OGE annual/termination parser preview; review required"
+                    ),
+                    "parsing_confidence": 0.58 if corrected else 0.76,
                     "review_required_before_public_trade": True,
                     "public_production_trade": False,
                     "date_normalized_from_ocr": corrected,
+                    "decision_authority_status": (
+                        "report_states_no_investment_decision_authority"
+                        if decision_authority_note
+                        else "not_stated_in_transaction_page"
+                    ),
+                    "decision_authority_note": decision_authority_note,
+                    "disclosure_attribution_note": (
+                        "Reported on the official's public financial disclosure; ownership and "
+                        "decision authority must be read from the source filing."
+                    ),
                     "source_url": document["source_url"],
                     "source_page": page["page"],
                     "source_line_text": re.sub(r"\s+", " ", normalized_line).strip()[:350],
                 }
             )
+    return rows
+
+
+def manual_transaction_rows(document: dict) -> list[dict]:
+    rows = []
+    for sequence, source_row in enumerate(
+        MANUALLY_REVIEWED_TRANSACTIONS.get(document["document_id"], []), start=1
+    ):
+        amount_label, amount_min, amount_max = normalize_amount_label(source_row["value_range_label"])
+        asset_class = asset_class_for(source_row["asset_display_name"])
+        rows.append(
+            {
+                "id": f"{document['document_id']}:tx-{sequence:04d}",
+                "document_id": document["document_id"],
+                "official_id": document["official_id"],
+                "full_name": document["full_name"],
+                "presidential_term": document["presidential_term"],
+                "filing_type": document["filing_type"],
+                "filing_label": document["filing_label"],
+                "form_section": "Schedule B, Part I: Transactions",
+                "source_sequence": source_row["source_sequence"],
+                "trade_date": source_row["trade_date"],
+                "reported_date": document["reported_date"],
+                "disclosure_lag_days": (
+                    date.fromisoformat(document["reported_date"])
+                    - date.fromisoformat(source_row["trade_date"])
+                ).days,
+                "action": source_row["action"],
+                "ticker": None,
+                "asset_display_name": source_row["asset_display_name"],
+                "asset_class": asset_class,
+                "value_range_label": amount_label,
+                "value_range_min": amount_min,
+                "value_range_max": amount_max,
+                "record_status": "official_archive_manual_review_preview_not_promoted",
+                "confidence_label": (
+                    "Official archive source-page transcription; second review required"
+                ),
+                "parsing_confidence": 0.95,
+                "review_required_before_public_trade": True,
+                "public_production_trade": False,
+                "date_normalized_from_ocr": False,
+                "decision_authority_status": "not_stated_in_transaction_page",
+                "decision_authority_note": None,
+                "disclosure_attribution_note": (
+                    "Reported on the official's public financial disclosure; filer, spouse, or "
+                    "dependent ownership is preserved where the source row identifies it."
+                ),
+                "source_url": document["source_url"],
+                "source_page": source_row["source_page"],
+                "source_line_text": None,
+                "normalization_method": "manual_source_page_transcription",
+            }
+        )
     return rows
 
 
@@ -403,16 +769,52 @@ def extract_pdf_text(content: bytes) -> tuple[list[dict], int]:
     return pages, len(reader.pages)
 
 
+def transaction_section_status(
+    document: dict,
+    text_by_page: list[dict],
+    transactions: list[dict],
+) -> str:
+    if document.get("transaction_parser_enabled") is False:
+        return "deduplication_review_required"
+    reviewed_status = document.get("source_transaction_section_status")
+    if transactions:
+        return "transactions_detected"
+    if reviewed_status == "source_reviewed_no_reportable_transactions":
+        return "no_reportable_transactions"
+    if reviewed_status == "source_reviewed_transactions_present":
+        return "reviewed_transactions_pending_normalization"
+
+    for page in text_by_page:
+        if re.search(
+            r"(?:Part\s*7\s*:\s*Transactions|Schedule\s*B).{0,1200}\bNone\b",
+            page["text"],
+            re.IGNORECASE | re.DOTALL,
+        ):
+            return "no_reportable_transactions"
+    if not any(page["text"].strip() for page in text_by_page):
+        return "image_only_review_required"
+    return "transaction_section_not_detected"
+
+
 def document_from_pdf(document: dict, content: bytes) -> tuple[dict, list[dict]]:
     text_by_page, page_count = extract_pdf_text(content)
     text_sample = "\n".join(page["text"] for page in text_by_page[:3])
-    transactions = parse_transaction_lines(document, text_by_page)
+    transactions = parse_transaction_lines(document, text_by_page) + manual_transaction_rows(document)
     transaction_actions = Counter(row["action"] for row in transactions)
     asset_classes = Counter(row["asset_class"] for row in transactions)
-    no_transaction_hint = bool(
-        re.search(r"Part\s*7[:\s]+Transactions.{0,300}\b(?:None|N/A)\b", text_sample, re.IGNORECASE | re.DOTALL)
-        or document.get("expected_transaction_activity") == "none_or_not_applicable"
-    )
+    section_status = transaction_section_status(document, text_by_page, transactions)
+    if transactions and any(row.get("normalization_method") for row in transactions):
+        parser_status = "manual_review_preview"
+    elif transactions:
+        parser_status = "parsed_preview"
+    elif section_status == "no_reportable_transactions":
+        parser_status = "no_reportable_transactions"
+    elif section_status == "image_only_review_required":
+        parser_status = "ocr_review_required"
+    elif section_status == "deduplication_review_required":
+        parser_status = "deduplication_review_required"
+    else:
+        parser_status = "document_indexed"
     result = {
         **document,
         "source_tier": "official",
@@ -422,7 +824,8 @@ def document_from_pdf(document: dict, content: bytes) -> tuple[dict, list[dict]]
         "byte_count": len(content),
         "sha256": hashlib.sha256(content).hexdigest(),
         "page_count": page_count,
-        "parser_status": "parsed_preview" if transactions else "document_indexed",
+        "parser_status": parser_status,
+        "transaction_section_status": section_status,
         "review_status": "review_required_before_public_trade",
         "review_required_before_public_trade": True,
         "public_production_trade_count": 0,
@@ -430,7 +833,7 @@ def document_from_pdf(document: dict, content: bytes) -> tuple[dict, list[dict]]
             "parser_preview_transaction_count": len(transactions),
             "parser_preview_actions": dict(sorted(transaction_actions.items())),
             "asset_class_counts": dict(sorted(asset_classes.items())),
-            "no_transaction_hint": no_transaction_hint,
+            "no_transaction_hint": section_status == "no_reportable_transactions",
         },
         "parser_preview": re.sub(r"\s+", " ", text_sample).strip()[:700],
     }
@@ -507,8 +910,9 @@ def build(refresh: bool) -> tuple[dict, dict]:
         "generated_at": date.today().isoformat(),
         "schema_version": "presidential-oge-transactions-v1",
         "context_label": (
-            "Official OGE 278-T parser-preview transaction rows for timeline exploration only; "
-            "review is required before production trade promotion."
+            "Official OGE annual, termination, and periodic parser-preview transaction rows plus "
+            "source-page transcriptions for timeline exploration only; review is required before "
+            "production trade promotion."
         ),
         "summary": {
             "parser_preview_transaction_count": len(transactions),

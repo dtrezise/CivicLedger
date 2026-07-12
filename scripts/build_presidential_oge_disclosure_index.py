@@ -27,12 +27,12 @@ PRESIDENTIAL_DISCLOSURE_STATUS = [
         "term_label": "Obama 44",
         "service_start": "2009-01-20",
         "service_end": "2017-01-20",
-        "source_status": "historical_request_or_archive_required",
+        "source_status": "official_archive_indexed_review_gated",
         "reviewed_trade_count": 0,
         "expected_forms": ["OGE Form 278e", "OGE Form 278-T"],
         "availability_note": (
-            "Historical presidential public financial disclosure records may require "
-            "official archive review or OGE Form 201/agency request workflows."
+            "Official Obama White House archive reports for 2009 through 2015 are indexed. "
+            "Source-page transaction transcriptions remain review-gated."
         ),
     },
     {
@@ -42,12 +42,12 @@ PRESIDENTIAL_DISCLOSURE_STATUS = [
         "term_label": "Trump 45",
         "service_start": "2017-01-20",
         "service_end": "2021-01-20",
-        "source_status": "oge_collection_search_required",
+        "source_status": "official_documents_indexed_review_gated",
         "reviewed_trade_count": 0,
         "expected_forms": ["OGE Form 278e", "OGE Form 278-T"],
         "availability_note": (
-            "OGE individual disclosures should be searched and archived before "
-            "any normalized presidential trade rows are promoted."
+            "Official annual and termination reports are indexed. Part 7 trust transactions "
+            "are parser previews and preserve the filing's decision-authority note."
         ),
     },
     {
@@ -57,12 +57,12 @@ PRESIDENTIAL_DISCLOSURE_STATUS = [
         "term_label": "Biden 46",
         "service_start": "2021-01-20",
         "service_end": "2025-01-20",
-        "source_status": "oge_collection_search_required",
+        "source_status": "official_documents_indexed_review_gated",
         "reviewed_trade_count": 0,
         "expected_forms": ["OGE Form 278e", "OGE Form 278-T"],
         "availability_note": (
-            "OGE individual disclosures should be searched and archived before "
-            "any normalized presidential trade rows are promoted."
+            "Official annual and termination reports are indexed. The 2022 annual report "
+            "contains 2021 transactions; other indexed reports identify no Part 7 activity."
         ),
     },
     {

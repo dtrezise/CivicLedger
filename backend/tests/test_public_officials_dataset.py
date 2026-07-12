@@ -165,8 +165,9 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     data = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
     timeline = data["career_trade_timeline"]
 
-    assert timeline["schema_version"] == "career-trade-timeline-v2"
-    assert timeline["event_relationship_methodology_version"] == "event-relevance-v2"
+    assert timeline["schema_version"] == "career-trade-timeline-v3"
+    assert timeline["event_relationship_methodology_version"] == "event-relevance-v3"
+    assert timeline["trade_context_methodology"]["version"] == "trade-window-v1"
     assert {"exec:barack-obama", "exec:donald-j-trump", "exec:joseph-r-biden"} <= set(
         timeline["default_official_ids"]
     )
@@ -176,8 +177,9 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     assert timeline["summary"]["event_count"] >= 1_100
     assert timeline["summary"]["trade_cluster_count"] >= 20
     assert timeline["summary"]["presidential_oge_status_count"] == 4
-    assert timeline["summary"]["presidential_oge_document_count"] >= 11
-    assert timeline["summary"]["presidential_oge_parser_preview_transaction_count"] >= 300
+    assert timeline["summary"]["presidential_oge_document_count"] >= 18
+    assert timeline["summary"]["presidential_oge_parser_preview_transaction_count"] >= 600
+    assert timeline["summary"]["trade_context_candidate_count"] >= 1
     assert timeline["summary"]["presidential_oge_public_production_trade_count"] == 0
     assert timeline["summary"]["official_count"] >= 298
     assert timeline["summary"]["trade_count"] >= 54_000
@@ -197,11 +199,21 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     biden = next(official for official in president_rows if official["id"] == "exec:joseph-r-biden")
     obama = next(official for official in president_rows if official["id"] == "exec:barack-obama")
     assert trump["stats"]["record_status"] == "official_oge_parser_preview_not_promoted"
-    assert trump["stats"]["parser_preview_trade_count"] >= 300
+    assert trump["stats"]["parser_preview_trade_count"] >= 550
     assert trump["stats"]["public_production_trade_count"] == 0
-    assert biden["stats"]["record_status"] == "official_oge_documents_indexed"
+    assert any(trade["date"].startswith("2019-") for trade in trump["trades"])
+    assert any(trade["date"].startswith("2020-") for trade in trump["trades"])
+    assert any(
+        trade["decision_authority_status"] == "report_states_no_investment_decision_authority"
+        for trade in trump["trades"]
+    )
+    assert biden["stats"]["record_status"] == "official_oge_parser_preview_not_promoted"
     assert biden["stats"]["document_count"] >= 5
-    assert obama["stats"]["record_status"] == "source_status_only"
+    assert biden["stats"]["parser_preview_trade_count"] == 13
+    assert {trade["date"] for trade in biden["trades"]} == {"2021-05-24"}
+    assert obama["stats"]["record_status"] == "official_oge_parser_preview_not_promoted"
+    assert obama["stats"]["document_count"] >= 7
+    assert obama["stats"]["parser_preview_trade_count"] == 16
     assert len(trump["service_periods"]) == 2
     assert trump["service_periods"][0]["end"] == "2021-01-20"
     assert trump["service_periods"][1]["start"] == "2025-01-20"
@@ -211,9 +223,15 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
         for event in trump["events"]
     )
     assert all(
-        event["display_default"] is False
+        event.get("trade_context_candidate") is True
+        and abs(event["nearest_trade_days"]) <= 7
         for event in trump["events"]
-        if event["relationship_tier"] == "general_macro"
+        if event["relationship_tier"] == "general_macro" and event["display_default"] is True
+    )
+    assert all(
+        event.get("candidate_basis") == "temporal_and_entity_context_only"
+        for event in trump["events"]
+        if event.get("trade_context_candidate")
     )
     assert all(
         trade["record_status"] != "fixture"
@@ -249,21 +267,28 @@ def test_presidential_oge_documents_add_official_disclosures_and_preview_rows():
     transactions = json.loads(PRESIDENTIAL_OGE_TRANSACTIONS.read_text())
 
     assert documents["schema_version"] == "presidential-oge-documents-v1"
-    assert documents["summary"]["document_count"] >= 11
+    assert documents["summary"]["document_count"] >= 18
+    assert documents["summary"]["document_counts_by_official"]["exec:barack-obama"] >= 7
     assert documents["summary"]["document_counts_by_official"]["exec:joseph-r-biden"] >= 5
     assert documents["summary"]["document_counts_by_official"]["exec:donald-j-trump"] >= 6
     assert documents["summary"]["public_production_trade_count"] == 0
     assert documents["summary"]["fetch_failure_count"] == 0
     assert all(document["source_tier"] == "official" for document in documents["documents"])
     assert all(document["review_required_before_public_trade"] is True for document in documents["documents"])
-    assert any(row["official_id"] == "exec:barack-obama" for row in documents["unavailable_documents"])
+    assert any(
+        row["official_id"] == "exec:barack-obama"
+        and row["availability_status"] == "official_archive_gap"
+        for row in documents["unavailable_documents"]
+    )
 
     assert transactions["schema_version"] == "presidential-oge-transactions-v1"
-    assert transactions["summary"]["parser_preview_transaction_count"] >= 300
+    assert transactions["summary"]["parser_preview_transaction_count"] >= 600
     assert transactions["summary"]["public_production_trade_count"] == 0
-    assert transactions["summary"]["transaction_counts_by_official"]["exec:donald-j-trump"] >= 300
+    assert transactions["summary"]["transaction_counts_by_official"]["exec:barack-obama"] == 16
+    assert transactions["summary"]["transaction_counts_by_official"]["exec:joseph-r-biden"] == 13
+    assert transactions["summary"]["transaction_counts_by_official"]["exec:donald-j-trump"] >= 550
     sample = transactions["transactions"][0]
-    assert sample["record_status"] == "official_oge_parser_preview_not_promoted"
+    assert "preview" in sample["record_status"]
     assert sample["review_required_before_public_trade"] is True
     assert sample["public_production_trade"] is False
     assert sample["trade_date"].startswith("20")

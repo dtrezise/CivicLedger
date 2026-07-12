@@ -902,6 +902,17 @@ def timeline_trade_row(
         "public_production_trade": trade.get("public_production_trade"),
         "benchmark_symbol": reference.get("benchmark_symbol", "SPY"),
     }
+    for key in [
+        "filing_type",
+        "filing_label",
+        "form_section",
+        "decision_authority_status",
+        "decision_authority_note",
+        "disclosure_attribution_note",
+        "normalization_method",
+    ]:
+        if trade.get(key) is not None:
+            row[key] = trade[key]
     if row["asset_class"] == "crypto":
         row["price_window"] = crypto_price_window(row["ticker"], row["date"], crypto_points_by_symbol)
     else:
@@ -1000,9 +1011,102 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
         "tier": tier,
         "tier_rank": tier_rank[tier],
         "reasons": reasons,
-        "display_default": tier in {"direct", "asset_specific", "jurisdictional"}
-        or (tier == "institutional" and event.get("editor_status") == "curated"),
+        "display_default": tier in {"direct", "asset_specific", "jurisdictional"},
     }
+
+
+def trade_context_candidates(
+    relationships: list[dict],
+    trades: list[dict],
+    events_by_id: dict[str, dict],
+    window_days: int = 45,
+    cluster_days: int = 14,
+) -> None:
+    dated_trades = sorted(
+        [trade for trade in trades if trade.get("date")],
+        key=lambda row: (row["date"], row["id"]),
+    )
+    if not dated_trades:
+        return
+
+    groups: list[list[dict]] = []
+    for trade in dated_trades:
+        if not groups or (
+            parse_iso_date(trade["date"]) - parse_iso_date(groups[-1][-1]["date"])
+        ).days > cluster_days:
+            groups.append([])
+        groups[-1].append(trade)
+
+    selected_ids = set()
+    for group in groups:
+        start = parse_iso_date(group[0]["date"])
+        end = parse_iso_date(group[-1]["date"])
+        buckets = {"before": [], "during": [], "after": []}
+        for relationship in relationships:
+            event_date = parse_iso_date(relationship["date"])
+            if event_date < start:
+                bucket = "before"
+                distance = (start - event_date).days
+            elif event_date > end:
+                bucket = "after"
+                distance = (event_date - end).days
+            else:
+                bucket = "during"
+                distance = 0
+            if distance > window_days:
+                continue
+
+            tier = relationship["relationship_tier"]
+            event = events_by_id.get(relationship["id"], {})
+            eligible = relationship["relationship_tier_rank"] >= 2
+            eligible = eligible or (tier == "general_macro" and distance <= 7)
+            eligible = eligible or (
+                tier == "general_context"
+                and event.get("editor_status") == "curated"
+                and distance <= 14
+            )
+            if not eligible:
+                continue
+            score = (
+                relationship["relationship_tier_rank"] * 100
+                - distance * 2
+                + (15 if event.get("editor_status") == "curated" else 0)
+            )
+            buckets[bucket].append((score, -distance, relationship["date"], relationship["id"]))
+
+        for bucket, limit in (("during", 2), ("before", 2), ("after", 2)):
+            candidates = sorted(buckets[bucket], reverse=True)[:limit]
+            selected_ids.update(candidate[-1] for candidate in candidates)
+
+    for relationship in relationships:
+        if relationship["id"] not in selected_ids:
+            continue
+        event_date = parse_iso_date(relationship["date"])
+        nearby = []
+        for trade in dated_trades:
+            days_from_trade = (event_date - parse_iso_date(trade["date"])).days
+            if abs(days_from_trade) <= window_days:
+                nearby.append((abs(days_from_trade), days_from_trade, trade["date"], trade["id"]))
+        nearby.sort()
+        nearest = nearby[0]
+        nearest_days = nearest[1]
+        if nearest_days == 0:
+            timing_reason = "same day as a disclosed transaction"
+        elif nearest_days > 0:
+            timing_reason = f"{nearest_days} days after the nearest disclosed transaction"
+        else:
+            timing_reason = f"{abs(nearest_days)} days before the nearest disclosed transaction"
+        relationship["trade_context_candidate"] = True
+        relationship["trade_context_methodology"] = "trade-window-v1"
+        relationship["candidate_basis"] = "temporal_and_entity_context_only"
+        relationship["nearest_trade_days"] = nearest_days
+        relationship["nearby_trade_count"] = len(nearby)
+        relationship["nearby_trade_ids"] = [item[3] for item in nearby[:12]]
+        relationship["relationship_reasons"] = [
+            *relationship["relationship_reasons"],
+            timing_reason,
+        ]
+        relationship["display_default"] = True
 
 
 def timeline_event_positions(
@@ -1030,6 +1134,7 @@ def timeline_event_positions(
                 "display_default": relevance["display_default"],
             }
         )
+    trade_context_candidates(rows, trades, {event["id"]: event for event in events})
     return rows
 
 
@@ -1127,26 +1232,51 @@ def career_trade_timeline(
         )
         periods = service_periods(presidential_roles, preview_trade_source_rows)
         start, end = service_bounds(periods)
-        timeline_trades = [
+        normalized_timeline_trades = [
             timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
             for trade in preview_trade_source_rows
         ]
+        timeline_trades = [trade for trade in normalized_timeline_trades if trade["career_day"] is not None]
+        source_preview_trade_count = len(normalized_timeline_trades)
+        out_of_service_trade_count = source_preview_trade_count - len(timeline_trades)
         disclosure_documents = oge_documents_by_official.get(external_id, [])
         unavailable_documents = oge_unavailable_by_official.get(external_id, [])
         document_count = len(disclosure_documents)
+        no_transaction_document_count = sum(
+            1
+            for document in disclosure_documents
+            if document.get("transaction_section_status") == "no_reportable_transactions"
+        )
         preview_trade_count = len(timeline_trades)
         disclosure_status = "No reviewed presidential trade disclosures ingested yet"
         record_status = "source_status_only"
         confidence_label = "Source status only"
-        if preview_trade_count:
+        if source_preview_trade_count:
             disclosure_status = (
                 f"{document_count} official OGE documents indexed; "
-                f"{preview_trade_count} parser-preview 278-T transactions require review before production promotion"
+                f"{source_preview_trade_count} review-gated disclosed transactions"
             )
+            if out_of_service_trade_count:
+                disclosure_status += (
+                    f"; {preview_trade_count} fall within active presidential service"
+                )
+            if no_transaction_document_count:
+                disclosure_status += (
+                    f"; {no_transaction_document_count} other report"
+                    f"{'s' if no_transaction_document_count != 1 else ''} explicitly list no transactions"
+                )
             record_status = "official_oge_parser_preview_not_promoted"
-            confidence_label = "Official OGE parser preview; review required"
+            confidence_label = "Official disclosure transaction preview; review required"
         elif document_count:
-            disclosure_status = f"{document_count} official OGE documents indexed; no parser-preview transactions detected"
+            if no_transaction_document_count == document_count:
+                disclosure_status = (
+                    f"{document_count} official OGE documents indexed; transaction sections "
+                    "explicitly list no reportable transactions"
+                )
+            else:
+                disclosure_status = (
+                    f"{document_count} official OGE documents indexed; transaction normalization pending"
+                )
             record_status = "official_oge_documents_indexed"
             confidence_label = "Official OGE documents indexed"
         elif unavailable_documents:
@@ -1176,8 +1306,11 @@ def career_trade_timeline(
                 "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
                     "trade_count": preview_trade_count,
-                    "parser_preview_trade_count": preview_trade_count,
+                    "parser_preview_trade_count": source_preview_trade_count,
+                    "timeline_trade_count": preview_trade_count,
+                    "out_of_service_trade_count": out_of_service_trade_count,
                     "document_count": document_count,
+                    "no_transaction_document_count": no_transaction_document_count,
                     "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
                     "sell_count": sum(1 for trade in timeline_trades if trade["action"] == "SELL"),
                     "crypto_count": sum(1 for trade in timeline_trades if trade["asset_class"] == "crypto"),
@@ -1307,8 +1440,18 @@ def career_trade_timeline(
         }
     )
     return {
-        "schema_version": "career-trade-timeline-v2",
-        "event_relationship_methodology_version": "event-relevance-v2",
+        "schema_version": "career-trade-timeline-v3",
+        "event_relationship_methodology_version": "event-relevance-v3",
+        "trade_context_methodology": {
+            "version": "trade-window-v1",
+            "window_days": 45,
+            "trade_cluster_days": 14,
+            "selection": "Up to two source-backed context candidates before, during, and after each trade cluster.",
+            "interpretation": (
+                "Candidate markers identify timing and entity or institutional context only. "
+                "They do not establish knowledge, intent, causation, ethics, legality, or market impact."
+            ),
+        },
         "default_axis": "career",
         "axis_modes": ["career", "calendar", "event_window"],
         "zoom_presets": [
@@ -1325,6 +1468,12 @@ def career_trade_timeline(
             "default_official_count": len(president_ids),
             "trade_count": sum(len(official["trades"]) for official in official_rows),
             "event_count": len(events),
+            "trade_context_candidate_count": sum(
+                1
+                for official in official_rows
+                for event in official.get("events", [])
+                if event.get("trade_context_candidate")
+            ),
             "crypto_trade_count": sum(official["stats"]["crypto_count"] for official in official_rows),
             "trade_cluster_count": sum(len(official.get("trade_clusters", [])) for official in official_rows),
             "presidential_oge_status_count": presidential_oge_status.get("summary", {}).get("official_status_count", 0),
@@ -2050,6 +2199,10 @@ def write_public_partitions(dataset: dict) -> None:
                 "record_status": official.get("stats", {}).get("record_status"),
                 "trade_count": len(official.get("trades", [])),
                 "event_count": len(official.get("events", [])),
+                "document_count": official.get("stats", {}).get("document_count", 0),
+                "no_transaction_document_count": official.get("stats", {}).get(
+                    "no_transaction_document_count", 0
+                ),
                 "service_periods": official.get("service_periods", []),
             }
         )

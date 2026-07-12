@@ -13,7 +13,7 @@
   },
   "officials": [
     {
-      "availability_note": "Historical presidential public financial disclosure records may require official archive review or OGE Form 201/agency request workflows.",
+      "availability_note": "Official Obama White House archive reports for 2009 through 2015 are indexed. Source-page transaction transcriptions remain review-gated.",
       "expected_forms": [
         "OGE Form 278e",
         "OGE Form 278-T"
@@ -24,11 +24,11 @@
       "reviewed_trade_count": 0,
       "service_end": "2017-01-20",
       "service_start": "2009-01-20",
-      "source_status": "historical_request_or_archive_required",
+      "source_status": "official_archive_indexed_review_gated",
       "term_label": "Obama 44"
     },
     {
-      "availability_note": "OGE individual disclosures should be searched and archived before any normalized presidential trade rows are promoted.",
+      "availability_note": "Official annual and termination reports are indexed. Part 7 trust transactions are parser previews and preserve the filing's decision-authority note.",
       "expected_forms": [
         "OGE Form 278e",
         "OGE Form 278-T"
@@ -39,11 +39,11 @@
       "reviewed_trade_count": 0,
       "service_end": "2021-01-20",
       "service_start": "2017-01-20",
-      "source_status": "oge_collection_search_required",
+      "source_status": "official_documents_indexed_review_gated",
       "term_label": "Trump 45"
     },
     {
-      "availability_note": "OGE individual disclosures should be searched and archived before any normalized presidential trade rows are promoted.",
+      "availability_note": "Official annual and termination reports are indexed. The 2022 annual report contains 2021 transactions; other indexed reports identify no Part 7 activity.",
       "expected_forms": [
         "OGE Form 278e",
         "OGE Form 278-T"
@@ -54,7 +54,7 @@
       "reviewed_trade_count": 0,
       "service_end": "2025-01-20",
       "service_start": "2021-01-20",
-      "source_status": "oge_collection_search_required",
+      "source_status": "official_documents_indexed_review_gated",
       "term_label": "Biden 46"
     },
     {
@@ -86,9 +86,9 @@
     "official_status_count": 4,
     "reviewed_trade_count": 0,
     "source_status_counts": {
-      "historical_request_or_archive_required": 1,
       "live_tracking_required": 1,
-      "oge_collection_search_required": 2
+      "official_archive_indexed_review_gated": 1,
+      "official_documents_indexed_review_gated": 2
     }
   }
 }

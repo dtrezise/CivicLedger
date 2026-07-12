@@ -90,7 +90,7 @@ def date_in_period(value: str, periods: list[dict[str, Any]]) -> bool:
 
 def validate_timeline(official_id: str, path: Path, event_catalog: dict[str, dict[str, Any]]) -> tuple[int, int]:
     payload = read_json(path)
-    require(payload.get("schema_version") == "career-trade-timeline-v2", f"Wrong timeline schema for {official_id}")
+    require(payload.get("schema_version") == "career-trade-timeline-v3", f"Wrong timeline schema for {official_id}")
     official = payload.get("official", {})
     require(official.get("id") == official_id, f"Timeline key does not match payload for {official_id}")
     periods = official.get("service_periods", [])
@@ -125,8 +125,20 @@ def validate_timeline(official_id: str, path: Path, event_catalog: dict[str, dic
             "general_macro",
             "general_context",
         }, f"Unknown relationship tier for {official_id}")
-        if event.get("relationship_tier") == "general_macro":
-            require(event.get("display_default") is False, f"Macro event defaults on for {official_id}")
+        if event.get("trade_context_candidate"):
+            require(event.get("display_default") is True, f"Context candidate hidden by default for {official_id}")
+            require(
+                event.get("trade_context_methodology") == "trade-window-v1",
+                f"Wrong context methodology for {official_id}",
+            )
+            require(
+                isinstance(event.get("nearest_trade_days"), int)
+                and abs(event["nearest_trade_days"]) <= 45,
+                f"Context candidate outside trade window for {official_id}",
+            )
+            require(event.get("nearby_trade_ids"), f"Context candidate has no linked trades for {official_id}")
+        elif event.get("relationship_tier") == "general_macro":
+            require(event.get("display_default") is False, f"Unlinked macro event defaults on for {official_id}")
 
     return len(official.get("trades", [])), production_count
 
@@ -181,7 +193,7 @@ def validate() -> dict[str, int]:
     house_summary = validate_house_archive()
     manifest = read_json(MANIFEST)
     require(manifest.get("schema_version") == "civicledger-public-manifest-v1", "Unexpected public manifest schema")
-    require(manifest.get("event_relationship_methodology_version") == "event-relevance-v2", "Unexpected event methodology")
+    require(manifest.get("event_relationship_methodology_version") == "event-relevance-v3", "Unexpected event methodology")
 
     seen_paths: set[str] = set()
     validated_paths: dict[tuple[str, str], Path] = {}

@@ -60,6 +60,7 @@ const state = {
   chartExtent: null,
   tradeChart: null,
   marketChart: null,
+  zoomRenderTimer: null,
   loadToken: 0,
   marketToken: 0,
   compactLayout: window.innerWidth <= 760,
@@ -479,6 +480,16 @@ function removeOfficial(id) {
 function placeholderTimeline(id) {
   const official = state.officialMap.get(id);
   const periods = official?.service_periods || [];
+  let disclosureStatus = "Disclosure documents have not yet been ingested for this official.";
+  if (official?.branch === "Legislative") {
+    disclosureStatus = (official.chambers || []).includes("Senate")
+      ? "Senate disclosure documents have not yet been ingested for this official."
+      : "House disclosure documents have not yet been normalized for this official.";
+  } else if (official?.branch === "Judicial") {
+    disclosureStatus = "Judicial financial disclosure documents have not yet been ingested for this official.";
+  } else if (official?.branch === "Executive") {
+    disclosureStatus = "Executive financial disclosure documents have not yet been ingested for this official.";
+  }
   return {
     id,
     full_name: official?.full_name || id,
@@ -492,7 +503,7 @@ function placeholderTimeline(id) {
     stats: {
       trade_count: 0,
       record_status: "source_status_only",
-      disclosure_status: "No reviewed or parser-preview trade rows are available in this snapshot.",
+      disclosure_status: disclosureStatus,
       confidence_label: "Source-backed official roster only",
     },
   };
@@ -534,7 +545,19 @@ function renderSelectedOfficials() {
         .map((id) => {
           const official = state.officialMap.get(id);
           const timeline = timelineSummary(id);
-          const coverage = timeline?.trade_count ? `${numberFormat.format(timeline.trade_count)} records` : "Roster only";
+          let coverage = "Disclosure documents pending";
+          if (timeline?.trade_count) {
+            coverage = `${numberFormat.format(timeline.trade_count)} records`;
+          } else if (
+            timeline?.document_count &&
+            timeline.no_transaction_document_count === timeline.document_count
+          ) {
+            coverage = `${numberFormat.format(timeline.document_count)} reports / no reportable transactions`;
+          } else if (timeline?.document_count) {
+            coverage = `${numberFormat.format(timeline.document_count)} reports indexed`;
+          } else if ((official?.chambers || []).includes("Senate")) {
+            coverage = "Senate disclosures pending";
+          }
           return `
             <div class="official-chip">
               <span><strong>${escapeHtml(official?.full_name || id)}</strong><small>${escapeHtml(`${official?.branch || "Unknown"} / ${coverage}`)}</small></span>
@@ -698,12 +721,78 @@ function aggregateTradePoints(official, laneIndex) {
   });
 }
 
+function noTradeLaneLabel(official) {
+  if ((official.trades || []).length) return "No matching transactions in this view";
+  const stats = official.stats || {};
+  if (stats.document_count && stats.no_transaction_document_count === stats.document_count) {
+    return `${numberFormat.format(stats.document_count)} official reports: no reportable transactions`;
+  }
+  return stats.disclosure_status || "Disclosure documents not yet ingested";
+}
+
+function careerDateForDay(official, careerDay) {
+  const period = (official.service_periods || []).find(
+    (row) => careerDay >= row.career_start_day && careerDay <= row.career_end_day
+  );
+  if (!period) return null;
+  return new Date(dateMs(period.start) + Math.round(careerDay - period.career_start_day) * 86400000);
+}
+
+function careerRulerLabel(careerDay, date, visibleSpan) {
+  const day = Math.max(1, Math.floor(careerDay) + 1);
+  const month = Math.max(1, Math.floor(careerDay / 30.4375) + 1);
+  const year = Math.max(1, Math.floor(careerDay / 365.25) + 1);
+  if (visibleSpan <= 62) {
+    return `D${numberFormat.format(day)} · ${date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
+    })}`;
+  }
+  if (visibleSpan <= 730) {
+    return `M${numberFormat.format(month)} · ${date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    })}`;
+  }
+  return `Y${numberFormat.format(year)} · ${date.getUTCFullYear()}`;
+}
+
+function careerRulerPoints(official, laneIndex) {
+  if (state.mode !== "career" || !(official.service_periods || []).length) return [];
+  const zoom = zoomedXRange() || state.chartExtent;
+  const careerStart = official.service_periods[0].career_start_day;
+  const careerEnd = official.service_periods[official.service_periods.length - 1].career_end_day;
+  const start = Math.max(careerStart, zoom.min);
+  const end = Math.min(careerEnd, zoom.max);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return [];
+  const visibleSpan = Math.max(1, end - start);
+  const count = state.compactLayout ? 3 : 5;
+  const days = new Set();
+  for (let index = 0; index < count; index += 1) {
+    days.add(Math.round(start + (visibleSpan * index) / Math.max(1, count - 1)));
+  }
+  return [...days].flatMap((careerDay) => {
+    const date = careerDateForDay(official, careerDay);
+    if (!date) return [];
+    return [
+      {
+        value: [careerDay, laneIndex + 0.29],
+        label: { formatter: careerRulerLabel(careerDay, date, visibleSpan) },
+      },
+    ];
+  });
+}
+
 function buildChartSeries() {
   const serviceSeries = [];
   const tradePoints = [];
   const eventPoints = [];
   const breakPoints = [];
   const emptyPoints = [];
+  const dateRulerPoints = [];
   const extent = state.chartExtent;
 
   state.selectedTimelines.forEach((official, laneIndex) => {
@@ -737,10 +826,11 @@ function buildChartSeries() {
 
     const points = aggregateTradePoints(official, laneIndex);
     tradePoints.push(...points);
+    dateRulerPoints.push(...careerRulerPoints(official, laneIndex));
     if (!points.length) {
       emptyPoints.push({
         value: [extent.min + (extent.max - extent.min) * 0.08, laneIndex],
-        label: { formatter: "No trade records in this view" },
+        label: { formatter: noTradeLaneLabel(official) },
       });
     }
 
@@ -762,6 +852,24 @@ function buildChartSeries() {
 
   return [
     ...serviceSeries,
+    {
+      name: "Local career dates",
+      type: "scatter",
+      silent: true,
+      data: dateRulerPoints,
+      symbol: "rect",
+      symbolSize: [1, 5],
+      itemStyle: { color: "#aebdb6" },
+      label: {
+        show: true,
+        position: "bottom",
+        distance: 3,
+        color: "#53616a",
+        fontSize: 9,
+      },
+      labelLayout: { hideOverlap: true },
+      z: 3,
+    },
     {
       name: "Term break",
       type: "scatter",
@@ -799,7 +907,15 @@ function buildChartSeries() {
       data: emptyPoints,
       symbolSize: 1,
       itemStyle: { opacity: 0 },
-      label: { show: true, position: "right", color: "#6d7a84", fontSize: 11 },
+      label: {
+        show: true,
+        position: "right",
+        color: "#6d7a84",
+        fontSize: 11,
+        width: state.compactLayout ? 210 : 360,
+        overflow: "break",
+        lineHeight: 15,
+      },
       z: 2,
     },
   ];
@@ -833,11 +949,18 @@ function tooltipFormatter(params) {
   }
   if (data.kind === "event") {
     const event = data.event;
+    const candidate = event.trade_context_candidate
+      ? `<br><strong>Context candidate</strong> / ${escapeHtml(
+          event.nearest_trade_days === 0
+            ? "same day as nearest transaction"
+            : `${Math.abs(event.nearest_trade_days)}d ${event.nearest_trade_days > 0 ? "after" : "before"} nearest transaction`
+        )}`
+      : "";
     return `
       <strong>${escapeHtml(event.label)}</strong><br>
       ${escapeHtml(formatDate(event.date))} / ${escapeHtml(titleCase(event.event_type))}<br>
       ${escapeHtml(tierLabels[event.relationship_tier] || "Context")}<br>
-      <span>${escapeHtml((event.relationship_reasons || []).join("; "))}</span>`;
+      <span>${escapeHtml((event.relationship_reasons || []).join("; "))}</span>${candidate}`;
   }
   return "";
 }
@@ -954,6 +1077,8 @@ function handleDataZoom(event) {
   if (!Number.isFinite(zoom.start) || !Number.isFinite(zoom.end)) return;
   state.zoomPercent = { start: zoom.start, end: zoom.end };
   renderTransactions();
+  window.clearTimeout(state.zoomRenderTimer);
+  state.zoomRenderTimer = window.setTimeout(() => renderTradeChart(), 120);
 }
 
 function zoomedXRange() {
@@ -1048,8 +1173,17 @@ function renderRecordDetail() {
       ${benchmark ? `<span>${escapeHtml(trade.benchmark_symbol)} close ${escapeHtml(benchmark)}</span>` : ""}
       ${trade.parsing_confidence != null ? `<span>Parser confidence ${Math.round(Number(trade.parsing_confidence) * 100)}%</span>` : ""}
       ${trade.source_page ? `<span>Source page ${numberFormat.format(trade.source_page)}</span>` : ""}
+      ${trade.filing_label ? `<span>${escapeHtml(trade.filing_label)}</span>` : ""}
     </div>
     <div class="evidence-links">${sourceLink || '<span class="state-label">Source link unavailable in this snapshot</span>'}</div>
+    ${
+      trade.decision_authority_note
+        ? `<p class="evidence-note"><strong>Decision authority recorded in filing:</strong> ${escapeHtml(trade.decision_authority_note)}</p>`
+        : `<p class="evidence-note">${escapeHtml(
+            trade.disclosure_attribution_note ||
+              "This transaction appears on the official's disclosure; the source filing controls ownership and decision-authority attribution."
+          )}</p>`
+    }
     <p>No causation, intent, ethics, legality, or investment conclusion is implied.</p>`;
 }
 
@@ -1080,6 +1214,11 @@ function renderEventDetail() {
     .map((url, index) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}</a>`)
     .join("");
   const reasons = event.relationship_reasons || [];
+  const candidateTiming = event.trade_context_candidate
+    ? event.nearest_trade_days === 0
+      ? "Same day as the nearest disclosed transaction"
+      : `${Math.abs(event.nearest_trade_days)} days ${event.nearest_trade_days > 0 ? "after" : "before"} the nearest disclosed transaction`
+    : "";
   const sourceReference = event.docket_number
     ? `Docket ${event.docket_number}${event.citation ? ` / ${event.citation}` : ""}`
     : event.law_number
@@ -1096,8 +1235,14 @@ function renderEventDetail() {
       <span>${escapeHtml(event.editor_status || "source status")}</span>
       <span>${escapeHtml(event.source || "CivicLedger event source")}</span>
       ${sourceReference ? `<span>${escapeHtml(sourceReference)}</span>` : ""}
+      ${event.trade_context_candidate ? '<span class="state-label preview">Automated context candidate</span>' : ""}
     </div>
     ${reasons.length ? `<p>${escapeHtml(reasons.join("; "))}</p>` : ""}
+    ${
+      candidateTiming
+        ? `<p class="evidence-note"><strong>${escapeHtml(candidateTiming)}.</strong> This marker is selected from source-backed public events by timing and entity or institutional relevance. It does not establish knowledge, intent, causation, or market impact.</p>`
+        : ""
+    }
     <div class="evidence-links">${sources || '<span class="state-label">No source link recorded</span>'}</div>
     <div class="window-transactions">
       <strong>Transactions within ${numberFormat.format(state.eventWindowDays)} days:</strong>
@@ -1129,7 +1274,7 @@ function renderSummary() {
     [production, "Reviewed production"],
     [preview, "Official preview"],
     [tickerMapped, "Ticker-mapped"],
-    [events, "Visible event markers"],
+    [events, "Visible context markers"],
   ];
   $("workbenchSummary").innerHTML = metrics
     .map(([value, label]) => `<div class="summary-item"><strong>${numberFormat.format(value)}</strong><span>${escapeHtml(label)}</span></div>`)
@@ -1138,7 +1283,10 @@ function renderSummary() {
 
 function renderChartHeader() {
   const modeCopy = {
-    career: ["Career trade activity", "Active service time is cumulative; inactive gaps are excluded and term breaks remain visible."],
+    career: [
+      "Career trade activity",
+      "Active service time is cumulative; each lane's local date ruler changes from years to months to days as you zoom.",
+    ],
     calendar: ["Calendar trade activity", "Officials, transactions, and events share actual dates; inactive service gaps remain visible."],
     event: [
       selectedEvent() ? `${selectedEvent().label} event window` : "Event window",
