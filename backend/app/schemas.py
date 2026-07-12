@@ -440,6 +440,7 @@ class RelationshipReviewCreateRequest(BaseModel):
         validation_alias=AliasChoices("evidence_note", "reason"),
     )
     expected_status: RelationshipCandidateStatus | None = None
+    expected_revision: str | None = Field(default=None, min_length=64, max_length=64)
 
     @field_validator("reviewer", "evidence_note")
     @classmethod
@@ -457,6 +458,41 @@ class RelationshipReviewHistoryItem(BaseModel):
     reviewer: str
     evidence_note: str
     reviewed_at: datetime
+
+
+class RelationshipBulkReviewTarget(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    candidate_id: UUID
+    expected_status: RelationshipCandidateStatus
+    expected_revision: str = Field(min_length=64, max_length=64)
+
+
+class RelationshipBulkReviewCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    decision: RelationshipReviewDecision
+    reviewer: str = Field(min_length=1, max_length=200)
+    evidence_note: str = Field(min_length=1, max_length=5000)
+    targets: list[RelationshipBulkReviewTarget] = Field(min_length=1, max_length=100)
+
+    @field_validator("reviewer", "evidence_note")
+    @classmethod
+    def strip_bulk_required_text(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("must not be blank")
+        return value
+
+    @field_validator("targets")
+    @classmethod
+    def reject_duplicate_targets(
+        cls, targets: list[RelationshipBulkReviewTarget]
+    ) -> list[RelationshipBulkReviewTarget]:
+        candidate_ids = [target.candidate_id for target in targets]
+        if len(candidate_ids) != len(set(candidate_ids)):
+            raise ValueError("candidate_id values must be unique")
+        return targets
 
 
 class TradeEventCandidateReviewItem(BaseModel):
@@ -482,6 +518,7 @@ class TradeEventCandidateReviewItem(BaseModel):
     internal_rank: Optional[Decimal] = None
     methodology_version: str
     review_status: RelationshipCandidateStatus
+    review_revision: str
     created_at: Optional[datetime] = None
     reviews: list[RelationshipReviewHistoryItem]
 
@@ -492,6 +529,90 @@ class TradeEventCandidateReviewListResponse(BaseModel):
     page_size: int
     total: int
     sort: RelationshipCandidateSort = RelationshipCandidateSort.PRIORITY
+
+
+class RelationshipBulkReviewResponse(BaseModel):
+    updated_count: int
+    items: list[TradeEventCandidateReviewItem]
+
+
+class RelationshipAuditExportRecord(BaseModel):
+    review_id: UUID
+    candidate_id: UUID
+    trade_id: UUID
+    event_id: UUID
+    methodology_version: str
+    decision: RelationshipReviewDecision
+    reviewer: str
+    evidence_note: str
+    reviewed_at: datetime
+
+
+class RelationshipAuditExportResponse(BaseModel):
+    schema_version: str
+    export_id: str
+    content_sha256: str
+    snapshot_through: datetime | None
+    record_count: int
+    interpretation_boundary: str
+    records: list[RelationshipAuditExportRecord]
+
+
+class ReviewerTelemetrySummary(BaseModel):
+    refresh_run_count: int
+    measured_refresh_count: int
+    failed_refresh_count: int
+    source_failure_count: int
+    data_drift_count: int
+
+
+class ReviewerRefreshRun(BaseModel):
+    run_id: str
+    source_id: str
+    status: str
+    started_at: datetime | None
+    completed_at: datetime | None
+    duration_seconds: float | None
+    failure_count: int
+
+
+class ReviewerRefreshDuration(BaseModel):
+    unit: str
+    p50: float | None
+    p95: float | None
+    maximum: float | None
+    runs: list[ReviewerRefreshRun]
+
+
+class ReviewerSourceFailure(BaseModel):
+    source_id: str
+    source_artifact: str
+    metric: str
+    failure_count: int
+
+
+class ReviewerDataDrift(BaseModel):
+    source_id: str
+    path: str
+    status: str
+    baseline_schema_version: str | None
+    current_schema_version: str | None
+    count_metric: str
+    baseline_record_count: int | None
+    current_record_count: int | None
+    baseline_summary_sha256: str | None
+    current_summary_sha256: str | None
+
+
+class ReviewerTelemetryResponse(BaseModel):
+    schema_version: str
+    generated_at: date
+    status: str
+    interpretation_boundary: str
+    summary: ReviewerTelemetrySummary
+    refresh_duration: ReviewerRefreshDuration
+    source_failures: list[ReviewerSourceFailure]
+    data_drift: list[ReviewerDataDrift]
 
 
 class IngestionRunItem(BaseModel):

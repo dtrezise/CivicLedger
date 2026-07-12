@@ -968,6 +968,18 @@ class RelationshipReview(Base):
     __table_args__ = (Index("idx_relationship_reviews_candidate", "candidate_id"),)
 
 
+def _reject_relationship_review_mutation(*_args, **_kwargs):
+    raise ValueError("Relationship reviews are immutable; append a new review instead")
+
+
+sqlalchemy_event.listen(
+    RelationshipReview, "before_update", _reject_relationship_review_mutation, propagate=True
+)
+sqlalchemy_event.listen(
+    RelationshipReview, "before_delete", _reject_relationship_review_mutation, propagate=True
+)
+
+
 class DataQualityIssue(Base):
     __tablename__ = "data_quality_issues"
 

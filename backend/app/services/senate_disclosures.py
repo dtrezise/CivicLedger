@@ -195,6 +195,71 @@ def senate_document_family_key(document: dict) -> str:
     return f"senate-family-{hashlib.sha256(value.encode('utf-8')).hexdigest()[:20]}"
 
 
+def senate_ocr_priority_record(document: dict, *, as_of: date) -> dict | None:
+    """Build a metadata-only OCR work item for an official Senate paper filing."""
+    if document.get("parser_status") != "paper_images_review_required":
+        return None
+
+    source_url = str(document.get("source_url") or "")
+    parsed_url = urlparse(source_url)
+    official_url = (
+        parsed_url.scheme == "https"
+        and parsed_url.netloc == "efdsearch.senate.gov"
+        and bool(REPORT_PATH_RE.fullmatch(parsed_url.path))
+    )
+    source_hash = str(document.get("source_page_sha256") or "").lower()
+    hash_verified = bool(re.fullmatch(r"[0-9a-f]{64}", source_hash))
+    identity_verified = (
+        document.get("match_status") == "matched"
+        and bool(document.get("official_id"))
+        and int(document.get("match_score") or 0) >= 8
+        and document.get("page_identity_consistent") is not False
+    )
+    media_urls = sorted(set(document.get("source_media_urls") or []))
+    media_manifested = bool(media_urls) and all(
+        urlparse(url).scheme == "https"
+        and urlparse(url).netloc == "efd-media-public.senate.gov"
+        for url in media_urls
+    )
+    filing_date = date.fromisoformat(document["filing_date"])
+    age_days = max(0, (as_of - filing_date).days)
+    recency_points = 15 if age_days <= 365 else 10 if age_days <= 1095 else 5
+    checks = {
+        "official_source_url": official_url,
+        "source_page_sha256_present": hash_verified,
+        "filer_identity_deterministically_matched": identity_verified,
+        "official_media_manifest_present": media_manifested,
+    }
+    evidence_score = (
+        (25 if official_url else 0)
+        + (20 if hash_verified else 0)
+        + (20 if identity_verified else 0)
+        + (20 if media_manifested else 0)
+        + recency_points
+    )
+    eligible = all(checks.values())
+    return {
+        "document_id": document["document_id"],
+        "source_id": document.get("source_id"),
+        "chamber": "Senate",
+        "official_id": document.get("official_id"),
+        "official_name": document.get("official_name"),
+        "filing_date": document["filing_date"],
+        "source_url": source_url,
+        "source_page_sha256": source_hash or None,
+        "source_media_urls": media_urls,
+        "source_page_count": len(media_urls),
+        "source_byte_count": int(document.get("source_page_byte_count") or 0),
+        "priority_score": evidence_score,
+        "priority_tier": "highest_confidence" if eligible and evidence_score >= 90 else "evidence_gap",
+        "eligibility_checks": checks,
+        "eligible_for_ocr_batch": eligible,
+        "processing_status": "metadata_prioritized_ocr_not_run",
+        "ocr_content_present": False,
+        "transaction_rows_created": 0,
+    }
+
+
 def reconcile_senate_amendments(documents: list[dict]) -> list[dict]:
     """Describe possible amendment chains while retaining every official filing."""
     grouped: dict[str, list[dict]] = {}
@@ -206,18 +271,44 @@ def reconcile_senate_amendments(documents: list[dict]) -> list[dict]:
     output = []
     for family in grouped.values():
         ordered = sorted(family, key=lambda row: (row["filing_date"], row["document_id"]))
-        prior = None
+        originals = [document for document in ordered if not document.get("is_amendment")]
         for document in ordered:
             if document.get("is_amendment"):
+                predecessor = originals[0] if len(originals) == 1 else None
                 document["amendment_status"] = (
-                    "candidate_predecessor_identified" if prior else "predecessor_not_identified"
+                    "candidate_predecessor_identified"
+                    if predecessor
+                    else "ambiguous_predecessor_candidates"
+                    if len(originals) > 1
+                    else "predecessor_not_identified"
                 )
-                document["candidate_supersedes_document_id"] = prior["document_id"] if prior else None
+                document["candidate_supersedes_document_id"] = (
+                    predecessor["document_id"] if predecessor else None
+                )
+                document["amendment_linkage_confidence"] = (
+                    "candidate_exact_official_metadata" if predecessor else "none"
+                )
+                document["amendment_reconciliation_evidence"] = [
+                    {
+                        "evidence_type": "official_title_marker",
+                        "field": "portal_report_title",
+                        "value": document.get("portal_report_title"),
+                        "source_document_id": document["document_id"],
+                    },
+                    {
+                        "evidence_type": "exact_family_metadata",
+                        "fields": ["official_id_or_filer_name", "report_title_without_marker", "filing_date"],
+                        "candidate_document_ids": [row["document_id"] for row in originals],
+                    },
+                ]
             else:
                 document["amendment_status"] = "original_or_standalone_filing"
                 document["candidate_supersedes_document_id"] = None
+                document["amendment_linkage_confidence"] = "not_applicable"
+                document["amendment_reconciliation_evidence"] = []
+            document["amendment_reconciliation_action"] = "annotate_only"
+            document["source_record_preserved"] = True
             output.append(document)
-            prior = document
     return sorted(output, key=lambda row: (row["filing_date"], row["senate_report_uuid"]))
 
 

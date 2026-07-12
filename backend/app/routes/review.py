@@ -1,8 +1,12 @@
 from collections import defaultdict
 from datetime import datetime, timezone
+from hashlib import sha256
+import json
+from pathlib import Path
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,11 +20,16 @@ from app.schemas import (
     ParserArtifactListResponse,
     PromotePreviewRequest,
     PromotePreviewResponse,
+    RelationshipAuditExportRecord,
+    RelationshipAuditExportResponse,
+    RelationshipBulkReviewCreateRequest,
+    RelationshipBulkReviewResponse,
     RelationshipCandidateSort,
     RelationshipCandidateStatus,
     RelationshipReviewCreateRequest,
     RelationshipReviewDecision,
     RelationshipReviewHistoryItem,
+    ReviewerTelemetryResponse,
     RollbackFilingRequest,
     RollbackFilingResponse,
     SupersedeFilingRequest,
@@ -34,6 +43,8 @@ from app.services.promotion import (
 )
 
 router = APIRouter(prefix="/review", tags=["review"])
+ROOT = Path(__file__).resolve().parents[3]
+REVIEWER_TELEMETRY = ROOT / "data" / "operations" / "source_refresh_telemetry.json"
 
 DECISION_STATUS = {
     RelationshipReviewDecision.ACCEPT: RelationshipCandidateStatus.ACCEPTED,
@@ -96,6 +107,7 @@ def _candidate_item(
         reason if isinstance(reason, (str, dict)) else {"value": str(reason)}
         for reason in reasons
     ]
+    candidate_history = history.get(candidate.id, [])
     return TradeEventCandidateReviewItem(
         id=candidate.id,
         trade_id=candidate.trade_id,
@@ -119,9 +131,23 @@ def _candidate_item(
         internal_rank=candidate.internal_rank,
         methodology_version=candidate.methodology_version,
         review_status=candidate.review_status,
+        review_revision=_review_revision(candidate.review_status, candidate_history),
         created_at=candidate.created_at,
-        reviews=history.get(candidate.id, []),
+        reviews=candidate_history,
     )
+
+
+def _review_revision(
+    status: str, history: list[RelationshipReviewHistoryItem]
+) -> str:
+    revision_state = {
+        "review_ids": [str(review.id) for review in history],
+        "status": status,
+    }
+    encoded = json.dumps(
+        revision_state, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return sha256(encoded).hexdigest()
 
 
 def _load_candidate(
@@ -134,6 +160,22 @@ def _load_candidate(
         return None
     history = _review_history(db, [candidate_id])
     return _candidate_item(row, history)
+
+
+@router.get("/telemetry", response_model=ReviewerTelemetryResponse)
+def get_reviewer_telemetry():
+    if not REVIEWER_TELEMETRY.exists():
+        raise HTTPException(
+            status_code=503,
+            detail="Reviewer telemetry artifact is unavailable.",
+        )
+    try:
+        return json.loads(REVIEWER_TELEMETRY.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Reviewer telemetry artifact is invalid.",
+        ) from exc
 
 
 @router.get("/parser-previews", response_model=ParserArtifactListResponse)
@@ -292,6 +334,69 @@ def get_relationship_candidate_history(
     return _review_history(db, [candidate_id]).get(candidate_id, [])
 
 
+@router.get(
+    "/relationship-audit-history/export",
+    response_model=RelationshipAuditExportResponse,
+)
+def export_relationship_audit_history(
+    db: Session = Depends(get_sync_db),
+):
+    rows = db.execute(
+        select(RelationshipReview, TradeEventCandidate)
+        .join(
+            TradeEventCandidate,
+            TradeEventCandidate.id == RelationshipReview.candidate_id,
+        )
+        .order_by(RelationshipReview.reviewed_at, RelationshipReview.id)
+    ).all()
+    records = [
+        RelationshipAuditExportRecord(
+            review_id=review.id,
+            candidate_id=review.candidate_id,
+            trade_id=candidate.trade_id,
+            event_id=candidate.event_id,
+            methodology_version=candidate.methodology_version,
+            decision=review.decision,
+            reviewer=review.reviewer,
+            evidence_note=review.reason,
+            reviewed_at=review.reviewed_at,
+        )
+        for review, candidate in rows
+    ]
+    core = {
+        "schema_version": "relationship-audit-export-v1",
+        "snapshot_through": (
+            records[-1].reviewed_at.isoformat() if records else None
+        ),
+        "record_count": len(records),
+        "interpretation_boundary": (
+            "Append-only reviewer decisions and attribution only. This export does not "
+            "promote candidates or establish that a relationship is causal."
+        ),
+        "records": [record.model_dump(mode="json") for record in records],
+    }
+    canonical_core = json.dumps(
+        core, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    digest = sha256(canonical_core).hexdigest()
+    payload = {
+        **core,
+        "export_id": f"relationship-audit-{digest[:16]}",
+        "content_sha256": digest,
+    }
+    body = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    return Response(
+        content=body,
+        media_type="application/json",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="relationship-audit-{digest[:16]}.json"'
+            ),
+            "ETag": f'"{digest}"',
+        },
+    )
+
+
 @router.post(
     "/relationship-candidates/{candidate_id}/decisions",
     response_model=TradeEventCandidateReviewItem,
@@ -325,6 +430,20 @@ def create_relationship_candidate_decision(
                 ),
             )
 
+        if payload.expected_revision is not None:
+            current_history = _review_history(db, [candidate_id]).get(candidate_id, [])
+            current_revision = _review_revision(
+                candidate.review_status, current_history
+            )
+            if current_revision != payload.expected_revision:
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "The candidate review history changed after this review view was "
+                        "loaded. Reload the candidate before recording a decision."
+                    ),
+                )
+
         reviewed_at = datetime.now(timezone.utc)
         review = RelationshipReview(
             id=uuid4(),
@@ -352,6 +471,99 @@ def create_relationship_candidate_decision(
     if saved_candidate is None:
         raise HTTPException(status_code=404, detail="Relationship candidate not found.")
     return saved_candidate
+
+
+@router.post(
+    "/relationship-candidates/bulk-decisions",
+    response_model=RelationshipBulkReviewResponse,
+    status_code=201,
+)
+def create_bulk_relationship_candidate_decisions(
+    payload: RelationshipBulkReviewCreateRequest,
+    db: Session = Depends(get_sync_db),
+):
+    target_ids = sorted(
+        (target.candidate_id for target in payload.targets), key=str
+    )
+    target_by_id = {target.candidate_id: target for target in payload.targets}
+    try:
+        candidates = (
+            db.execute(
+                select(TradeEventCandidate)
+                .where(TradeEventCandidate.id.in_(target_ids))
+                .order_by(TradeEventCandidate.id)
+                .with_for_update()
+            )
+            .scalars()
+            .all()
+        )
+        candidates_by_id = {candidate.id: candidate for candidate in candidates}
+        missing = [candidate_id for candidate_id in target_ids if candidate_id not in candidates_by_id]
+        if missing:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Relationship candidates not found: {', '.join(map(str, missing))}.",
+            )
+
+        history = _review_history(db, target_ids)
+        stale = []
+        for candidate_id in target_ids:
+            candidate = candidates_by_id[candidate_id]
+            target = target_by_id[candidate_id]
+            current_revision = _review_revision(
+                candidate.review_status, history.get(candidate_id, [])
+            )
+            if (
+                candidate.review_status != target.expected_status.value
+                or current_revision != target.expected_revision
+            ):
+                stale.append(candidate_id)
+        if stale:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "The bulk review was not recorded because candidate state changed: "
+                    f"{', '.join(map(str, stale))}. Reload the queue and try again."
+                ),
+            )
+
+        reviewed_at = datetime.now(timezone.utc)
+        for candidate_id in target_ids:
+            candidate = candidates_by_id[candidate_id]
+            db.add(
+                RelationshipReview(
+                    id=uuid4(),
+                    candidate_id=candidate_id,
+                    decision=payload.decision.value,
+                    reviewer=payload.reviewer,
+                    reason=payload.evidence_note,
+                    reviewed_at=reviewed_at,
+                )
+            )
+            candidate.review_status = DECISION_STATUS[payload.decision].value
+        db.flush()
+        db.commit()
+    except HTTPException:
+        db.rollback()
+        raise
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="The bulk relationship decision could not be saved.",
+        ) from exc
+
+    rows = db.execute(
+        _candidate_select().where(TradeEventCandidate.id.in_(target_ids))
+    ).all()
+    saved_history = _review_history(db, target_ids)
+    items_by_id = {
+        row[0].id: _candidate_item(row, saved_history) for row in rows
+    }
+    return RelationshipBulkReviewResponse(
+        updated_count=len(target_ids),
+        items=[items_by_id[candidate_id] for candidate_id in target_ids],
+    )
 
 
 @router.post(

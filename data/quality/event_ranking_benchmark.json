@@ -1,0 +1,71 @@
+{
+  "benchmark_id": "trade-event-ranking-regression-v1",
+  "cases": [
+    {
+      "candidate_rank": 1,
+      "candidate_score": 91.0,
+      "expected_relevant": true,
+      "id": "direct-same-day",
+      "predicted_candidate": true
+    },
+    {
+      "candidate_rank": 2,
+      "candidate_score": 89.3,
+      "expected_relevant": true,
+      "id": "asset-three-days-before",
+      "predicted_candidate": true
+    },
+    {
+      "candidate_rank": 3,
+      "candidate_score": 78.8,
+      "expected_relevant": true,
+      "id": "jurisdiction-four-days-after",
+      "predicted_candidate": true
+    },
+    {
+      "candidate_rank": null,
+      "candidate_score": null,
+      "expected_relevant": false,
+      "id": "asset-outside-window",
+      "predicted_candidate": false
+    },
+    {
+      "candidate_rank": null,
+      "candidate_score": null,
+      "expected_relevant": false,
+      "id": "general-same-day",
+      "predicted_candidate": false
+    },
+    {
+      "candidate_rank": null,
+      "candidate_score": null,
+      "expected_relevant": false,
+      "id": "macro-eight-days-before",
+      "predicted_candidate": false
+    },
+    {
+      "candidate_rank": null,
+      "candidate_score": null,
+      "expected_relevant": false,
+      "id": "sector-thirty-nine-days-before",
+      "predicted_candidate": false
+    }
+  ],
+  "generated_at": "2026-07-12",
+  "label_policy": "Labels are hand-authored regression expectations for relationship specificity and temporal proximity. They are not empirical findings or allegations.",
+  "methodology_version": "trade-window-v3",
+  "metrics": {
+    "case_count": 7,
+    "f1": 1.0,
+    "false_negative": 0,
+    "false_positive": 0,
+    "negative_label_count": 4,
+    "positive_label_count": 3,
+    "precision": 1.0,
+    "recall": 1.0,
+    "true_negative": 4,
+    "true_positive": 3
+  },
+  "schema_version": "trade-event-ranking-benchmark-v1",
+  "scope_note": "This is a deterministic regression benchmark for ranking behavior. It does not measure real-world causation, intent, knowledge, misconduct, or investigative accuracy."
+}

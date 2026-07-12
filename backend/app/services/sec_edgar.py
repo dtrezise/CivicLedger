@@ -17,6 +17,7 @@ from xml.etree import ElementTree
 
 SEC_SUBMISSIONS_BASE_URL = "https://data.sec.gov/submissions"
 SEC_COMPANYFACTS_BASE_URL = "https://data.sec.gov/api/xbrl/companyfacts"
+SEC_COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
 SEC_ARCHIVES_BASE_URL = "https://www.sec.gov/Archives/edgar/data"
 SEC_ATOM_BASE_URL = "https://www.sec.gov/cgi-bin/browse-edgar"
 SEC_MAX_REQUESTS_PER_SECOND = 10.0
@@ -103,6 +104,23 @@ class SecFilingResult:
 @dataclass(frozen=True)
 class SecCompanyFactsResult:
     payload: dict
+    request_url: str
+    retrieval_status: str
+    warnings: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class SecIssuerTicker:
+    cik: str
+    company_name: str
+    ticker: str
+    exchange: str | None
+    source_url: str
+
+
+@dataclass(frozen=True)
+class SecIssuerTickerResult:
+    records: tuple[SecIssuerTicker, ...]
     request_url: str
     retrieval_status: str
     warnings: tuple[str, ...] = ()
@@ -220,7 +238,7 @@ def _string_values(value: object) -> list[str]:
 def _source_bool(value: object) -> bool:
     if isinstance(value, bool):
         return value
-    if isinstance(value, int | float):
+    if isinstance(value, (int, float)):
         return value != 0
     return str(value).strip().lower() in {"1", "true", "yes"}
 
@@ -275,6 +293,46 @@ def parse_submission_filings(
             )
         )
     return sorted(filings, key=lambda filing: (filing.filing_date, filing.accession_number))
+
+
+def parse_company_tickers(payload: dict, *, source_url: str) -> list[SecIssuerTicker]:
+    """Parse both current tabular and legacy keyed SEC ticker payloads."""
+
+    rows: list[dict] = []
+    fields = payload.get("fields")
+    data = payload.get("data")
+    if isinstance(fields, list) and isinstance(data, list):
+        for values in data:
+            if not isinstance(values, list):
+                continue
+            rows.append({str(field): values[index] if index < len(values) else None for index, field in enumerate(fields)})
+    else:
+        rows.extend(value for value in payload.values() if isinstance(value, dict))
+
+    records: dict[tuple[str, str, str, str], SecIssuerTicker] = {}
+    for row in rows:
+        cik_value = row.get("cik") if row.get("cik") is not None else row.get("cik_str")
+        company_name = _optional_text(row.get("name") or row.get("title"))
+        ticker = _optional_text(row.get("ticker"))
+        if cik_value is None or not company_name or not ticker:
+            continue
+        try:
+            cik = normalize_cik(str(cik_value))
+        except ValueError:
+            continue
+        normalized_ticker = ticker.upper()
+        if not re.fullmatch(r"[A-Z0-9][A-Z0-9.-]{0,14}", normalized_ticker):
+            continue
+        exchange = _optional_text(row.get("exchange"))
+        key = (normalized_ticker, cik, company_name, exchange or "")
+        records[key] = SecIssuerTicker(
+            cik=cik,
+            company_name=company_name,
+            ticker=normalized_ticker,
+            exchange=exchange,
+            source_url=source_url,
+        )
+    return [records[key] for key in sorted(records)]
 
 
 def _xml_child_text(parent: ElementTree.Element | None, local_name: str) -> str | None:
@@ -386,6 +444,7 @@ class SecEdgarSubmissionsProvider:
         cache_directory: Path | None = None,
         submissions_base_url: str = SEC_SUBMISSIONS_BASE_URL,
         companyfacts_base_url: str = SEC_COMPANYFACTS_BASE_URL,
+        company_tickers_url: str = SEC_COMPANY_TICKERS_URL,
         requests_per_second: float = SEC_DEFAULT_REQUESTS_PER_SECOND,
         timeout: float = 45.0,
         refresh: bool = False,
@@ -396,6 +455,7 @@ class SecEdgarSubmissionsProvider:
         self.cache = JsonResponseCache(cache_directory)
         self.submissions_base_url = submissions_base_url.rstrip("/")
         self.companyfacts_base_url = companyfacts_base_url.rstrip("/")
+        self.company_tickers_url = company_tickers_url
         self.timeout = timeout
         self.refresh = refresh
         self.transport = transport or _default_json_transport
@@ -540,6 +600,17 @@ class SecEdgarSubmissionsProvider:
         return SecCompanyFactsResult(
             payload=payload,
             request_url=request_url,
+            retrieval_status=status,
+            warnings=warnings,
+        )
+
+    def company_tickers(self) -> SecIssuerTickerResult:
+        payload, status, warnings = self._get_json(self.company_tickers_url)
+        return SecIssuerTickerResult(
+            records=tuple(
+                parse_company_tickers(payload, source_url=self.company_tickers_url)
+            ),
+            request_url=self.company_tickers_url,
             retrieval_status=status,
             warnings=warnings,
         )
@@ -718,6 +789,9 @@ class SecEdgarOfficialProvider:
                     )
                 ),
             )
+
+    def company_tickers(self) -> SecIssuerTickerResult:
+        return self.submissions.company_tickers()
 
 
 SecEdgarAdapter = SecEdgarSubmissionsProvider

@@ -26,6 +26,8 @@ jobs:
           python-version: "3.12"
       - name: Install backend dependencies
         run: python -m pip install -e ./backend
+      - name: Start refresh telemetry clock
+        run: echo "REFRESH_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
       - name: Verify required secrets are configured
         env:
           CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
@@ -95,12 +97,13 @@ jobs:
           python scripts/build_executive_disclosure_manifest.py
           python scripts/build_judicial_disclosure_manifest.py
           python scripts/build_disclosure_ingestion_queue.py
+          python scripts/build_disclosure_ocr_priority_batches.py
+          python scripts/build_disclosure_amendment_reconciliation.py
           python scripts/build_reviewed_disclosure_promotions.py
           python scripts/build_disclosure_retrieval_batches.py
           python scripts/build_production_trade_promotions.py
           python scripts/build_disclosure_completeness_dashboard.py
           python scripts/build_source_staleness_alerts.py
-          python scripts/build_disclosure_completeness_dashboard.py
       - name: Refresh FRED trade context
         env:
           PYTHONPATH: backend
@@ -124,26 +127,30 @@ jobs:
         run: |
           python scripts/build_asset_resolution_dataset.py
           python scripts/build_trade_market_reactions.py
+          python scripts/evaluate_event_ranking.py
       - name: Refresh official SEC issuer filing context
         env:
           PYTHONPATH: backend
           SEC_EDGAR_USER_AGENT: CivicLedger github-actions[bot]@users.noreply.github.com
-        run: >-
-          python scripts/build_sec_filing_events.py
-          --cik apple=0000320193
-          --cik microsoft=0000789019
-          --cik alphabet=0001652044
-          --cik nvidia=0001045810
-          --cik jpmorgan=0000019617
-          --cik amazon=0001018724
-          --start 2025-01-01
-          --forms 8-K,10-K,10-Q
+        run: |
+          python scripts/build_sec_issuer_aliases.py --refresh
+          python scripts/build_sec_filing_events.py --refresh
+          python scripts/build_primary_source_context.py
       - name: Rebuild canonical entities and source snapshots
         env:
           PYTHONPATH: backend
         run: |
           python scripts/build_entity_reference_dataset.py
           python scripts/build_source_snapshot_index.py
+      - name: Record successful refresh telemetry
+        env:
+          PYTHONPATH: backend
+        run: >-
+          python scripts/build_source_refresh_telemetry.py
+          --record-run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          --started-at "$REFRESH_STARTED_AT"
+          --completed-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          --status success
       - name: Check source freshness
         run: python scripts/check_source_freshness.py
       - name: Rebuild Pages data

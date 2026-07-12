@@ -1,0 +1,104 @@
+{
+  "benchmark_id": "trade-event-ranking-regression-v1",
+  "label_policy": "Labels are hand-authored regression expectations for relationship specificity and temporal proximity. They are not empirical findings or allegations.",
+  "trades": [
+    {
+      "date": "2025-05-10",
+      "id": "trade-1",
+      "market_reaction": {
+        "post_windows": [
+          {
+            "benchmark_adjusted_return_pct": -4.0,
+            "session_count": 5
+          }
+        ]
+      }
+    }
+  ],
+  "cases": [
+    {
+      "date": "2025-05-10",
+      "editor_status": "source_ingested",
+      "expected_relevant": true,
+      "id": "direct-same-day",
+      "relationship_reasons": [
+        "official recorded action"
+      ],
+      "relationship_tier": "direct",
+      "relationship_tier_rank": 6,
+      "source_tier": "official"
+    },
+    {
+      "date": "2025-05-07",
+      "editor_status": "source_ingested",
+      "expected_relevant": true,
+      "id": "asset-three-days-before",
+      "relationship_reasons": [
+        "matching disclosed ticker"
+      ],
+      "relationship_tier": "asset_specific",
+      "relationship_tier_rank": 5,
+      "source_tier": "official"
+    },
+    {
+      "date": "2025-05-14",
+      "editor_status": "source_ingested",
+      "expected_relevant": true,
+      "id": "jurisdiction-four-days-after",
+      "relationship_reasons": [
+        "matching official jurisdiction"
+      ],
+      "relationship_tier": "jurisdictional",
+      "relationship_tier_rank": 4,
+      "source_tier": "official"
+    },
+    {
+      "date": "2025-04-01",
+      "editor_status": "source_ingested",
+      "expected_relevant": false,
+      "id": "sector-thirty-nine-days-before",
+      "relationship_reasons": [
+        "broad sector overlap only"
+      ],
+      "relationship_tier": "sector_context",
+      "relationship_tier_rank": 2,
+      "source_tier": "official"
+    },
+    {
+      "date": "2025-05-02",
+      "editor_status": "source_ingested",
+      "expected_relevant": false,
+      "id": "macro-eight-days-before",
+      "relationship_reasons": [
+        "general macro context"
+      ],
+      "relationship_tier": "general_macro",
+      "relationship_tier_rank": 1,
+      "source_tier": "official"
+    },
+    {
+      "date": "2025-05-10",
+      "editor_status": "source_ingested",
+      "expected_relevant": false,
+      "id": "general-same-day",
+      "relationship_reasons": [
+        "global context only"
+      ],
+      "relationship_tier": "general_context",
+      "relationship_tier_rank": 0,
+      "source_tier": "official"
+    },
+    {
+      "date": "2025-07-01",
+      "editor_status": "source_ingested",
+      "expected_relevant": false,
+      "id": "asset-outside-window",
+      "relationship_reasons": [
+        "matching ticker outside candidate window"
+      ],
+      "relationship_tier": "asset_specific",
+      "relationship_tier_rank": 5,
+      "source_tier": "official"
+    }
+  ]
+}

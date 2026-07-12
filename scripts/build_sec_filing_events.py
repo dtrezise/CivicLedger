@@ -30,6 +30,7 @@ from app.services.sec_edgar import (  # noqa: E402
 
 OUTPUT = ROOT / "data" / "context" / "sec_filing_events.json"
 CACHE = ROOT / ".cache" / "sec-edgar"
+ISSUER_ALIASES = ROOT / "data" / "context" / "sec_issuer_aliases.json"
 DEFAULT_START = "2009-01-20"
 DEFAULT_FORMS = (
     "6-K",
@@ -53,6 +54,14 @@ REVIEW_POLICY = {
     "review_required_before_publication": True,
     "public_production_event": False,
 }
+DEFAULT_SEED_ISSUERS = (
+    ("alphabet", "0001652044"),
+    ("amazon", "0001018724"),
+    ("apple", "0000320193"),
+    ("jpmorgan", "0000019617"),
+    ("microsoft", "0000789019"),
+    ("nvidia", "0001045810"),
+)
 
 
 def _coverage_status(retrieval_status: str) -> str:
@@ -130,6 +139,7 @@ def build_dataset(
     requests: list[SecCompanyRequest],
     *,
     artifact_date: str,
+    selection_policy: dict | None = None,
 ) -> dict:
     date.fromisoformat(artifact_date)
     ordered_requests = sorted(requests, key=lambda item: item.request_id)
@@ -198,6 +208,9 @@ def build_dataset(
         "scope": {
             "description": "Bounded official SEC filing events for issuer-context review.",
             "requests": [request.as_dict() for request in ordered_requests],
+            "selection_policy": selection_policy or {
+                "method": "explicit_request_list",
+            },
         },
         "summary": {
             "request_count": len(ordered_requests),
@@ -243,6 +256,52 @@ def parse_cik_argument(
     )
 
 
+def requests_from_issuer_aliases(
+    payload: dict,
+    *,
+    start_date: str,
+    end_date: str,
+    forms: tuple[str, ...],
+    excluded_ciks: set[str],
+    maximum_issuers: int,
+) -> list[SecCompanyRequest]:
+    if maximum_issuers < 0:
+        raise ValueError("maximum_issuers cannot be negative")
+    selected = []
+    seen_ciks = set(excluded_ciks)
+    ordered = sorted(
+        payload.get("records", []),
+        key=lambda row: (
+            -int(row.get("occurrence_count") or 0),
+            str(row.get("ticker") or ""),
+            str(row.get("cik") or ""),
+        ),
+    )
+    for row in ordered:
+        if len(selected) >= maximum_issuers:
+            break
+        try:
+            cik = normalize_cik(row.get("cik"))
+        except (TypeError, ValueError):
+            continue
+        ticker = str(row.get("ticker") or "").strip().lower()
+        if cik in seen_ciks or not re.fullmatch(r"[a-z0-9][a-z0-9.-]{0,14}", ticker):
+            continue
+        request_id = f"alias-{re.sub(r'[^a-z0-9]+', '-', ticker).strip('-')}"
+        selected.append(
+            SecCompanyRequest(
+                request_id=request_id,
+                cik=cik,
+                start_date=start_date,
+                end_date=end_date,
+                forms=forms,
+                label=str(row.get("official_name") or "").strip() or None,
+            )
+        )
+        seen_ciks.add(cik)
+    return selected
+
+
 def write_artifact(payload: dict) -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     temporary = OUTPUT.with_suffix(".tmp")
@@ -255,7 +314,6 @@ def main() -> None:
     parser.add_argument(
         "--cik",
         action="append",
-        required=True,
         help="Issuer CIK, optionally prefixed with a stable id as REQUEST_ID=CIK.",
     )
     parser.add_argument("--start", default=DEFAULT_START, help="Inclusive ISO start date.")
@@ -272,9 +330,22 @@ def main() -> None:
         help="SEC-compliant organization and contact identity header.",
     )
     parser.add_argument("--refresh", action="store_true", help="Refresh even when cache entries exist.")
+    parser.add_argument(
+        "--issuer-aliases",
+        type=Path,
+        default=ISSUER_ALIASES,
+        help="Deterministic SEC issuer-alias evidence artifact used for bounded expansion.",
+    )
+    parser.add_argument(
+        "--include-alias-issuers",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument("--max-alias-issuers", type=int, default=18)
     args = parser.parse_args()
 
     forms = tuple(form.strip().upper() for form in args.forms.split(",") if form.strip())
+    cik_arguments = args.cik or [f"{request_id}={cik}" for request_id, cik in DEFAULT_SEED_ISSUERS]
     requests = [
         parse_cik_argument(
             value,
@@ -282,8 +353,20 @@ def main() -> None:
             end_date=args.end,
             forms=forms,
         )
-        for value in args.cik
+        for value in cik_arguments
     ]
+    if args.include_alias_issuers:
+        alias_payload = json.loads(args.issuer_aliases.read_text())
+        requests.extend(
+            requests_from_issuer_aliases(
+                alias_payload,
+                start_date=args.start,
+                end_date=args.end,
+                forms=forms,
+                excluded_ciks={request.cik for request in requests},
+                maximum_issuers=args.max_alias_issuers,
+            )
+        )
     duplicate_ids = [
         request_id
         for request_id, count in Counter(request.request_id for request in requests).items()
@@ -301,6 +384,15 @@ def main() -> None:
         provider,
         requests,
         artifact_date=args.artifact_date or args.end,
+        selection_policy={
+            "method": "six_seed_issuers_plus_ranked_supported_alias_issuers",
+            "alias_evidence_path": args.issuer_aliases.relative_to(ROOT).as_posix()
+            if args.issuer_aliases.is_relative_to(ROOT)
+            else str(args.issuer_aliases),
+            "alias_rank": ["occurrence_count_desc", "ticker_asc", "cik_asc"],
+            "maximum_additional_issuers": args.max_alias_issuers,
+            "unsupported_or_ambiguous_aliases_included": False,
+        },
     )
     write_artifact(dataset)
     print(f"Wrote {OUTPUT}")

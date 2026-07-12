@@ -22,6 +22,7 @@ from app.services.market_prices import TICKER_HISTORY, validate_ticker_history  
 ASSET_RESOLUTION = ROOT / "data" / "context" / "asset_resolution.json"
 COMPANY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference.json"
 SEC_EVENTS = ROOT / "data" / "context" / "sec_filing_events.json"
+SEC_ISSUER_ALIASES = ROOT / "data" / "context" / "sec_issuer_aliases.json"
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 HOUSE_INDEX = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 PRESIDENTIAL_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
@@ -130,11 +131,13 @@ def build_dataset(
     asset_resolution_path: Path = ASSET_RESOLUTION,
     company_reference_path: Path = COMPANY_REFERENCE,
     sec_events_path: Path = SEC_EVENTS,
+    sec_issuer_aliases_path: Path = SEC_ISSUER_ALIASES,
     market_prices_path: Path = MARKET_PRICES,
 ) -> dict:
     asset_resolution = _read_json(asset_resolution_path)
     company_reference = _read_json(company_reference_path)
     sec_events = _read_json(sec_events_path)
+    sec_issuer_aliases = _read_json(sec_issuer_aliases_path)
     market_prices = _read_json(market_prices_path)
     disclosure_rows, disclosure_snapshots = load_disclosure_rows()
 
@@ -156,6 +159,12 @@ def build_dataset(
             "sec_filing_events",
             sec_events_path,
             sec_events,
+            source_tier="official",
+        ),
+        _snapshot(
+            "sec_issuer_aliases",
+            sec_issuer_aliases_path,
+            sec_issuer_aliases,
             source_tier="official",
         ),
         _snapshot(
@@ -211,6 +220,7 @@ def build_dataset(
         disclosure_rows=disclosure_rows,
         ticker_history=[row.as_dict() for row in validate_ticker_history(TICKER_HISTORY)],
         source_snapshots=snapshots,
+        issuer_alias_evidence=sec_issuer_aliases,
     )
 
 

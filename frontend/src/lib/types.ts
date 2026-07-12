@@ -233,6 +233,7 @@ export interface RelationshipCandidate {
   internal_rank: string | number | null;
   methodology_version: string;
   review_status: RelationshipStatus;
+  review_revision: string;
   created_at: string | null;
   reviews: RelationshipReview[];
 }
@@ -243,6 +244,64 @@ export interface RelationshipCandidateListResponse {
   page_size: number;
   total: number;
   sort: RelationshipSort;
+}
+
+export interface RelationshipBulkReviewResponse {
+  updated_count: number;
+  items: RelationshipCandidate[];
+}
+
+export interface ReviewerRefreshRun {
+  run_id: string;
+  source_id: string;
+  status: string;
+  started_at: string | null;
+  completed_at: string | null;
+  duration_seconds: number | null;
+  failure_count: number;
+}
+
+export interface ReviewerSourceFailure {
+  source_id: string;
+  source_artifact: string;
+  metric: string;
+  failure_count: number;
+}
+
+export interface ReviewerDataDrift {
+  source_id: string;
+  path: string;
+  status: string;
+  baseline_schema_version: string | null;
+  current_schema_version: string | null;
+  count_metric: string;
+  baseline_record_count: number | null;
+  current_record_count: number | null;
+  baseline_summary_sha256: string | null;
+  current_summary_sha256: string | null;
+}
+
+export interface ReviewerTelemetry {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  interpretation_boundary: string;
+  summary: {
+    refresh_run_count: number;
+    measured_refresh_count: number;
+    failed_refresh_count: number;
+    source_failure_count: number;
+    data_drift_count: number;
+  };
+  refresh_duration: {
+    unit: string;
+    p50: number | null;
+    p95: number | null;
+    maximum: number | null;
+    runs: ReviewerRefreshRun[];
+  };
+  source_failures: ReviewerSourceFailure[];
+  data_drift: ReviewerDataDrift[];
 }
 
 export interface ShareCardCreateResponse {

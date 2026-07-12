@@ -10,6 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import shutil
 import sys
 from typing import Iterable
 
@@ -32,6 +33,7 @@ from scripts.build_asset_resolution_dataset import load_transactions  # noqa: E4
 
 MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 OUTPUT = ROOT / "data" / "context" / "trade_market_reactions.json"
+PARTITION_ROOT = ROOT / "data" / "context" / "trade_market_reactions"
 SCHEMA_VERSION = "trade-market-context-v1"
 _TICKER_RE = re.compile(r"^[A-Z0-9.-]{1,10}$")
 
@@ -266,10 +268,79 @@ def partition_reactions_by_symbol_year(reactions: Iterable[dict]) -> dict[str, d
             "symbol": symbol,
             "year": int(year),
             "reaction_count": count,
-            "path": f"reactions/{symbol}/{year}.json",
+            "path": f"trade_market_reactions/{symbol.lower()}/{year}.json",
         }
         for (symbol, year), count in sorted(grouped.items())
     }
+
+
+def _canonical_partition_bytes(payload: dict) -> bytes:
+    return (json.dumps(payload, separators=(",", ":"), sort_keys=True) + "\n").encode("utf-8")
+
+
+def write_partitioned_dataset(
+    dataset: dict,
+    output: Path = OUTPUT,
+    partition_root: Path = PARTITION_ROOT,
+) -> dict:
+    """Write a compact manifest plus independently verifiable symbol-year shards."""
+
+    reactions = sorted(
+        dataset.get("reactions", []),
+        key=lambda row: (
+            str(row.get("asset_symbol") or ""),
+            str(row.get("event_date") or ""),
+            str(row.get("id") or ""),
+        ),
+    )
+    grouped: dict[tuple[str, int], list[dict]] = {}
+    for row in reactions:
+        symbol = str(row.get("asset_symbol") or "").upper()
+        year_text = str(row.get("event_date") or "")[:4]
+        if not symbol or len(year_text) != 4 or not year_text.isdigit():
+            raise ValueError(f"Reaction {row.get('id')} has no partitionable symbol/year")
+        grouped.setdefault((symbol, int(year_text)), []).append(row)
+
+    if partition_root.exists():
+        shutil.rmtree(partition_root)
+    partition_root.mkdir(parents=True, exist_ok=True)
+
+    partition_records = {}
+    for (symbol, year), rows in sorted(grouped.items()):
+        relative_path = Path("trade_market_reactions") / symbol.lower() / f"{year}.json"
+        path = output.parent / relative_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema_version": "trade-market-context-partition-v1",
+            "generated_at": dataset.get("generated_at"),
+            "symbol": symbol,
+            "year": year,
+            "reaction_count": len(rows),
+            "reactions": rows,
+        }
+        encoded = _canonical_partition_bytes(payload)
+        path.write_bytes(encoded)
+        partition_records[f"{symbol}:{year}"] = {
+            "symbol": symbol,
+            "year": year,
+            "reaction_count": len(rows),
+            "bytes": len(encoded),
+            "sha256": hashlib.sha256(encoded).hexdigest(),
+            "path": relative_path.as_posix(),
+        }
+
+    manifest = {key: value for key, value in dataset.items() if key != "reactions"}
+    manifest["storage"] = {
+        "format": "symbol_year_partitions",
+        "partition_schema_version": "trade-market-context-partition-v1",
+        "partition_count": len(partition_records),
+        "reaction_count": len(reactions),
+        "partitions": partition_records,
+    }
+    manifest.setdefault("coverage_diagnostics", {})["symbol_year_partitions"] = partition_records
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    return manifest
 
 
 def _parse_windows(value: str) -> tuple[int, ...]:
@@ -295,15 +366,17 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     dataset = build_dataset(
         load_transactions(),
         load_market_prices(),
         args.windows,
         window_days=args.day_windows,
     )
-    OUTPUT.write_text(json.dumps(dataset, indent=2, sort_keys=True) + "\n")
-    print(f"Wrote {OUTPUT}")
+    manifest = write_partitioned_dataset(dataset)
+    print(
+        f"Wrote {OUTPUT} with {manifest['storage']['partition_count']} partitions "
+        f"and {manifest['storage']['reaction_count']} reactions"
+    )
 
 
 if __name__ == "__main__":

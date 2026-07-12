@@ -14,6 +14,7 @@ QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
+TELEMETRY = ROOT / "data" / "operations" / "source_refresh_telemetry.json"
 OUTPUT = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
 
 
@@ -46,6 +47,7 @@ def build_dataset() -> dict:
     raw_archive = read_json(RAW_ARCHIVE, {"documents": [], "summary": {}})
     completeness = read_json(COMPLETENESS, {"rows": [], "summary": {}})
     officials = read_json(PUBLIC_OFFICIALS, {"generated_at": None, "summary": {}})
+    telemetry = read_json(TELEMETRY, {"summary": {}})
     alerts = []
 
     current_entries = [
@@ -105,6 +107,41 @@ def build_dataset() -> dict:
             )
         )
 
+    telemetry_summary = telemetry.get("summary", {})
+    source_failure_count = telemetry_summary.get("source_failure_count", 0)
+    data_drift_count = telemetry_summary.get("data_drift_count", 0)
+    measured_refresh_count = telemetry_summary.get("measured_refresh_count", 0)
+    if source_failure_count:
+        alerts.append(
+            alert(
+                "source-refresh:failures",
+                "warning",
+                None,
+                "Recorded source refresh failures require operational review.",
+                source_failure_count,
+            )
+        )
+    if data_drift_count:
+        alerts.append(
+            alert(
+                "source-refresh:data-drift",
+                "warning",
+                None,
+                "Aggregate source summaries differ from the recorded telemetry baseline.",
+                data_drift_count,
+            )
+        )
+    if measured_refresh_count == 0:
+        alerts.append(
+            alert(
+                "source-refresh:duration-unobserved",
+                "info",
+                None,
+                "No explicitly instrumented source refresh duration is recorded yet.",
+                0,
+            )
+        )
+
     return {
         "generated_at": today.isoformat(),
         "schema_version": "source-staleness-alerts-v1",
@@ -118,6 +155,9 @@ def build_dataset() -> dict:
             "high_alert_count": sum(1 for row in alerts if row["severity"] == "high"),
             "current_queue_item_count": len(current_entries),
             "reviewed_public_trade_count": reviewed_count,
+            "measured_refresh_count": measured_refresh_count,
+            "source_failure_count": source_failure_count,
+            "data_drift_count": data_drift_count,
         },
         "alerts": alerts,
     }

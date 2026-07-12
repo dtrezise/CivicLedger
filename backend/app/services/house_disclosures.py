@@ -8,6 +8,7 @@ import unicodedata
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 
@@ -32,6 +33,7 @@ NAME_NOISE = {
     "phd",
     "esq",
 }
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
 @dataclass(frozen=True)
@@ -115,6 +117,66 @@ def source_row_sha256(row: dict) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+def house_ocr_priority_record(document: dict, *, as_of: date) -> dict | None:
+    """Build a metadata-only OCR work item for an image-only House PTR."""
+    if document.get("parser_status") != "ocr_required":
+        return None
+
+    source_url = str(document.get("source_url") or "")
+    parsed_url = urlparse(source_url)
+    official_url = (
+        parsed_url.scheme == "https"
+        and parsed_url.netloc == "disclosures-clerk.house.gov"
+        and parsed_url.path.startswith("/public_disc/ptr-pdfs/")
+    )
+    file_hash = str(document.get("file_hash") or "").lower()
+    hash_verified = bool(SHA256_RE.fullmatch(file_hash))
+    identity_verified = (
+        document.get("match_status") == "matched"
+        and bool(document.get("official_id"))
+        and int(document.get("match_score") or 0) >= 8
+    )
+    page_count = int(document.get("page_count") or 0)
+    page_manifested = page_count > 0
+    filing_date = date.fromisoformat(document["filing_date"])
+    age_days = max(0, (as_of - filing_date).days)
+    recency_points = 15 if age_days <= 365 else 10 if age_days <= 1095 else 5
+
+    checks = {
+        "official_source_url": official_url,
+        "source_file_sha256_present": hash_verified,
+        "filer_identity_deterministically_matched": identity_verified,
+        "source_page_count_present": page_manifested,
+    }
+    evidence_score = (
+        (30 if official_url else 0)
+        + (25 if hash_verified else 0)
+        + (20 if identity_verified else 0)
+        + (10 if page_manifested else 0)
+        + recency_points
+    )
+    eligible = all(checks.values())
+    return {
+        "document_id": document["document_id"],
+        "source_id": document.get("source_id"),
+        "chamber": "House",
+        "official_id": document.get("official_id"),
+        "official_name": document.get("official_name"),
+        "filing_date": document["filing_date"],
+        "source_url": source_url,
+        "source_file_sha256": file_hash or None,
+        "source_page_count": page_count,
+        "source_byte_count": int(document.get("byte_count") or 0),
+        "priority_score": evidence_score,
+        "priority_tier": "highest_confidence" if eligible and evidence_score >= 90 else "evidence_gap",
+        "eligibility_checks": checks,
+        "eligible_for_ocr_batch": eligible,
+        "processing_status": "metadata_prioritized_ocr_not_run",
+        "ocr_content_present": False,
+        "transaction_rows_created": 0,
+    }
+
+
 def house_document_family_key(document: dict) -> str:
     """Group only explicitly related filings; never infer that same-year PTRs are amendments."""
     title = normalize_name(document.get("report_title") or document.get("report_type"))
@@ -138,13 +200,31 @@ def reconcile_house_amendments(documents: list[dict]) -> list[dict]:
         document["document_family_id"] = house_document_family_key(document)
         referenced_id = document.get("amends_document_id") or document.get("original_document_id")
         if referenced_id:
+            reference_field = (
+                "amends_document_id" if document.get("amends_document_id") else "original_document_id"
+            )
             document["amendment_status"] = (
                 "explicit_reference_resolved" if referenced_id in by_id else "explicit_reference_unresolved"
             )
             document["supersedes_document_id"] = referenced_id
+            document["amendment_reconciliation_evidence"] = [
+                {
+                    "evidence_type": "explicit_source_field",
+                    "field": reference_field,
+                    "value": referenced_id,
+                    "source_document_id": document["document_id"],
+                }
+            ]
+            document["amendment_linkage_confidence"] = (
+                "explicit_resolved" if referenced_id in by_id else "explicit_unresolved"
+            )
         else:
             document["amendment_status"] = "no_explicit_amendment_reference"
             document["supersedes_document_id"] = None
+            document["amendment_reconciliation_evidence"] = []
+            document["amendment_linkage_confidence"] = "none"
+        document["amendment_reconciliation_action"] = "annotate_only"
+        document["source_record_preserved"] = True
         output.append(document)
     return output
 

@@ -23,6 +23,7 @@ from app.seed import (
 )
 from app.services.official_sources import OFFICIAL_SOURCES
 from app.services.market_prices import crypto_reference, normalize_asset_symbol, ticker_reference
+from app.services.market_reactions import load_partitioned_reaction_dataset
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,9 +44,12 @@ ASSET_RESOLUTION = ROOT / "data" / "context" / "asset_resolution.json"
 TRADE_MARKET_REACTIONS = ROOT / "data" / "context" / "trade_market_reactions.json"
 HISTORICAL_NEWS_CONTEXT = ROOT / "data" / "context" / "historical_news_context.json"
 SEC_FILING_EVENTS = ROOT / "data" / "context" / "sec_filing_events.json"
+SEC_ISSUER_ALIASES = ROOT / "data" / "context" / "sec_issuer_aliases.json"
+PRIMARY_SOURCE_CONTEXT = ROOT / "data" / "context" / "primary_source_context.json"
 OFFICIAL_EVENT_INVOLVEMENT = ROOT / "data" / "context" / "official_event_involvement.json"
 SOURCE_SNAPSHOTS = ROOT / "data" / "context" / "source_snapshots.json"
 ENTITY_REFERENCE = ROOT / "data" / "context" / "entity_reference.json"
+EVENT_RANKING_BENCHMARK = ROOT / "data" / "quality" / "event_ranking_benchmark.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
 PRESIDENTIAL_OGE_DOCUMENTS = ROOT / "data" / "disclosures" / "presidential_oge_documents.json"
 PRESIDENTIAL_OGE_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
@@ -62,6 +66,8 @@ PRODUCTION_PROMOTIONS = ROOT / "data" / "disclosures" / "production_trade_promot
 RETRIEVAL_BATCHES = ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json"
 SOURCE_STALENESS_ALERTS = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
 DISCLOSURE_COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
+DISCLOSURE_OCR_PRIORITIES = ROOT / "data" / "disclosures" / "disclosure_ocr_priority_batches.json"
+DISCLOSURE_AMENDMENTS = ROOT / "data" / "disclosures" / "disclosure_amendment_reconciliation.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
 
@@ -507,6 +513,14 @@ def load_disclosure_artifacts() -> dict:
             DISCLOSURE_COMPLETENESS,
             {"schema_version": "disclosure-completeness-dashboard-v1", "summary": {}, "branches": [], "rows": []},
         ),
+        "ocr_priority_batches": load_json_file(
+            DISCLOSURE_OCR_PRIORITIES,
+            {"schema_version": "disclosure-ocr-priority-batches-v1", "summary": {}, "batches": []},
+        ),
+        "amendment_reconciliation": load_json_file(
+            DISCLOSURE_AMENDMENTS,
+            {"schema_version": "disclosure-amendment-reconciliation-v1", "summary": {}, "reconciliations": []},
+        ),
     }
 
 
@@ -539,6 +553,20 @@ def public_disclosure_artifacts(artifacts: dict) -> dict:
         "retrieval_batches": artifacts["retrieval_batches"],
         "source_staleness_alerts": artifacts["source_staleness_alerts"],
         "completeness_dashboard": artifacts["completeness_dashboard"],
+        "ocr_priority_batches": {
+            "schema_version": artifacts["ocr_priority_batches"].get("schema_version"),
+            "generated_at": artifacts["ocr_priority_batches"].get("generated_at"),
+            "context_label": artifacts["ocr_priority_batches"].get("context_label"),
+            "priority_policy": artifacts["ocr_priority_batches"].get("priority_policy", {}),
+            "summary": artifacts["ocr_priority_batches"].get("summary", {}),
+        },
+        "amendment_reconciliation": {
+            "schema_version": artifacts["amendment_reconciliation"].get("schema_version"),
+            "generated_at": artifacts["amendment_reconciliation"].get("generated_at"),
+            "context_label": artifacts["amendment_reconciliation"].get("context_label"),
+            "reconciliation_policy": artifacts["amendment_reconciliation"].get("reconciliation_policy", {}),
+            "summary": artifacts["amendment_reconciliation"].get("summary", {}),
+        },
     }
 
 
@@ -1257,7 +1285,9 @@ def trade_context_candidates(
 
             tier = relationship["relationship_tier"]
             event = events_by_id.get(relationship["id"], {})
-            eligible = relationship["relationship_tier_rank"] >= 2
+            eligible = relationship["relationship_tier_rank"] >= 3
+            eligible = eligible or (tier in {"asset_specific", "jurisdictional"} and distance <= 30)
+            eligible = eligible or (tier == "sector_context" and distance <= 14)
             eligible = eligible or (tier == "general_macro" and distance <= 7)
             eligible = eligible or (
                 tier == "general_context"
@@ -1303,7 +1333,7 @@ def trade_context_candidates(
         else:
             timing_reason = f"{abs(nearest_days)} days before the nearest disclosed transaction"
         relationship["trade_context_candidate"] = True
-        relationship["trade_context_methodology"] = "trade-window-v2"
+        relationship["trade_context_methodology"] = "trade-window-v3"
         relationship["candidate_basis"] = (
             "source_specificity_temporal_proximity_and_descriptive_market_context"
         )
@@ -1978,7 +2008,7 @@ def career_trade_timeline(
         "schema_version": "career-trade-timeline-v3",
         "event_relationship_methodology_version": "event-relevance-v4",
         "trade_context_methodology": {
-            "version": "trade-window-v2",
+            "version": "trade-window-v3",
             "window_days": 45,
             "trade_cluster_days": 14,
             "selection": "Up to two source-backed context candidates before, during, and after each trade cluster.",
@@ -2208,6 +2238,14 @@ def build_dataset() -> dict:
         SEC_FILING_EVENTS,
         {"summary": {}, "coverage_report": {}},
     )
+    sec_issuer_aliases = load_json_file(
+        SEC_ISSUER_ALIASES,
+        {"summary": {}, "records": [], "gaps": []},
+    )
+    primary_source_context = load_json_file(
+        PRIMARY_SOURCE_CONTEXT,
+        {"summary": {}, "records": [], "gaps": []},
+    )
     context_maps = load_context_maps()
     disclosure_artifacts = load_disclosure_artifacts()
     market_series, market_metadata = load_market_prices()
@@ -2232,15 +2270,20 @@ def build_dataset() -> dict:
         ASSET_RESOLUTION,
         {"summary": {}, "transaction_resolutions": []},
     )
-    market_reaction_context = load_json_file(
-        TRADE_MARKET_REACTIONS,
-        {"summary": {}, "reactions": []},
+    market_reaction_context = (
+        load_partitioned_reaction_dataset(TRADE_MARKET_REACTIONS)
+        if TRADE_MARKET_REACTIONS.exists()
+        else {"summary": {}, "reactions": []}
     )
     official_event_involvement = load_official_event_involvement()
     source_snapshots = load_json_file(SOURCE_SNAPSHOTS, {"summary": {}, "snapshots": []})
     entity_reference = load_json_file(
         ENTITY_REFERENCE,
         {"summary": {}, "organizations": [], "assets": [], "ticker_histories": []},
+    )
+    event_ranking_benchmark = load_json_file(
+        EVENT_RANKING_BENCHMARK,
+        {"metrics": {}, "scope_note": "Ranking benchmark has not been generated."},
     )
     house_disclosure_index = load_json_file(HOUSE_DISCLOSURE_INDEX, {"summary": {}})
     senate_disclosure_index = load_json_file(SENATE_DISCLOSURE_INDEX, {"summary": {}})
@@ -2474,6 +2517,12 @@ def build_dataset() -> dict:
             "sec_filing_event_count": sec_filing_context.get("summary", {}).get(
                 "event_count", 0
             ),
+            "sec_supported_issuer_alias_count": sec_issuer_aliases.get("summary", {}).get(
+                "supported_alias_count", 0
+            ),
+            "primary_source_context_record_count": primary_source_context.get("summary", {}).get(
+                "record_count", 0
+            ),
             "macro_series_count": fred_context["summary"].get("series_count", 0),
             "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
             "market_price_provider": market_metadata["summary"].get("active_market_price_provider", market_metadata["provider"]),
@@ -2662,6 +2711,7 @@ def build_dataset() -> dict:
             "methodology": market_reaction_context.get("methodology", {}),
             "context_label": market_reaction_context.get("context_label"),
         },
+        "event_ranking_benchmark": event_ranking_benchmark,
         "official_event_involvement": {
             "schema_version": official_event_involvement.get("schema_version"),
             "methodology_version": official_event_involvement.get("methodology_version"),
@@ -2705,6 +2755,20 @@ def build_dataset() -> dict:
             "summary": sec_filing_context.get("summary", {}),
             "coverage_report": sec_filing_context.get("coverage_report", {}),
             "context_label": sec_filing_context.get("context_label"),
+        },
+        "sec_issuer_aliases": {
+            "schema_version": sec_issuer_aliases.get("schema_version"),
+            "artifact_date": sec_issuer_aliases.get("artifact_date"),
+            "summary": sec_issuer_aliases.get("summary", {}),
+            "scope": sec_issuer_aliases.get("scope", {}),
+            "context_label": sec_issuer_aliases.get("context_label"),
+        },
+        "primary_source_context": {
+            "schema_version": primary_source_context.get("schema_version"),
+            "artifact_date": primary_source_context.get("artifact_date"),
+            "summary": primary_source_context.get("summary", {}),
+            "gaps": primary_source_context.get("gaps", []),
+            "context_label": primary_source_context.get("context_label"),
         },
         "disclosure_pipeline": public_disclosure_artifacts(disclosure_artifacts),
         "context_maps": context_maps,
@@ -2970,6 +3034,106 @@ def compact_timeline_official(official: dict) -> dict:
     }
 
 
+def compact_public_entity_reference(entity_reference: dict) -> dict:
+    def representative_aliases(aliases: list, limit: int = 12) -> list:
+        ordered = sorted(
+            aliases,
+            key=lambda row: (
+                -int(row.get("occurrence_count") or 0),
+                len(str(row.get("alias") or "")),
+                str(row.get("normalized_alias") or ""),
+            ),
+        )
+        return [
+            {
+                key: row.get(key)
+                for key in (
+                    "alias",
+                    "normalized_alias",
+                    "alias_type",
+                    "confidence",
+                    "occurrence_count",
+                )
+                if row.get(key) is not None
+            }
+            for row in ordered[:limit]
+        ]
+
+    organizations = []
+    for row in entity_reference.get("organizations", []):
+        aliases = row.get("aliases", [])
+        organizations.append(
+            {
+                key: row.get(key)
+                for key in (
+                    "id",
+                    "canonical_key",
+                    "canonical_name",
+                    "normalized_name",
+                    "organization_type",
+                    "status",
+                    "country_code",
+                    "issuer",
+                    "identifiers",
+                    "sector_assignments",
+                    "source_ids",
+                    "record_hash",
+                )
+                if row.get(key) is not None
+            }
+            | {
+                "alias_count": len(aliases),
+                "representative_aliases": representative_aliases(aliases),
+            }
+        )
+
+    assets = []
+    for row in entity_reference.get("assets", []):
+        aliases = sorted(
+            {str(value) for value in row.get("aliases", []) if value},
+            key=lambda value: (len(value), value.casefold(), value),
+        )
+        assets.append(
+            {
+                key: row.get(key)
+                for key in (
+                    "id",
+                    "canonical_name",
+                    "asset_class",
+                    "organization_id",
+                    "primary_symbol",
+                    "record_hash",
+                )
+                if row.get(key) is not None
+            }
+            | {"alias_count": len(aliases), "representative_aliases": aliases[:12]}
+        )
+
+    return {
+        **{
+            key: entity_reference.get(key)
+            for key in (
+                "schema_version",
+                "generated_at",
+                "dataset_hash",
+                "summary",
+                "methodology",
+                "context_label",
+            )
+        },
+        "public_projection": (
+            "Canonical identities and bounded representative aliases. Complete alias evidence and "
+            "provenance remain in data/context/entity_reference.json."
+        ),
+        "organizations": organizations,
+        "assets": assets,
+        "sectors": entity_reference.get("sectors", []),
+        "ticker_histories": entity_reference.get("ticker_histories", []),
+        "relationships": entity_reference.get("relationships", []),
+        "source_snapshots": entity_reference.get("source_snapshots", []),
+    }
+
+
 def write_partition(relative_path: str, payload) -> dict:
     path = ROOT / "pages-site" / "data" / relative_path
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -3013,6 +3177,7 @@ def write_public_partitions(dataset: dict) -> None:
             "judicial_disclosures": dataset.get("judicial_disclosures", {}),
             "asset_resolution_context": dataset.get("asset_resolution_context", {}),
             "market_reaction_context": dataset.get("market_reaction_context", {}),
+            "event_ranking_benchmark": dataset.get("event_ranking_benchmark", {}),
             "official_event_involvement": dataset.get("official_event_involvement", {}),
             "source_snapshots": dataset.get("source_snapshots", {}),
             "entity_reference": {
@@ -3025,6 +3190,8 @@ def write_public_partitions(dataset: dict) -> None:
             },
             "historical_news_context": dataset.get("historical_news_context", {}),
             "sec_filing_context": dataset.get("sec_filing_context", {}),
+            "sec_issuer_aliases": dataset.get("sec_issuer_aliases", {}),
+            "primary_source_context": dataset.get("primary_source_context", {}),
             "federal_event_context": dataset.get("federal_event_context", {}),
         },
     )
@@ -3034,7 +3201,7 @@ def write_public_partitions(dataset: dict) -> None:
     )
     files["entity_reference"] = write_partition(
         "partitions/entity-reference.json",
-        dataset.get("entity_reference", {}),
+        compact_public_entity_reference(dataset.get("entity_reference", {})),
     )
     files["coverage"] = write_partition("partitions/coverage.json", coverage_payload(dataset))
     public_events = [

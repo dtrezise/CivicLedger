@@ -47,16 +47,27 @@
       "severity": "info",
       "source_id": null,
       "status": "monitoring"
+    },
+    {
+      "affected_count": 0,
+      "alert_id": "source-refresh:duration-unobserved",
+      "message": "No explicitly instrumented source refresh duration is recorded yet.",
+      "severity": "info",
+      "source_id": null,
+      "status": "monitoring"
     }
   ],
   "context_label": "Scheduled stale-source alerts for current officials and live source lanes. Warnings identify work queues; they are not allegations or trade findings.",
   "generated_at": "2026-07-12",
   "schema_version": "source-staleness-alerts-v1",
   "summary": {
-    "alert_count": 6,
-    "current_queue_item_count": 1349,
+    "alert_count": 7,
+    "current_queue_item_count": 1348,
+    "data_drift_count": 0,
     "high_alert_count": 0,
+    "measured_refresh_count": 0,
     "open_warning_count": 4,
-    "reviewed_public_trade_count": 0
+    "reviewed_public_trade_count": 0,
+    "source_failure_count": 0
   }
 }

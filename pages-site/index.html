@@ -182,13 +182,38 @@
               <h2 id="chartTitle">Career trade activity</h2>
               <p id="chartDescription">Active service time is cumulative; inactive gaps are excluded.</p>
             </div>
-            <div class="record-key" aria-label="Record status legend">
-              <span><i class="key-dot buy"></i>Buy</span>
-              <span><i class="key-dot sell"></i>Sell</span>
-              <span><i class="key-diamond"></i>Context candidate</span>
-              <span><i class="key-line"></i>Service</span>
+            <div class="chart-head-controls">
+              <div class="record-key" aria-label="Record status legend">
+                <span><i class="key-dot buy"></i>Buy</span>
+                <span><i class="key-dot sell"></i>Sell</span>
+                <span><i class="key-diamond"></i>Context candidate</span>
+                <span><i class="key-line"></i>Service</span>
+              </div>
+              <div class="chart-tools" aria-label="Timeline tools">
+                <label class="density-control" for="clusterDensity">
+                  <span>Cluster density</span>
+                  <input id="clusterDensity" type="range" min="48" max="128" step="16" value="80" />
+                  <output id="clusterDensityValue" for="clusterDensity">Balanced</output>
+                </label>
+                <div class="brush-commands" role="group" aria-label="Range selection">
+                  <button class="chart-tool-button" id="brushSelectButton" type="button" aria-pressed="false" title="Draw a range on the timeline">
+                    <span class="tool-icon brush-icon" aria-hidden="true"></span>
+                    <span>Brush range</span>
+                  </button>
+                  <button class="chart-tool-button" id="selectVisibleButton" type="button" title="Select the currently zoomed range">
+                    <span class="tool-icon visible-icon" aria-hidden="true"></span>
+                    <span>Select visible</span>
+                  </button>
+                  <button class="chart-tool-button" id="clearBrushButton" type="button" disabled title="Clear the selected range">
+                    <span class="tool-icon clear-icon" aria-hidden="true"></span>
+                    <span>Clear</span>
+                  </button>
+                </div>
+                <span class="brush-status" id="brushStatus" role="status" aria-live="polite">No range selected</span>
+              </div>
             </div>
           </div>
+          <div class="lane-event-controls" id="laneEventControls" aria-label="Event categories by official timeline lane"></div>
           <div class="trade-chart" id="tradeChart" role="img" tabindex="0" aria-describedby="chartDescription chartAlternative" aria-label="Selected officials trade comparison chart"></div>
           <div class="chart-alternative" id="chartAlternative" aria-live="polite"></div>
         </div>

@@ -38,6 +38,11 @@ The shared public data contract is `pages-site/data/manifest.json` plus its hash
 - `officials/*`: one detailed transaction/event relationship timeline per official.
 - `market/*`: one price-series partition per supported symbol or crypto pair.
 
+The source-side neutral reaction dataset uses a separate hash-verified symbol-year
+manifest under `data/context/trade_market_reactions/`. The Pages builder verifies
+and reassembles those shards before emitting compact per-trade context. This keeps
+individual repository objects small without weakening provenance checks.
+
 Every manifest entry carries byte size and SHA-256. The release validator rejects unsafe paths, missing partitions, hash drift, fixture contamination, out-of-service plotting, and initial-load budget violations.
 
 ## Temporal Semantics
@@ -59,4 +64,7 @@ Every manifest entry carries byte size and SHA-256. The release validator reject
 - No preview record is labeled as reviewed or production.
 - Every public partition matches its manifest hash and size.
 - Coverage cannot silently drop below committed baselines.
+- The curated trade-event ranking regression benchmark must retain its minimum
+  precision and recall thresholds; those metrics are software-quality checks,
+  not evidence of causation or investigative accuracy.
 - GitHub Pages deploys and serves the manifest and a representative official partition.

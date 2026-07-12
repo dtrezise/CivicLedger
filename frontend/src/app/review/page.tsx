@@ -7,14 +7,22 @@ import { StatusBadge } from "@/components/ProvenanceStatus";
 import { api } from "@/lib/api";
 import type {
   ParserArtifactItem,
+  RelationshipBulkReviewResponse,
   RelationshipCandidate,
   RelationshipCandidateListResponse,
   RelationshipDecision,
   RelationshipSort,
   RelationshipStatus,
+  ReviewerTelemetry,
 } from "@/lib/types";
 
 type ReviewView = "relationships" | "parser";
+
+type BulkReviewTarget = {
+  candidate_id: string;
+  expected_status: RelationshipStatus;
+  expected_revision: string;
+};
 
 type ParserFormState = {
   reviewer: string;
@@ -132,6 +140,104 @@ function statusTone(status: RelationshipStatus): "neutral" | "complete" | "atten
   return "neutral";
 }
 
+function telemetryTone(status: string): "neutral" | "complete" | "attention" {
+  if (status === "healthy") return "complete";
+  if (status === "attention") return "attention";
+  return "neutral";
+}
+
+function formatDuration(value: number | null) {
+  if (value === null) return "Not observed";
+  if (value < 60) return `${value.toFixed(1)}s`;
+  return `${(value / 60).toFixed(1)}m`;
+}
+
+function ReviewerTelemetryStrip() {
+  const [telemetry, setTelemetry] = useState<ReviewerTelemetry | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchRelationshipAPI<ReviewerTelemetry>("/review/telemetry")
+      .then((response) => {
+        if (!cancelled) setTelemetry(response);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (failed) {
+    return (
+      <p className="mb-5 border-l-2 border-red-500 pl-3 text-sm text-red-700">
+        Reviewer telemetry is unavailable.
+      </p>
+    );
+  }
+  if (!telemetry) {
+    return <p className="mb-5 text-sm text-gray-500">Loading operational telemetry...</p>;
+  }
+
+  const driftSources = telemetry.data_drift.filter((row) => row.status !== "unchanged");
+  return (
+    <section className="mb-6 border-y border-gray-200 py-4" aria-label="Source refresh telemetry">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-semibold text-gray-900">Source refresh telemetry</h2>
+        <StatusBadge tone={telemetryTone(telemetry.status)}>
+          {formatEnum(telemetry.status)}
+        </StatusBadge>
+      </div>
+      <dl className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div>
+          <dt className="text-xs text-gray-500">Measured refreshes</dt>
+          <dd className="mt-1 text-sm font-semibold tabular-nums text-gray-900">
+            {telemetry.summary.measured_refresh_count}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-gray-500">P95 duration</dt>
+          <dd className="mt-1 text-sm font-semibold tabular-nums text-gray-900">
+            {formatDuration(telemetry.refresh_duration.p95)}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-gray-500">Recorded failures</dt>
+          <dd className="mt-1 text-sm font-semibold tabular-nums text-gray-900">
+            {telemetry.summary.source_failure_count}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-gray-500">Aggregate drift</dt>
+          <dd className="mt-1 text-sm font-semibold tabular-nums text-gray-900">
+            {telemetry.summary.data_drift_count}
+          </dd>
+        </div>
+      </dl>
+      {telemetry.source_failures.length || driftSources.length ? (
+        <details className="mt-3 border-t border-gray-100 pt-3 text-sm">
+          <summary className="cursor-pointer font-medium text-civic-700">Review signals</summary>
+          <ul className="mt-2 space-y-1 text-gray-700">
+            {telemetry.source_failures.map((failure) => (
+              <li key={`${failure.source_id}-${failure.source_artifact}-${failure.metric}`}>
+                {formatEnum(failure.source_id)}: {failure.failure_count} {formatEnum(failure.metric)}
+              </li>
+            ))}
+            {driftSources.map((drift) => (
+              <li key={drift.source_id}>
+                {formatEnum(drift.source_id)}: {formatEnum(drift.status)} ({drift.baseline_record_count ?? "n/a"} to{" "}
+                {drift.current_record_count ?? "n/a"})
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+    </section>
+  );
+}
+
 function RelationshipCandidateReview() {
   const [queue, setQueue] = useState<RelationshipCandidateListResponse>({
     items: [],
@@ -159,6 +265,7 @@ function RelationshipCandidateReview() {
   const [reviewer, setReviewer] = useState("");
   const [evidenceNote, setEvidenceNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [bulkSelection, setBulkSelection] = useState<Record<string, BulkReviewTarget>>({});
   const [message, setMessage] = useState("");
   const [messageIsError, setMessageIsError] = useState(false);
 
@@ -186,6 +293,19 @@ function RelationshipCandidateReview() {
         );
         if (cancelled) return;
         setQueue(response);
+        setBulkSelection((current) => {
+          const next: Record<string, BulkReviewTarget> = {};
+          response.items.forEach((candidate) => {
+            if (current[candidate.id]) {
+              next[candidate.id] = {
+                candidate_id: candidate.id,
+                expected_status: candidate.review_status,
+                expected_revision: candidate.review_revision,
+              };
+            }
+          });
+          return next;
+        });
         setSelectedId((current) =>
           response.items.some((candidate) => candidate.id === current)
             ? current
@@ -213,6 +333,13 @@ function RelationshipCandidateReview() {
   );
   const totalPages = Math.max(1, Math.ceil(queue.total / queue.page_size));
   const canSubmit = Boolean(selected && reviewer.trim() && evidenceNote.trim() && !saving);
+  const bulkTargets = Object.values(bulkSelection);
+  const canSubmitBulk = Boolean(
+    bulkTargets.length && reviewer.trim() && evidenceNote.trim() && !saving
+  );
+  const allPageSelected = Boolean(
+    queue.items.length && queue.items.every((candidate) => bulkSelection[candidate.id])
+  );
 
   async function submitDecision() {
     if (!selected || !canSubmit) return;
@@ -228,6 +355,7 @@ function RelationshipCandidateReview() {
             reviewer,
             evidence_note: evidenceNote,
             expected_status: selected.review_status,
+            expected_revision: selected.review_revision,
           }),
         }
       );
@@ -245,9 +373,42 @@ function RelationshipCandidateReview() {
     }
   }
 
+  async function submitBulkDecision() {
+    if (!canSubmitBulk) return;
+    setSaving(true);
+    setMessage("");
+    try {
+      const response = await fetchRelationshipAPI<RelationshipBulkReviewResponse>(
+        "/review/relationship-candidates/bulk-decisions",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            decision,
+            reviewer,
+            evidence_note: evidenceNote,
+            targets: bulkTargets,
+          }),
+        }
+      );
+      setEvidenceNote("");
+      setBulkSelection({});
+      setMessageIsError(false);
+      setMessage(`${response.updated_count} candidates updated to ${formatEnum(response.items[0].review_status)}.`);
+      setReloadToken((current) => current + 1);
+    } catch (error) {
+      setMessageIsError(true);
+      setMessage(error instanceof Error ? error.message : "Bulk decision failed.");
+      setReloadToken((current) => current + 1);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
-      <section className="min-w-0">
+    <>
+      <ReviewerTelemetryStrip />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <section className="min-w-0">
         <form
           className="mb-4 grid gap-3 border-b border-gray-200 pb-4 sm:grid-cols-2 xl:grid-cols-4"
           onSubmit={(event) => {
@@ -374,20 +535,69 @@ function RelationshipCandidateReview() {
               <option value="100">100</option>
             </select>
           </label>
-          <div className="flex items-end justify-between gap-3 sm:col-span-2 xl:col-span-4">
-            <p className="text-sm tabular-nums text-gray-500">
-              {queue.total} {queue.total === 1 ? "candidate" : "candidates"}
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setStatus("candidate"); setEvidenceTier(""); setEventType(""); setMaxDays("");
-                setMinRank(""); setReviewHistory(""); setSort("priority"); setQueryInput(""); setQuery(""); setPage(1);
-              }}
-              className="text-sm font-medium text-civic-700 hover:underline"
-            >
-              Clear filters
-            </button>
+          <div className="flex flex-wrap items-end justify-between gap-3 sm:col-span-2 xl:col-span-4">
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              <p className="tabular-nums text-gray-500">
+                {queue.total} {queue.total === 1 ? "candidate" : "candidates"}
+              </p>
+              {queue.items.length ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (allPageSelected) {
+                      setBulkSelection((current) => {
+                        const next = { ...current };
+                        queue.items.forEach((candidate) => delete next[candidate.id]);
+                        return next;
+                      });
+                    } else {
+                      setBulkSelection((current) => {
+                        const next = { ...current };
+                        queue.items.forEach((candidate) => {
+                          next[candidate.id] = {
+                            candidate_id: candidate.id,
+                            expected_status: candidate.review_status,
+                            expected_revision: candidate.review_revision,
+                          };
+                        });
+                        return next;
+                      });
+                    }
+                  }}
+                  className="font-medium text-civic-700 hover:underline"
+                >
+                  {allPageSelected ? "Deselect page" : "Select page"}
+                </button>
+              ) : null}
+              {bulkTargets.length ? (
+                <button
+                  type="button"
+                  onClick={() => setBulkSelection({})}
+                  className="font-medium text-civic-700 hover:underline"
+                >
+                  Clear {bulkTargets.length} selected
+                </button>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-4">
+              <a
+                href={`${API_BASE}/review/relationship-audit-history/export`}
+                download
+                className="text-sm font-medium text-civic-700 hover:underline"
+              >
+                Export audit history
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  setStatus("candidate"); setEvidenceTier(""); setEventType(""); setMaxDays("");
+                  setMinRank(""); setReviewHistory(""); setSort("priority"); setQueryInput(""); setQuery(""); setPage(1);
+                }}
+                className="text-sm font-medium text-civic-700 hover:underline"
+              >
+                Clear filters
+              </button>
+            </div>
           </div>
         </form>
 
@@ -416,20 +626,46 @@ function RelationshipCandidateReview() {
           {queue.items.map((candidate) => {
             const isSelected = candidate.id === selectedId;
             return (
-              <button
+              <div
                 key={candidate.id}
-                type="button"
-                onClick={() => {
-                  setSelectedId(candidate.id);
-                  setMessage("");
-                  setEvidenceNote("");
-                }}
-                className={`w-full rounded-lg border bg-white p-4 text-left transition-colors ${
+                className={`grid grid-cols-[2rem_minmax(0,1fr)] rounded-lg border bg-white transition-colors ${
                   isSelected
                     ? "border-civic-500 ring-1 ring-civic-200"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
+                <label className="flex items-start justify-center px-2 py-5">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(bulkSelection[candidate.id])}
+                    onChange={(event) => {
+                      setBulkSelection((current) => {
+                        const next = { ...current };
+                        if (event.target.checked) {
+                          next[candidate.id] = {
+                            candidate_id: candidate.id,
+                            expected_status: candidate.review_status,
+                            expected_revision: candidate.review_revision,
+                          };
+                        } else {
+                          delete next[candidate.id];
+                        }
+                        return next;
+                      });
+                    }}
+                    aria-label={`Select ${candidate.person_name} relationship candidate`}
+                    className="h-4 w-4 rounded border-gray-300 text-civic-700"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedId(candidate.id);
+                    setMessage("");
+                    setEvidenceNote("");
+                  }}
+                  className="min-w-0 p-4 pl-2 text-left"
+                >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-semibold text-gray-900">{candidate.person_name}</p>
@@ -450,7 +686,8 @@ function RelationshipCandidateReview() {
                   {candidate.internal_rank !== null ? <span>Rank {candidate.internal_rank}</span> : null}
                   <span>{candidate.reviews.length} review{candidate.reviews.length === 1 ? "" : "s"}</span>
                 </div>
-              </button>
+                </button>
+              </div>
             );
           })}
         </div>
@@ -478,9 +715,9 @@ function RelationshipCandidateReview() {
             </button>
           </div>
         ) : null}
-      </section>
+        </section>
 
-      <aside className="min-w-0 border-t border-gray-200 pt-6 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+        <aside className="min-w-0 border-t border-gray-200 pt-6 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
         {selected ? (
           <div>
             <div className="flex items-start justify-between gap-3">
@@ -597,6 +834,16 @@ function RelationshipCandidateReview() {
                 >
                   {saving ? "Recording..." : "Record decision"}
                 </button>
+                {bulkTargets.length ? (
+                  <button
+                    type="button"
+                    onClick={submitBulkDecision}
+                    disabled={!canSubmitBulk}
+                    className="w-full rounded-md border border-civic-700 bg-white px-4 py-2 text-sm font-medium text-civic-800 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400"
+                  >
+                    {saving ? "Recording..." : `Record for ${bulkTargets.length} selected`}
+                  </button>
+                ) : null}
               </div>
             </section>
 
@@ -630,8 +877,9 @@ function RelationshipCandidateReview() {
         ) : (
           <p className="text-sm text-gray-500">Select a relationship candidate.</p>
         )}
-      </aside>
-    </div>
+        </aside>
+      </div>
+    </>
   );
 }
 

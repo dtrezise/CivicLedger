@@ -36,6 +36,19 @@ const tierLabels = {
   general_context: "General context",
 };
 
+const eventCategoryLabels = {
+  agency_notice: "Agency notice",
+  agency_rule: "Agency rule",
+  court_decision: "Court decision",
+  crypto_policy: "Crypto policy",
+  executive_order: "Executive order",
+  funding: "Funding",
+  legislation: "Legislation",
+  macro_release: "Macro release",
+  sec_filing: "SEC filing",
+  other: "Other",
+};
+
 const state = {
   manifest: null,
   overview: null,
@@ -58,6 +71,10 @@ const state = {
   activeEventContext: null,
   selectedTradeId: "",
   zoomPercent: null,
+  brushPercent: null,
+  brushActive: false,
+  clusterDensity: 80,
+  hiddenEventCategories: new Set(),
   rosterFilters: {
     branch: "",
     chamber: "",
@@ -74,6 +91,7 @@ const state = {
   tradeChart: null,
   marketChart: null,
   zoomRenderTimer: null,
+  restoringBrush: false,
   loadToken: 0,
   marketToken: 0,
   compactLayout: window.innerWidth <= 760,
@@ -166,6 +184,31 @@ function parseZoom(value) {
   return { start, end };
 }
 
+function parseBrush(value) {
+  const [start, end] = String(value || "").split("-").map(Number);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end > 100 || end - start < 0.05) return null;
+  return { start, end };
+}
+
+function parseClusterDensity(value) {
+  if (value == null || value === "") return 80;
+  const density = Number(value);
+  if (!Number.isFinite(density)) return 80;
+  return clamp(Math.round(density / 16) * 16, 48, 128);
+}
+
+function parseHiddenEventCategories(value) {
+  return new Set(
+    String(value || "")
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter((entry) => {
+        const [officialId, category, extra] = entry.split("~");
+        return !extra && state.selectedIds.includes(officialId) && /^[a-z0-9_]+$/.test(category || "");
+      })
+  );
+}
+
 function parseUrlState() {
   const params = new URLSearchParams(window.location.search);
   const requestedIds = (params.get("officials") || "")
@@ -187,6 +230,10 @@ function parseUrlState() {
   const windowDays = Number(params.get("window"));
   state.eventWindowDays = [30, 90, 180, 365].includes(windowDays) ? windowDays : 180;
   state.zoomPercent = parseZoom(params.get("zoom"));
+  state.brushPercent = parseBrush(params.get("brush"));
+  state.brushActive = false;
+  state.clusterDensity = parseClusterDensity(params.get("density"));
+  state.hiddenEventCategories = parseHiddenEventCategories(params.get("eventcats"));
   state.activeEventContext = null;
   state.selectedTradeId = "";
   state.transactionRenderLimit = state.compactLayout ? 50 : 100;
@@ -212,6 +259,14 @@ function syncUrl() {
   if (state.zoomPercent) {
     params.set("zoom", `${state.zoomPercent.start.toFixed(2)}-${state.zoomPercent.end.toFixed(2)}`);
   }
+  if (state.brushPercent) {
+    params.set("brush", `${state.brushPercent.start.toFixed(2)}-${state.brushPercent.end.toFixed(2)}`);
+  }
+  if (state.clusterDensity !== 80) params.set("density", String(state.clusterDensity));
+  const hiddenCategories = [...state.hiddenEventCategories]
+    .filter((entry) => state.selectedIds.includes(entry.split("~")[0]))
+    .sort();
+  if (hiddenCategories.length) params.set("eventcats", hiddenCategories.join(","));
   Object.entries(state.rosterFilters).forEach(([key, value]) => {
     if (value) params.set(key, value);
   });
@@ -260,6 +315,9 @@ function initializeControls() {
   $("eventSearch").value = selectedEvent()?.label || "";
   $("eventTierFilter").value = state.eventTierFilter;
   $("eventWindowFilter").value = String(state.eventWindowDays);
+  $("clusterDensity").value = String(state.clusterDensity);
+  updateClusterDensityLabel();
+  updateBrushControls();
   setRosterFilterControls();
   bindControls();
   updateModeControls();
@@ -270,6 +328,7 @@ function initializeCharts() {
   state.tradeChart = window.echarts.init($("tradeChart"), null, { renderer: "canvas" });
   state.tradeChart.on("click", handleChartClick);
   state.tradeChart.on("datazoom", handleDataZoom);
+  state.tradeChart.on("brushselected", handleBrushSelected);
 }
 
 function uniqueOfficialValues(field) {
@@ -359,6 +418,86 @@ function updateFilterSummary() {
   $("filterSummary").textContent = labels.length ? labels.join(" / ") : "All branches and service periods";
 }
 
+function clusterDensityLabel(value = state.clusterDensity) {
+  if (value <= 48) return "Compact";
+  if (value >= 112) return "Detailed";
+  return "Balanced";
+}
+
+function updateClusterDensityLabel() {
+  $("clusterDensityValue").value = clusterDensityLabel();
+  $("clusterDensity").setAttribute(
+    "aria-valuetext",
+    `${clusterDensityLabel()} clustering, ${numberFormat.format(state.clusterDensity)} horizontal bins`
+  );
+}
+
+function eventCategory(event) {
+  return String(event?.event_type || "other").toLowerCase();
+}
+
+function eventCategoryLabel(category) {
+  return eventCategoryLabels[category] || titleCase(category);
+}
+
+function laneEvent(relationship) {
+  return { ...(state.eventMap.get(relationship.id) || {}), ...relationship };
+}
+
+function laneEventCategories(official) {
+  return [...new Set((official.events || []).map(laneEvent).map(eventCategory))].sort((a, b) =>
+    eventCategoryLabel(a).localeCompare(eventCategoryLabel(b))
+  );
+}
+
+function laneCategoryKey(officialId, category) {
+  return `${officialId}~${category}`;
+}
+
+function laneCategoryIsVisible(officialId, category) {
+  return !state.hiddenEventCategories.has(laneCategoryKey(officialId, category));
+}
+
+function updateLaneCategorySummary(officialId) {
+  const official = state.selectedTimelines.find((timeline) => timeline.id === officialId);
+  const summary = document.querySelector(`[data-lane-category-summary="${CSS.escape(officialId)}"]`);
+  if (!official || !summary) return;
+  const categories = laneEventCategories(official);
+  const visible = categories.filter((category) => laneCategoryIsVisible(officialId, category)).length;
+  summary.textContent = `${numberFormat.format(visible)} of ${numberFormat.format(categories.length)} event types`;
+}
+
+function renderLaneEventControls() {
+  $("laneEventControls").innerHTML = state.selectedTimelines
+    .map((official) => {
+      const categories = laneEventCategories(official);
+      const visible = categories.filter((category) => laneCategoryIsVisible(official.id, category)).length;
+      const controls = categories.length
+        ? categories
+            .map(
+              (category) => `
+                <label class="lane-category-toggle">
+                  <input type="checkbox" data-lane-event-category="${escapeHtml(category)}" data-lane-official-id="${escapeHtml(official.id)}" ${laneCategoryIsVisible(official.id, category) ? "checked" : ""} />
+                  <span>${escapeHtml(eventCategoryLabel(category))}</span>
+                </label>`
+            )
+            .join("")
+        : '<span class="state-label">No event categories</span>';
+      return `
+        <div class="lane-event-row" style="--lane-color: ${escapeHtml(branchColors[official.branch] || branchColors.Legislative)}">
+          <div class="lane-event-name">
+            <strong title="${escapeHtml(official.full_name)}">${escapeHtml(official.full_name)}</strong>
+            <small data-lane-category-summary="${escapeHtml(official.id)}">${numberFormat.format(visible)} of ${numberFormat.format(categories.length)} event types</small>
+          </div>
+          <fieldset class="lane-category-group">
+            <legend class="visually-hidden">${escapeHtml(official.full_name)} event categories</legend>
+            <div class="lane-category-scroll">${controls}</div>
+          </fieldset>
+        </div>`;
+    })
+    .join("");
+}
+
 function resetResultNavigation(kind) {
   const isOfficial = kind === "official";
   state[isOfficial ? "activeOfficialResultIndex" : "activeEventResultIndex"] = -1;
@@ -392,6 +531,93 @@ function handleComboboxKeydown(event, config) {
   const active = options[state[indexKey]];
   $(inputId).setAttribute("aria-activedescendant", active.id);
   active.scrollIntoView({ block: "nearest" });
+}
+
+function brushXRange() {
+  if (!state.chartExtent || !state.brushPercent) return null;
+  const span = state.chartExtent.max - state.chartExtent.min;
+  return {
+    min: state.chartExtent.min + (span * state.brushPercent.start) / 100,
+    max: state.chartExtent.min + (span * state.brushPercent.end) / 100,
+  };
+}
+
+function brushPercentForRange(start, end) {
+  if (!state.chartExtent || state.chartExtent.max <= state.chartExtent.min) return null;
+  const span = state.chartExtent.max - state.chartExtent.min;
+  const values = [start, end].map((value) => clamp(((value - state.chartExtent.min) / span) * 100, 0, 100)).sort((a, b) => a - b);
+  return values[1] - values[0] >= 0.05 ? { start: values[0], end: values[1] } : null;
+}
+
+function setBrushMode(active) {
+  state.brushActive = Boolean(active && state.selectedTimelines.length);
+  $("brushSelectButton").setAttribute("aria-pressed", String(state.brushActive));
+  if (state.tradeChart) {
+    state.tradeChart.dispatchAction({
+      type: "takeGlobalCursor",
+      key: "brush",
+      brushOption: { brushType: state.brushActive ? "lineX" : false, brushMode: "single" },
+    });
+  }
+  updateBrushControls();
+}
+
+function applyBrushToChart() {
+  if (!state.tradeChart || !state.chartExtent) return;
+  const range = brushXRange();
+  state.restoringBrush = true;
+  state.tradeChart.dispatchAction({
+    type: "brush",
+    areas: range ? [{ brushType: "lineX", xAxisIndex: 0, coordRange: [range.min, range.max] }] : [],
+  });
+  window.requestAnimationFrame(() => {
+    state.restoringBrush = false;
+  });
+}
+
+function updateBrushControls() {
+  const hasTimelines = Boolean(state.selectedTimelines.length);
+  $("brushSelectButton").disabled = !hasTimelines;
+  $("selectVisibleButton").disabled = !hasTimelines;
+  $("clearBrushButton").disabled = !state.brushPercent;
+  $("brushSelectButton").setAttribute("aria-pressed", String(state.brushActive));
+  if (!state.brushPercent) {
+    $("brushStatus").textContent = state.brushActive ? "Range brush active" : "No range selected";
+    return;
+  }
+  const total = transactionRowsInZoom().length;
+  const selected = visibleTransactionRows().length;
+  $("brushStatus").textContent = `${numberFormat.format(selected)} of ${numberFormat.format(total)} records selected`;
+}
+
+function clearBrushSelection() {
+  state.brushPercent = null;
+  applyBrushToChart();
+  renderTransactions();
+  renderChartAlternative();
+  updateBrushControls();
+  syncUrl();
+}
+
+function selectVisibleRange() {
+  state.brushPercent = state.zoomPercent ? { ...state.zoomPercent } : { start: 0, end: 100 };
+  applyBrushToChart();
+  renderTransactions();
+  renderChartAlternative();
+  updateBrushControls();
+  syncUrl();
+}
+
+function handleBrushSelected(event) {
+  if (state.restoringBrush) return;
+  const area = event.batch?.[0]?.areas?.[0] || event.areas?.[0];
+  if (!area?.coordRange || area.coordRange.length < 2) return;
+  state.brushPercent = brushPercentForRange(Number(area.coordRange[0]), Number(area.coordRange[1]));
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
+  renderTransactions();
+  renderChartAlternative();
+  updateBrushControls();
+  syncUrl();
 }
 
 function bindControls() {
@@ -476,12 +702,15 @@ function bindControls() {
     state.selectedIds = [...state.timelineIndex.default_official_ids].slice(0, 4);
     state.selectedTradeId = "";
     state.zoomPercent = null;
+    state.brushPercent = null;
+    state.hiddenEventCategories.clear();
     state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     loadSelectedTimelines();
   });
   $("assetFilter").addEventListener("change", () => {
     state.assetFilter = $("assetFilter").value;
     state.zoomPercent = null;
+    state.brushPercent = null;
     state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     renderWorkbench();
   });
@@ -492,8 +721,31 @@ function bindControls() {
   $("eventWindowFilter").addEventListener("change", () => {
     state.eventWindowDays = Number($("eventWindowFilter").value);
     state.zoomPercent = null;
+    state.brushPercent = null;
     state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     renderWorkbench();
+  });
+  $("clusterDensity").addEventListener("input", () => {
+    state.clusterDensity = parseClusterDensity($("clusterDensity").value);
+    updateClusterDensityLabel();
+    renderTradeChart();
+    syncUrl();
+  });
+  $("brushSelectButton").addEventListener("click", () => setBrushMode(!state.brushActive));
+  $("selectVisibleButton").addEventListener("click", selectVisibleRange);
+  $("clearBrushButton").addEventListener("click", clearBrushSelection);
+  $("laneEventControls").addEventListener("change", (event) => {
+    const checkbox = event.target.closest("[data-lane-event-category]");
+    if (!checkbox) return;
+    const officialId = checkbox.dataset.laneOfficialId;
+    const key = laneCategoryKey(officialId, checkbox.dataset.laneEventCategory);
+    if (checkbox.checked) state.hiddenEventCategories.delete(key);
+    else state.hiddenEventCategories.add(key);
+    updateLaneCategorySummary(officialId);
+    renderSummary();
+    renderTradeChart();
+    renderChartAlternative();
+    syncUrl();
   });
   $("resetViewButton").addEventListener("click", () => {
     state.mode = "career";
@@ -504,10 +756,16 @@ function bindControls() {
     state.activeEventContext = null;
     state.selectedTradeId = "";
     state.zoomPercent = null;
+    state.brushPercent = null;
+    state.clusterDensity = 80;
+    state.hiddenEventCategories.clear();
     state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     $("eventSearch").value = "";
     $("eventTierFilter").value = "focused";
     $("eventWindowFilter").value = "180";
+    $("clusterDensity").value = "80";
+    updateClusterDensityLabel();
+    setBrushMode(false);
     updateAssetOptions();
     updateModeControls();
     renderWorkbench();
@@ -559,6 +817,9 @@ function bindControls() {
     $("eventSearch").value = selectedEvent()?.label || "";
     $("eventTierFilter").value = state.eventTierFilter;
     $("eventWindowFilter").value = String(state.eventWindowDays);
+    $("clusterDensity").value = String(state.clusterDensity);
+    updateClusterDensityLabel();
+    setBrushMode(false);
     updateModeControls();
     await loadSelectedTimelines();
   });
@@ -752,6 +1013,7 @@ async function selectEvent(id) {
   state.activeEventId = id;
   state.activeEventContext = null;
   state.zoomPercent = null;
+  state.brushPercent = null;
   state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   $("eventSearch").value = state.eventMap.get(id)?.label || "";
   hideEventResults();
@@ -783,6 +1045,7 @@ function addOfficial(id) {
   state.selectedIds.push(id);
   state.selectedTradeId = "";
   state.zoomPercent = null;
+  state.brushPercent = null;
   state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   $("officialSearch").value = "";
   hideOfficialResults();
@@ -793,6 +1056,10 @@ function removeOfficial(id) {
   state.selectedIds = state.selectedIds.filter((selectedId) => selectedId !== id);
   state.selectedTradeId = "";
   state.zoomPercent = null;
+  state.brushPercent = null;
+  state.hiddenEventCategories = new Set(
+    [...state.hiddenEventCategories].filter((entry) => entry.split("~")[0] !== id)
+  );
   state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   renderDatasetStatus();
   loadSelectedTimelines();
@@ -926,6 +1193,7 @@ function setMode(mode) {
   if (mode === "event" && !selectedEvent()) return;
   state.mode = mode;
   state.zoomPercent = null;
+  state.brushPercent = null;
   state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   updateModeControls();
   renderWorkbench();
@@ -972,6 +1240,10 @@ function eventVisible(event) {
   if (event.relationship_tier === "general_macro") return false;
   if (state.eventTierFilter === "all") return true;
   return event.display_default === true;
+}
+
+function eventVisibleForLane(event, officialId) {
+  return eventVisible(event) && laneCategoryIsVisible(officialId, eventCategory(event));
 }
 
 function eventInModeWindow(event) {
@@ -1021,7 +1293,9 @@ function aggregateTradePoints(official, laneIndex) {
     return Number.isFinite(x) && (!visible || (x >= visible.min && x <= visible.max));
   });
   const unit = state.mode === "calendar" ? 86400000 : 1;
-  const targetBins = state.compactLayout ? 42 : 80;
+  const targetBins = state.compactLayout
+    ? Math.max(32, Math.round(state.clusterDensity * 0.65))
+    : state.clusterDensity;
   const binSize = Math.max(unit, (visible.max - visible.min) / targetBins);
   const groups = new Map();
   for (const trade of trades) {
@@ -1167,8 +1441,8 @@ function buildChartSeries() {
     }
 
     for (const relationship of official.events || []) {
-      const event = { ...(state.eventMap.get(relationship.id) || {}), ...relationship };
-      if (!eventVisible(event) || !eventInModeWindow(event)) continue;
+      const event = laneEvent(relationship);
+      if (!eventVisibleForLane(event, official.id) || !eventInModeWindow(event)) continue;
       const x = xValueForEvent(event);
       if (!Number.isFinite(x)) continue;
       const visible = zoomedXRange() || state.chartExtent;
@@ -1302,6 +1576,7 @@ function tooltipFormatter(params) {
 function renderTradeChart() {
   if (!state.tradeChart) return;
   if (!state.selectedTimelines.length) {
+    state.chartExtent = null;
     state.tradeChart.clear();
     state.tradeChart.setOption({
       graphic: {
@@ -1316,6 +1591,7 @@ function renderTradeChart() {
         },
       },
     });
+    updateBrushControls();
     return;
   }
   state.chartExtent = calculateExtent();
@@ -1324,7 +1600,7 @@ function renderTradeChart() {
   $("tradeChart").style.height = `${chartHeight}px`;
   $("tradeChart").setAttribute(
     "aria-label",
-    `${titleCase(state.mode)} comparison for ${names.join(", ")}. Use plus and minus to change zoom; press 0 to reset zoom.`
+    `${titleCase(state.mode)} comparison for ${names.join(", ")}. Use plus and minus to change zoom; press 0 to reset zoom. Use the timeline tool buttons to select a transaction range.`
   );
   state.tradeChart.resize();
   const xAxis = {
@@ -1336,6 +1612,8 @@ function renderTradeChart() {
     splitLine: { show: true, lineStyle: { color: "#e3e9e6" } },
   };
   const zoom = state.zoomPercent || { start: 0, end: 100 };
+  const series = buildChartSeries();
+  const transactionSeriesIndex = series.findIndex((item) => item.name === "Transactions");
   state.tradeChart.setOption(
     {
       animationDuration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 250,
@@ -1389,10 +1667,30 @@ function renderTradeChart() {
           textStyle: { color: "#6d7a84", fontSize: 10 },
         },
       ],
-      series: buildChartSeries(),
+      toolbox: { show: false },
+      brush: {
+        xAxisIndex: 0,
+        seriesIndex: transactionSeriesIndex >= 0 ? [transactionSeriesIndex] : [],
+        brushMode: "single",
+        transformable: true,
+        removeOnClick: false,
+        throttleType: "debounce",
+        throttleDelay: 80,
+        brushStyle: {
+          borderWidth: 1,
+          color: "rgba(11,107,120,0.13)",
+          borderColor: "#0b6b78",
+        },
+        inBrush: { opacity: 1 },
+        outOfBrush: { opacity: 0.24 },
+      },
+      series,
     },
     true
   );
+  applyBrushToChart();
+  if (state.brushActive) setBrushMode(true);
+  else updateBrushControls();
 }
 
 function handleChartClick(params) {
@@ -1430,7 +1728,7 @@ function zoomedXRange() {
   };
 }
 
-function visibleTransactionRows() {
+function transactionRowsInZoom() {
   const zoom = zoomedXRange();
   return state.selectedTimelines
     .flatMap((official) =>
@@ -1443,11 +1741,21 @@ function visibleTransactionRows() {
     .sort((a, b) => b.date.localeCompare(a.date) || a.officialName.localeCompare(b.officialName));
 }
 
+function visibleTransactionRows() {
+  const brush = brushXRange();
+  return transactionRowsInZoom().filter((trade) => {
+    const x = xValueForTrade(trade);
+    return !brush || !Number.isFinite(x) || (x >= brush.min && x <= brush.max);
+  });
+}
+
 function renderTransactions() {
   const rows = visibleTransactionRows();
+  const unselectedRows = state.brushPercent ? transactionRowsInZoom().length : rows.length;
   const visibleRows = rows.slice(0, state.transactionRenderLimit);
   const shownLabel = rows.length > visibleRows.length ? `${numberFormat.format(visibleRows.length)} of ` : "";
-  $("transactionCount").textContent = `${shownLabel}${numberFormat.format(rows.length)} record${rows.length === 1 ? "" : "s"} in view`;
+  const selectionLabel = state.brushPercent ? ` selected of ${numberFormat.format(unselectedRows)} in view` : " in view";
+  $("transactionCount").textContent = `${shownLabel}${numberFormat.format(rows.length)} record${rows.length === 1 ? "" : "s"}${selectionLabel}`;
   $("transactionRows").innerHTML = rows.length
     ? visibleRows
         .map((trade) => {
@@ -1468,6 +1776,7 @@ function renderTransactions() {
     : '<tr><td colspan="8" class="empty-state">No transaction records match this view.</td></tr>';
   $("transactionActions").hidden = visibleRows.length >= rows.length;
   $("showMoreTransactionsButton").textContent = `Show ${numberFormat.format(Math.min(state.compactLayout ? 50 : 100, rows.length - visibleRows.length))} more records`;
+  updateBrushControls();
 }
 
 function findTrade(id) {
@@ -1653,7 +1962,12 @@ function renderSummary() {
   const preview = trades.filter((trade) => String(trade.record_status || "").includes("preview")).length;
   const tickerMapped = trades.filter((trade) => trade.ticker).length;
   const events = state.selectedTimelines.reduce(
-    (total, official) => total + (official.events || []).filter(eventVisible).filter(eventInModeWindow).length,
+    (total, official) =>
+      total +
+      (official.events || [])
+        .map(laneEvent)
+        .filter((event) => eventVisibleForLane(event, official.id))
+        .filter(eventInModeWindow).length,
     0
   );
   const metrics = [
@@ -1686,11 +2000,22 @@ function renderChartHeader() {
 }
 
 function renderChartAlternative() {
+  const selectedRange = brushXRange();
   const descriptions = state.selectedTimelines.map((official) => {
     const trades = filteredTrades(official);
+    const selectedTrades = selectedRange
+      ? trades.filter((trade) => {
+          const x = xValueForTrade(trade);
+          return Number.isFinite(x) && x >= selectedRange.min && x <= selectedRange.max;
+        }).length
+      : null;
     const buys = trades.filter((trade) => trade.action === "BUY").length;
     const sells = trades.filter((trade) => trade.action === "SELL").length;
-    return `${official.full_name}, ${official.branch}: ${trades.length} displayed transactions, ${buys} buys, ${sells} sells, ${(official.service_periods || []).length} service periods.`;
+    const events = (official.events || [])
+      .map(laneEvent)
+      .filter((event) => eventVisibleForLane(event, official.id))
+      .filter(eventInModeWindow).length;
+    return `${official.full_name}, ${official.branch}: ${trades.length} displayed transactions, ${buys} buys, ${sells} sells, ${events} visible events, ${(official.service_periods || []).length} service periods${selectedTrades == null ? "" : `, ${selectedTrades} transactions inside the selected range`}.`;
   });
   $("chartAlternative").textContent = descriptions.join(" ");
 }
@@ -1770,11 +2095,11 @@ function renderDatasetStatus() {
   const newsStatus = newsSummary.event_count
     ? `${numberFormat.format(newsSummary.event_count)} attributed news candidates`
     : newsCoverage.unavailable
-      ? "historical-news provider unavailable in this build"
+      ? "independent historical-news provider unavailable in this build"
       : "no historical-news candidates in this build";
   $("dataNotice").innerHTML = `
     <strong>Current record boundary</strong>
-    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}. Context coverage: ${numberFormat.format(summary.sec_filing_event_count || 0)} SEC filing events; ${escapeHtml(newsStatus)}.</span>`;
+    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}. Context coverage: ${numberFormat.format(summary.primary_source_context_record_count || 0)} official primary-source records, including ${numberFormat.format(summary.sec_filing_event_count || 0)} SEC filing events; ${escapeHtml(newsStatus)}.</span>`;
   $("footerDataset").textContent = `Dataset ${state.overview.dataset_version} / generated ${state.overview.generated_at}`;
 
   const metrics = [
@@ -1833,6 +2158,7 @@ function renderWorkbench() {
   renderSelectedOfficials();
   renderChartHeader();
   renderSummary();
+  renderLaneEventControls();
   renderTradeChart();
   renderChartAlternative();
   renderEventDetail();

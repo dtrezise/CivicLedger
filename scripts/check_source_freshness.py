@@ -22,6 +22,8 @@ FILES = [
     ROOT / "data" / "disclosures" / "production_trade_promotions.json",
     ROOT / "data" / "disclosures" / "source_staleness_alerts.json",
     ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json",
+    ROOT / "data" / "disclosures" / "disclosure_ocr_priority_batches.json",
+    ROOT / "data" / "disclosures" / "disclosure_amendment_reconciliation.json",
     ROOT / "data" / "disclosures" / "house_disclosure_index.json",
     ROOT / "data" / "disclosures" / "house_ptr_transactions.json",
     ROOT / "data" / "disclosures" / "senate_disclosure_index.json",
@@ -35,6 +37,10 @@ FILES = [
     ROOT / "data" / "context" / "official_event_involvement.json",
     ROOT / "data" / "context" / "source_snapshots.json",
     ROOT / "data" / "context" / "entity_reference.json",
+    ROOT / "data" / "context" / "sec_issuer_aliases.json",
+    ROOT / "data" / "context" / "sec_filing_events.json",
+    ROOT / "data" / "context" / "primary_source_context.json",
+    ROOT / "data" / "operations" / "source_refresh_telemetry.json",
     ROOT / "pages-site" / "data" / "civicledger-static.json",
 ]
 
@@ -54,7 +60,9 @@ def main() -> None:
             failures.append(f"Missing required generated file: {path.relative_to(ROOT)}")
             continue
         data = json.loads(path.read_text())
-        generated = parse_date(data.get("generated_at"))
+        generated = parse_date(
+            data.get("generated_at") or data.get("artifact_date") or data.get("captured_at")
+        )
         if not generated:
             warnings.append(f"{path.relative_to(ROOT)} has no generated_at date")
             continue

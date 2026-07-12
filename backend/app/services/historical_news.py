@@ -17,6 +17,20 @@ GDELT_DOC_API_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 GDELT_MAX_RECORDS = 250
 GDELT_DEFAULT_REQUEST_INTERVAL_SECONDS = 1.0
 USER_AGENT = "CivicLedger historical news context (+https://github.com/dtrezise/CivicLedger)"
+PRIMARY_SOURCE_CATEGORY_BY_EVENT_TYPE = {
+    "agency_notice": "agencies",
+    "agency_rule": "agencies",
+    "court_decision": "courts",
+    "funding": "congress",
+    "legislation": "congress",
+}
+OFFICIAL_SOURCE_HOSTS = (
+    "congress.gov",
+    "federalregister.gov",
+    "govinfo.gov",
+    "sec.gov",
+    "supremecourt.gov",
+)
 
 JsonTransport = Callable[[str, dict[str, str], float], dict]
 
@@ -161,6 +175,242 @@ def _canonical_url(value: str | None) -> str:
     return urlunsplit(
         (parsed.scheme.lower(), parsed.netloc.lower(), parsed.path, parsed.query, "")
     )
+
+
+def _official_source_url(value: object) -> str | None:
+    url = _canonical_url(str(value or ""))
+    if not url:
+        return None
+    host = urlsplit(url).hostname or ""
+    if host.endswith(".gov") or any(
+        host == suffix or host.endswith(f".{suffix}") for suffix in OFFICIAL_SOURCE_HOSTS
+    ):
+        return url
+    return None
+
+
+def _source_urls(value: object) -> list[str]:
+    rows = value if isinstance(value, list) else []
+    urls = []
+    for row in rows:
+        candidate = row.get("url") if isinstance(row, dict) else row
+        if url := _official_source_url(candidate):
+            urls.append(url)
+    return sorted(set(urls), key=lambda item: (_official_url_priority(item), item))
+
+
+def _official_url_priority(url: str) -> int:
+    host = urlsplit(url).hostname or ""
+    priorities = {
+        "www.supremecourt.gov": 0,
+        "www.congress.gov": 0,
+        "www.federalregister.gov": 0,
+        "www.sec.gov": 0,
+        "data.sec.gov": 1,
+        "www.govinfo.gov": 1,
+    }
+    return priorities.get(host, 2)
+
+
+def _dataset_hash(value: object) -> str:
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def build_primary_source_context(
+    *,
+    federal_events: dict,
+    sec_filing_events: dict,
+    artifact_date: str,
+    source_snapshots: list[dict] | None = None,
+) -> dict:
+    """Compile source-backed context without asserting event/trade correlations."""
+
+    date.fromisoformat(artifact_date)
+    records = []
+    gaps = []
+    included_federal_ids = set()
+    for event in sorted(
+        federal_events.get("events", []),
+        key=lambda row: (str(row.get("date") or ""), str(row.get("id") or "")),
+    ):
+        category = PRIMARY_SOURCE_CATEGORY_BY_EVENT_TYPE.get(str(event.get("event_type")))
+        if not category:
+            continue
+        source_event_id = str(event.get("id") or "").strip()
+        if not source_event_id:
+            continue
+        included_federal_ids.add(source_event_id)
+        urls = _source_urls(event.get("sources"))
+        records.append(
+            {
+                "id": f"primary-source:{category}:{source_event_id}",
+                "category": category,
+                "source_event_id": source_event_id,
+                "event_type": event.get("event_type"),
+                "date": event.get("date"),
+                "title": event.get("label"),
+                "source_name": event.get("source"),
+                "source_tier": "official",
+                "primary_url": urls[0] if urls else None,
+                "official_urls": urls,
+                "source_record_id": event.get("source_record_id"),
+                "source_record_sha256": event.get("source_record_sha256"),
+                "agency_names": sorted(set(event.get("agency_names", []))),
+                "docket_ids": sorted(set(event.get("docket_ids", []))),
+                "law_number": event.get("law_number"),
+                "context_only": True,
+                "correlation_asserted": False,
+            }
+        )
+
+    for event in sorted(
+        sec_filing_events.get("events", []),
+        key=lambda row: (str(row.get("date") or ""), str(row.get("id") or "")),
+    ):
+        source_event_id = str(event.get("id") or "").strip()
+        if not source_event_id:
+            continue
+        urls = _source_urls(event.get("sources") or event.get("source_urls"))
+        company = event.get("company") or {}
+        filing = event.get("filing") or {}
+        records.append(
+            {
+                "id": f"primary-source:issuer-filings:{source_event_id}",
+                "category": "issuer_filings",
+                "source_event_id": source_event_id,
+                "event_type": "sec_filing",
+                "date": event.get("date"),
+                "title": event.get("title"),
+                "source_name": "SEC EDGAR",
+                "source_tier": "official",
+                "primary_url": urls[0] if urls else None,
+                "official_urls": urls,
+                "cik": company.get("cik"),
+                "issuer_name": company.get("name"),
+                "ticker_symbols": sorted(set(company.get("tickers", []))),
+                "accession_number": filing.get("accession_number"),
+                "form": filing.get("form"),
+                "context_only": True,
+                "correlation_asserted": False,
+            }
+        )
+
+    missing_urls = sorted(row["source_event_id"] for row in records if not row["official_urls"])
+    if missing_urls:
+        gaps.append(
+            {
+                "id": "primary-source-gap:missing-official-url",
+                "category": "cross_category",
+                "gap_type": "missing_official_url",
+                "record_count": len(missing_urls),
+                "sample_source_event_ids": missing_urls[:25],
+                "status": "open",
+            }
+        )
+
+    federal_summary = federal_events.get("summary") or {}
+    selected_agency = int(federal_summary.get("selected_federal_register_agency_document_count") or 0)
+    classified_agency = int(federal_summary.get("classified_federal_register_agency_document_count") or 0)
+    if classified_agency > selected_agency:
+        gaps.append(
+            {
+                "id": "primary-source-gap:agencies-bounded-selection",
+                "category": "agencies",
+                "gap_type": "bounded_selection",
+                "selected_record_count": selected_agency,
+                "available_classified_record_count": classified_agency,
+                "status": "declared_scope_limit",
+            }
+        )
+    selected_laws = int(federal_summary.get("selected_public_law_count") or 0)
+    raw_laws = int(federal_summary.get("raw_public_law_count") or 0)
+    if raw_laws > selected_laws:
+        gaps.append(
+            {
+                "id": "primary-source-gap:congress-bounded-selection",
+                "category": "congress",
+                "gap_type": "bounded_selection",
+                "selected_record_count": selected_laws,
+                "available_record_count": raw_laws,
+                "status": "declared_scope_limit",
+            }
+        )
+    court_status = (federal_events.get("scope") or {}).get(
+        "supreme_court_pre_2017_status"
+    )
+    if court_status and court_status != "complete":
+        gaps.append(
+            {
+                "id": "primary-source-gap:courts-pre-2017",
+                "category": "courts",
+                "gap_type": "known_historical_backfill_gap",
+                "scope": "Supreme Court opinions before the 2017 term",
+                "source_status": court_status,
+                "status": "open",
+            }
+        )
+    for request_id, coverage in sorted(
+        (sec_filing_events.get("coverage_report") or {}).items()
+    ):
+        if coverage.get("status") in {"covered", "cached"}:
+            continue
+        gaps.append(
+            {
+                "id": f"primary-source-gap:issuer-filings:{request_id}",
+                "category": "issuer_filings",
+                "gap_type": "sec_request_not_fully_covered",
+                "request_id": request_id,
+                "cik": coverage.get("cik"),
+                "source_status": coverage.get("status"),
+                "reason": coverage.get("reason"),
+                "warnings": coverage.get("warnings", []),
+                "status": "open",
+            }
+        )
+
+    records.sort(key=lambda row: (row["date"] or "", row["category"], row["id"]))
+    gaps.sort(key=lambda row: row["id"])
+    category_counts = {
+        category: sum(1 for row in records if row["category"] == category)
+        for category in ("agencies", "courts", "congress", "issuer_filings")
+    }
+    gap_counts = {
+        gap_type: sum(1 for row in gaps if row["gap_type"] == gap_type)
+        for gap_type in sorted({row["gap_type"] for row in gaps})
+    }
+    dataset = {
+        "schema_version": "primary-source-context-v1",
+        "artifact_date": artifact_date,
+        "context_label": (
+            "Official primary-source context only. Inclusion records source availability and "
+            "does not assert a relationship to any disclosure, trade, price move, or outcome."
+        ),
+        "source_preference": "official_first",
+        "source_snapshots": sorted(
+            source_snapshots or [], key=lambda row: str(row.get("source_id") or "")
+        ),
+        "summary": {
+            "record_count": len(records),
+            "record_counts_by_category": category_counts,
+            "record_with_official_url_count": sum(
+                1 for row in records if row["official_urls"]
+            ),
+            "gap_count": len(gaps),
+            "gap_counts": gap_counts,
+            "excluded_federal_event_count": len(federal_events.get("events", []))
+            - len(included_federal_ids),
+        },
+        "records": records,
+        "gaps": gaps,
+        "ingestion_policy": {
+            "official_sources_preferred": True,
+            "correlation_inference": False,
+            "missing_context_is_recorded_not_invented": True,
+        },
+    }
+    dataset["dataset_hash"] = _dataset_hash(dataset)
+    return dataset
 
 
 def _clean_text(value: object) -> str | None:

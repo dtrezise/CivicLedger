@@ -1,63 +1,50 @@
 #!/usr/bin/env python3
-"""Build reviewed promotion artifact from parser fixtures without inventing production trades."""
+"""Systematically evaluate disclosure parser previews for evidence-qualified promotion."""
 
 from __future__ import annotations
 
 import json
+import sys
 from datetime import date
 from pathlib import Path
 
-from app.parsers import get_parser
-
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURE = ROOT / "backend" / "tests" / "fixtures" / "parsers" / "oge_278t.csv"
+sys.path.insert(0, str(ROOT / "backend"))
+
+from app.services.promotion import build_parser_preview_review_dataset  # noqa: E402
+
+
+HOUSE_MANIFEST = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
+SENATE_DATASET = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
 OUTPUT = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
 
 
+def load_house_evidence(manifest: dict) -> tuple[list[dict], list[dict]]:
+    documents = []
+    transactions = []
+    for year, record in sorted(manifest.get("year_partitions", {}).items()):
+        partition = json.loads((ROOT / record["path"]).read_text())
+        if str(partition.get("filing_year")) != year:
+            raise ValueError(f"House partition year mismatch for {record['path']}")
+        documents.extend(partition.get("documents", []))
+        transactions.extend(partition.get("transactions", []))
+    return documents, transactions
+
+
 def build_dataset() -> dict:
-    content = FIXTURE.read_bytes()
-    parser = get_parser("oge-individual-disclosures")
-    preview = parser.preview(content, filename=FIXTURE.name, content_type="text/csv")
-    promotions = []
-    for index, transaction in enumerate(preview.transactions, start=1):
-        row = transaction.to_dict()
-        promotions.append(
-            {
-                "promotion_id": f"fixture-oge-reviewed-{index:03d}",
-                "source_id": "oge-individual-disclosures",
-                "fixture_path": str(FIXTURE.relative_to(ROOT)),
-                "filer_name": preview.filer_name,
-                "report_type": preview.report_type,
-                "filing_date": preview.filing_date,
-                "asset_display_name": row["asset"],
-                "ticker": row["ticker"],
-                "action": row["transaction_type"],
-                "trade_date": row["transaction_date"],
-                "value_range_label": row["amount"],
-                "parser_confidence": row["confidence"],
-                "field_confidence": row["field_confidence"],
-                "review_status": "reviewed_fixture_promotion",
-                "record_status": "reviewed_fixture_not_public_production",
-                "confidence_label": "Reviewed fixture promotion; not a public production official trade",
-                "public_production_trade": False,
-                "review_required_before_public_trade": True,
-            }
-        )
-    return {
-        "generated_at": date.today().isoformat(),
-        "schema_version": "reviewed-disclosure-promotions-v1",
-        "context_label": (
-            "Promotion workflow proof using parser fixtures. These rows verify review mechanics "
-            "and are not public production official trade records."
-        ),
-        "summary": {
-            "reviewed_fixture_promotion_count": len(promotions),
-            "public_production_trade_count": 0,
-            "review_required_before_public_trade": True,
-        },
-        "promotions": promotions,
-    }
+    house_manifest = json.loads(HOUSE_MANIFEST.read_text())
+    senate_dataset = json.loads(SENATE_DATASET.read_text())
+    house_documents, house_transactions = load_house_evidence(house_manifest)
+    generated_at = max(
+        date.fromisoformat(house_manifest["generated_at"]),
+        date.fromisoformat(senate_dataset["generated_at"]),
+    ).isoformat()
+    return build_parser_preview_review_dataset(
+        [*house_documents, *senate_dataset.get("documents", [])],
+        [*house_transactions, *senate_dataset.get("transactions", [])],
+        generated_at=generated_at,
+    )
 
 
 def main() -> None:

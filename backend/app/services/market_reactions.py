@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
 from datetime import date, timedelta
+import hashlib
+import json
 import math
+from pathlib import Path
 from typing import Iterable
 
 
@@ -15,6 +18,46 @@ MARKET_CONTEXT_LABEL = (
     "impact, or investment performance."
 )
 PRICE_METHOD = "adjusted_close_preferred_else_close"
+
+
+def load_partitioned_reaction_dataset(manifest_path: Path) -> dict:
+    """Load and verify either the legacy monolith or the partitioned reaction dataset."""
+
+    manifest = json.loads(manifest_path.read_text())
+    if isinstance(manifest.get("reactions"), list):
+        return manifest
+
+    storage = manifest.get("storage") or {}
+    records = storage.get("partitions") or {}
+    reactions = []
+    context_root = manifest_path.parent.resolve()
+    for key, record in sorted(records.items()):
+        partition_path = (manifest_path.parent / record["path"]).resolve()
+        if partition_path != context_root and context_root not in partition_path.parents:
+            raise ValueError(f"Reaction partition escapes context root: {key}")
+        encoded = partition_path.read_bytes()
+        if hashlib.sha256(encoded).hexdigest() != record.get("sha256"):
+            raise ValueError(f"Reaction partition hash mismatch: {key}")
+        payload = json.loads(encoded)
+        rows = payload.get("reactions", [])
+        if len(rows) != record.get("reaction_count"):
+            raise ValueError(f"Reaction partition count mismatch: {key}")
+        if payload.get("symbol") != record.get("symbol") or payload.get("year") != record.get("year"):
+            raise ValueError(f"Reaction partition identity mismatch: {key}")
+        reactions.extend(rows)
+
+    expected_count = storage.get("reaction_count", 0)
+    if len(reactions) != expected_count:
+        raise ValueError(
+            f"Reaction dataset count mismatch: expected {expected_count}, loaded {len(reactions)}"
+        )
+    return {
+        **manifest,
+        "reactions": sorted(
+            reactions,
+            key=lambda row: (str(row.get("event_date") or ""), str(row.get("id") or "")),
+        ),
+    }
 
 
 def _iso_date(value: str | date) -> str:

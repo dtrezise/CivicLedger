@@ -195,7 +195,7 @@
     "summary": {
       "crypto_trade_count": 122,
       "default_official_count": 3,
-      "event_count": 3350,
+      "event_count": 3820,
       "house_ptr_document_count": 7501,
       "house_ptr_out_of_service_trade_count": 13,
       "house_ptr_parser_preview_transaction_count": 53673,
@@ -210,7 +210,7 @@
       "senate_ptr_parser_preview_transaction_count": 10882,
       "senate_ptr_timeline_transaction_count": 10881,
       "trade_cluster_count": 3341,
-      "trade_context_candidate_count": 20326,
+      "trade_context_candidate_count": 20412,
       "trade_count": 71720
     },
     "trade_context_methodology": {
@@ -219,7 +219,7 @@
       "ranking": "Transparent score from relationship specificity, temporal proximity, and unsigned absolute benchmark-adjusted post-trade movement when market coverage exists.",
       "selection": "Up to two source-backed context candidates before, during, and after each trade cluster.",
       "trade_cluster_days": 14,
-      "version": "trade-window-v2",
+      "version": "trade-window-v3",
       "window_days": 45
     },
     "zoom_presets": [
@@ -249,6 +249,33 @@
   "dataset_version": "seed-v1",
   "disclaimer": "This public research preview combines source-backed official rosters, official House Clerk, Senate, and OGE parser previews, and market context. Development fixtures are excluded from public timelines. Parser previews require review and are not reviewed public-production trades.",
   "disclosure_pipeline": {
+    "amendment_reconciliation": {
+      "context_label": "Document-level amendment reconciliation retains every official filing. Links are annotations supported by explicit source fields or exact official metadata; no source record is overwritten.",
+      "generated_at": "2026-07-12",
+      "reconciliation_policy": {
+        "automatic_trade_suppression_allowed": false,
+        "destructive_merge_allowed": false,
+        "house_link_rule": "explicit amends_document_id or original_document_id only",
+        "senate_link_rule": "official amendment title plus exactly one non-amendment filing in the same exact filer, normalized-title, and filing-date family",
+        "unresolved_amendments_remain_reviewable": true
+      },
+      "schema_version": "disclosure-amendment-reconciliation-v1",
+      "summary": {
+        "amendment_document_count": 169,
+        "chamber_counts": {
+          "Senate": 169
+        },
+        "destructive_change_count": 0,
+        "linked_candidate_count": 9,
+        "source_document_count": 9606,
+        "source_record_preserved_count": 169,
+        "status_counts": {
+          "candidate_predecessor_identified": 9,
+          "predecessor_not_identified": 160
+        },
+        "unlinked_or_ambiguous_count": 160
+      }
+    },
     "completeness_dashboard": {
       "branches": [
         {
@@ -668,12 +695,15 @@
         "archived_raw_document_count": 1,
         "branch_count": 3,
         "completeness_row_count": 16,
+        "evidence_review_batch_count": 100,
+        "evidence_review_candidate_count": 43327,
         "open_warning_count": 4,
+        "parser_preview_evaluated_record_count": 64555,
         "queue_item_count": 5893,
         "retrieval_batch_count": 4,
         "retrieval_candidate_count": 96,
         "review_required_before_public_trade": true,
-        "reviewed_fixture_promotion_count": 1,
+        "reviewed_fixture_promotion_count": 0,
         "reviewed_public_trade_count": 0,
         "source_coverage": {
           "house-financial-disclosure": {
@@ -751,22 +781,1452 @@
         "unique_official_count": 2159
       }
     },
+    "ocr_priority_batches": {
+      "context_label": "Deterministic metadata-only priority batches for official image disclosures. No OCR text or transaction content is inferred or fabricated.",
+      "generated_at": "2026-07-12",
+      "priority_policy": {
+        "batch_size_per_chamber": 50,
+        "house_evidence": [
+          "official House Clerk PTR URL",
+          "source PDF SHA-256",
+          "deterministic filer identity match",
+          "source PDF page count"
+        ],
+        "ocr_content_generation": "not_performed",
+        "primary_order": [
+          "evidence_score_descending",
+          "filing_date_descending",
+          "document_id_ascending"
+        ],
+        "senate_evidence": [
+          "official Senate report URL",
+          "source report-page SHA-256",
+          "deterministic filer identity match",
+          "official Senate media-image manifest"
+        ]
+      },
+      "schema_version": "disclosure-ocr-priority-batches-v1",
+      "summary": {
+        "backlog_document_count": 2534,
+        "eligible_document_count": 2534,
+        "ocr_content_record_count": 0,
+        "selected_document_count": 100,
+        "selected_source_byte_count": 13305111,
+        "selected_source_page_count": 611,
+        "transaction_rows_created": 0
+      }
+    },
     "production_promotions": {
       "blocked_rows": [
         {
-          "blocked_reason": "reviewed fixture or non-production source; real public trade promotion requires official raw document review",
-          "promotion_id": "fixture-oge-reviewed-001",
-          "record_status": "reviewed_fixture_not_public_production",
-          "source_id": "oge-individual-disclosures"
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-a5fdbba4-9c67-4002-b931-1cd910ce590d",
+          "record_id": "senate-ptr-a5fdbba4-9c67-4002-b931-1cd910ce590d-row-0001-72bc4c3e48",
+          "source_file_hash": "3831669b01c79d0b7293bab4b8ec073de098adb2d0246b137cd78964dd3d516e",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-a5fdbba4-9c67-4002-b931-1cd910ce590d",
+          "record_id": "senate-ptr-a5fdbba4-9c67-4002-b931-1cd910ce590d-row-0002-7387521076",
+          "source_file_hash": "3831669b01c79d0b7293bab4b8ec073de098adb2d0246b137cd78964dd3d516e",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-a5fdbba4-9c67-4002-b931-1cd910ce590d",
+          "record_id": "senate-ptr-a5fdbba4-9c67-4002-b931-1cd910ce590d-row-0003-e42b549b42",
+          "source_file_hash": "3831669b01c79d0b7293bab4b8ec073de098adb2d0246b137cd78964dd3d516e",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6",
+          "record_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6-row-0001-3ef351d64c",
+          "source_file_hash": "68b51170c9581e7c5ee0f7c95d55f16421170b121dfffbda1098d7a712c2e041",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6",
+          "record_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6-row-0002-f31a6e4aa2",
+          "source_file_hash": "68b51170c9581e7c5ee0f7c95d55f16421170b121dfffbda1098d7a712c2e041",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6",
+          "record_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6-row-0003-4b7030005e",
+          "source_file_hash": "68b51170c9581e7c5ee0f7c95d55f16421170b121dfffbda1098d7a712c2e041",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6",
+          "record_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6-row-0004-e3222363e8",
+          "source_file_hash": "68b51170c9581e7c5ee0f7c95d55f16421170b121dfffbda1098d7a712c2e041",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6",
+          "record_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6-row-0005-d1ffe96226",
+          "source_file_hash": "68b51170c9581e7c5ee0f7c95d55f16421170b121dfffbda1098d7a712c2e041",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6",
+          "record_id": "senate-ptr-5d9b1b8e-2ae1-442b-860c-e79b8a701dc6-row-0006-095e336da0",
+          "source_file_hash": "68b51170c9581e7c5ee0f7c95d55f16421170b121dfffbda1098d7a712c2e041",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-4f4d76c6-52ab-4edb-884d-b6c43e7b1bbe",
+          "record_id": "senate-ptr-4f4d76c6-52ab-4edb-884d-b6c43e7b1bbe-row-0001-ff9c194bde",
+          "source_file_hash": "1cd540aec40a0bf691015eabe5094adc1fbaec39464c72af290bbd59909f46ba",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0001-4b28bbaa22",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0002-35071f0ab5",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0003-c5bb477924",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0004-5ec59ab962",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0005-06720234fd",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0006-eb76ec6308",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0007-f3371d14b7",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0008-c54dba234e",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0009-52f682d867",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0010-32f744718a",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0011-1a4ef790d7",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0012-c8dc6d274c",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0013-cfc6d58e3c",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0014-23e0e2fea4",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0015-53561c82a0",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0016-c0b45176bc",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0017-26fc63a9c6",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0018-6ee2def836",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0019-d3c2747d2e",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0020-46312b0786",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0021-12eb949c3f",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0022-2849108405",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0023-f4e7091bc7",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0024-5b8083d1d0",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6",
+          "record_id": "senate-ptr-96d0794e-fb53-495f-9137-fff88d0885e6-row-0025-a071db9d29",
+          "source_file_hash": "af540ee0f9268ceeef8c71e0b5dc8da8ec6f643ec8dddcb0c197b61dd1fe7058",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ff0b0573-2809-40ae-8197-4b26648e9027",
+          "record_id": "senate-ptr-ff0b0573-2809-40ae-8197-4b26648e9027-row-0030-e08ce8407a",
+          "source_file_hash": "88603512891629ce379ecaa8149ce018bbf92d4038bb8f9305b20eea1b550738",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ff0b0573-2809-40ae-8197-4b26648e9027",
+          "record_id": "senate-ptr-ff0b0573-2809-40ae-8197-4b26648e9027-row-0031-c74d34ffc6",
+          "source_file_hash": "88603512891629ce379ecaa8149ce018bbf92d4038bb8f9305b20eea1b550738",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-7caf1b69-3678-4420-8812-a1476a1a6158",
+          "record_id": "senate-ptr-7caf1b69-3678-4420-8812-a1476a1a6158-row-0002-35567c66e3",
+          "source_file_hash": "6f1955008deaeb4cbd45c7b4141be64e4b42b8cd03a7b695f9f276fed5ddaccb",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c",
+          "record_id": "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0001-98403f5092",
+          "source_file_hash": "9c53a91cce5db4e201889fb580df5e4d43db4df9157fefbece42e7a1019dd5e7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c",
+          "record_id": "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0004-a4c0803f73",
+          "source_file_hash": "9c53a91cce5db4e201889fb580df5e4d43db4df9157fefbece42e7a1019dd5e7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c",
+          "record_id": "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0011-ad72ef74e5",
+          "source_file_hash": "9c53a91cce5db4e201889fb580df5e4d43db4df9157fefbece42e7a1019dd5e7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52",
+          "record_id": "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0001-b3344f9e8d",
+          "source_file_hash": "b1a9c78d5b059909f5944a8dc5d5fd6b19851f3b43ad0c9d31faf9b27d9fb487",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52",
+          "record_id": "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0004-5e80188f0f",
+          "source_file_hash": "b1a9c78d5b059909f5944a8dc5d5fd6b19851f3b43ad0c9d31faf9b27d9fb487",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52",
+          "record_id": "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0011-ed2316900f",
+          "source_file_hash": "b1a9c78d5b059909f5944a8dc5d5fd6b19851f3b43ad0c9d31faf9b27d9fb487",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-4b69867f-0376-4526-93f2-cd556b1155c9",
+          "record_id": "senate-ptr-4b69867f-0376-4526-93f2-cd556b1155c9-row-0001-f80c63d013",
+          "source_file_hash": "bd2d1df73361210360e1c4b4c0fdb72d1b646497352975a4b2dcb562aaaea80e",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-4aa0094d-d9da-4a05-aa13-6d9f5d376105",
+          "record_id": "senate-ptr-4aa0094d-d9da-4a05-aa13-6d9f5d376105-row-0001-8c32d833b3",
+          "source_file_hash": "abbbdd79d5bc33ff07f880398cd9c6ee985df3b45d17ef22a83649cd2e5a6ef2",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-4aa0094d-d9da-4a05-aa13-6d9f5d376105",
+          "record_id": "senate-ptr-4aa0094d-d9da-4a05-aa13-6d9f5d376105-row-0002-815c893cb6",
+          "source_file_hash": "abbbdd79d5bc33ff07f880398cd9c6ee985df3b45d17ef22a83649cd2e5a6ef2",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-4aa0094d-d9da-4a05-aa13-6d9f5d376105",
+          "record_id": "senate-ptr-4aa0094d-d9da-4a05-aa13-6d9f5d376105-row-0003-420424f070",
+          "source_file_hash": "abbbdd79d5bc33ff07f880398cd9c6ee985df3b45d17ef22a83649cd2e5a6ef2",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8",
+          "record_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8-row-0001-b11cf1b8be",
+          "source_file_hash": "2ba8a170007d3aa5b50bc4b85d622f057bba08ac4693df52b4c6f6a216d9b54d",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8",
+          "record_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8-row-0033-35d456a394",
+          "source_file_hash": "2ba8a170007d3aa5b50bc4b85d622f057bba08ac4693df52b4c6f6a216d9b54d",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8",
+          "record_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8-row-0034-e793b3ab42",
+          "source_file_hash": "2ba8a170007d3aa5b50bc4b85d622f057bba08ac4693df52b4c6f6a216d9b54d",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8",
+          "record_id": "senate-ptr-5245bd7a-a8b7-4d3e-8fb1-f563322da8f8-row-0035-686f8e403f",
+          "source_file_hash": "2ba8a170007d3aa5b50bc4b85d622f057bba08ac4693df52b4c6f6a216d9b54d",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-86810b3e-3dee-4e8e-9b47-6d3822385b7d",
+          "record_id": "senate-ptr-86810b3e-3dee-4e8e-9b47-6d3822385b7d-row-0001-a7f3621bbf",
+          "source_file_hash": "957750b94660fd8d5c4db11c5cbd77e296e22b336bc0a4d0b23d3a21c9f0d12e",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f148dc2e-d440-4759-be4d-f000c1cd6e89",
+          "record_id": "senate-ptr-f148dc2e-d440-4759-be4d-f000c1cd6e89-row-0001-7ea9c25ada",
+          "source_file_hash": "57da6cf9889d40c983eccf1c185137b40b358c0ca46ab1e0ff5574db8065eabb",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f148dc2e-d440-4759-be4d-f000c1cd6e89",
+          "record_id": "senate-ptr-f148dc2e-d440-4759-be4d-f000c1cd6e89-row-0002-acd98e25ba",
+          "source_file_hash": "57da6cf9889d40c983eccf1c185137b40b358c0ca46ab1e0ff5574db8065eabb",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f34c4d7a-29ba-48fb-beea-d94c1368cc99",
+          "record_id": "senate-ptr-f34c4d7a-29ba-48fb-beea-d94c1368cc99-row-0001-9387cce5b1",
+          "source_file_hash": "2769e89b6f76c26c52f129c7544832c77eb1410ad74145bd9b0f4f1b50db1deb",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f34c4d7a-29ba-48fb-beea-d94c1368cc99",
+          "record_id": "senate-ptr-f34c4d7a-29ba-48fb-beea-d94c1368cc99-row-0002-6f97f4a086",
+          "source_file_hash": "2769e89b6f76c26c52f129c7544832c77eb1410ad74145bd9b0f4f1b50db1deb",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f34c4d7a-29ba-48fb-beea-d94c1368cc99",
+          "record_id": "senate-ptr-f34c4d7a-29ba-48fb-beea-d94c1368cc99-row-0003-a3f13a0b5d",
+          "source_file_hash": "2769e89b6f76c26c52f129c7544832c77eb1410ad74145bd9b0f4f1b50db1deb",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-747b4aac-bbc9-4636-bf0f-95b0454e39d9",
+          "record_id": "senate-ptr-747b4aac-bbc9-4636-bf0f-95b0454e39d9-row-0001-3d9a807d1b",
+          "source_file_hash": "e61e54f882e0aaad8aa399299fb22e94c883a72cb4aba91699d6a1dd76f31bb3",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-dcea4793-9402-493b-8c92-ba4d77970c75",
+          "record_id": "senate-ptr-dcea4793-9402-493b-8c92-ba4d77970c75-row-0006-194eb46b04",
+          "source_file_hash": "54aa794d765980751cd13e0e979f50f94439424d1900e075b836732fbb8c7ba7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-dcea4793-9402-493b-8c92-ba4d77970c75",
+          "record_id": "senate-ptr-dcea4793-9402-493b-8c92-ba4d77970c75-row-0007-a134f9147c",
+          "source_file_hash": "54aa794d765980751cd13e0e979f50f94439424d1900e075b836732fbb8c7ba7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-dcea4793-9402-493b-8c92-ba4d77970c75",
+          "record_id": "senate-ptr-dcea4793-9402-493b-8c92-ba4d77970c75-row-0009-63042d212a",
+          "source_file_hash": "54aa794d765980751cd13e0e979f50f94439424d1900e075b836732fbb8c7ba7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-aa38bdb0-5847-4bec-8e36-80d6ffc90837",
+          "record_id": "senate-ptr-aa38bdb0-5847-4bec-8e36-80d6ffc90837-row-0001-04b3c77302",
+          "source_file_hash": "f0d8cf52cd5f0895d37751d83b182da9e77206ad4949c81179b6d70e35bdec60",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-853d0789-28db-4789-9654-a73cff7740d7",
+          "record_id": "senate-ptr-853d0789-28db-4789-9654-a73cff7740d7-row-0001-a1f4c7eb1e",
+          "source_file_hash": "1d30dcbb54f78eb5d11e16c2fc2d9816804691bd0022aefeb04c379c48e5b5f3",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8",
+          "record_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8-row-0001-0bab7fe3eb",
+          "source_file_hash": "30c4de3d25a4608a4166b02bb650c0b3c038f6075aa584fa90367ea6099a0a89",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8",
+          "record_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8-row-0002-5dec0744dd",
+          "source_file_hash": "30c4de3d25a4608a4166b02bb650c0b3c038f6075aa584fa90367ea6099a0a89",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8",
+          "record_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8-row-0003-d2cc10256e",
+          "source_file_hash": "30c4de3d25a4608a4166b02bb650c0b3c038f6075aa584fa90367ea6099a0a89",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8",
+          "record_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8-row-0004-9618bb9a68",
+          "source_file_hash": "30c4de3d25a4608a4166b02bb650c0b3c038f6075aa584fa90367ea6099a0a89",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8",
+          "record_id": "senate-ptr-ab712d8d-1afd-4f09-b29e-f1b65bba50b8-row-0005-8ac408f531",
+          "source_file_hash": "30c4de3d25a4608a4166b02bb650c0b3c038f6075aa584fa90367ea6099a0a89",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0001-15a604ecfa",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0002-aced40c501",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0003-8dbe59d752",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0004-01ef2a850f",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0005-7c7f36b096",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0006-02ff5361c8",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0007-7ecc31b86e",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0008-0debc1543d",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039",
+          "record_id": "senate-ptr-8d93e30a-19a8-43a9-93d8-e95d629b1039-row-0009-745a0fd980",
+          "source_file_hash": "3b4cff9d3ae2f48374e9f3aa6ea51d5bf9e74cecf76d8e53fa9a2b250275b308",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-1e345459-9cbe-4434-99ed-eaca63641fb3",
+          "record_id": "senate-ptr-1e345459-9cbe-4434-99ed-eaca63641fb3-row-0004-2a47d7c86f",
+          "source_file_hash": "39f5db23c10354787a18bb6d7965bbe7d85811574d72869239bcbe1b36df6042",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-1e345459-9cbe-4434-99ed-eaca63641fb3",
+          "record_id": "senate-ptr-1e345459-9cbe-4434-99ed-eaca63641fb3-row-0011-17c531b32c",
+          "source_file_hash": "39f5db23c10354787a18bb6d7965bbe7d85811574d72869239bcbe1b36df6042",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-1e345459-9cbe-4434-99ed-eaca63641fb3",
+          "record_id": "senate-ptr-1e345459-9cbe-4434-99ed-eaca63641fb3-row-0012-44465434c2",
+          "source_file_hash": "39f5db23c10354787a18bb6d7965bbe7d85811574d72869239bcbe1b36df6042",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0001-68c1fc530a",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0002-9d2a6bbaee",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0003-165789ed7f",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0004-7a6c0c1497",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0005-e634ab850e",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0006-2eccb1fc6a",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0007-9e20dd5875",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0008-8fe75b6fa4",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b",
+          "record_id": "senate-ptr-09b9c1ed-1d73-4f17-b6f8-7b2d92021c5b-row-0009-e9edc26b8e",
+          "source_file_hash": "8e127a051e56cbe43aadfc4dbfd43758098154047de81ef7ab963ee693497a96",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f586922d-6083-44e5-8a32-769290389416",
+          "record_id": "senate-ptr-f586922d-6083-44e5-8a32-769290389416-row-0001-7fe6ebab87",
+          "source_file_hash": "26f7555ae95f894807cbb1d26d8f8ecda281a649e750c2154d5e9cd2d587e5c6",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f586922d-6083-44e5-8a32-769290389416",
+          "record_id": "senate-ptr-f586922d-6083-44e5-8a32-769290389416-row-0002-7d17f262a7",
+          "source_file_hash": "26f7555ae95f894807cbb1d26d8f8ecda281a649e750c2154d5e9cd2d587e5c6",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-f586922d-6083-44e5-8a32-769290389416",
+          "record_id": "senate-ptr-f586922d-6083-44e5-8a32-769290389416-row-0003-35c1f91977",
+          "source_file_hash": "26f7555ae95f894807cbb1d26d8f8ecda281a649e750c2154d5e9cd2d587e5c6",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0001-0a99c2e7b7",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0002-0a705228ed",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0003-179e7b0eb7",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0004-d6d7e4bf94",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0005-3c63ba7195",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0006-0c80c528fb",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
+        },
+        {
+          "blocked_criteria": [
+            "explicit_public_production_decision",
+            "review_document_matches_source",
+            "review_hash_matches_source",
+            "review_timestamp_present",
+            "reviewer_identified"
+          ],
+          "blocked_reason": "parser preview lacks one or more required source or review evidence criteria",
+          "document_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1",
+          "record_id": "senate-ptr-141ea86c-9411-4d3f-ae9b-ce6e5e8065d1-row-0007-171f6c06cb",
+          "source_file_hash": "1dd4d5c809edf2221ce639b0b9053c81c3afcb732f477bfc2c96e628daf1b8d7",
+          "source_id": "senate-public-financial-disclosure"
         }
       ],
-      "context_label": "Production trade promotion gate. Rows appear only after official raw documents are archived, parsed, reviewed, and explicitly marked public production.",
+      "context_label": "Production trade promotion gate. Rows appear only after official source provenance, hashes, parser quality, identity, and explicit human review evidence all pass.",
       "generated_at": "2026-07-12",
       "production_ready_raw_documents": [],
       "public_trade_rows": [],
       "schema_version": "production-trade-promotions-v1",
       "summary": {
-        "blocked_non_production_review_count": 1,
+        "blocked_evidence_review_batch_count": 100,
+        "blocked_non_production_review_count": 64555,
         "production_ready_raw_document_count": 0,
         "review_required_before_public_trade": true,
         "reviewed_public_trade_count": 0
@@ -3791,41 +5251,35 @@
       }
     },
     "reviewed_promotions": {
-      "context_label": "Promotion workflow proof using parser fixtures. These rows verify review mechanics and are not public production official trade records.",
+      "context_label": "Systematic parser-preview evidence review. A row is promoted only when official-source, hash, identity, parser-quality, and explicit human review criteria all pass.",
       "generated_at": "2026-07-12",
-      "promotions": [
-        {
-          "action": "BUY",
-          "asset_display_name": "Example Infrastructure Fund",
-          "confidence_label": "Reviewed fixture promotion; not a public production official trade",
-          "field_confidence": {
-            "amount": 0.9,
-            "asset": 0.95,
-            "ticker": 0.8,
-            "transaction_date": 0.95,
-            "transaction_type": 0.9
-          },
-          "filer_name": "Secretary Example",
-          "filing_date": "2024-07-03",
-          "fixture_path": "backend/tests/fixtures/parsers/oge_278t.csv",
-          "parser_confidence": 0.93,
-          "promotion_id": "fixture-oge-reviewed-001",
-          "public_production_trade": false,
-          "record_status": "reviewed_fixture_not_public_production",
-          "report_type": "OGE Form 278-T",
-          "review_required_before_public_trade": true,
-          "review_status": "reviewed_fixture_promotion",
-          "source_id": "oge-individual-disclosures",
-          "ticker": "EIF",
-          "trade_date": "2024-06-11",
-          "value_range_label": "$50,001 - $100,000"
-        }
-      ],
-      "schema_version": "reviewed-disclosure-promotions-v1",
+      "promotions": [],
+      "schema_version": "reviewed-disclosure-promotions-v2",
       "summary": {
+        "automated_source_criteria_pass_count": 43327,
+        "eligible_public_production_count": 0,
+        "evaluated_record_count": 64555,
+        "evidence_review_candidate_count": 43327,
+        "evidence_review_queue_count": 100,
+        "evidence_review_queue_limit": 100,
+        "failed_criteria_counts": {
+          "explicit_public_production_decision": 64555,
+          "no_quality_flags": 21228,
+          "not_duplicate_candidate": 5967,
+          "review_document_matches_source": 64555,
+          "review_hash_matches_source": 64555,
+          "review_timestamp_present": 64555,
+          "reviewer_identified": 64555
+        },
+        "missing_document_evidence_count": 0,
+        "parser_preview_record_count": 64555,
         "public_production_trade_count": 0,
         "review_required_before_public_trade": true,
-        "reviewed_fixture_promotion_count": 1
+        "reviewed_fixture_promotion_count": 0,
+        "source_record_counts": {
+          "house-financial-disclosure": 53673,
+          "senate-public-financial-disclosure": 10882
+        }
       }
     },
     "source_staleness_alerts": {
@@ -3877,17 +5331,28 @@
           "severity": "info",
           "source_id": null,
           "status": "monitoring"
+        },
+        {
+          "affected_count": 0,
+          "alert_id": "source-refresh:duration-unobserved",
+          "message": "No explicitly instrumented source refresh duration is recorded yet.",
+          "severity": "info",
+          "source_id": null,
+          "status": "monitoring"
         }
       ],
       "context_label": "Scheduled stale-source alerts for current officials and live source lanes. Warnings identify work queues; they are not allegations or trade findings.",
       "generated_at": "2026-07-12",
       "schema_version": "source-staleness-alerts-v1",
       "summary": {
-        "alert_count": 6,
-        "current_queue_item_count": 1349,
+        "alert_count": 7,
+        "current_queue_item_count": 1348,
+        "data_drift_count": 0,
         "high_alert_count": 0,
+        "measured_refresh_count": 0,
         "open_warning_count": 4,
-        "reviewed_public_trade_count": 0
+        "reviewed_public_trade_count": 0,
+        "source_failure_count": 0
       }
     }
   },
@@ -4523,8 +5988,8 @@
       "Executive": 3,
       "Legislative": 355
     },
-    "canonical_asset_count": 83,
-    "canonical_organization_count": 72,
+    "canonical_asset_count": 411,
+    "canonical_organization_count": 376,
     "career_timeline_crypto_trade_count": 122,
     "career_timeline_default_official_count": 3,
     "career_timeline_official_count": 358,
@@ -4532,8 +5997,8 @@
     "career_timeline_trade_count": 71720,
     "crypto_price_point_count": 14215,
     "disclosure_queue_item_count": 5893,
-    "entity_quality_issue_count": 13430,
-    "event_count": 1678,
+    "entity_quality_issue_count": 9440,
+    "event_count": 2148,
     "executive_oge_indexed_document_count": 19,
     "executive_oge_manifest_official_count": 72,
     "executive_oge_manifest_role_count": 77,
@@ -4560,7 +6025,7 @@
     "macro_series_count": 6,
     "market_price_point_count": 91092,
     "market_price_provider": "Tiingo",
-    "normalized_source_snapshot_count": 2716,
+    "normalized_source_snapshot_count": 4126,
     "official_count": 358,
     "official_event_relationship_count": 222782,
     "official_event_roll_call_count": 748,
@@ -4568,6 +6033,7 @@
     "presidential_oge_parser_preview_transaction_count": 7182,
     "presidential_oge_public_production_trade_count": 0,
     "presidential_oge_source_status_count": 4,
+    "primary_source_context_record_count": 1874,
     "public_official_role_count": 5914,
     "public_official_role_counts_by_branch": {
       "Executive": 77,
@@ -4592,9 +6058,10 @@
       "trump-47": 602
     },
     "raw_document_count": 31,
-    "reviewed_fixture_promotion_count": 1,
+    "reviewed_fixture_promotion_count": 0,
     "reviewed_public_trade_count": 0,
-    "sec_filing_event_count": 164,
+    "sec_filing_event_count": 634,
+    "sec_supported_issuer_alias_count": 3974,
     "senate_ptr_indexed_document_count": 2103,
     "senate_ptr_matched_document_count": 1820,
     "senate_ptr_parser_preview_transaction_count": 10882,

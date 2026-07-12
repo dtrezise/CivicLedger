@@ -203,7 +203,7 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
 
     assert timeline["schema_version"] == "career-trade-timeline-v3"
     assert timeline["event_relationship_methodology_version"] == "event-relevance-v4"
-    assert timeline["trade_context_methodology"]["version"] == "trade-window-v2"
+    assert timeline["trade_context_methodology"]["version"] == "trade-window-v3"
     assert {"exec:barack-obama", "exec:donald-j-trump", "exec:joseph-r-biden"} <= set(
         timeline["default_official_ids"]
     )
@@ -360,7 +360,7 @@ def test_disclosure_ingestion_queue_covers_all_branches_and_congress_scope():
     assert len(president_terms) == len(set(president_terms))
 
 
-def test_raw_archive_and_reviewed_promotion_keep_fixture_boundary_clear():
+def test_raw_archive_and_systematic_preview_review_keep_production_boundary_clear():
     raw_archive = json.loads(RAW_ARCHIVE_INDEX.read_text())
     promotions = json.loads(REVIEWED_PROMOTIONS.read_text())
 
@@ -371,13 +371,18 @@ def test_raw_archive_and_reviewed_promotion_keep_fixture_boundary_clear():
     assert sample["file_hash"]
     assert sample["review_required_before_public_trade"] is True
 
-    assert promotions["schema_version"] == "reviewed-disclosure-promotions-v1"
-    assert promotions["summary"]["reviewed_fixture_promotion_count"] == 1
+    assert promotions["schema_version"] == "reviewed-disclosure-promotions-v2"
+    assert promotions["summary"]["reviewed_fixture_promotion_count"] == 0
+    assert promotions["summary"]["evaluated_record_count"] >= 64_000
+    assert promotions["summary"]["evidence_review_candidate_count"] > 0
+    assert promotions["summary"]["evidence_review_queue_count"] == 100
     assert promotions["summary"]["public_production_trade_count"] == 0
-    promotion = promotions["promotions"][0]
-    assert promotion["record_status"] == "reviewed_fixture_not_public_production"
-    assert promotion["public_production_trade"] is False
-    assert promotion["review_required_before_public_trade"] is True
+    assert promotions["promotions"] == []
+    assert all(
+        row["decision"] == "hold_for_evidence_review"
+        and row["eligible_for_public_production"] is False
+        for row in promotions["evidence_review_queue"]
+    )
 
 
 def test_context_maps_and_pages_completeness_are_available():

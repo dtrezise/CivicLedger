@@ -29,6 +29,26 @@ _CORPORATE_WORDS = frozenset(
         "the",
     }
 )
+_ISSUER_LABEL_WORDS = frozenset(
+    {
+        "a",
+        "and",
+        "class",
+        "com",
+        "common",
+        "de",
+        "depositary",
+        "inc",
+        "new",
+        "ordinary",
+        "ot",
+        "registry",
+        "share",
+        "shares",
+        "st",
+        "stock",
+    }
+)
 
 
 def canonical_json(value: object) -> str:
@@ -53,6 +73,32 @@ def _name_core(value: object) -> str:
     return " ".join(
         token for token in normalize_name(value).split() if token not in _CORPORATE_WORDS
     )
+
+
+def issuer_name_core(value: object, *, ticker: str | None = None) -> str:
+    """Return a strict issuer-name core after removing disclosure annotations."""
+
+    text = str(value or "")
+    if ticker:
+        escaped = re.escape(ticker)
+        text = re.sub(rf"\(\s*{escaped}\s*\)", " ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\[\s*(?:ST|OT)\s*\]", " ", text, flags=re.IGNORECASE)
+    text = re.split(
+        r"\b(?:filing\s+status|subholding\s+of|holding\s+of|description|comments|location)\b",
+        text,
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0]
+    ignored = _CORPORATE_WORDS | _ISSUER_LABEL_WORDS
+    return " ".join(token for token in normalize_name(text).split() if token not in ignored)
+
+
+def issuer_name_matches(official_name: object, observed_name: object, *, ticker: str) -> bool:
+    """Require exact conservative name-core agreement in addition to ticker evidence."""
+
+    official_core = issuer_name_core(official_name)
+    observed_core = issuer_name_core(observed_name, ticker=ticker)
+    return bool(official_core and official_core == observed_core)
 
 
 def _symbol(value: object) -> str | None:
@@ -317,12 +363,17 @@ def build_entity_reference(
     disclosure_rows: Iterable[Mapping],
     ticker_history: Iterable[Mapping],
     source_snapshots: Sequence[Mapping],
+    issuer_alias_evidence: Mapping | None = None,
 ) -> dict:
     """Build a conservative canonical reference without fuzzy identity guesses."""
 
     registry = _Registry()
     assets: dict[tuple[int, str, str, str], _AssetDraft] = {}
     ticker_rows: list[dict] = []
+    issuer_alias_evidence = issuer_alias_evidence or {}
+    evidence_aliases_by_symbol: dict[str, set[str]] = defaultdict(set)
+    evidence_record_by_symbol: dict[str, dict] = {}
+    evidence_resolved_asset_resolution_count = 0
 
     def add_asset(
         entity: _EntityDraft,
@@ -426,6 +477,72 @@ def build_entity_reference(
                 aliases=(ticker,),
                 provenance=provenance,
             )
+
+    # Official SEC ticker-reference evidence expands issuer aliases only when the
+    # evidence builder found a unique ticker and exact conservative name agreement.
+    for row in sorted(
+        issuer_alias_evidence.get("records", []),
+        key=lambda item: (str(item.get("cik")), str(item.get("ticker"))),
+    ):
+        cik = str(row.get("cik") or "").strip()
+        symbol = _symbol(row.get("ticker"))
+        name = str(row.get("official_name") or "").strip()
+        if not cik or not symbol or not name:
+            continue
+        provenance = _source_ref(
+            "sec_issuer_aliases",
+            record_id=str(row.get("id") or "") or None,
+            url=str(row.get("source_url") or "") or None,
+        )
+        entity = registry.resolve(
+            name=name,
+            cik=cik,
+            symbols=(symbol,),
+            issue_source_id="sec_issuer_aliases",
+        )
+        entity.add_name(name, 85, provenance)
+        entity.add_identifier("SEC_CIK", cik, provenance, is_primary=True)
+        entity.add_alias(symbol, "ticker_symbol", provenance, confidence=1.0)
+        asset_classes = sorted(
+            {
+                str(item)
+                for item in row.get("observed_asset_classes", [])
+                if item
+            }
+        )
+        organization_type = (
+            "fund"
+            if asset_classes
+            and set(asset_classes) <= {"529_portfolio", "etf", "fund", "mutual_fund"}
+            else "company"
+        )
+        entity.organization_types.append((95, organization_type))
+        entity.source_ids.add("sec_issuer_aliases")
+        for alias in row.get("aliases", []):
+            alias_value = str(alias.get("alias") or "").strip()
+            normalized_alias = normalize_name(alias_value)
+            if not normalized_alias:
+                continue
+            evidence_aliases_by_symbol[symbol].add(normalized_alias)
+            entity.add_alias(
+                alias_value,
+                "disclosure_asset_label",
+                provenance,
+                confidence=1.0,
+                occurrence_count=int(alias.get("occurrence_count") or 0),
+                source_datasets=alias.get("source_datasets", []),
+                sample_transaction_ids=alias.get("sample_transaction_ids", [])[:5],
+            )
+        evidence_record_by_symbol[symbol] = dict(row)
+        registry.index(entity, name=name, cik=cik, symbols=(symbol,))
+        add_asset(
+            entity,
+            canonical_name=name,
+            asset_class=asset_classes[0] if len(asset_classes) == 1 else "unknown_security",
+            symbol=symbol,
+            aliases=(alias.get("alias") for alias in row.get("aliases", [])),
+            provenance=provenance,
+        )
 
     # The market reference supplies current issuer/security labels and contextual sectors.
     for ticker, reference in sorted((market_prices.get("ticker_reference") or {}).items()):
@@ -537,6 +654,23 @@ def build_entity_reference(
         source_id = "asset_resolution"
         provenance = _source_ref(source_id, record_id=str(row.get("id") or "") or None)
         if row.get("resolution_status") != "resolved" or not row.get("issuer_name"):
+            disclosed_symbols = sorted(
+                {
+                    symbol
+                    for value in row.get("disclosed_tickers", [])
+                    if (symbol := _symbol(value))
+                }
+            )
+            supported_symbol = disclosed_symbols[0] if len(disclosed_symbols) == 1 else None
+            supported_aliases = evidence_aliases_by_symbol.get(supported_symbol or "", set())
+            observed_aliases = {
+                normalize_name(value)
+                for value in row.get("observed_names", [])
+                if normalize_name(value)
+            }
+            if supported_symbol and observed_aliases & supported_aliases:
+                evidence_resolved_asset_resolution_count += 1
+                continue
             registry.quality_issues.append(
                 {
                     "issue_type": "unresolved_asset_resolution",
@@ -623,6 +757,24 @@ def build_entity_reference(
             unlinked_without_ticker += aggregate["count"]
             continue
         candidates = registry.by_symbol.get(ticker, set())
+        if ticker in evidence_record_by_symbol:
+            if normalized not in evidence_aliases_by_symbol[ticker]:
+                registry.quality_issues.append(
+                    {
+                        "issue_type": "unsupported_sec_alias_label",
+                        "severity": "review",
+                        "normalized_label": normalized,
+                        "observed_label": aggregate["label"],
+                        "ticker": ticker,
+                        "occurrence_count": aggregate["count"],
+                        "source_datasets": [source_dataset],
+                        "sample_transaction_ids": sorted(aggregate["transaction_ids"])[:10],
+                        "source_id": "disclosure_labels",
+                        "evidence_record_id": evidence_record_by_symbol[ticker].get("id"),
+                    }
+                )
+            # Supported aliases were already aggregated by the evidence artifact.
+            continue
         if len(candidates) != 1:
             registry.quality_issues.append(
                 {
@@ -995,6 +1147,8 @@ def build_entity_reference(
             "quality_issue_count": len(quality_issues),
             "quality_issue_counts": dict(sorted(issue_counts.items())),
             "unlinked_disclosure_label_occurrence_count": unlinked_without_ticker,
+            "evidence_resolved_asset_resolution_count": evidence_resolved_asset_resolution_count,
+            "sec_evidence_supported_symbol_count": len(evidence_aliases_by_symbol),
         },
         "organizations": sorted(organizations, key=lambda row: row["id"]),
         "assets": sorted(asset_rows, key=lambda row: row["id"]),

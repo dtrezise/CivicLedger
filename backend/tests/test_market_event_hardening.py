@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import json
 import sys
 from pathlib import Path
 
@@ -21,7 +22,10 @@ from app.services.market_prices import (  # noqa: E402
     symbol_year_partition_path,
     validate_ticker_history,
 )
-from app.services.market_reactions import MarketReactionCalculator  # noqa: E402
+from app.services.market_reactions import (  # noqa: E402
+    MarketReactionCalculator,
+    load_partitioned_reaction_dataset,
+)
 from app.services.official_event_involvement import (  # noqa: E402
     build_official_event_involvement,
     canonical_event_source_url,
@@ -32,6 +36,7 @@ from scripts.build_market_price_dataset import build_symbol_year_partition_manif
 from scripts.build_trade_market_reactions import (  # noqa: E402
     build_dataset as build_reaction_dataset,
     partition_reactions_by_symbol_year,
+    write_partitioned_dataset,
 )
 
 
@@ -199,6 +204,52 @@ def test_reaction_builder_maps_historical_ticker_and_reports_partitions_and_cove
         "reaction_count"
     ] == 1
     assert partition_reactions_by_symbol_year(dataset["reactions"])["META:2019"]["year"] == 2019
+
+
+def test_reaction_dataset_writes_and_verifies_symbol_year_partitions(tmp_path):
+    output = tmp_path / "context" / "trade_market_reactions.json"
+    partition_root = tmp_path / "context" / "trade_market_reactions"
+    reactions = [
+        {"id": "two", "asset_symbol": "META", "event_date": "2020-01-02"},
+        {"id": "one", "asset_symbol": "META", "event_date": "2019-12-01"},
+        {"id": "three", "asset_symbol": "AAPL", "event_date": "2020-02-03"},
+    ]
+    dataset = {
+        "schema_version": "trade-market-context-v1",
+        "generated_at": "2021-01-01",
+        "summary": {"market_context_row_count": len(reactions)},
+        "coverage_diagnostics": {},
+        "reactions": reactions,
+    }
+
+    manifest = write_partitioned_dataset(dataset, output, partition_root)
+    loaded = load_partitioned_reaction_dataset(output)
+
+    assert "reactions" not in manifest
+    assert manifest["storage"]["partition_count"] == 3
+    assert manifest["storage"]["reaction_count"] == 3
+    assert [row["id"] for row in loaded["reactions"]] == ["one", "two", "three"]
+    assert max(path.stat().st_size for path in partition_root.rglob("*.json")) < output.stat().st_size * 4
+
+    first_record = next(iter(manifest["storage"]["partitions"].values()))
+    first_path = output.parent / first_record["path"]
+    first_path.write_text(first_path.read_text().replace("three", "tampered"))
+    with pytest.raises(ValueError, match="hash mismatch"):
+        load_partitioned_reaction_dataset(output)
+
+
+def test_checked_in_reaction_manifest_reconciles_and_keeps_shards_small():
+    manifest_path = ROOT / "data" / "context" / "trade_market_reactions.json"
+    manifest = json.loads(manifest_path.read_text())
+    loaded = load_partitioned_reaction_dataset(manifest_path)
+
+    assert manifest["storage"]["format"] == "symbol_year_partitions"
+    assert manifest["storage"]["partition_count"] >= 180
+    assert len(loaded["reactions"]) == manifest["summary"]["market_context_row_count"]
+    assert max(
+        (manifest_path.parent / row["path"]).stat().st_size
+        for row in manifest["storage"]["partitions"].values()
+    ) < 2_000_000
 
 
 def test_asset_resolution_diagnostics_keep_effective_date_and_unresolved_records_separate():

@@ -222,6 +222,15 @@ def build_dataset() -> dict:
             "queue_item_count": queue.get("summary", {}).get("queue_item_count", 0),
             "archived_raw_document_count": raw_archive.get("summary", {}).get("archived_document_count", 0),
             "reviewed_fixture_promotion_count": promotions.get("summary", {}).get("reviewed_fixture_promotion_count", 0),
+            "parser_preview_evaluated_record_count": promotions.get("summary", {}).get(
+                "evaluated_record_count", 0
+            ),
+            "evidence_review_candidate_count": promotions.get("summary", {}).get(
+                "evidence_review_candidate_count", 0
+            ),
+            "evidence_review_batch_count": promotions.get("summary", {}).get(
+                "evidence_review_queue_count", 0
+            ),
             "reviewed_public_trade_count": reviewed_count,
             "retrieval_batch_count": retrieval_batches.get("summary", {}).get("batch_count", 0),
             "retrieval_candidate_count": retrieval_batches.get("summary", {}).get("candidate_count", 0),

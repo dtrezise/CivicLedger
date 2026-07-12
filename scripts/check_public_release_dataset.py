@@ -292,7 +292,7 @@ def validate_timeline(official_id: str, path: Path, event_catalog: dict[str, dic
         }, f"Unknown relationship tier for {official_id}")
         if event.get("trade_context_candidate"):
             require(
-                event.get("trade_context_methodology") == "trade-window-v2",
+                event.get("trade_context_methodology") == "trade-window-v3",
                 f"Wrong context methodology for {official_id}",
             )
             require(
@@ -422,7 +422,7 @@ def validate_senate_archive() -> dict[str, int]:
     return {"documents": len(documents), "transactions": len(transactions)}
 
 
-def validate() -> dict[str, int]:
+def validate() -> dict[str, int | float]:
     house_summary = validate_house_archive()
     senate_summary = validate_senate_archive()
     manifest = read_json(MANIFEST)
@@ -501,6 +501,43 @@ def validate() -> dict[str, int]:
     require(overview.get("dataset_version") == manifest["dataset_version"], "Overview and manifest dataset versions differ")
     require(overview.get("methodology_version") == manifest["methodology_version"], "Overview and manifest methodology versions differ")
     require(overview.get("generated_at") == manifest["generated_at"], "Overview and manifest generation dates differ")
+    ranking_benchmark = overview.get("event_ranking_benchmark", {})
+    ranking_metrics = ranking_benchmark.get("metrics", {})
+    require(
+        ranking_benchmark.get("schema_version") == "trade-event-ranking-benchmark-v1",
+        "Trade-event ranking benchmark is missing or has the wrong schema",
+    )
+    require(
+        ranking_benchmark.get("methodology_version") == "trade-window-v3",
+        "Trade-event ranking benchmark methodology is stale",
+    )
+    require(ranking_metrics.get("case_count", 0) >= 7, "Trade-event ranking benchmark is too small")
+    require(ranking_metrics.get("precision", 0) >= 0.7, "Trade-event ranking precision regressed")
+    require(ranking_metrics.get("recall", 0) >= 0.9, "Trade-event ranking recall regressed")
+    disclosure_pipeline = overview.get("disclosure_pipeline", {})
+    ocr_summary = disclosure_pipeline.get("ocr_priority_batches", {}).get("summary", {})
+    amendment_summary = disclosure_pipeline.get("amendment_reconciliation", {}).get("summary", {})
+    require(ocr_summary.get("backlog_document_count", 0) >= 2_500, "OCR backlog priorities are missing")
+    require(ocr_summary.get("ocr_content_record_count") == 0, "Metadata-only OCR batching generated content")
+    require(ocr_summary.get("transaction_rows_created") == 0, "OCR batching created unsupported trades")
+    require(
+        amendment_summary.get("destructive_change_count") == 0,
+        "Amendment reconciliation performed a destructive change",
+    )
+    require(
+        overview.get("sec_issuer_aliases", {}).get("summary", {}).get("supported_ticker_count", 0)
+        >= 300,
+        "SEC-backed issuer alias coverage regressed",
+    )
+    require(
+        overview.get("sec_filing_context", {}).get("summary", {}).get("event_count", 0) >= 600,
+        "SEC filing context coverage regressed",
+    )
+    require(
+        overview.get("primary_source_context", {}).get("summary", {}).get("record_count", 0)
+        >= 1_800,
+        "Official primary-source context coverage regressed",
+    )
     source_count = validate_source_catalog(overview, coverage)
     role_count = validate_role_partitions(manifest, validated_paths, official_ids)
 
@@ -555,6 +592,8 @@ def validate() -> dict[str, int]:
         "house_transactions": house_summary["transactions"],
         "senate_documents": senate_summary["documents"],
         "senate_transactions": senate_summary["transactions"],
+        "ranking_precision": ranking_metrics["precision"],
+        "ranking_recall": ranking_metrics["recall"],
     }
 
 

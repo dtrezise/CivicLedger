@@ -117,6 +117,12 @@ Examples:
 
 Date proximity alone is contextual. It does not establish knowledge, causation, benefit, or wrongdoing. Reviewer decisions are append-only in `relationship_reviews`; narrowing or rejecting a candidate does not delete the original calculation.
 
+Neutral market-reaction context is stored outside the relational review state as
+a compact manifest plus symbol-year partitions. Each partition records its byte
+length, SHA-256, symbol, year, and reaction count. Loading fails closed on hash,
+identity, or count mismatch. These descriptive windows remain unsigned with
+respect to BUY or SELL and are not promotion evidence by themselves.
+
 ## Temporal Conventions
 
 - Dates are inclusive unless a source defines a more precise interval.

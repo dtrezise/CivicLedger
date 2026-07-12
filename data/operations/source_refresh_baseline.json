@@ -1,0 +1,55 @@
+{
+  "captured_at": "2026-07-12",
+  "interpretation_boundary": "Aggregate source-summary baseline for change detection only. It does not copy disclosure evidence or determine data correctness.",
+  "schema_version": "source-refresh-baseline-v1",
+  "sources": [
+    {
+      "count_metric": "source_index_row_count",
+      "path": "data/disclosures/house_disclosure_index.json",
+      "record_count": 47638,
+      "schema_version": "house-disclosure-index-v1",
+      "source_id": "house-disclosure-index",
+      "summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff"
+    },
+    {
+      "count_metric": "processed_document_count",
+      "path": "data/disclosures/house_ptr_transactions.json",
+      "record_count": 7501,
+      "schema_version": "house-ptr-transactions-manifest-v2",
+      "source_id": "house-ptr-transactions",
+      "summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba"
+    },
+    {
+      "count_metric": "indexed_document_count",
+      "path": "data/disclosures/judicial_disclosure_manifest.json",
+      "record_count": 0,
+      "schema_version": "judicial-disclosure-manifest-v1",
+      "source_id": "judicial-disclosure-manifest",
+      "summary_sha256": "4f78e39c9a5a2051a67d8b5193d843235df96a108c2fa8b3221e3d68ec008941"
+    },
+    {
+      "count_metric": "document_count",
+      "path": "data/disclosures/presidential_oge_documents.json",
+      "record_count": 19,
+      "schema_version": "presidential-oge-documents-v1",
+      "source_id": "presidential-oge-documents",
+      "summary_sha256": "52f4aa8e118e59116788d374a8bc5e4c0cdf5cd4348d9f94b4d8a4491ae0bdc9"
+    },
+    {
+      "count_metric": "document_count",
+      "path": "data/disclosures/senate_disclosure_index.json",
+      "record_count": 2103,
+      "schema_version": "senate-disclosure-index-v1",
+      "source_id": "senate-disclosure-index",
+      "summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950"
+    },
+    {
+      "count_metric": "processed_document_count",
+      "path": "data/disclosures/senate_ptr_transactions.json",
+      "record_count": 1820,
+      "schema_version": "senate-ptr-transactions-v1",
+      "source_id": "senate-ptr-transactions",
+      "summary_sha256": "e2a147747d619b486b576a154b69062baeb3b73e3051d64c0e3e9a66128ffdbd"
+    }
+  ]
+}
