@@ -15,8 +15,11 @@ Federal public financial disclosure tracker. View reporting timelines, disclosur
 - 111th-119th Congress coverage with Bioguide-keyed House and Senate service records.
 - 7,501 matched House periodic transaction reports from 2015-present.
 - 53,673 House parser-preview transactions for 295 officials; 1,983 image-only reports remain in the OCR queue.
-- 11 presidential OGE documents and 365 Trump parser-preview transactions; Obama and Biden currently remain document/status lanes where no reviewed transaction rows are available.
-- 926 selected official-source federal market-context events: enacted laws, executive orders, and Supreme Court opinions.
+- 2,103 Senate PTRs indexed from 2012-present; 1,820 matched reports were acquired for 65 senators, yielding 10,882 structured parser-preview transactions while 551 paper-image reports remain review work.
+- 19 presidential OGE documents and 7,182 source rows: 15 in-service Obama rows, 13 Biden rows, and 7,151 Trump rows across both terms. Six Obama reports and four Biden reports explicitly state no reportable transactions.
+- 924 official federal events enriched with 520 Congress.gov bill records, 745 official roll calls, and 218,861 sourced official-event relationships.
+- 164 review-gated SEC filing events for six frequently disclosed issuers; the independent historical-news provider records provider outages as coverage gaps.
+- 902 conservatively resolved fund/ETF/529 transaction identities and 4,080 neutral pre/post market-reaction contexts.
 - 91,092 equity/ETF market points, 14,215 crypto points, and 9,955 FRED observations backfilled to 2009 or provider inception.
 - Zero reviewed public-production trades. Every visible transaction remains a source-linked, review-gated parser preview.
 
@@ -118,6 +121,9 @@ python3 -m http.server 4173 --directory pages-site
 | GET | `/raw-documents/{id}` | Raw source artifact metadata |
 | GET | `/raw-documents/{id}/artifacts` | Parser artifacts linked to a raw document |
 | GET | `/review/parser-previews` | Pending parser previews for reviewer promotion |
+| GET | `/review/relationship-candidates` | Filterable trade-event candidate review queue |
+| GET | `/review/relationship-candidates/{id}/history` | Append-only reviewer decision history |
+| POST | `/review/relationship-candidates/{id}/decisions` | Record a sourced relationship decision and evidence note |
 | POST | `/review/parser-previews/{id}/promote` | Promote reviewed preview into filing/trade records |
 | POST | `/review/filings/{id}/rollback` | Roll back a promoted filing |
 | POST | `/review/filings/{id}/supersede` | Mark a filing superseded by a replacement |

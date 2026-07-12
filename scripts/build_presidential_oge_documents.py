@@ -130,6 +130,28 @@ CURATED_DOCUMENTS = [
         "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
     },
     {
+        "document_id": "oge-obama-2017-termination-278",
+        "official_id": "exec:barack-obama",
+        "full_name": "Barack Obama",
+        "presidential_term": "obama-44",
+        "report_year": 2016,
+        "filing_type": "termination_278e",
+        "filing_label": "2017 Termination OGE Form 278",
+        "reported_date": "2017-01-20",
+        "coverage_start": "2016-01-01",
+        "coverage_end": "2017-01-20",
+        "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/579DA54DF8BE5F24852580B4006318A9/%24FILE/Obama%2C%20Barack%20H.%20%20%202017Termination.pdf",
+        "source_notice_url": "https://extapps2.oge.gov/201/Presiden.nsf/President%20and%20Vice%20President%20Index",
+        "expected_transaction_activity": "none_or_not_applicable",
+        "source_transaction_section_status": "source_reviewed_no_reportable_transactions",
+        "source_reviewed_without_live_pdf": True,
+        "source_review_note": (
+            "Schedule B, Part I, pages 6-7 of the 10-page filing checks None and "
+            "contains no reportable purchase, sale, or exchange rows. The original OGE "
+            "PDF is no longer served under the agency's disclosure-retention schedule."
+        ),
+    },
+    {
         "document_id": "oge-biden-2021-annual-278",
         "official_id": "exec:joseph-r-biden",
         "full_name": "Joseph R. Biden",
@@ -266,11 +288,8 @@ CURATED_DOCUMENTS = [
         "reported_date": "2026-05-15",
         "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/69AEAA9D7455ACD585258E27002DDEE1/%24FILE/Donald-J-Trump-2026-278ANNUAL.pdf",
         "expected_transaction_activity": "annual_report_review_required",
-        "transaction_parser_enabled": False,
-        "parser_deferral_note": (
-            "The annual transaction schedules require deduplication against the indexed 278-T "
-            "filings before timeline inclusion."
-        ),
+        "transaction_parser_enabled": True,
+        "cross_filing_reconciliation_required": True,
     },
 ]
 
@@ -409,21 +428,7 @@ MANUALLY_REVIEWED_TRANSACTIONS = {
     ],
 }
 
-UNAVAILABLE_DOCUMENTS = [
-    {
-        "document_id": "oge-obama-2016-annual-or-termination-278",
-        "official_id": "exec:barack-obama",
-        "full_name": "Barack Obama",
-        "presidential_term": "obama-44",
-        "report_year": 2016,
-        "availability_status": "official_archive_gap",
-        "availability_note": (
-            "The Obama White House archive supplies annual reports for 2009 through 2015. "
-            "A 2016 annual or termination report has not yet been located in the official archive."
-        ),
-        "source_url": OGE_COLLECTION_URL,
-    }
-]
+UNAVAILABLE_DOCUMENTS = []
 
 AMOUNT_RE = re.compile(
     r"[$S]\s*([0-9][0-9,\s.]*)\s*[-\u2022]\s*[$S]?\s*([0-9][0-9,\s.]*)",
@@ -441,6 +446,7 @@ TRUSTEE_DECISION_AUTHORITY_NOTE = (
     "J.P. Morgan is the sole Trustee. Donald J. Trump retains an income interest only in the "
     "Family Trusts and has no investment decision authority."
 )
+ACCOUNT_LABEL_RE = re.compile(r"INVESTMENT\s+ACCOUNT\s*#\s*([A-Za-z0-9.-]+)", re.IGNORECASE)
 
 TICKER_HINTS = {
     "ADOBE": "ADBE",
@@ -460,6 +466,7 @@ TICKER_HINTS = {
     "HOME DEPOT": "HD",
     "INTEL": "INTC",
     "ISHARES GOLD TRUST": "IAU",
+    "JOHNSON & JOHNSON": "JNJ",
     "JPMORGAN": "JPM",
     "META PLATFORMS": "META",
     "MICROSOFT": "MSFT",
@@ -476,6 +483,7 @@ TICKER_HINTS = {
     "THE HOME DEPOT": "HD",
     "VANGUARD S&P 500 ETF": "VOO",
     "VANGUARD TOTAL STOCK MARKET": "VTI",
+    "VISA": "V",
     "WALMART": "WMT",
     "WELLS FARGO": "WFC",
 }
@@ -568,11 +576,9 @@ def ticker_for(description: str, asset_class: str) -> str | None:
     for needle, ticker in TICKER_HINTS.items():
         if needle in value:
             return ticker
-    if asset_class == "fixed_income":
-        return None
-    ticker_match = re.search(r"\b([A-Z]{2,5})\s+(?:INC|CORP|PLC|CO|CL|COM)\b", description)
-    if ticker_match:
-        return ticker_match.group(1)
+    # Disclosure descriptions usually name issuers rather than publishing ticker
+    # symbols. Do not infer a ticker from the word preceding INC/CORP/PLC: that
+    # produces false symbols such as GROUP, FOODS, and TRUST.
     return None
 
 
@@ -607,6 +613,10 @@ def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[di
             TRUSTEE_DECISION_AUTHORITY_NOTE
             if "has no investment decision authority" in page_text
             else None
+        )
+        account_match = ACCOUNT_LABEL_RE.search(page_text)
+        source_account_label = (
+            f"Investment account #{account_match.group(1)}" if account_match else None
         )
         for line in page["text"].splitlines():
             normalized_line = normalize_ocr_line(
@@ -661,6 +671,7 @@ def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[di
                     "filing_type": document["filing_type"],
                     "filing_label": document["filing_label"],
                     "form_section": "Part 7: Transactions",
+                    "source_account_label": source_account_label,
                     "source_sequence": source_sequence,
                     "trade_date": trade_date,
                     "reported_date": document["reported_date"],
@@ -698,6 +709,102 @@ def parse_transaction_lines(document: dict, text_by_page: list[dict]) -> list[di
                 }
             )
     return rows
+
+
+ASSET_MATCH_STOP_WORDS = {
+    "class",
+    "co",
+    "com",
+    "common",
+    "company",
+    "corp",
+    "corporation",
+    "fund",
+    "inc",
+    "ltd",
+    "new",
+    "ordinary",
+    "plc",
+    "shares",
+    "stock",
+    "the",
+    "trust",
+}
+
+
+def normalized_asset_tokens(value: str) -> set[str]:
+    return {
+        token
+        for token in re.findall(r"[a-z0-9]+", (value or "").lower())
+        if token not in ASSET_MATCH_STOP_WORDS
+    }
+
+
+def asset_match_score(left: str, right: str) -> float:
+    left_tokens = normalized_asset_tokens(left)
+    right_tokens = normalized_asset_tokens(right)
+    if not left_tokens or not right_tokens:
+        return 0.0
+    if left_tokens == right_tokens:
+        return 1.0
+    return len(left_tokens.intersection(right_tokens)) / len(left_tokens.union(right_tokens))
+
+
+def cross_filing_key(row: dict) -> tuple:
+    return (
+        row.get("official_id"),
+        row.get("trade_date"),
+        row.get("action"),
+        row.get("value_range_min"),
+        row.get("value_range_max"),
+    )
+
+
+def reconcile_cross_filing_duplicates(transactions: list[dict]) -> dict:
+    periodic_by_key: dict[tuple, list[dict]] = {}
+    for row in transactions:
+        row["timeline_inclusion"] = True
+        row["cross_filing_duplicate"] = False
+        if row.get("filing_type") == "periodic_transaction_278t":
+            periodic_by_key.setdefault(cross_filing_key(row), []).append(row)
+
+    duplicate_count = 0
+    for row in transactions:
+        if row.get("filing_type") not in {"annual_278e", "termination_278e"}:
+            continue
+        candidates = periodic_by_key.get(cross_filing_key(row), [])
+        ranked = sorted(
+            (
+                (asset_match_score(row.get("asset_display_name", ""), candidate.get("asset_display_name", "")), candidate)
+                for candidate in candidates
+            ),
+            key=lambda item: (item[0], item[1]["id"]),
+            reverse=True,
+        )
+        if not ranked or ranked[0][0] < 0.85:
+            continue
+        score, duplicate_of = ranked[0]
+        row["timeline_inclusion"] = False
+        row["cross_filing_duplicate"] = True
+        row["duplicate_of_transaction_id"] = duplicate_of["id"]
+        row["cross_filing_match_score"] = round(score, 4)
+        row["cross_filing_match_method"] = "date_action_amount_asset_tokens_v1"
+        row["data_quality_flags"] = [
+            *row.get("data_quality_flags", []),
+            "cross_filing_duplicate_with_periodic_report",
+        ]
+        duplicate_count += 1
+
+    return {
+        "methodology_version": "oge-cross-filing-dedup-v1",
+        "periodic_reference_transaction_count": sum(
+            1 for row in transactions if row.get("filing_type") == "periodic_transaction_278t"
+        ),
+        "cross_filing_duplicate_count": duplicate_count,
+        "timeline_included_transaction_count": sum(
+            1 for row in transactions if row.get("timeline_inclusion") is True
+        ),
+    }
 
 
 def manual_transaction_rows(document: dict) -> list[dict]:
@@ -833,6 +940,15 @@ def document_from_pdf(document: dict, content: bytes) -> tuple[dict, list[dict]]
             "parser_preview_transaction_count": len(transactions),
             "parser_preview_actions": dict(sorted(transaction_actions.items())),
             "asset_class_counts": dict(sorted(asset_classes.items())),
+            "source_account_counts": dict(
+                sorted(
+                    Counter(
+                        row["source_account_label"]
+                        for row in transactions
+                        if row.get("source_account_label")
+                    ).items()
+                )
+            ),
             "no_transaction_hint": section_status == "no_reportable_transactions",
         },
         "parser_preview": re.sub(r"\s+", " ", text_sample).strip()[:700],
@@ -855,6 +971,30 @@ def build(refresh: bool) -> tuple[dict, dict]:
     transactions = []
     failures = []
     for document in CURATED_DOCUMENTS:
+        if document.get("source_reviewed_without_live_pdf"):
+            documents.append(
+                {
+                    **document,
+                    "source_tier": "official",
+                    "source_collection_url": OGE_COLLECTION_URL,
+                    "archive_status": "official_source_reviewed_retention_expired",
+                    "content_type": "application/pdf",
+                    "parser_status": "no_reportable_transactions",
+                    "transaction_section_status": "no_reportable_transactions",
+                    "review_status": "source_reviewed_no_reportable_transactions",
+                    "review_required_before_public_trade": False,
+                    "public_production_trade_count": 0,
+                    "transaction_summary": {
+                        "parser_preview_transaction_count": 0,
+                        "parser_preview_actions": {},
+                        "asset_class_counts": {},
+                        "source_account_counts": {},
+                        "no_transaction_hint": True,
+                    },
+                    "parser_preview": document.get("source_review_note", ""),
+                }
+            )
+            continue
         try:
             content = fetch_pdf(document["source_url"])
             parsed_document, parsed_transactions = document_from_pdf(document, content)
@@ -876,9 +1016,26 @@ def build(refresh: bool) -> tuple[dict, dict]:
                 }
             )
 
+    reconciliation = reconcile_cross_filing_duplicates(transactions)
+    transactions_by_document = Counter(row["document_id"] for row in transactions)
+    timeline_transactions_by_document = Counter(
+        row["document_id"] for row in transactions if row.get("timeline_inclusion") is True
+    )
+    duplicates_by_document = Counter(
+        row["document_id"] for row in transactions if row.get("cross_filing_duplicate") is True
+    )
+    for document in documents:
+        summary = document.setdefault("transaction_summary", {})
+        document_id = document["document_id"]
+        summary["parser_preview_transaction_count"] = transactions_by_document[document_id]
+        summary["timeline_included_transaction_count"] = timeline_transactions_by_document[document_id]
+        summary["cross_filing_duplicate_count"] = duplicates_by_document[document_id]
+
     document_counts = Counter(row["official_id"] for row in documents)
     term_counts = Counter(row["presidential_term"] for row in documents)
     transaction_counts = Counter(row["official_id"] for row in transactions)
+    timeline_transactions = [row for row in transactions if row.get("timeline_inclusion") is True]
+    timeline_transaction_counts = Counter(row["official_id"] for row in timeline_transactions)
     document_index = {
         "generated_at": date.today().isoformat(),
         "schema_version": "presidential-oge-documents-v1",
@@ -897,6 +1054,8 @@ def build(refresh: bool) -> tuple[dict, dict]:
             "document_count": len(documents),
             "unavailable_official_count": len(UNAVAILABLE_DOCUMENTS),
             "parser_preview_transaction_count": len(transactions),
+            "timeline_included_transaction_count": len(timeline_transactions),
+            "cross_filing_duplicate_count": reconciliation["cross_filing_duplicate_count"],
             "public_production_trade_count": 0,
             "document_counts_by_official": dict(sorted(document_counts.items())),
             "document_counts_by_term": dict(sorted(term_counts.items())),
@@ -919,8 +1078,12 @@ def build(refresh: bool) -> tuple[dict, dict]:
             "public_production_trade_count": 0,
             "review_required_transaction_count": len(transactions),
             "transaction_counts_by_official": dict(sorted(transaction_counts.items())),
-            "transaction_counts_by_document": dict(sorted(Counter(row["document_id"] for row in transactions).items())),
+            "timeline_transaction_counts_by_official": dict(
+                sorted(timeline_transaction_counts.items())
+            ),
+            "transaction_counts_by_document": dict(sorted(transactions_by_document.items())),
             "asset_class_counts": dict(sorted(Counter(row["asset_class"] for row in transactions).items())),
+            **reconciliation,
         },
         "transactions": sorted(transactions, key=lambda row: (row["official_id"], row["trade_date"], row["id"])),
     }

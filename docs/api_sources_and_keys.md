@@ -11,6 +11,7 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 - `DATA_GOV_API_KEY`: api.data.gov-backed federal APIs where required.
 - `CENSUS_API_KEY`: Census API demographic and geography datasets.
 - `BLS_API_KEY`: Bureau of Labor Statistics datasets.
+- `SEC_EDGAR_USER_AGENT`: SEC-compliant application and contact identity; this is not a secret.
 
 ## Current Product Priority
 
@@ -19,6 +20,9 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 - BLS and Treasury Fiscal Data are watchlist sources.
 - FEC is deferred because campaign-finance data is not directly tied to stock-trade context.
 - USAspending is deferred until ticker/company/entity matching can connect public companies to federal awards or contract events.
+- SEC EDGAR is active for review-gated issuer filing context around ticker-linked disclosures.
+- GDELT DOC 2.0 is configured as a keyless, pluggable historical-news discovery provider. Provider outages remain explicit coverage gaps.
+- Senate eFD acquisition is active under an explicit portal-terms acknowledgement and one-second request pacing.
 
 ## Keyless or Documentation-Only Sources
 
@@ -35,7 +39,7 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 
 ## Scheduled Refresh
 
-The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, FRED context data, Tiingo stock/ETF prices, Tiingo crypto prices, and Pages static JSON once per day. It can also be run manually from GitHub Actions.
+The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, disclosure indexes, OGE documents, FRED context, Tiingo prices, SEC filing context, asset resolution, market reactions, and Pages partitions daily. Heavier Senate report-page acquisition and official-event involvement refresh weekly or on a manual run.
 
 Required repository secrets:
 

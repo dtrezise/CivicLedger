@@ -1,0 +1,47 @@
+{
+  "artifact_date": "2026-07-12",
+  "context_label": "News discovery context only. A provider match is not verification of an article's claims and does not imply causation, intent, legality, ethics, or investment performance.",
+  "coverage_report": {
+    "aapl": {
+      "article_count": 0,
+      "provider": "gdelt-doc-2",
+      "reason": "GDELT unavailable (HTTP 429)",
+      "status": "unavailable"
+    }
+  },
+  "events": [],
+  "ingestion_policy": {
+    "provider_match_is_verification": false,
+    "public_production_event_default": false,
+    "review_required_before_publication": true
+  },
+  "schema_version": "historical-news-context-v1",
+  "scope": {
+    "description": "Bounded provider-discovered historical-news candidates for research review.",
+    "queries": [
+      {
+        "end_date": "2026-07-12",
+        "label": "(Apple OR AAPL) sourcelang:english",
+        "max_records": 50,
+        "query": "(Apple OR AAPL) sourcelang:english",
+        "query_id": "aapl",
+        "start_date": "2026-06-01"
+      }
+    ]
+  },
+  "source": {
+    "documentation_url": "https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/",
+    "id": "gdelt-doc-2",
+    "name": "GDELT DOC 2.0",
+    "source_tier": "news_aggregator"
+  },
+  "summary": {
+    "coverage_status_counts": {
+      "unavailable": 1
+    },
+    "event_count": 0,
+    "public_production_event_count": 0,
+    "query_count": 1,
+    "review_pending_event_count": 0
+  }
+}

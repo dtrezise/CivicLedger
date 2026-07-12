@@ -15,13 +15,15 @@ PUBLIC_DATA = ROOT / "pages-site" / "data"
 MANIFEST = PUBLIC_DATA / "manifest.json"
 HOUSE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
 HOUSE_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
+SENATE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
+SENATE_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
 
 INITIAL_PAYLOAD_LIMITS = {
     "overview": 500_000,
     "officials_index": 3_000_000,
     "coverage": 100_000,
-    "events": 1_000_000,
-    "timeline_index": 150_000,
+    "events": 1_200_000,
+    "timeline_index": 200_000,
     "market_index": 100_000,
 }
 PARTITION_LIMITS = {
@@ -99,11 +101,20 @@ def validate_timeline(official_id: str, path: Path, event_catalog: dict[str, dic
     require(official.get("active_service_days") == expected_days, f"Wrong active service day count for {official_id}")
 
     production_count = 0
-    for trade in official.get("trades", []):
+    documents_by_id = {
+        document["document_id"]: document
+        for document in official.get("disclosure_documents", [])
+        if document.get("document_id")
+    }
+    trade_defaults = official.get("trade_record_defaults", {})
+    for compact_trade in official.get("trades", []):
+        trade = {**trade_defaults, **compact_trade}
         require(date_in_period(trade["date"], periods), f"Trade outside service periods for {official_id}: {trade['date']}")
         require(isinstance(trade.get("career_day"), int), f"Trade without career day for {official_id}")
         require(0 <= trade["career_day"] < expected_days, f"Trade career day out of range for {official_id}")
-        source_url = trade.get("source_url") or ""
+        source_url = trade.get("source_url") or documents_by_id.get(
+            trade.get("document_id"), {}
+        ).get("source_url", "")
         if trade.get("record_status") != "fixture_demo":
             require(source_url.startswith("https://"), f"Trade without HTTPS source for {official_id}")
         if trade.get("public_production_trade") is True:
@@ -126,11 +137,24 @@ def validate_timeline(official_id: str, path: Path, event_catalog: dict[str, dic
             "general_context",
         }, f"Unknown relationship tier for {official_id}")
         if event.get("trade_context_candidate"):
-            require(event.get("display_default") is True, f"Context candidate hidden by default for {official_id}")
             require(
-                event.get("trade_context_methodology") == "trade-window-v1",
+                event.get("trade_context_methodology") == "trade-window-v2",
                 f"Wrong context methodology for {official_id}",
             )
+            require(
+                isinstance(event.get("candidate_rank"), int)
+                and isinstance(event.get("candidate_score"), (int, float)),
+                f"Context candidate lacks a transparent rank for {official_id}",
+            )
+            require(
+                bool(event.get("candidate_score_components")),
+                f"Context candidate lacks score components for {official_id}",
+            )
+            if event["candidate_rank"] <= 24:
+                require(
+                    event.get("display_default") is True,
+                    f"Top-ranked context candidate hidden by default for {official_id}",
+                )
             require(
                 isinstance(event.get("nearest_trade_days"), int)
                 and abs(event["nearest_trade_days"]) <= 45,
@@ -189,11 +213,67 @@ def validate_house_archive() -> dict[str, int]:
     return {"documents": len(documents), "transactions": len(transactions)}
 
 
+def validate_senate_archive() -> dict[str, int]:
+    index = read_json(SENATE_INDEX)
+    archive = read_json(SENATE_TRANSACTIONS)
+    require(
+        index.get("schema_version") == "senate-disclosure-index-v1",
+        "Unexpected Senate index schema",
+    )
+    require(
+        archive.get("schema_version") == "senate-ptr-transactions-v1",
+        "Unexpected Senate transaction schema",
+    )
+    require(
+        index.get("summary", {}).get("document_count", 0) >= 2_100,
+        "Senate PTR index is incomplete",
+    )
+    require(
+        index.get("summary", {}).get("matched_document_count", 0) >= 1_800,
+        "Senate roster matching regressed",
+    )
+    documents = archive.get("documents", [])
+    transactions = archive.get("transactions", [])
+    require(len(documents) >= 1_800, "Senate matched PTR acquisition is incomplete")
+    require(
+        len(documents) == archive.get("summary", {}).get("processed_document_count"),
+        "Senate document count does not reconcile",
+    )
+    require(
+        len(transactions) == archive.get("summary", {}).get("parser_preview_transaction_count"),
+        "Senate transaction count does not reconcile",
+    )
+    require(
+        len({document["document_id"] for document in documents}) == len(documents),
+        "Senate archive contains duplicate document IDs",
+    )
+    require(
+        len({transaction["id"] for transaction in transactions}) == len(transactions),
+        "Senate archive contains duplicate transaction IDs",
+    )
+    for transaction in transactions:
+        require(
+            transaction.get("source_url", "").startswith("https://efdsearch.senate.gov/"),
+            "Senate transaction lacks an official portal source",
+        )
+        require(transaction.get("source_tier") == "official", "Senate source tier regressed")
+        require(
+            transaction.get("review_required_before_public_trade") is True,
+            "Senate review gate is missing",
+        )
+        require(
+            transaction.get("public_production_trade") is False,
+            "Unreviewed Senate transaction entered production",
+        )
+    return {"documents": len(documents), "transactions": len(transactions)}
+
+
 def validate() -> dict[str, int]:
     house_summary = validate_house_archive()
+    senate_summary = validate_senate_archive()
     manifest = read_json(MANIFEST)
     require(manifest.get("schema_version") == "civicledger-public-manifest-v1", "Unexpected public manifest schema")
-    require(manifest.get("event_relationship_methodology_version") == "event-relevance-v3", "Unexpected event methodology")
+    require(manifest.get("event_relationship_methodology_version") == "event-relevance-v4", "Unexpected event methodology")
 
     seen_paths: set[str] = set()
     validated_paths: dict[tuple[str, str], Path] = {}
@@ -273,6 +353,8 @@ def validate() -> dict[str, int]:
         "market_symbols": len(market_records),
         "house_documents": house_summary["documents"],
         "house_transactions": house_summary["transactions"],
+        "senate_documents": senate_summary["documents"],
+        "senate_transactions": senate_summary["transactions"],
     }
 
 

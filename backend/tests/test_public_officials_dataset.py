@@ -24,6 +24,8 @@ BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.j
 FEDERAL_EVENTS = ROOT / "data" / "context" / "federal_events.json"
 HOUSE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
 HOUSE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
+SENATE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
+SENATE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
 
 
 def test_public_officials_dataset_has_expected_initial_scope():
@@ -143,6 +145,27 @@ def test_house_archive_is_source_backed_review_gated_and_partitioned():
     assert set(archive["year_partitions"]) == {str(year) for year in range(2015, 2027)}
 
 
+def test_senate_archive_indexes_all_senators_and_preserves_feinstein_images():
+    index = json.loads(SENATE_DISCLOSURE_INDEX.read_text())
+    archive = json.loads(SENATE_PTR_TRANSACTIONS.read_text())
+
+    assert index["schema_version"] == "senate-disclosure-index-v1"
+    assert index["summary"]["document_count"] >= 2_100
+    assert index["summary"]["matched_document_count"] >= 1_800
+    assert index["summary"]["report_format_counts"]["electronic_html"] >= 1_500
+    assert index["summary"]["report_format_counts"]["paper_images"] >= 550
+    assert index["validation"]["matched_document_count"] == 40
+
+    assert archive["schema_version"] == "senate-ptr-transactions-v1"
+    assert archive["summary"]["processed_document_count"] >= 1_800
+    assert archive["summary"]["processed_official_count"] >= 60
+    assert archive["summary"]["parser_preview_transaction_count"] > 0
+    assert archive["summary"]["public_production_trade_count"] == 0
+    assert archive["validation"]["processed_document_count"] == 40
+    assert archive["validation"]["paper_image_review_document_count"] == 40
+    assert archive["validation"]["parser_preview_transaction_count"] == 0
+
+
 def test_federal_event_context_spans_all_branches_with_official_sources():
     data = json.loads(FEDERAL_EVENTS.read_text())
     summary = data["summary"]
@@ -166,8 +189,8 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     timeline = data["career_trade_timeline"]
 
     assert timeline["schema_version"] == "career-trade-timeline-v3"
-    assert timeline["event_relationship_methodology_version"] == "event-relevance-v3"
-    assert timeline["trade_context_methodology"]["version"] == "trade-window-v1"
+    assert timeline["event_relationship_methodology_version"] == "event-relevance-v4"
+    assert timeline["trade_context_methodology"]["version"] == "trade-window-v2"
     assert {"exec:barack-obama", "exec:donald-j-trump", "exec:joseph-r-biden"} <= set(
         timeline["default_official_ids"]
     )
@@ -177,8 +200,8 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     assert timeline["summary"]["event_count"] >= 1_100
     assert timeline["summary"]["trade_cluster_count"] >= 20
     assert timeline["summary"]["presidential_oge_status_count"] == 4
-    assert timeline["summary"]["presidential_oge_document_count"] >= 18
-    assert timeline["summary"]["presidential_oge_parser_preview_transaction_count"] >= 600
+    assert timeline["summary"]["presidential_oge_document_count"] >= 19
+    assert timeline["summary"]["presidential_oge_parser_preview_transaction_count"] >= 7_100
     assert timeline["summary"]["trade_context_candidate_count"] >= 1
     assert timeline["summary"]["presidential_oge_public_production_trade_count"] == 0
     assert timeline["summary"]["official_count"] >= 298
@@ -199,7 +222,7 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     biden = next(official for official in president_rows if official["id"] == "exec:joseph-r-biden")
     obama = next(official for official in president_rows if official["id"] == "exec:barack-obama")
     assert trump["stats"]["record_status"] == "official_oge_parser_preview_not_promoted"
-    assert trump["stats"]["parser_preview_trade_count"] >= 550
+    assert trump["stats"]["parser_preview_trade_count"] >= 7_100
     assert trump["stats"]["public_production_trade_count"] == 0
     assert any(trade["date"].startswith("2019-") for trade in trump["trades"])
     assert any(trade["date"].startswith("2020-") for trade in trump["trades"])
@@ -212,7 +235,7 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     assert biden["stats"]["parser_preview_trade_count"] == 13
     assert {trade["date"] for trade in biden["trades"]} == {"2021-05-24"}
     assert obama["stats"]["record_status"] == "official_oge_parser_preview_not_promoted"
-    assert obama["stats"]["document_count"] >= 7
+    assert obama["stats"]["document_count"] >= 8
     assert obama["stats"]["parser_preview_trade_count"] == 16
     assert len(trump["service_periods"]) == 2
     assert trump["service_periods"][0]["end"] == "2021-01-20"
@@ -229,7 +252,13 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
         if event["relationship_tier"] == "general_macro" and event["display_default"] is True
     )
     assert all(
-        event.get("candidate_basis") == "temporal_and_entity_context_only"
+        event.get("candidate_basis")
+        == "source_specificity_temporal_proximity_and_descriptive_market_context"
+        for event in trump["events"]
+        if event.get("trade_context_candidate")
+    )
+    assert all(
+        event.get("candidate_score_components") and event.get("candidate_rank")
         for event in trump["events"]
         if event.get("trade_context_candidate")
     )
@@ -267,26 +296,31 @@ def test_presidential_oge_documents_add_official_disclosures_and_preview_rows():
     transactions = json.loads(PRESIDENTIAL_OGE_TRANSACTIONS.read_text())
 
     assert documents["schema_version"] == "presidential-oge-documents-v1"
-    assert documents["summary"]["document_count"] >= 18
-    assert documents["summary"]["document_counts_by_official"]["exec:barack-obama"] >= 7
+    assert documents["summary"]["document_count"] >= 19
+    assert documents["summary"]["document_counts_by_official"]["exec:barack-obama"] >= 8
     assert documents["summary"]["document_counts_by_official"]["exec:joseph-r-biden"] >= 5
     assert documents["summary"]["document_counts_by_official"]["exec:donald-j-trump"] >= 6
     assert documents["summary"]["public_production_trade_count"] == 0
     assert documents["summary"]["fetch_failure_count"] == 0
     assert all(document["source_tier"] == "official" for document in documents["documents"])
-    assert all(document["review_required_before_public_trade"] is True for document in documents["documents"])
+    assert all(
+        document["review_required_before_public_trade"] is True
+        or document.get("transaction_section_status") == "no_reportable_transactions"
+        for document in documents["documents"]
+    )
+    assert documents["unavailable_documents"] == []
     assert any(
-        row["official_id"] == "exec:barack-obama"
-        and row["availability_status"] == "official_archive_gap"
-        for row in documents["unavailable_documents"]
+        row["document_id"] == "oge-obama-2017-termination-278"
+        and row["transaction_section_status"] == "no_reportable_transactions"
+        for row in documents["documents"]
     )
 
     assert transactions["schema_version"] == "presidential-oge-transactions-v1"
-    assert transactions["summary"]["parser_preview_transaction_count"] >= 600
+    assert transactions["summary"]["parser_preview_transaction_count"] >= 7_100
     assert transactions["summary"]["public_production_trade_count"] == 0
     assert transactions["summary"]["transaction_counts_by_official"]["exec:barack-obama"] == 16
     assert transactions["summary"]["transaction_counts_by_official"]["exec:joseph-r-biden"] == 13
-    assert transactions["summary"]["transaction_counts_by_official"]["exec:donald-j-trump"] >= 550
+    assert transactions["summary"]["transaction_counts_by_official"]["exec:donald-j-trump"] >= 7_100
     sample = transactions["transactions"][0]
     assert "preview" in sample["record_status"]
     assert sample["review_required_before_public_trade"] is True

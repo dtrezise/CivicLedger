@@ -1,16 +1,16 @@
 {
   "dataset_version": "seed-v1",
-  "event_relationship_methodology_version": "event-relevance-v3",
+  "event_relationship_methodology_version": "event-relevance-v4",
   "files": {
     "coverage": {
-      "bytes": 4535,
+      "bytes": 4977,
       "path": "partitions/coverage.json",
-      "sha256": "747dd86d5b8e4ebebc898263e173951f1ae671f25db61d0ffff3d74cb08e20fb"
+      "sha256": "3aeb59f65eaa7334cabfc43803377080359459bd5d7b1d9011d8ecd38a776791"
     },
     "events": {
-      "bytes": 918090,
+      "bytes": 1174186,
       "path": "partitions/events.json",
-      "sha256": "3fbeaa2503ef45cd87e7167243a52d7399e632360a27b1e1d07a5e75b058cbaf"
+      "sha256": "43592a63d3951a4989c725938268ec7c4b0829f6ef82352e9514e81923be91e4"
     },
     "market_index": {
       "bytes": 855,
@@ -23,14 +23,14 @@
       "sha256": "b05b65143c7544f8a2621a6b25dacdd139e0bb5333e850e03706338b2476dc05"
     },
     "overview": {
-      "bytes": 114745,
+      "bytes": 128007,
       "path": "partitions/overview.json",
-      "sha256": "8f9ffd62dca38887418a52f4b95ab5b9d5f68054721988eb0c9c768127df0df8"
+      "sha256": "a88a69bca13a64ede12da80bc065b38c15ea7460cd7f3be232692d8b3c772e95"
     },
     "timeline_index": {
-      "bytes": 146076,
+      "bytes": 175324,
       "path": "partitions/timeline-index.json",
-      "sha256": "67d0d08f8ec50de6144f0f845db868b06833a1fbf329c2108885aa37fba92593"
+      "sha256": "e6d264cc5bf6caf68118af335723fc5d6cbc57f601fb65180b53b5463379d9ab"
     }
   },
   "generated_at": "2026-07-12",
@@ -197,1494 +197,1794 @@
     },
     "timelines": {
       "congress:A000055": {
-        "bytes": 291242,
+        "bytes": 484232,
         "path": "partitions/timelines/congress-a000055.json",
-        "sha256": "1b18bb8b87af4dde4d80138fd8169b9de353afd94550cd548fb77e3d96c75b8d"
+        "sha256": "c7855d74ee253e3db64f9b41e523754ef97fe7a6aa72281ffb9ed49b32081eba"
       },
       "congress:A000148": {
-        "bytes": 121164,
+        "bytes": 216779,
         "path": "partitions/timelines/congress-a000148.json",
-        "sha256": "cb38b77e9bd2a1b8ea24def38827a9fe0baa7cf4e0a9c737184ca30646be6007"
+        "sha256": "6ce63edec17fd6daec773ff72ea7ffea01c1e662f3a09b4bea99f9b5b248a87b"
+      },
+      "congress:A000360": {
+        "bytes": 409345,
+        "path": "partitions/timelines/congress-a000360.json",
+        "sha256": "58983f603b28d0ca4959296c70a346c4b2a614da968c1b481573cfd4756a919a"
       },
       "congress:A000367": {
-        "bytes": 179053,
+        "bytes": 276730,
         "path": "partitions/timelines/congress-a000367.json",
-        "sha256": "a4d3902d17785f70dc2635282a3255650c926e5f83fe3309e19ae01e014cc93f"
+        "sha256": "f940d22839674f017969885b06be98291aef1cfa271aba1690d19320a364e204"
       },
       "congress:A000372": {
-        "bytes": 641406,
+        "bytes": 804260,
         "path": "partitions/timelines/congress-a000372.json",
-        "sha256": "7e9cb2f0a6dec62d42d38bad8387f128321a604587c0ee098ad7ad9a6a0fd8b2"
+        "sha256": "4294cb778c6766974a47c5d561d845f5fec8e441b7e7c6f0c18021033df006f1"
       },
       "congress:A000373": {
-        "bytes": 76069,
+        "bytes": 112462,
         "path": "partitions/timelines/congress-a000373.json",
-        "sha256": "3e91822a291f257423bca12482e02e876675158867aefb4e9cf89717293bb280"
+        "sha256": "4e0131da8ed8e63684a6771a3d689f27f067f67857c3ae8be4f0338a587fe4ff"
       },
       "congress:A000378": {
-        "bytes": 368482,
+        "bytes": 412482,
         "path": "partitions/timelines/congress-a000378.json",
-        "sha256": "75a52a364811e2ede8d29578f7930121178eaf0cd78526c30e63200058fefad4"
+        "sha256": "46d4c469da55d8e46a7a893175652e26376a410d46e99b57e617406d05a990d7"
       },
       "congress:A000379": {
-        "bytes": 78300,
+        "bytes": 152511,
         "path": "partitions/timelines/congress-a000379.json",
-        "sha256": "f36491118438573f137a02844bdab44121f13921fca3b3a1591156af169c81f5"
+        "sha256": "55e999167f3362a330dd68e670801e01667443f8d69ad9cdbe4ce68667eb1a4d"
       },
       "congress:B000574": {
-        "bytes": 966267,
+        "bytes": 1116641,
         "path": "partitions/timelines/congress-b000574.json",
-        "sha256": "49e75d90666585cdadd8832b6b4d8d00b96a1a8f9efeb331c3516dd861778f8c"
+        "sha256": "3c66a992d73e5ced94e73713c0a498762c57072f16f0b4d6bd85619353f4f906"
+      },
+      "congress:B000575": {
+        "bytes": 381699,
+        "path": "partitions/timelines/congress-b000575.json",
+        "sha256": "a291476058ba68e3d14e7e003ef3d3441d15a04a469faa548a47f667270e6d4d"
       },
       "congress:B000589": {
-        "bytes": 151158,
+        "bytes": 195459,
         "path": "partitions/timelines/congress-b000589.json",
-        "sha256": "cde8ad53dc3824a92abb8a27c89f608324b4849ba8e4a8586c7eded8448ff7b2"
+        "sha256": "a1b54a21a9c1be7fb4025a6323c3edba32b0d7a072ff2fb78e8c352798a454d1"
       },
       "congress:B000668": {
-        "bytes": 117829,
+        "bytes": 205307,
         "path": "partitions/timelines/congress-b000668.json",
-        "sha256": "2b6fd9dea4279d27bdbbbd7209cfe5c6c27568b8f56c51e9c18018b793c9074b"
+        "sha256": "062b447713084ac29882dbd06fab06b9a8e49badf17f07afe233fc22579796a7"
       },
       "congress:B000740": {
-        "bytes": 112217,
+        "bytes": 196913,
         "path": "partitions/timelines/congress-b000740.json",
-        "sha256": "33c18bd4a6b033f2d6409ad5ad1216eae3bb1ed74760d49690439348ed7e47d9"
+        "sha256": "b3f30a3f7b5be2541857635c90b397c6c355a9fb23a2b21b45638e3f5f0248db"
+      },
+      "congress:B001135": {
+        "bytes": 483880,
+        "path": "partitions/timelines/congress-b001135.json",
+        "sha256": "16242bdfc91220d8a3244320830250105c141e49e863419e5f9c7b0782ae8956"
+      },
+      "congress:B001236": {
+        "bytes": 1105834,
+        "path": "partitions/timelines/congress-b001236.json",
+        "sha256": "cf15d573bd77d5320778f782ebb46460829ea234925b1acdccd300cdf13b887d"
       },
       "congress:B001248": {
-        "bytes": 426257,
+        "bytes": 599493,
         "path": "partitions/timelines/congress-b001248.json",
-        "sha256": "e96390e5aa9fd4f410426539869a0f4458336c31410d9c86687878b700b43e70"
+        "sha256": "4ee58f83e6340afa043662d875695f3b64afedd07e074bf9d3fb94af0aa441f7"
       },
       "congress:B001260": {
-        "bytes": 556562,
+        "bytes": 777441,
         "path": "partitions/timelines/congress-b001260.json",
-        "sha256": "c7f10bbdc933437cbe098153918eec0ec2b9c89f2f764db4b81828643ad20c72"
+        "sha256": "f9a964dfb42ceec152fb467a80d2bc236164c053765af9f11366b8aebdd4dbea"
+      },
+      "congress:B001261": {
+        "bytes": 441812,
+        "path": "partitions/timelines/congress-b001261.json",
+        "sha256": "8b31cbe6e18e3c1b6e5c7726b2652190b69dc7bbc3f01b8fe02218944e65775a"
+      },
+      "congress:B001267": {
+        "bytes": 495128,
+        "path": "partitions/timelines/congress-b001267.json",
+        "sha256": "07ffae475590e229d15e6251710416c147b3aacf31166072f1b6c7a935a32d87"
       },
       "congress:B001269": {
-        "bytes": 292374,
+        "bytes": 377368,
         "path": "partitions/timelines/congress-b001269.json",
-        "sha256": "f918a94e7e568d388b14a7089cf8b24c7264a17de3fef556a7318df16766db38"
+        "sha256": "edd5f4a2adf37059dbb29f78c0330c00c1f47d22a6596aecd87eeaafb7d8a102"
       },
       "congress:B001274": {
-        "bytes": 420855,
+        "bytes": 581571,
         "path": "partitions/timelines/congress-b001274.json",
-        "sha256": "3a0b3cc55e89928db7c27d4a9b5571168877cdb365a2b05bb5750603c83b3034"
+        "sha256": "85728b45eff412a4ac57a3e56c3f8ef306bd94f2a5e71d71be202dc065256502"
       },
       "congress:B001275": {
-        "bytes": 214796,
+        "bytes": 319759,
         "path": "partitions/timelines/congress-b001275.json",
-        "sha256": "dc1887c52a37ac962f638b4c01eab97ce7d0d97e351d9be20e7da1f92e603a9c"
+        "sha256": "767136a4c21747a59cce4eba05f68a65aea900403dbac3e3408974398346fb69"
+      },
+      "congress:B001277": {
+        "bytes": 580722,
+        "path": "partitions/timelines/congress-b001277.json",
+        "sha256": "3bc5a4363bcd1cbfe50a72c3d8b046d7ea96510ed753e16735019747ce795a0d"
       },
       "congress:B001284": {
-        "bytes": 166298,
+        "bytes": 252988,
         "path": "partitions/timelines/congress-b001284.json",
-        "sha256": "df9598f02c449480f55362fda359039c4ba8823d86188b18ff9658b1d5e9230e"
+        "sha256": "2e3f57e184a86a1fe49c6efa237d722d5b8565ec666136f12a225a5c3fc74ea6"
       },
       "congress:B001286": {
-        "bytes": 219388,
+        "bytes": 312421,
         "path": "partitions/timelines/congress-b001286.json",
-        "sha256": "6e4fd949c29dd38bf675805034941c278a26e4e4c2337ca8f14e53a5d58feab3"
+        "sha256": "63caa3ca6db389fe4d829c9f146abce92e475dc3bf6a4d85bdbaf1b29f5e6628"
+      },
+      "congress:B001288": {
+        "bytes": 386463,
+        "path": "partitions/timelines/congress-b001288.json",
+        "sha256": "1efb0c5d0c3b713fba0b188dd0bc4117b3a9a382f6343ac1b9a0eb16fddd1b35"
       },
       "congress:B001291": {
-        "bytes": 222942,
+        "bytes": 358574,
         "path": "partitions/timelines/congress-b001291.json",
-        "sha256": "3f8351d31051804e861c5da71cb4ef71b767ecba7e3a6c84595848f9cc57a6bf"
+        "sha256": "8fc66855d4b319b4e97e99e551b778d66ed1d3704a2d16d45bbf1e06643726a7"
       },
       "congress:B001292": {
-        "bytes": 1283102,
+        "bytes": 1235768,
         "path": "partitions/timelines/congress-b001292.json",
-        "sha256": "f0afe9989a3661d1f9111c8862dd2bb96a5ae47dca8f75ebe49b474622bde25b"
+        "sha256": "86b4bb9e05173cd7f3c963c73adefc63bdf1058a28e0801865b552c99d19401d"
       },
       "congress:B001294": {
-        "bytes": 74183,
+        "bytes": 122577,
         "path": "partitions/timelines/congress-b001294.json",
-        "sha256": "0bdd29ca786486eba239f0bc9a8f1de787b036e1e0851776792736e4c5aa8a72"
+        "sha256": "6ed054d884c55adf3380f022aab3879db315a2ac3d677d3a129cceac1f566295"
       },
       "congress:B001297": {
-        "bytes": 250356,
+        "bytes": 312663,
         "path": "partitions/timelines/congress-b001297.json",
-        "sha256": "955694a088908a5047b4459d96ab9d6dd58be676c52953a9a9d0aae6d6c4f248"
+        "sha256": "418abcc712019f899954cc0a6a66697b320382f28f54264f28621bc04eac1a6b"
       },
       "congress:B001299": {
-        "bytes": 246051,
+        "bytes": 384560,
         "path": "partitions/timelines/congress-b001299.json",
-        "sha256": "b2c79d90bc13fa69022c17b9ee4fe62a7f175dcacb85c02d706cb135e82133cb"
+        "sha256": "079d99de768952af42adf7e4225181afbb6331b38ab4e711b9517bc43225f05e"
       },
       "congress:B001300": {
-        "bytes": 176381,
+        "bytes": 289851,
         "path": "partitions/timelines/congress-b001300.json",
-        "sha256": "003b34cd85f1ab13bc17351cc1afab8b30ae79384f4f0a94f460499e62d01c2a"
+        "sha256": "8e7000c1db7fadd8ba43e0141738c044e0b79f363b21fba55e7f82825c990da2"
       },
       "congress:B001303": {
-        "bytes": 270135,
+        "bytes": 389090,
         "path": "partitions/timelines/congress-b001303.json",
-        "sha256": "97c4b5a30409c5724768bd4a04e6209cfab05171ab26acd63ac36b2e33370dba"
+        "sha256": "8fbe7470e5332a05442e32f7cafd49917152e8168e4f5a47b765bf5bd1e50bee"
       },
       "congress:B001309": {
-        "bytes": 135756,
+        "bytes": 224909,
         "path": "partitions/timelines/congress-b001309.json",
-        "sha256": "1d34e6138b01258b246a4f9d8917415ac2dbc45ef9cdad740802c0451ebb149b"
+        "sha256": "3891c983d3398a6992f89d21d65efdac6173b01d45cc677e1c00ce4f1fc9ca3e"
       },
       "congress:B001311": {
-        "bytes": 116077,
+        "bytes": 149369,
         "path": "partitions/timelines/congress-b001311.json",
-        "sha256": "6bf8155247f99a9932a037155e9a5bdcf781e580d4617135889816c05be3cc88"
+        "sha256": "14db192cfbb00865aa93a14c7ccc9bcb6b566edf67307a579eb8bbeb49da00a6"
+      },
+      "congress:B001319": {
+        "bytes": 225762,
+        "path": "partitions/timelines/congress-b001319.json",
+        "sha256": "5ca357b1bb744b46a63867592e955d499a9b3b5eda91f048e8c6cc7abe1986cd"
       },
       "congress:B001323": {
-        "bytes": 41725,
+        "bytes": 99314,
         "path": "partitions/timelines/congress-b001323.json",
-        "sha256": "24c697faabf0381f0c4b3cfd2990d89ed4f3bb7f1260b97440dab0d2a2e59b93"
+        "sha256": "95374712a47a55cb8b9c10b1cc9850dbee81dc9f4e5b295bab95aa13cfbe7a69"
       },
       "congress:B001325": {
-        "bytes": 313413,
+        "bytes": 297146,
         "path": "partitions/timelines/congress-b001325.json",
-        "sha256": "79e3593c9cda7e8e82abe4e0e2d9c510263845ac19b45896ebf4e8857b5ba1f7"
+        "sha256": "6c0c99f100cf741068bed609509c5a9f5ddb940d8f9792eaa60f2cd943cbd7d6"
       },
       "congress:B001327": {
-        "bytes": 684972,
+        "bytes": 598035,
         "path": "partitions/timelines/congress-b001327.json",
-        "sha256": "0dea91ee39a3d3a72dc3c9b9d672f74322844256df8c297899969bcff623bd83"
+        "sha256": "baa3aa5b87fe8e5d639a1c982082836b8ac42c7bfaf67c72060c5855ce246150"
+      },
+      "congress:C000127": {
+        "bytes": 467077,
+        "path": "partitions/timelines/congress-c000127.json",
+        "sha256": "0f1d549a2d6fe0f818085c4391053eb52eebfcb5071a28a7c3fd66cb58754a96"
+      },
+      "congress:C000141": {
+        "bytes": 402710,
+        "path": "partitions/timelines/congress-c000141.json",
+        "sha256": "a7cc2a62b3b0c0a6f8e7bcea00413dac1b31e0fa9b2a9c8c482023649a3f58a0"
+      },
+      "congress:C000174": {
+        "bytes": 2084309,
+        "path": "partitions/timelines/congress-c000174.json",
+        "sha256": "943a2e2a42b8b7dfb7f5e0d7df71fddd2ed4ac28936bb773783da1054ce29e69"
       },
       "congress:C000266": {
-        "bytes": 203249,
+        "bytes": 296761,
         "path": "partitions/timelines/congress-c000266.json",
-        "sha256": "039315874a02e9dded8af7e752ffe107b408830ac2ba9e3dae80cc56d72c947c"
+        "sha256": "7f54d74f7c98387cd27a3fe9387303ca0af4f0eec81a4d737b5a8d73555f5127"
+      },
+      "congress:C000567": {
+        "bytes": 259357,
+        "path": "partitions/timelines/congress-c000567.json",
+        "sha256": "7bbb5264d9266976cc4b979d97d0a411610d618792a6b4a6648d8f276501de91"
       },
       "congress:C000754": {
-        "bytes": 232943,
+        "bytes": 362150,
         "path": "partitions/timelines/congress-c000754.json",
-        "sha256": "9046a9ed5f8d1202b1431eb2b3c1413110fbc907adbf79d96bbbccdb9024d892"
+        "sha256": "5763d73496e6877c525e9eadbe693a6984d57b527715a2eafd9131e315ff84ba"
+      },
+      "congress:C001035": {
+        "bytes": 1234349,
+        "path": "partitions/timelines/congress-c001035.json",
+        "sha256": "295141a23afd825282ec4f296348480f363b6c9d10bd0dcc02bac367ed583230"
+      },
+      "congress:C001047": {
+        "bytes": 1621870,
+        "path": "partitions/timelines/congress-c001047.json",
+        "sha256": "259c3547e0b0ece09212bfeb8a2ee19a6d1ef56b78f490e92c15cce3ec347ac2"
       },
       "congress:C001055": {
-        "bytes": 169352,
+        "bytes": 291389,
         "path": "partitions/timelines/congress-c001055.json",
-        "sha256": "59eaa4a57e11d059a9479987aa8ad5f2632abf64a7e1d0aabdd58119474099e9"
+        "sha256": "8376f9bbf54f528666ce801acb680aac5bbeb53d0cb1cd901d55aedad013019a"
+      },
+      "congress:C001056": {
+        "bytes": 464452,
+        "path": "partitions/timelines/congress-c001056.json",
+        "sha256": "d9042214e747740263bb396676d59924b3539033650e208e94cd7839ac05923e"
       },
       "congress:C001059": {
-        "bytes": 284929,
+        "bytes": 473559,
         "path": "partitions/timelines/congress-c001059.json",
-        "sha256": "0a19431b6ce7069e4d6a1284b08c59a390410673cb4c24a1e244d808792ee6ac"
+        "sha256": "5649ecd25de46756c9b56c5b4a851fa7e2f60ab4385a47f716935fa460d17a1d"
       },
       "congress:C001062": {
-        "bytes": 1657702,
+        "bytes": 1549735,
         "path": "partitions/timelines/congress-c001062.json",
-        "sha256": "9be999c9d0c716df867700cde3ea19b418008bdcbcad03a1d59a3176cf635b69"
+        "sha256": "df24aa3508d7c85e81a4debae21507cfb6bb135b5a94f3396af40da714e853ed"
       },
       "congress:C001066": {
-        "bytes": 416278,
+        "bytes": 662537,
         "path": "partitions/timelines/congress-c001066.json",
-        "sha256": "db128ad879751f2fd8847e65a8b5ad696eba000d9f53291bf4699d122fbce92e"
+        "sha256": "dde8ad624991550c42959a91d65109e376f9587359bc7c727fb622bb5f85b2d9"
       },
       "congress:C001068": {
-        "bytes": 532172,
+        "bytes": 807637,
         "path": "partitions/timelines/congress-c001068.json",
-        "sha256": "b0d68bec74c15b3c3118d7ff5f2dd1fd2d5cb4631847bd45b13174bbc9a44433"
+        "sha256": "aac5c5f8a78fbc6d1e4d5a727fda032595d58eb791eb6227456fa02ca79e5fa5"
       },
       "congress:C001069": {
-        "bytes": 487418,
+        "bytes": 664252,
         "path": "partitions/timelines/congress-c001069.json",
-        "sha256": "8619367db2da47538d2d10c4c0cb9faf72546253dc85d750f868d37172433a02"
+        "sha256": "540bd78fbc0664027b08101d002dd543a8158fd87d463bffa74f17eceb19052b"
+      },
+      "congress:C001070": {
+        "bytes": 353195,
+        "path": "partitions/timelines/congress-c001070.json",
+        "sha256": "b5bfc97df76ad812aa6332312628fc00e0d509f86859213a7f39d01dac13ef23"
       },
       "congress:C001076": {
-        "bytes": 147229,
+        "bytes": 231169,
         "path": "partitions/timelines/congress-c001076.json",
-        "sha256": "ad56f1116733b9f6243f817efb279dea35ed1308cd7ee000d0885842ea3acee3"
+        "sha256": "d73c0d72149f495a4906972e44820396575f44663aa9717549a077b4872f5907"
       },
       "congress:C001078": {
-        "bytes": 402190,
+        "bytes": 657360,
         "path": "partitions/timelines/congress-c001078.json",
-        "sha256": "fdd5ad7c1bdab347bf6f2100c88de2e3acbd4619811aac33d951869c866d119d"
+        "sha256": "cf9d4285c6c58c924ccaa1269a53eeeab5d00e7ed38385397d0d9e7918edb4a0"
       },
       "congress:C001080": {
-        "bytes": 825602,
+        "bytes": 920828,
         "path": "partitions/timelines/congress-c001080.json",
-        "sha256": "b5c555c8ba99c889aebf9458ad20a6bc91de16fc56eadfbb175b334956cc98cd"
+        "sha256": "33545ebb7c23db001820d897f8a9ebd9c795b3630bd9c26cf07d593831d7f3f6"
+      },
+      "congress:C001088": {
+        "bytes": 532216,
+        "path": "partitions/timelines/congress-c001088.json",
+        "sha256": "314a88a5119c4d2788c50d8c5197e87a64518dc6f765864ba59d9da920125944"
       },
       "congress:C001101": {
-        "bytes": 918427,
+        "bytes": 1025457,
         "path": "partitions/timelines/congress-c001101.json",
-        "sha256": "52e47bfa1297ee69ab5a7b4dc32524712118d5c488a0a11c9a2628bb861b92f9"
+        "sha256": "06358b4da36bdae834a0d8d0d6ad28ea2facce84127585be8f60bba38c60d1a5"
       },
       "congress:C001103": {
-        "bytes": 279453,
+        "bytes": 449151,
         "path": "partitions/timelines/congress-c001103.json",
-        "sha256": "2e245f831de158a1aa36e1d825f2b9707450b49ed6d889e819e273be95c12463"
+        "sha256": "7da5423bd36fa6951d69abe18480ce81b2e4e7aa78e619cb150249004cb31fa9"
       },
       "congress:C001104": {
-        "bytes": 75358,
+        "bytes": 91818,
         "path": "partitions/timelines/congress-c001104.json",
-        "sha256": "3f8df26e552b5ae25d7c8723c4b5b88d26d4b8b148f7d124d37cfed2a520c1f8"
+        "sha256": "16a0805be369ce240366d1c4a9c8aed5745d3bac21256fc6f5dc0d9d58251fc7"
       },
       "congress:C001105": {
-        "bytes": 177467,
+        "bytes": 239296,
         "path": "partitions/timelines/congress-c001105.json",
-        "sha256": "47dc6f53800658802cfecda8c74aca8d10f36db96b172d0eb91a19201d570359"
+        "sha256": "3af6a7d6a231f4b20ac2f467d434785e46d5ee6e61817f4ba970928b66bd352f"
       },
       "congress:C001107": {
-        "bytes": 546686,
+        "bytes": 566610,
         "path": "partitions/timelines/congress-c001107.json",
-        "sha256": "6e2afbb6f8733216dc202be0d6ee8c1d14e44c7d2638e5131141eaa99b426906"
+        "sha256": "12609bf805c9fc99a1a592a94ed43df6366883fab32060ed7f3201d29bf40747"
       },
       "congress:C001108": {
-        "bytes": 243774,
+        "bytes": 382137,
         "path": "partitions/timelines/congress-c001108.json",
-        "sha256": "213be17d419dc6ed624c2d013846280c4a735626a022aa576f6870867e42e634"
+        "sha256": "04758b8a6cf9eba4ccd03c0a4ec403cd47de88325dbf9d750ceadb45ac767f0b"
       },
       "congress:C001111": {
-        "bytes": 124365,
+        "bytes": 178101,
         "path": "partitions/timelines/congress-c001111.json",
-        "sha256": "ecd347292701d9868df8fcc1563b19609501c400c45741b1129aef809fc2840b"
+        "sha256": "a623ea85b43f3038b78a412fef4b9eb2fb096f001240d5bb205fde75c45efccf"
       },
       "congress:C001114": {
-        "bytes": 579122,
+        "bytes": 742221,
         "path": "partitions/timelines/congress-c001114.json",
-        "sha256": "58113c1ec4db8659f87da6694e75cf7307ddd42de99632ed9aaf337aebe532ea"
+        "sha256": "04ef4ca7169ee0740fe00419d2bfa9672ba4c16a521012687330fd614b5ff82d"
       },
       "congress:C001117": {
-        "bytes": 157918,
+        "bytes": 257208,
         "path": "partitions/timelines/congress-c001117.json",
-        "sha256": "befdeb708ad1585faeaf1bcccb069295d76fd17ba6a900d01c767fbda2e15a8b"
+        "sha256": "6ffc0ea68f3ab08c767cc74a7fb79b993da1e7fc303e88f52e16bd50897c3bde"
       },
       "congress:C001120": {
-        "bytes": 193736,
+        "bytes": 307862,
         "path": "partitions/timelines/congress-c001120.json",
-        "sha256": "f7b86e43d641a882ae50beedb8263e28cb0f8a48ac63ed6c4611d5921f197c9b"
+        "sha256": "676f8f422b61fcebf7547bcabce98136c8f9faf7492c116b7bda4bc0ece2dd10"
       },
       "congress:C001123": {
-        "bytes": 2656385,
+        "bytes": 1773701,
         "path": "partitions/timelines/congress-c001123.json",
-        "sha256": "867d41d47b1f9c27eb3099f73e4ac091da672a96db7a283af317a940e70d845c"
+        "sha256": "e9328ffd5167f6d5df92f1ce8014a29c1cee95b0f46c7819641675d4a5bc3fe2"
       },
       "congress:C001129": {
-        "bytes": 126028,
+        "bytes": 210885,
         "path": "partitions/timelines/congress-c001129.json",
-        "sha256": "e3028d617113789d56294c4e3e79457f7ea282c00809a1ebf44bb5bce8de21c7"
+        "sha256": "0fc84ba9c020ba6185c35ef83d6dc63969d4629c0b66d043dd2522c5984028aa"
       },
       "congress:D000032": {
-        "bytes": 289068,
+        "bytes": 347539,
         "path": "partitions/timelines/congress-d000032.json",
-        "sha256": "9e5b67fe73a9233ab9e2950a631ef2fa05d623a792d008294a3aaab993aaf91b"
+        "sha256": "81cec54df62f8e3dec08a357e33927f7f21124ca6014f4afaf07874ffb6793d3"
       },
       "congress:D000399": {
-        "bytes": 654926,
+        "bytes": 1007644,
         "path": "partitions/timelines/congress-d000399.json",
-        "sha256": "a0c2a0870d397401bc31a103f42b9c73d0f8e928a7221e73da68b3856b4fe4ba"
+        "sha256": "681d5aa1853d12ce2020b00adc63d4b58b987f19f61d7f026e6d9bb219583a9b"
       },
       "congress:D000598": {
-        "bytes": 284522,
+        "bytes": 419248,
         "path": "partitions/timelines/congress-d000598.json",
-        "sha256": "e023cbc05b8dcdef6bc64da79c39fabbe03c52d12c26e58c3399bbc5429aa464"
+        "sha256": "544aced77e04de66077c711e117d122dfdcf7c57dff762349ecf5e7996a7c9af"
       },
       "congress:D000600": {
-        "bytes": 289661,
+        "bytes": 477541,
         "path": "partitions/timelines/congress-d000600.json",
-        "sha256": "3db3e5e7418564f8589b413d3182d2e1848fc83be84a7a9fb672fa175d4c0c2d"
+        "sha256": "cc73893d8906e4336c5109e38b3d540f975e8bda1531adb3514529b9fe0f381a"
       },
       "congress:D000610": {
-        "bytes": 223791,
+        "bytes": 327963,
         "path": "partitions/timelines/congress-d000610.json",
-        "sha256": "3ca75d619f5f7cc6afe63db7a4a10bb7d45d2600f0e3c1360c3cfc6617cd8bd3"
+        "sha256": "16f0dd890393f8e165485e308ff90e0161bb15f8ebc97b99846d504724063369"
       },
       "congress:D000615": {
-        "bytes": 215636,
+        "bytes": 324333,
         "path": "partitions/timelines/congress-d000615.json",
-        "sha256": "329d696981ca27630cee8a681090801367a4f2ad1083ca37d0350d7ccb98b2c4"
+        "sha256": "cfc9660f7be2b8be54cddfdaffd9419cacfe508a7a276382df55b537c83f06f3"
       },
       "congress:D000616": {
-        "bytes": 252581,
+        "bytes": 411241,
         "path": "partitions/timelines/congress-d000616.json",
-        "sha256": "966d10a4ab73c9e4a366ffa08b1f9d9c47b4cb5cae696c12b0ef8fdf5334dc61"
+        "sha256": "d8946b4e9076bb67f9aaff5d5b2544f228154a44767f48d0bfc55980e74144e1"
       },
       "congress:D000617": {
-        "bytes": 1170882,
+        "bytes": 1396697,
         "path": "partitions/timelines/congress-d000617.json",
-        "sha256": "620400743e2b8a8acf097a0c5b0b1353fd1adc8f6bf869668193907b1b5d7554"
+        "sha256": "643ec6b2dcc6f8caffb7fbf15cfa0ee66c4dfa03bd0cddd032348a1afb6616d0"
+      },
+      "congress:D000618": {
+        "bytes": 370937,
+        "path": "partitions/timelines/congress-d000618.json",
+        "sha256": "2d065557ea640a35810434ce19bc25958608845f0ae1cb1e5fe6c23a5c702e29"
       },
       "congress:D000622": {
-        "bytes": 248198,
+        "bytes": 451519,
         "path": "partitions/timelines/congress-d000622.json",
-        "sha256": "ece42dcd31e4e5c9f6e0a76ecff273c526ac0ebe72036fa58db26c65481f15de"
+        "sha256": "8787de741ee12eaf9b6738a81eec076457eb6360246e2b5d7caf00a5c200527d"
       },
       "congress:D000624": {
-        "bytes": 617845,
+        "bytes": 883183,
         "path": "partitions/timelines/congress-d000624.json",
-        "sha256": "ec113542f02e347fa897448ed56de96fd1ea4a4546bff314a5719ae5b126771d"
+        "sha256": "a5ce71441b42114eb11c87f4006606a270f3a7d988259ce322514d2ec91874e9"
       },
       "congress:D000626": {
-        "bytes": 197961,
+        "bytes": 320525,
         "path": "partitions/timelines/congress-d000626.json",
-        "sha256": "b340bfecf2fcdba5b5624e126ab492718880d95129e28036f005996b6771cead"
+        "sha256": "ebd0cc3930c36bfc6832580d500b300be51285e3ac117a1759d0c6d331818998"
       },
       "congress:D000628": {
-        "bytes": 342483,
+        "bytes": 474790,
         "path": "partitions/timelines/congress-d000628.json",
-        "sha256": "412916b7cd10dfe365d466cf3c27761606ddd2c4b56279b80da9773eff09ac81"
+        "sha256": "d61852c6f353090c9f88ce262a8dc0c0d061a59d7d6559d8dd74ff60bdd3c8f6"
       },
       "congress:E000179": {
-        "bytes": 176496,
+        "bytes": 287721,
         "path": "partitions/timelines/congress-e000179.json",
-        "sha256": "604c35acaa8b0ec120e870d75aa5b9585d4e5547b6ed444ed8bd752f7e0b22af"
+        "sha256": "d151beb88baa2ccd4cd44119cc95661d9efa8363ea49701beb436155f3b27807"
+      },
+      "congress:E000285": {
+        "bytes": 292080,
+        "path": "partitions/timelines/congress-e000285.json",
+        "sha256": "8444ed368876f7aa3658d9b5c575736cc3e0c398f32c34aec04b694e17aa6467"
       },
       "congress:E000296": {
-        "bytes": 441159,
+        "bytes": 582149,
         "path": "partitions/timelines/congress-e000296.json",
-        "sha256": "44d7e1fff8b2524495d94784a096d63b0ac045ea178d37df9d7a8bfd0edcb004"
+        "sha256": "a8f4a66e54ed06363bb090d07ef8079d98066dd4c8e854055de1feb330a6c329"
       },
       "congress:E000298": {
-        "bytes": 200408,
+        "bytes": 314994,
         "path": "partitions/timelines/congress-e000298.json",
-        "sha256": "495637cd94dacebed765dab0cabb214884b21a859675b9a32089aa2818125ed1"
+        "sha256": "a623a9070c75ec3fb283aba95e8e22dec3d5a7a3d92b28b143776f3199d7c7e4"
       },
       "congress:F000030": {
-        "bytes": 119023,
+        "bytes": 196751,
         "path": "partitions/timelines/congress-f000030.json",
-        "sha256": "879ab3362881048d28261ad36b62a9b43423566932dbb661c5a94fae12a0f744"
+        "sha256": "2304d5d49c37a92c20ffe0e1edf7986b1a93ca600026790c6eb0bae9aa330e86"
+      },
+      "congress:F000062": {
+        "bytes": 406773,
+        "path": "partitions/timelines/congress-f000062.json",
+        "sha256": "1096ccc07634297652a11aefe4426ae4577fb4a6383de41e97e3916d58e75006"
       },
       "congress:F000246": {
-        "bytes": 439487,
+        "bytes": 513193,
         "path": "partitions/timelines/congress-f000246.json",
-        "sha256": "16ab861345c34c1c0b3a429cbea32ac7a6d36f026b2e83982530a67af6634bb6"
+        "sha256": "18f075d6cfd477447927d7e4ab381a410f4e720b2949cedc698794bd43966058"
       },
       "congress:F000449": {
-        "bytes": 215049,
+        "bytes": 335301,
         "path": "partitions/timelines/congress-f000449.json",
-        "sha256": "20e07e3d92091ee3b8b0ca04bdb55e33e10b3d1d5edc3222ef81b6037fdd0349"
+        "sha256": "e7d4b79a2ec8341c99e3cd13127a1e658a43015f01fc909bc99b28965f001d43"
       },
       "congress:F000450": {
-        "bytes": 1409328,
+        "bytes": 1426207,
         "path": "partitions/timelines/congress-f000450.json",
-        "sha256": "1d49f2509fb4c0a751a2696202e4ba473714374bb2dbf0fc28594f1f34c79097"
+        "sha256": "2cc8bc9535d8176dfe95915eaee441d989ba20a4b92982e2ab53c149b8873ed2"
       },
       "congress:F000451": {
-        "bytes": 95001,
+        "bytes": 144748,
         "path": "partitions/timelines/congress-f000451.json",
-        "sha256": "ceb52b16d0d61cba64bae969d144a5238e73caf2a3acbead0466b9a28619447b"
+        "sha256": "2a08555a4d80bdede9c522bc2436029533510adba83e09e751ed6f536f47a5bf"
       },
       "congress:F000461": {
-        "bytes": 1061887,
+        "bytes": 935205,
         "path": "partitions/timelines/congress-f000461.json",
-        "sha256": "daa66a82cc05bc113205eefe61b4f5e873a229a1b98fbcf0e07ee701ee837b35"
+        "sha256": "98919a8abfff787ae51299904ab34263519ac958dd03659cbbd31c67eec64f15"
       },
       "congress:F000462": {
-        "bytes": 1635472,
+        "bytes": 1406410,
         "path": "partitions/timelines/congress-f000462.json",
-        "sha256": "ba2dc1bad6fe9d56dc10a502fa82a650777d5895d29220d900aa5f7ad7ac4c01"
+        "sha256": "a3c67960ef20c06e6e1fbb0b962ef0d64545b5ed33618fabd82f3683c8b147f7"
       },
       "congress:F000464": {
-        "bytes": 36330,
+        "bytes": 60992,
         "path": "partitions/timelines/congress-f000464.json",
-        "sha256": "ff0ec64780ded8e00669291d30a11f438f2fc388e1cebebd558db1becab8a872"
+        "sha256": "c30d51bb2d244763af8ebda5764e027df7f6a6541b524c5d40172446fb34ce20"
       },
       "congress:F000468": {
-        "bytes": 266032,
+        "bytes": 341451,
         "path": "partitions/timelines/congress-f000468.json",
-        "sha256": "8dff2ce4654371c764b1d4ccb7de95cc2b3e68d42bba3cc756a7ea16a0cfeeeb"
+        "sha256": "89826adf22746938b518b94b98f45189ac6759e6db5a8e0538c289c40756c4b8"
       },
       "congress:F000469": {
-        "bytes": 136389,
+        "bytes": 226692,
         "path": "partitions/timelines/congress-f000469.json",
-        "sha256": "ea4224d215afc6dc0cc87e9ad7c6f829352d1797014ce3b0ffb2d09d18d04eb5"
+        "sha256": "7b13d17072c2518ca5740bccd92e2ccfa0c46c85f759162e2fd42c87ffa34cec"
       },
       "congress:F000472": {
-        "bytes": 395112,
+        "bytes": 503174,
         "path": "partitions/timelines/congress-f000472.json",
-        "sha256": "2cf97b8ea68b8f2cd9c4a232168b2be6537e871e6906b362998c345dd8949b5c"
+        "sha256": "391dfd0532aae28a87c67e7b10656306dd18935fe7e5163f718eff957832af55"
       },
       "congress:F000474": {
-        "bytes": 83003,
+        "bytes": 151146,
         "path": "partitions/timelines/congress-f000474.json",
-        "sha256": "de7a57c045b865e729d5ba67ec7788e9e6ea8342c790c8bc69bc6513777bfc94"
+        "sha256": "eeff41c02c767c1617a774cf0c0799df950b3867960c6edbc3a5fa4d6c5a92a2"
+      },
+      "congress:F000479": {
+        "bytes": 304529,
+        "path": "partitions/timelines/congress-f000479.json",
+        "sha256": "e4cde8cd5c86621aea961dbf811f965613f4d889c3c2fd3c5dcad6010d551938"
       },
       "congress:F000483": {
-        "bytes": 49171,
+        "bytes": 110075,
         "path": "partitions/timelines/congress-f000483.json",
-        "sha256": "37c7a9b81642175a9f020ce90915ae5e099679761712168a72bd9b8fe42dc2c1"
+        "sha256": "2154329af1d8214bc927c7c36c85b334be2a72c5f593b3565cbf2ec7d12856be"
       },
       "congress:G000061": {
-        "bytes": 167939,
+        "bytes": 221601,
         "path": "partitions/timelines/congress-g000061.json",
-        "sha256": "2b5710e2964c3ccd282ff4c2761c60df44ab1557b70fb57eee395722762a7d9f"
+        "sha256": "855fd82386e9dfc98d9a6a3a45c9eef62f8a802ee5555bdf4cfdc3791fa19df2"
+      },
+      "congress:G000359": {
+        "bytes": 508362,
+        "path": "partitions/timelines/congress-g000359.json",
+        "sha256": "d6b396c668c0c1384f6f5938fd08e81640c2493f9b8ded5759e1c2e4be1e43d6"
       },
       "congress:G000535": {
-        "bytes": 171239,
+        "bytes": 286359,
         "path": "partitions/timelines/congress-g000535.json",
-        "sha256": "0475da58af0b13d028c0ba087b2277c6b32ac9dd71fd0cf9fe692e04307500bd"
+        "sha256": "cb5ca2b3706aed7da8c0b8ec986ec784d107c5d4fbdd4f627ebd14bc08af0148"
       },
       "congress:G000551": {
-        "bytes": 449360,
+        "bytes": 640503,
         "path": "partitions/timelines/congress-g000551.json",
-        "sha256": "1840430db4eecd54cf6bee8d8d1ed42a99be9dad393554f015e639765a6eb535"
+        "sha256": "4e535231311575dd7082b4e3879806303b5693bd2699f6bf407cf34fa56ff72c"
       },
       "congress:G000553": {
-        "bytes": 274269,
+        "bytes": 461058,
         "path": "partitions/timelines/congress-g000553.json",
-        "sha256": "079951b052ae5a0c3b7c9b7987fbefb488331bc2fb9be2f37c457c5df27e377c"
+        "sha256": "992af41c72fb478454a9ae6563f68da293b761b5ae1976347cd9bae79341d437"
       },
       "congress:G000559": {
-        "bytes": 296725,
+        "bytes": 472954,
         "path": "partitions/timelines/congress-g000559.json",
-        "sha256": "92e4ddff86eb78eb4325a03bc13bfd5ab1d6ce64f51cdbc7dea0c865705bf5a0"
+        "sha256": "d0617c7cb2f721ce4cf711de14e8cf3b88fff6a4ec344b6369dd7f90fa59d2bc"
       },
       "congress:G000560": {
-        "bytes": 174171,
+        "bytes": 262487,
         "path": "partitions/timelines/congress-g000560.json",
-        "sha256": "7d844784a248cd1d23d4a4fef147237e60b36941c2ef20712f168fa4fe6fdde2"
+        "sha256": "24058df3f33d6983392f8fee76cff02cecb1d9a22c95c8d079ce1a170651aa48"
       },
       "congress:G000563": {
-        "bytes": 445647,
+        "bytes": 654695,
         "path": "partitions/timelines/congress-g000563.json",
-        "sha256": "9f3c3bc7de3908789b7539bf105cd5bf2a7fa798fc182c2d93aa536f6ab99b30"
+        "sha256": "e4f9181017494217e931cfa2e668e0782f03c500a8df60b53b05c41fe0276816"
       },
       "congress:G000574": {
-        "bytes": 199343,
+        "bytes": 337770,
         "path": "partitions/timelines/congress-g000574.json",
-        "sha256": "f79b0b5070958be0de8b7da4139d2a7b5e7dc15e1449e41e1a6e0f82475bc2fc"
+        "sha256": "d608b46b267d086ce49d4aeee45abdabc1b5da998d13a6e7d5ff5f5c27eb9460"
       },
       "congress:G000576": {
-        "bytes": 204928,
+        "bytes": 338510,
         "path": "partitions/timelines/congress-g000576.json",
-        "sha256": "cd6ecc8a9b5bb9d1d95f6eab6fb8c755df6a968d2e7ae8407b85a01edba3f19b"
+        "sha256": "5d6e6ef87fa27b6ecd1131fba7fcd126fbd69b2e3c6ed340560d8a00adc464a2"
       },
       "congress:G000577": {
-        "bytes": 185566,
+        "bytes": 272924,
         "path": "partitions/timelines/congress-g000577.json",
-        "sha256": "4b63047924b35534051d6d8f66359f73327846f4994d1c01aae13dcc39408605"
+        "sha256": "1f4453434278641150d1ada57675338c7cb5fc0d549c04e74337c1aa48caf2bf"
       },
       "congress:G000578": {
-        "bytes": 137160,
+        "bytes": 195011,
         "path": "partitions/timelines/congress-g000578.json",
-        "sha256": "2ab1bd1a15516a57674398bd6c3db225042c47eb4a8aadbf8060520050174144"
+        "sha256": "79255cfa34097896d6996d7d77f75339010d786eeff178b6d14db9584bc36a23"
       },
       "congress:G000579": {
-        "bytes": 177001,
+        "bytes": 227890,
         "path": "partitions/timelines/congress-g000579.json",
-        "sha256": "5793e51f157dcb707fce0727fa2062b6cb7dcb9f9a701b4dad0ab73200468e7a"
+        "sha256": "1b2ef0cadcd1fe1867ecb1e4baffff00721788566b081c6bc92971a23a4014ca"
       },
       "congress:G000583": {
-        "bytes": 3760479,
+        "bytes": 3383254,
         "path": "partitions/timelines/congress-g000583.json",
-        "sha256": "e3e64ec1a1b935528c866c1f2688d5d033f2f0214eabaf75d7a7041d7fc77487"
+        "sha256": "bb921aa9cb06a69da3c17d24013a4c71c5fd970323fa9eeaa3c4746320ad8a81"
       },
       "congress:G000584": {
-        "bytes": 1549983,
+        "bytes": 1101148,
         "path": "partitions/timelines/congress-g000584.json",
-        "sha256": "c65291e230d6493c254a60a0c69a394e6604d986fa06bdfce3b9dc9fafec364b"
+        "sha256": "d12e83237c54b8f1e228993893720a9fbeb1ff76d76c381bd99c746b26c4713d"
       },
       "congress:G000588": {
-        "bytes": 94695,
+        "bytes": 137587,
         "path": "partitions/timelines/congress-g000588.json",
-        "sha256": "91fdd74af29661a8a00a2b9ebfee1b9d96baf2ce58981ec9d950de7541ff9f5f"
+        "sha256": "2113937b427e6f474c8872d019a575c9dd9c6a999aaad1502b565d05a123cfbe"
       },
       "congress:G000589": {
-        "bytes": 138820,
+        "bytes": 230158,
         "path": "partitions/timelines/congress-g000589.json",
-        "sha256": "f8fe0ccec3ff11df51dc96bbd522c95d1696d6681ec72c046240e8bb8bc3ecdc"
+        "sha256": "e6314aa7780fdc2e6ea8adfea52fd4c4cfbee51704d3de868228c3699a5dbd19"
       },
       "congress:G000590": {
-        "bytes": 905182,
+        "bytes": 845448,
         "path": "partitions/timelines/congress-g000590.json",
-        "sha256": "1b7ed32477a17b0d30ee66563ee5b6f8e094801f12141dc2c8c419ed32eb7647"
+        "sha256": "ed7ad79749b02337e949c7ea4e181dbdd41f7832ad00d69c395983520f127878"
       },
       "congress:G000591": {
-        "bytes": 264675,
+        "bytes": 392244,
         "path": "partitions/timelines/congress-g000591.json",
-        "sha256": "ea17f71b061a1ad6a66c716815f1936c5f789e15a49b236367ab8ad9280c9fb2"
+        "sha256": "9c584371b96998a9a5fd22d844c669b1f47b5b669143b8239f0383d6f95cafc1"
       },
       "congress:G000596": {
-        "bytes": 687517,
+        "bytes": 807783,
         "path": "partitions/timelines/congress-g000596.json",
-        "sha256": "f22fbbee21ad35c2a813e3193ebda568b8f981c0485e717239f0001fa3b4cf67"
+        "sha256": "cba875af9bfc1a3fc007753f67ab1dfeb719fcaad5ed515151adcd3d5bdfb3ca"
       },
       "congress:G000597": {
-        "bytes": 126711,
+        "bytes": 210584,
         "path": "partitions/timelines/congress-g000597.json",
-        "sha256": "64885ad11d5e6ef85178e8e24aa4b8ee256204ab7726dc54c76c20256dfed2cb"
+        "sha256": "44cb1221eb0ddde5f7fecd81dc6e0d6c9c5197ecd24b5d1a75fd3a8e7c802acc"
       },
       "congress:G000599": {
-        "bytes": 1312714,
+        "bytes": 880387,
         "path": "partitions/timelines/congress-g000599.json",
-        "sha256": "9ebf2fb75aadad45d48aca233240018c9010c9af627fafa76fd30d2f876654da"
+        "sha256": "3bedac7fa5a37cae1e4ff82d0626701084521c6f7732ff38985caa5a7677ed4e"
       },
       "congress:G000603": {
-        "bytes": 72049,
+        "bytes": 151878,
         "path": "partitions/timelines/congress-g000603.json",
-        "sha256": "c52464559a26a8f4d09eaf39f0ebaf062f81b789f10db34ade99f0005e6443b2"
+        "sha256": "4295ccc6214da9cef0fb25ac06ef99cc69af5a54854099d7a3db3849725536a1"
+      },
+      "congress:H000273": {
+        "bytes": 451075,
+        "path": "partitions/timelines/congress-h000273.json",
+        "sha256": "5226cb74b5e5fdd9578e9b4af8292a3f7e664c7a8c8280eee9cfe76ad77a0496"
       },
       "congress:H000636": {
-        "bytes": 284021,
+        "bytes": 347164,
         "path": "partitions/timelines/congress-h000636.json",
-        "sha256": "da181709bab6d6a359dadc04b4ad49699fc0b63ff26247e6040bc45b286e25b5"
+        "sha256": "fb200ec88b275de4e1aef97dd3af500283cc5191dc668a33c4411efdce305968"
       },
       "congress:H001038": {
-        "bytes": 252285,
+        "bytes": 390299,
         "path": "partitions/timelines/congress-h001038.json",
-        "sha256": "b157f784e7f187aee7df7123287afc4889e0e19aa1b4dc3f54906802d76d2ee7"
+        "sha256": "afe9bdeeca55abf2b08e29a69b7f790ac7483cc740115a7359fb28c3093645e1"
       },
       "congress:H001047": {
-        "bytes": 288807,
+        "bytes": 478068,
         "path": "partitions/timelines/congress-h001047.json",
-        "sha256": "64b08cb94080158321082c089f0002bcc80aae8a487f43833337f61b211ad582"
+        "sha256": "ff783b3258e8d0e58f797255bb64ee0600121e84b5f7d45cadd255ee139e406b"
       },
       "congress:H001051": {
-        "bytes": 342783,
+        "bytes": 373939,
         "path": "partitions/timelines/congress-h001051.json",
-        "sha256": "db69b4662b81bfd9d3f71d92a5a6174140a1762c84dfdb06b8bb1fda126a5db4"
+        "sha256": "db3a6c95561b356f2abf06fd22b0441ed03ff8b6967cef76eba24de25559eed1"
+      },
+      "congress:H001061": {
+        "bytes": 803469,
+        "path": "partitions/timelines/congress-h001061.json",
+        "sha256": "0f05f1d294d1f94fb4f13f450d3f20daa4199a5ab37b4c2d0067636fab1f1210"
       },
       "congress:H001065": {
-        "bytes": 129451,
+        "bytes": 228624,
         "path": "partitions/timelines/congress-h001065.json",
-        "sha256": "6e2d6af965638d7de5d2d585ecc4e6a8125568ac7c5f4fdcb76f105839bb4818"
+        "sha256": "7cfa8035b53a5ca15cdc94e187c7d23ffbc5982c1ec369f0b100e19eb42ceeb1"
       },
       "congress:H001072": {
-        "bytes": 299608,
+        "bytes": 440620,
         "path": "partitions/timelines/congress-h001072.json",
-        "sha256": "724bf9650a805a2a090aa734958e6ab550be8b7fdde312d8181d053ab6bbd806"
+        "sha256": "66b06057351c4dac6d229b9597dea289f15e8f751ff7770729a03565888425b5"
       },
       "congress:H001082": {
-        "bytes": 1157811,
+        "bytes": 1155798,
         "path": "partitions/timelines/congress-h001082.json",
-        "sha256": "54b2df3b0860f1acf3a5a6a7f120b3a962a18e7c0c91809a5db5d2bb1a915422"
+        "sha256": "ca7cb03ce74dd236bf8946670ceddbfe104b1386fc8785291a97ac11b5bd13c9"
       },
       "congress:H001086": {
-        "bytes": 103702,
+        "bytes": 219498,
         "path": "partitions/timelines/congress-h001086.json",
-        "sha256": "487e7f3a3b7a1b6ea5339a898fd74761ee7119851186ddd196fc8be63192a413"
+        "sha256": "9e06df2600d1ddfbe773a953bb87caad834ea56c93e2dc4bf22b268690e7b467"
       },
       "congress:H001094": {
-        "bytes": 472728,
+        "bytes": 469798,
         "path": "partitions/timelines/congress-h001094.json",
-        "sha256": "22484ca0a8fe91c61c52bd22cd62d2bd7af951ce4b2a7ae44101d38812824fd4"
+        "sha256": "fb79abb3202fe941a7323c09ae040c3a865cfdb2778ce811ac7ddb16851c0736"
+      },
+      "congress:H001104": {
+        "bytes": 106072,
+        "path": "partitions/timelines/congress-h001104.json",
+        "sha256": "9914babcde16894bda389a73f539c88eaa98c738789c86867d09e0d3bdf1e9fc"
+      },
+      "congress:I000024": {
+        "bytes": 765788,
+        "path": "partitions/timelines/congress-i000024.json",
+        "sha256": "56debe145e0da7e0d7cd503e39bf5d128ce77885f0db3d1d17044d7d49a357a2"
       },
       "congress:I000056": {
-        "bytes": 282197,
+        "bytes": 459714,
         "path": "partitions/timelines/congress-i000056.json",
-        "sha256": "c5787697456d10487fa6b7074020bf2a96a14b098484f1dace8801b7571d7175"
+        "sha256": "561e13257976b975d80aee2e2d0d56f46fc6067c6166a526af89c3f812a29d6d"
       },
       "congress:J000020": {
-        "bytes": 390712,
+        "bytes": 346867,
         "path": "partitions/timelines/congress-j000020.json",
-        "sha256": "d9a2c28fdc843ce1e47cc95a7437c9b5ab08a7101ede97e0246753f0145773d1"
+        "sha256": "e7e5a95f0345d03424497e487db30c8b30d789e5c130b85fd1c02d5199137ab6"
       },
       "congress:J000289": {
-        "bytes": 284634,
+        "bytes": 468703,
         "path": "partitions/timelines/congress-j000289.json",
-        "sha256": "c6c9ce5f016eec8fd79e607f2be66e86d3e07943b66f47ea0b7aae5da7dcfa06"
+        "sha256": "db6ae62babac148aa4c9802b7c6de517309d7158d17c93c7980c022c5adc2710"
       },
       "congress:J000292": {
-        "bytes": 206479,
+        "bytes": 310225,
         "path": "partitions/timelines/congress-j000292.json",
-        "sha256": "5675b90c565b22f47321ae2808f9668db9f2fa36e007d4fbf3fb7df2f20a2b3c"
+        "sha256": "9d9d319136419cbf2d799f4e44896d55884288affba47dbb229300bbe63dce69"
+      },
+      "congress:J000293": {
+        "bytes": 393708,
+        "path": "partitions/timelines/congress-j000293.json",
+        "sha256": "502fd845bad15e750fbb8cef96f1bec2bd5bc1d94ed1d601aa19e5b794e4144d"
       },
       "congress:J000294": {
-        "bytes": 263513,
+        "bytes": 425333,
         "path": "partitions/timelines/congress-j000294.json",
-        "sha256": "0eb3a8e7e3c5ff4d59f36c6efe02e71d525798f7f7f7d3364eb259b4cc31a8e4"
+        "sha256": "ae4bb2d1649552c1d3eb4737c277f7b7008570c22b872942f4a11c5e589c386c"
       },
       "congress:J000295": {
-        "bytes": 486141,
+        "bytes": 682680,
         "path": "partitions/timelines/congress-j000295.json",
-        "sha256": "aac70cd7a2e1bc8222e75b591eb4525f055a0d218d74b9f9fd99b5ef1d77f2ee"
+        "sha256": "ff3455f5b579bb2f558acaea4ff29bdf579e97a72b4da10f7f50395bbb75a6a3"
       },
       "congress:J000298": {
-        "bytes": 170194,
+        "bytes": 281594,
         "path": "partitions/timelines/congress-j000298.json",
-        "sha256": "ee636713b778c6e6639287d4ed4c1c052fd0a8f21b874bdcaecda98cc0dc7dca"
+        "sha256": "45933bb149ecf115a6baef236e5ecdaf1e61581c9144fd14e26fd3b72788f8be"
       },
       "congress:J000305": {
-        "bytes": 168723,
+        "bytes": 239212,
         "path": "partitions/timelines/congress-j000305.json",
-        "sha256": "bdcb807137ae0210fb0a7a0210d9046d37107187e18f9fd8eaa90d345c84a2f3"
+        "sha256": "7ee5b46e3b814c1c16ec1ef6ef8de52e5133a77f360c3d8df2b965966a56554b"
       },
       "congress:J000307": {
-        "bytes": 344827,
+        "bytes": 346349,
         "path": "partitions/timelines/congress-j000307.json",
-        "sha256": "d8870fcb3418821676bd5aff9497d5aa7aa60cf90b2c736f337b1a799644b0ff"
+        "sha256": "68ef4a8f09521eb5878e881a3823f41ba61f126d95b1780661c1b8d5a774d88d"
       },
       "congress:J000308": {
-        "bytes": 30624,
+        "bytes": 40800,
         "path": "partitions/timelines/congress-j000308.json",
-        "sha256": "0d804af3b639d5e722b58185443b433feffb364d8d284ea0736372a497597341"
+        "sha256": "0f7b7938cafec4e384bdc5f2d0bced84a105fa99d9b9a875b79b520f9526fbdc"
       },
       "congress:J000309": {
-        "bytes": 310058,
+        "bytes": 413297,
         "path": "partitions/timelines/congress-j000309.json",
-        "sha256": "08f9084277bae257b64ec500097508d810c2bb7e44c69a31ac6b8f099bc46e0e"
+        "sha256": "1b009ac86999115c006fb50346fbc383dbff2fa01652e995d63ece287f2fb419"
       },
       "congress:J000310": {
-        "bytes": 544657,
+        "bytes": 448460,
         "path": "partitions/timelines/congress-j000310.json",
-        "sha256": "f866f7664874fc1deeb51e46d02a31a6990cefec07a0d753bf5b24bd8648b190"
+        "sha256": "686db75c221096ad0ee1029304900786a5e639a85d2564c7a41096583be0c866"
+      },
+      "congress:J000312": {
+        "bytes": 106145,
+        "path": "partitions/timelines/congress-j000312.json",
+        "sha256": "52e6aa0996bdb93506c5013d360224674da898ad0fd8502fa9c75c21b2263d86"
       },
       "congress:K000009": {
-        "bytes": 284659,
+        "bytes": 470019,
         "path": "partitions/timelines/congress-k000009.json",
-        "sha256": "f27c2f048eca5bd870eba23b96f022afcf0b208de0b5d98fffff4cc5cfdb3581"
+        "sha256": "c84898b2b0597d41e7347a1717c96fd9566e7c18e0b9c94040c4781ebe227899"
       },
       "congress:K000375": {
-        "bytes": 525137,
+        "bytes": 711941,
         "path": "partitions/timelines/congress-k000375.json",
-        "sha256": "46ff460bd82389ee46bff505d895229ca950af34f8cb4546303845c4ae88149f"
+        "sha256": "b6edd2c7cfb2236340adc4b9a8a3bfebae22f0283ab5d809a07b53ab4e5a36f2"
       },
       "congress:K000376": {
-        "bytes": 364750,
+        "bytes": 664610,
         "path": "partitions/timelines/congress-k000376.json",
-        "sha256": "0167f19ac131c488ebb35c6d2d0fad01b5f42fd6319b48a3e661f5425db44123"
+        "sha256": "830f9a0d9f873dc105a07fb8ab6cf938ede761380e6ec0c36bb3fb7e4ca7e1aa"
+      },
+      "congress:K000377": {
+        "bytes": 210664,
+        "path": "partitions/timelines/congress-k000377.json",
+        "sha256": "b80d40479fe3945f865451d87a38579272ca8fe6c34762830acb20380e4556ef"
       },
       "congress:K000378": {
-        "bytes": 251168,
+        "bytes": 356257,
         "path": "partitions/timelines/congress-k000378.json",
-        "sha256": "5d3df9fa4ab65d05dbbb205942369aea6dc479b2c9678b9e184df99d5c94d6c5"
+        "sha256": "2898db49d750803e26b308535d9c5d154bc00d034d6b8099ca5da1a9d2e69c0e"
       },
       "congress:K000381": {
-        "bytes": 186699,
+        "bytes": 277645,
         "path": "partitions/timelines/congress-k000381.json",
-        "sha256": "8818638d30b3ba53d13fcd71308bd22b8a7e6d2d6079865bf5b25fe3dff81e9d"
+        "sha256": "9d2deadb700fcb1d09227b4c357b800ec0e1d99832cf55f90634f4b2832b97c2"
+      },
+      "congress:K000383": {
+        "bytes": 691188,
+        "path": "partitions/timelines/congress-k000383.json",
+        "sha256": "23bac9e570e9b4183da3cea6bb4fc9bd29edc7365a8147b87aad2d00bc9827ca"
       },
       "congress:K000387": {
-        "bytes": 76611,
+        "bytes": 128635,
         "path": "partitions/timelines/congress-k000387.json",
-        "sha256": "e2461a6fe52da9625e89062792609890846abb162d4eb1fcd4e62f6310f8aba4"
+        "sha256": "c419b6f877681ad2cdb49bcc63f6d9c320e9af32b3bc531348e7636c9011138e"
       },
       "congress:K000391": {
-        "bytes": 166010,
+        "bytes": 278073,
         "path": "partitions/timelines/congress-k000391.json",
-        "sha256": "5f650883423a457d206a94b5c96e406a52d06ab7ddf013348a159b145c303843"
+        "sha256": "2b85972de0c270576a8d6afb4cf18e6a2cda84e8bbc55b627684f5f9bdbafc6b"
       },
       "congress:K000392": {
-        "bytes": 171728,
+        "bytes": 317797,
         "path": "partitions/timelines/congress-k000392.json",
-        "sha256": "bb4e15c3859a5b24e897f1cb3365cb02cba76a07e7855ea693ea0d0679480e03"
+        "sha256": "7e831c48d4dc2053957c32c4abee6677525315b5d7a092b8737e20ea9b495a46"
+      },
+      "congress:K000393": {
+        "bytes": 296548,
+        "path": "partitions/timelines/congress-k000393.json",
+        "sha256": "413ce0bf0dcb9825a3091382d0e83c01ec372ad3ae995844d7b34e2b4c029859"
       },
       "congress:K000398": {
-        "bytes": 276700,
+        "bytes": 378012,
         "path": "partitions/timelines/congress-k000398.json",
-        "sha256": "f30b2550c4b400227ba523587a6a7dc573d5c59875dd14dc044b2d34d6c297d2"
+        "sha256": "6957b537e56202afe1066ef4783507ebc3714b5d5e21d6c6b2ecd5f4abe3996b"
       },
       "congress:K000403": {
-        "bytes": 41171,
+        "bytes": 97891,
         "path": "partitions/timelines/congress-k000403.json",
-        "sha256": "27d69526e953a1430cb3c5b4fdb572d4b1207dec9e7b850f72bc3d930c85bdb1"
+        "sha256": "ea6e5b345ff4643410e06ee5a35f18ad4d80bb9f06d2385fff0d43c41bcc3f4b"
       },
       "congress:K000405": {
-        "bytes": 43375,
+        "bytes": 99017,
         "path": "partitions/timelines/congress-k000405.json",
-        "sha256": "f9381d938e2abadc555b4c9184378859ce16f6416a21b28207d2736673dd931c"
+        "sha256": "6a9a22f94338e4759219e06f863360c4555d944bad66053b2485524aea5ce7d0"
       },
       "congress:L000273": {
-        "bytes": 104134,
+        "bytes": 184034,
         "path": "partitions/timelines/congress-l000273.json",
-        "sha256": "ac5c491714135ceeadffbdb62a5886562ca6925117a02062d470539048c75dce"
+        "sha256": "05cb0485102307cf841a6ee02c28ce79a3f94389ca6d6cf4d8e94021e1d9e3b0"
       },
       "congress:L000397": {
-        "bytes": 855446,
+        "bytes": 986775,
         "path": "partitions/timelines/congress-l000397.json",
-        "sha256": "f1087f80097842594ca53620a78cc2a8e3a053606fd0a43d89fe1c408e94e3b1"
+        "sha256": "87a446edbf1b1f3bdee284de6d523d451ce0041cd368791a1417fc3661b789b2"
       },
       "congress:L000480": {
-        "bytes": 178076,
+        "bytes": 288840,
         "path": "partitions/timelines/congress-l000480.json",
-        "sha256": "f0dabbe4af3df4828c852f4cd90884f7cc2baf6479bb4e8cfd5004f60ac0f779"
+        "sha256": "1e7200b15e340dbbc7bac80e22c8d4e2c748071d1785d80fe202f35d3b5c80ed"
       },
       "congress:L000554": {
-        "bytes": 261140,
+        "bytes": 373336,
         "path": "partitions/timelines/congress-l000554.json",
-        "sha256": "5e070127d5149e27367fdffc3c096035ae94d064a82c0a37d63f6a28c6ff2143"
+        "sha256": "2b74a0f68b5dd11b136a8fd8fb76740f8637b1aab3b5bf3713e35604338159af"
       },
       "congress:L000557": {
-        "bytes": 336237,
+        "bytes": 617804,
         "path": "partitions/timelines/congress-l000557.json",
-        "sha256": "66c411f157c700d3ef3dd65f1d34af147f6081d2efaae954627115d3953a992c"
+        "sha256": "845f1eb0fcc713ce5826df2a0f54e3534bf0c81a32b0d2df682d91c06acefa27"
       },
       "congress:L000559": {
-        "bytes": 742265,
+        "bytes": 901059,
         "path": "partitions/timelines/congress-l000559.json",
-        "sha256": "452a4ac9845548201b8fa29557c2c9a6b238b02f87201867b169e762fe25b902"
+        "sha256": "df2af03ece7cf76698423e613430a17531aa709a54c8123f9012b4354d20b560"
       },
       "congress:L000560": {
-        "bytes": 401789,
+        "bytes": 597490,
         "path": "partitions/timelines/congress-l000560.json",
-        "sha256": "c56aa44942464f0f48502fdc6e69927eecd968aa4683c492bbd6e8485091b08b"
+        "sha256": "94ca24f8b64721dee4fe8fb84d4f7646b8fe5e81589eaf61efacee7705c523e3"
       },
       "congress:L000562": {
-        "bytes": 306601,
+        "bytes": 502413,
         "path": "partitions/timelines/congress-l000562.json",
-        "sha256": "795eff95ee6ec40497ce688340988002de4bbfd2ac8c641bb66325b0d8009fa9"
+        "sha256": "360b46f86f9ee0b98fb92b054a08392fca761cf9a5faef3f3593a2f09c8825de"
       },
       "congress:L000566": {
-        "bytes": 330307,
+        "bytes": 560481,
         "path": "partitions/timelines/congress-l000566.json",
-        "sha256": "19ff14ea94d4b19781dc4921a9bc9aa86880281101be68172114c85a651688d7"
+        "sha256": "d10adbffb018b16635075899d09b8c3a080dc4dd82f6d580c0b2abd38a666e2c"
+      },
+      "congress:L000571": {
+        "bytes": 392710,
+        "path": "partitions/timelines/congress-l000571.json",
+        "sha256": "f19e110381a955a1e143722f4b1a22b88c39c8d2a876974d998a8cb62f183265"
       },
       "congress:L000579": {
-        "bytes": 1811393,
+        "bytes": 2066727,
         "path": "partitions/timelines/congress-l000579.json",
-        "sha256": "e251b579964fda544d410fdcd07334bda5b216ad0b9bf8f62e1903b6a0837532"
+        "sha256": "8902b481f9bdde4413ac6a76c59807a8978aeeb38fa5907b900d403d8ff13305"
       },
       "congress:L000581": {
-        "bytes": 171865,
+        "bytes": 248031,
         "path": "partitions/timelines/congress-l000581.json",
-        "sha256": "ed039c8c71c3b4220c32e1df84fe4c839a19387398d624655293071b5b1645aa"
+        "sha256": "02eedde546c44b8fd8db38c85baf5e02404e56d06b91d66176d0e5b630ffbf5d"
       },
       "congress:L000585": {
-        "bytes": 196900,
+        "bytes": 317542,
         "path": "partitions/timelines/congress-l000585.json",
-        "sha256": "843b86aa0d52e50f6ec432add7d25b01807aa0b5ecb99947a7d9a69888876b4b"
+        "sha256": "a52b7045b8b34fbe510d107c3d87716b3546504ff93e028497414b888768fb03"
       },
       "congress:L000590": {
-        "bytes": 1453300,
+        "bytes": 1075750,
         "path": "partitions/timelines/congress-l000590.json",
-        "sha256": "4450de87307295351ccce06eb46da4b90df8356f9e369dd926d8b10acb4aadc6"
+        "sha256": "4a7b06d3b027104ee1a2ee0c6d4e7edf3604172f110cc810323ab1c4f23e95ee"
       },
       "congress:L000591": {
-        "bytes": 75603,
+        "bytes": 103686,
         "path": "partitions/timelines/congress-l000591.json",
-        "sha256": "5ae6c90725d9971edd908f1e3d9255243c1da29d97809de584eeafb449fadba6"
+        "sha256": "6ea118337be7e25a382a32df8c8e37690167ce2ba57362c34cf16c7465161be6"
+      },
+      "congress:L000594": {
+        "bytes": 396149,
+        "path": "partitions/timelines/congress-l000594.json",
+        "sha256": "93b533b1c7d14f1ad494eb73ed145b67d5a68319114e0690656cf00813ea42ad"
       },
       "congress:L000595": {
-        "bytes": 389728,
+        "bytes": 433430,
         "path": "partitions/timelines/congress-l000595.json",
-        "sha256": "1e83d62103721ab4d2c1181fe9711fdd91b84869bbd299198e64121e01a7de66"
+        "sha256": "eecc94ffaf35b6d16001b9eaac4e298033031735c5033dd305e423e89675b7be"
       },
       "congress:L000596": {
-        "bytes": 68151,
+        "bytes": 133622,
         "path": "partitions/timelines/congress-l000596.json",
-        "sha256": "c3b1908993e2b787933b51b0d206e017451282d5c45a0d0fd72d8079cff2be2e"
+        "sha256": "ac6a5249c9e7f28f53f61b22746e177ac220d179e0682bbd228b4c9ef5f4f414"
       },
       "congress:L000597": {
-        "bytes": 96972,
+        "bytes": 188591,
         "path": "partitions/timelines/congress-l000597.json",
-        "sha256": "c2712927c1d7d59dc09c400d3f8c4dbb539c22416a1566876053bde1468e5372"
+        "sha256": "f58307c1de68e64a1e669049f3cff98d031b82b5b11706d61c0f26a8f59e43fe"
       },
       "congress:L000601": {
-        "bytes": 276400,
+        "bytes": 367322,
         "path": "partitions/timelines/congress-l000601.json",
-        "sha256": "9bdfae330506f2a2711342d70ab4f8b52780d8043444e685d47710e3173cbcbd"
+        "sha256": "b72018d5fd26443520f6c973c6b445f6b1f060308f3998c21427c341c95dfe01"
       },
       "congress:M000087": {
-        "bytes": 467340,
+        "bytes": 600293,
         "path": "partitions/timelines/congress-m000087.json",
-        "sha256": "4949afda942bf46a2e76c2fb3fac44e72fe9a71c4d814a9d363ac2166c336b7c"
+        "sha256": "45ed93b153ae3ae7cdc3d2d22f0236d9974b46b99cb44719743aa84c8cc3f97e"
       },
       "congress:M000312": {
-        "bytes": 287711,
+        "bytes": 474092,
         "path": "partitions/timelines/congress-m000312.json",
-        "sha256": "89af27a00058420432d7c5d664a054ed452a5f0b5110649cc9e1e76eaab6a778"
+        "sha256": "d43551f30826255705762d491cf2850b7fbb0c3c62e999fc6399264d8817368b"
       },
       "congress:M000404": {
-        "bytes": 159800,
+        "bytes": 252389,
         "path": "partitions/timelines/congress-m000404.json",
-        "sha256": "7290a3e83b4f94ccfd2a5cde24771abef9d133780da532ba453afcbfc5064e68"
+        "sha256": "3b4357846774ac396585eebe36780eb6cf7aa09fbc90af2a3a7a5e979170b376"
       },
       "congress:M000871": {
-        "bytes": 102203,
+        "bytes": 183169,
         "path": "partitions/timelines/congress-m000871.json",
-        "sha256": "82d9a62a5a62f1c6d424369b77a0d70464a9a3ec9e3b6a1211d7122ebd7884b7"
+        "sha256": "f5f3750f53fb84a6b63258890715ce5bf49bdce87b05cb20aecd3df5b20ba60e"
+      },
+      "congress:M000934": {
+        "bytes": 868014,
+        "path": "partitions/timelines/congress-m000934.json",
+        "sha256": "04744a9e166b5505aa88852d08ce6bb49d8a6badd664262e847ca0f52883e923"
+      },
+      "congress:M001111": {
+        "bytes": 608400,
+        "path": "partitions/timelines/congress-m001111.json",
+        "sha256": "d8c0a074d4b335b90d521d3beda7e9ef2a745abb3a49dceb764dd07f9c7d4fb0"
       },
       "congress:M001135": {
-        "bytes": 877252,
+        "bytes": 861427,
         "path": "partitions/timelines/congress-m001135.json",
-        "sha256": "adfb8a9b5a1aef65c18cfca6beadd0f567e30a48b002bad2f0347c47b1e7761a"
+        "sha256": "99e1e3fed573b896c41c8601695985c3d554116e28359d527917c0562c57be69"
       },
       "congress:M001136": {
-        "bytes": 1517120,
+        "bytes": 1167075,
         "path": "partitions/timelines/congress-m001136.json",
-        "sha256": "57295a2be81b0a8fc0a402679852e77ceb5710037c0605eac365328594267aac"
+        "sha256": "e4e27f686d619d681310e483ce9d72cb67c34a1814be8d560d8ddc10e7bad981"
       },
       "congress:M001150": {
-        "bytes": 111666,
+        "bytes": 187649,
         "path": "partitions/timelines/congress-m001150.json",
-        "sha256": "b3d35ca91c99d0e3d2fb6523fde4466e519a175454a37c737f13115cadb2c09d"
+        "sha256": "7d7034606fc3f973dc9d518ecfdc7a2d5bdb0ce10a197ebf00abb2a6d7dd5f4f"
       },
       "congress:M001156": {
-        "bytes": 248398,
+        "bytes": 379668,
         "path": "partitions/timelines/congress-m001156.json",
-        "sha256": "205829a926607dc6e1a5d8b59806eb50c62df524228a4acfd40b6c7fbda499a7"
+        "sha256": "5041578c068b9ab031f72010ba6f025d414b5cff09b8d8ae21263e81eec18ce6"
       },
       "congress:M001159": {
-        "bytes": 249541,
+        "bytes": 381260,
         "path": "partitions/timelines/congress-m001159.json",
-        "sha256": "253eef8edd9486bdb6dbf4f7e46dbf978f8b4f096a9575e33399eeab2114a09d"
+        "sha256": "59244c30c681de758a4017e6897399b6fdeee6373162844d59b08336f2afb339"
       },
       "congress:M001163": {
-        "bytes": 338175,
+        "bytes": 538741,
         "path": "partitions/timelines/congress-m001163.json",
-        "sha256": "d464b2b205a40d9d6ddc3c6f1a0b78496fa01461dcb40ac333d11137c9abaffb"
+        "sha256": "1a63dbbc3de57defc5360332bd2a80aaf936cfa459e1f2c286fdbf03eddc0497"
       },
       "congress:M001180": {
-        "bytes": 723522,
+        "bytes": 716067,
         "path": "partitions/timelines/congress-m001180.json",
-        "sha256": "c98bc13291f036a9f493900075ce1dc893d79ded2a81fe84dcabbf382f950457"
+        "sha256": "85b7aa3af31f2960149760a8615fda8fb68f51d9dea5ae5f7218d3670c0f352f"
       },
       "congress:M001182": {
-        "bytes": 167871,
+        "bytes": 222403,
         "path": "partitions/timelines/congress-m001182.json",
-        "sha256": "1c355149904ec35e0b3e42ad0f0c33d5fe12c913608efc1d6c6a4aadf70ae007"
+        "sha256": "ee4c5f8bff5309b9da336e71079411221135f35d3f88865e794db166ce3c6b01"
       },
       "congress:M001184": {
-        "bytes": 240825,
+        "bytes": 387564,
         "path": "partitions/timelines/congress-m001184.json",
-        "sha256": "b37e8efe1301ae3bde9f418f3d2280167de00089b3c7ef062d4b01e5361daf01"
+        "sha256": "fadcf6bace17e4150e66cf34f747a6251412dc6627b6eedceeb906fcfa5fa1a4"
       },
       "congress:M001185": {
-        "bytes": 173175,
+        "bytes": 252172,
         "path": "partitions/timelines/congress-m001185.json",
-        "sha256": "89ec43b73960f8c73bb5b5b4ebc4b3c57b3c42377131843a7df225eb96686f06"
+        "sha256": "cfc88591da11a5f2ae1517443e5c4e293ab50c03d3ad99336a70ef319cbab98b"
       },
       "congress:M001186": {
-        "bytes": 58127,
+        "bytes": 73805,
         "path": "partitions/timelines/congress-m001186.json",
-        "sha256": "07fc0e3b564be0343bc638e6eb424dae9659d1b94b04de338850b0f1b1841832"
+        "sha256": "615123032c7e0915d14e28a2c8535e56cd24a27c18774061d904f27965bd4017"
       },
       "congress:M001187": {
-        "bytes": 133565,
+        "bytes": 199378,
         "path": "partitions/timelines/congress-m001187.json",
-        "sha256": "fc5e721266bffb40bca81d40dff1e6c8076f9e6a262fd414e930670056d3df80"
+        "sha256": "2947177ed3d6fc44cc9b308e9bee8b5ee5c0b5062355c3248b5aeceee74f8aaa"
       },
       "congress:M001188": {
-        "bytes": 252429,
+        "bytes": 393507,
         "path": "partitions/timelines/congress-m001188.json",
-        "sha256": "db47208d052b2bb9d744ec24f4905543dba6932482e889dac1e569406d8cf870"
+        "sha256": "86c92aae4164b319d7cfb173323a235555b1bd2e4ba012a923503ed4bd26ae45"
       },
       "congress:M001190": {
-        "bytes": 216710,
+        "bytes": 1060361,
         "path": "partitions/timelines/congress-m001190.json",
-        "sha256": "08c8febb3361b8d1f5c63094c6942efcb69892a3f4695923a26424a191d3403f"
+        "sha256": "ebf11c7f503f1e1bc87e27ed9a2601593fb1ab58e0bf470fe3d6c5ebec32c148"
       },
       "congress:M001191": {
-        "bytes": 53203,
+        "bytes": 84957,
         "path": "partitions/timelines/congress-m001191.json",
-        "sha256": "cec35b44af5d696a2eba60c55422663b17b93d26f89843e54539bbcf1973fadc"
+        "sha256": "dd5f2c6eaee22cdf5db5381762c9d38636613eaa7bb9584423c3a9e6d850b5ec"
       },
       "congress:M001193": {
-        "bytes": 4327512,
+        "bytes": 3012460,
         "path": "partitions/timelines/congress-m001193.json",
-        "sha256": "75fa2d6f8360dcc4b8aec508f9e1e6c8360d53c47bc156df81cf586b2435fe0a"
+        "sha256": "c73943f513c0659e536907a2a9472fc972e3dcacba20be6fa63a7ac54e8eb8b8"
       },
       "congress:M001196": {
-        "bytes": 233862,
+        "bytes": 384108,
         "path": "partitions/timelines/congress-m001196.json",
-        "sha256": "bbd845e45a58614649502d4780bfea7778df8b761bbb1d88948c85324d99dd0f"
+        "sha256": "98c9ea103086eead25853589eedfde53c36f4ec1609f4539954ea5672789a7a0"
       },
       "congress:M001198": {
-        "bytes": 352934,
+        "bytes": 467347,
         "path": "partitions/timelines/congress-m001198.json",
-        "sha256": "d329de2a010aa89a71f10a212e3f2cb1c609238a1b9c7e8dad6bc7eae356bf00"
+        "sha256": "3ba454e083a58378d08f942f9ead6e4b90fc665d36ba2f657f0944eeb2f1b6f9"
       },
       "congress:M001199": {
-        "bytes": 310637,
+        "bytes": 445292,
         "path": "partitions/timelines/congress-m001199.json",
-        "sha256": "32b7a98dcf9ea182315e319f6a6ff73f0a08091d7053d7bd9b34205fc19763a1"
+        "sha256": "a7123f22c8c6e4a4703716d047f3fcfa832c4d171046260d91c0522677488638"
       },
       "congress:M001200": {
-        "bytes": 114051,
+        "bytes": 168138,
         "path": "partitions/timelines/congress-m001200.json",
-        "sha256": "011094036388f0d03fc1478072ac11a1c256b3aa9d992796b2041314da52b2ab"
+        "sha256": "bce642469f699e16697fb110af93bbe8fce02c6da07abafe579052d333f0ccbd"
       },
       "congress:M001201": {
-        "bytes": 73743,
+        "bytes": 111079,
         "path": "partitions/timelines/congress-m001201.json",
-        "sha256": "37e97580763ae3d584319cbce19912ea6e86be6e08a317baa4bbbd046a266b98"
+        "sha256": "19aa54ae8387f17f5ec252ea3c508fa24cf61def1ae423d7f0b8bfdc51ac947a"
       },
       "congress:M001202": {
-        "bytes": 109851,
+        "bytes": 158541,
         "path": "partitions/timelines/congress-m001202.json",
-        "sha256": "0b30b668db8c92bf6154086a2b19a44d989ab066bce70719d63017fe1ae32ddc"
+        "sha256": "843738f223ac02c1ce63ab23783f6afeb7cbdd3b006541928a1b0c5ca40ca27f"
       },
       "congress:M001203": {
-        "bytes": 460146,
+        "bytes": 357897,
         "path": "partitions/timelines/congress-m001203.json",
-        "sha256": "34da96dc446b0f3a42af65813dd0a50607fb17ba818f9b8f5c7efa9f65b81831"
+        "sha256": "fc7653449376c455649c0579b56d31fc95cbecb382ed729f0e66a71eccd780f0"
       },
       "congress:M001204": {
-        "bytes": 258656,
+        "bytes": 441270,
         "path": "partitions/timelines/congress-m001204.json",
-        "sha256": "e6b8146eb2ef5d089908ec16ad7a748af7c8d591b5da65fb821d49ff4314be74"
+        "sha256": "b906c5c8f79ac81cd9f629f1e8b2e943fc26e14d569bda192e8fc1d6da0f297c"
       },
       "congress:M001205": {
-        "bytes": 294893,
+        "bytes": 384000,
         "path": "partitions/timelines/congress-m001205.json",
-        "sha256": "dff0396e50c52313ede328a486fcc8c8f26217fcae5cec7d65ae9b84df6a0bd8"
+        "sha256": "9b8ff279f90ae73aad92ca30643a9efbea4b7f2a14385ecb9d8dbe057e94984d"
       },
       "congress:M001206": {
-        "bytes": 181109,
+        "bytes": 281390,
         "path": "partitions/timelines/congress-m001206.json",
-        "sha256": "42895e2ebbcd08b7b84902f83199f4c0918bffa4691dee4fa55d34e8b0c17c99"
+        "sha256": "4f9ac32aad686281186d0e7a9de4145d8843bb37588ebf5e431d3721f8c6b681"
       },
       "congress:M001210": {
-        "bytes": 144367,
+        "bytes": 235734,
         "path": "partitions/timelines/congress-m001210.json",
-        "sha256": "2a8c6b183912d5597ead1c01a9072d5539f7fe00d7a0d946019c23dc4dc0599e"
+        "sha256": "667ca30c4a4a7832d0fa115aa650eaf0ea34c121ffc6b67d2fb21c6b3dedb71f"
       },
       "congress:M001212": {
-        "bytes": 112811,
+        "bytes": 197498,
         "path": "partitions/timelines/congress-m001212.json",
-        "sha256": "75f687abd41719802b8d7aedab73bb0a55e292f35b8c16e290a6cebfd47181fd"
+        "sha256": "979f5c5ee7ae36164fb167e5cfe648ea3a4fd4ca4b5051785e922bda46f218cb"
       },
       "congress:M001213": {
-        "bytes": 297639,
+        "bytes": 436217,
         "path": "partitions/timelines/congress-m001213.json",
-        "sha256": "4bf5be53c4cfc0925c99c58f4be3680c0d57589db9cf652563d327e459c9f489"
+        "sha256": "3fe80f7c56c172cc218196f18a17cd9235863516eb719df2ff1009bc5b590ae5"
       },
       "congress:M001217": {
-        "bytes": 542386,
+        "bytes": 554638,
         "path": "partitions/timelines/congress-m001217.json",
-        "sha256": "1c82e8daedde7778d1eb5750bf0308cc04dd54ec3f53ddbc0bd19144c8e78d6c"
+        "sha256": "63ea14d00978bbbb989c980937fa0066d207887e13264f9525e834dd4c7e2622"
       },
       "congress:M001218": {
-        "bytes": 185457,
+        "bytes": 250542,
         "path": "partitions/timelines/congress-m001218.json",
-        "sha256": "fd2f1f3dc84058ef1bce3eec41691bdb6fdaaaab006bfc6de7284e200809b435"
+        "sha256": "6c3818502cdce553e1b647185c5a252640914515446a81b496ee67c29ea86101"
       },
       "congress:M001220": {
-        "bytes": 105677,
+        "bytes": 209664,
         "path": "partitions/timelines/congress-m001220.json",
-        "sha256": "c7a786515f5dbe8cad9cef36033d5225609b36594feea4a99e8ccac85a719f68"
+        "sha256": "e868ca5be779bc5ba5f63ea88b68f01dad99357b1b08a2996f9edc8cfdcbfdf0"
       },
       "congress:M001222": {
-        "bytes": 162922,
+        "bytes": 275998,
         "path": "partitions/timelines/congress-m001222.json",
-        "sha256": "4d6ea40f089ea0b68eb341739051ae2da66857b15a40d719d4dbe8381ad5b06b"
+        "sha256": "95eaee407503531ea66fe96d4c9b4dc83aaf8d5944a06a1500b20bc63e879236"
       },
       "congress:M001223": {
-        "bytes": 66317,
+        "bytes": 131324,
         "path": "partitions/timelines/congress-m001223.json",
-        "sha256": "883dcedae0204b76d62b64e7e65ed1e05f371f3035d256d4fae3c6729f22460e"
+        "sha256": "edb7efeed2ae389076b33524416664207a8ac302705c6f599b0f9164e4f77f89"
       },
       "congress:M001227": {
-        "bytes": 69429,
+        "bytes": 136658,
         "path": "partitions/timelines/congress-m001227.json",
-        "sha256": "88bbf3b89164b6a4870159bf1e7f17132ffe3b48708dc8a408cd206d6271ad78"
+        "sha256": "e891a1602a0f78643cc4cfaa2f143d5e819ba754a2206a3c9a2df0dd4071345f"
       },
       "congress:M001232": {
-        "bytes": 377606,
+        "bytes": 308758,
         "path": "partitions/timelines/congress-m001232.json",
-        "sha256": "3e680acfd19b4da9003cee0be135f615668e78fb81f02a6f7be033e86e69574c"
+        "sha256": "94445977ae2f24c40ba858e3b09666110a1be08f956528d554238043744c49ca"
       },
       "congress:M001234": {
-        "bytes": 182670,
+        "bytes": 250634,
         "path": "partitions/timelines/congress-m001234.json",
-        "sha256": "f0dcf5bbd3406fc6276caaff54ce70314882d3825dde757b523f1eb2270b03c0"
+        "sha256": "ed1eb1ee9a1645cbab40b8cce2b907a8412d2dac8d705209998942ae81e9eca8"
       },
       "congress:M001236": {
-        "bytes": 272224,
+        "bytes": 277779,
         "path": "partitions/timelines/congress-m001236.json",
-        "sha256": "d0f6ec54d2d4cb3b20103f16574e8b77da17c90eb3a8e505c381a959ff3c20b9"
+        "sha256": "1f0fbb6318b1cbfb9d0d6a818d197c97b4f6858922b04e9d532f5da2eee527d8"
       },
       "congress:M001239": {
-        "bytes": 66820,
+        "bytes": 147436,
         "path": "partitions/timelines/congress-m001239.json",
-        "sha256": "92a754d37cf0d28c29e206871606bf14f4655a001cc2a50372a489d70b36a71a"
+        "sha256": "b4bf42aab22495d07c8e8368a40d7ac8a1802779aee24edddaf3694e9eb1715f"
       },
       "congress:M001241": {
-        "bytes": 41908,
+        "bytes": 97587,
         "path": "partitions/timelines/congress-m001241.json",
-        "sha256": "a17f339cce67b68253c61f6ff372ecfa75528c8fe32596b80fff34c689495df0"
+        "sha256": "7216e0ccd660fdd861fa8774a949eee244c7e378c279abb05af0c18aab4c7014"
+      },
+      "congress:M001242": {
+        "bytes": 130266,
+        "path": "partitions/timelines/congress-m001242.json",
+        "sha256": "15d9d1d0606acc12fffaa285dc1fb74a3def2aa57b434ae424e699a7245646ed"
+      },
+      "congress:M001243": {
+        "bytes": 398683,
+        "path": "partitions/timelines/congress-m001243.json",
+        "sha256": "f16e5356be33e01489839297f7864a29f67083c110fe6535387f6e427b25155a"
+      },
+      "congress:M001244": {
+        "bytes": 159873,
+        "path": "partitions/timelines/congress-m001244.json",
+        "sha256": "bf9cd44fb241458c2ca9d03a834bc3d36808abcbf705b8b477b8c9f9fa411c63"
       },
       "congress:M001245": {
-        "bytes": 22591,
+        "bytes": 44834,
         "path": "partitions/timelines/congress-m001245.json",
-        "sha256": "f2e854d1c64923f7788658c67a12a92e5136f110b960862e9c176de3fa24587b"
+        "sha256": "0f0cbac311a36f9f7e4ba8d98dba3324163491534d2aba740df81647ab75697e"
       },
       "congress:N000147": {
-        "bytes": 346373,
+        "bytes": 467931,
         "path": "partitions/timelines/congress-n000147.json",
-        "sha256": "de380b228756757bfab8748cfca4f95f53d7a72636078f3f022cc4df5fcf5c57"
+        "sha256": "17a133e2fb24e9aa25f9dceb1802a143aca7d816444c194f61a8d583635fb1ff"
       },
       "congress:N000182": {
-        "bytes": 208387,
+        "bytes": 324414,
         "path": "partitions/timelines/congress-n000182.json",
-        "sha256": "f45688407f50248f2cf8a9a68c643922b7f1bbaad274fd8da5acfad8d443345e"
+        "sha256": "8a9527642b9000deb62f6d9b62762abae35d5a13c3003975b48d3da6f9b3e1fb"
       },
       "congress:N000188": {
-        "bytes": 212484,
+        "bytes": 343321,
         "path": "partitions/timelines/congress-n000188.json",
-        "sha256": "8ec1e5bd284016c0f9cb2784baee193df14e0da5d327fbb78559d7a57958f697"
+        "sha256": "d42597418892e6eb71e7cf161c7a1da442a8d7806ea97c63a98b188e3553c0cc"
       },
       "congress:N000189": {
-        "bytes": 410494,
+        "bytes": 528211,
         "path": "partitions/timelines/congress-n000189.json",
-        "sha256": "fe2c07ce180305e6c9175d71eee6a27a5ab79bd2f574837e91234d7b5816f48c"
+        "sha256": "8a2a37951e51f5fbc62fc93113c1f1ddff7ce3fb2f0292d8d3f6edf3b5ddee46"
       },
       "congress:N000192": {
-        "bytes": 301672,
+        "bytes": 263551,
         "path": "partitions/timelines/congress-n000192.json",
-        "sha256": "f98621987567ed24e9a4eb0c33ef313933a0752eefcc2d43320043c0f0588873"
+        "sha256": "ec77ccb7d17dbdb7bcb35b7fa5f0ea6aa204f025f9c528c924f7091fca18ae04"
       },
       "congress:O000170": {
-        "bytes": 87164,
+        "bytes": 141665,
         "path": "partitions/timelines/congress-o000170.json",
-        "sha256": "0244a3e3f7e22f5c4611e639cc3aa8da4f7f41bde2d7d1283352cc587cb7be0d"
+        "sha256": "92ca121e26d5b175aef9b4e828bb71c6ce588d67442ca93618dca73f5be90235"
       },
       "congress:O000171": {
-        "bytes": 115579,
+        "bytes": 168719,
         "path": "partitions/timelines/congress-o000171.json",
-        "sha256": "aa7a6f8a125d7158018beb8ea71cb60bd05f05f575c90f68d6841aa3f3a2d2cc"
+        "sha256": "b30691271440f518713825f95cb720db4a04b5faa82ae183a5a612ad8ce2b22b"
       },
       "congress:P000034": {
-        "bytes": 301215,
+        "bytes": 492048,
         "path": "partitions/timelines/congress-p000034.json",
-        "sha256": "3da0fab62100146f7ca4128d1205f914588079fd371252127d38497954fe4c1b"
+        "sha256": "9fec00735bf1ac500f93474271556ee2314017a343536f83e13192d9f828492f"
       },
       "congress:P000048": {
-        "bytes": 152294,
+        "bytes": 242024,
         "path": "partitions/timelines/congress-p000048.json",
-        "sha256": "f0a7677c915718e64149b6caf3418df94d7179d5f431bdf050c535cb46f1c398"
+        "sha256": "706370c0a7d8da5514bc86b34ec955a900d33e072d9ab805c7eaf01cd41aa8e3"
       },
       "congress:P000096": {
-        "bytes": 257062,
+        "bytes": 400112,
         "path": "partitions/timelines/congress-p000096.json",
-        "sha256": "5d47fbf3019462145225493c52f5e816a9acbe2f87e6fc6883f5381b27c33d48"
+        "sha256": "d87adbf1565055f38a887adb2a17e797bb5e7e6ece785dd371c9dc9d0dcecd72"
       },
       "congress:P000197": {
-        "bytes": 611391,
+        "bytes": 947536,
         "path": "partitions/timelines/congress-p000197.json",
-        "sha256": "d0ed6281120e26a6ee63f84030a010b81441e471989bea8a7542f3c5462097ca"
+        "sha256": "f7a0520e80a894d2c1101ef0065cd1c58c295023f396e59eca37618794a7af01"
       },
       "congress:P000523": {
-        "bytes": 395687,
+        "bytes": 578298,
         "path": "partitions/timelines/congress-p000523.json",
-        "sha256": "05701929d1ec266a0327b0bb8900578c7b641d362ea93dc0136c39520dd1ee30"
+        "sha256": "f244dc8d56a98ee8fb8766296eb31d1039446859875b06932ec710e245580c90"
       },
       "congress:P000593": {
-        "bytes": 371741,
+        "bytes": 550489,
         "path": "partitions/timelines/congress-p000593.json",
-        "sha256": "a9d7f2d407b7e04e0cc0052d01016d9b5a5f099c2089ee468623f86ac5ba2e55"
+        "sha256": "166bde710e117b96dac01ddf7b141ab41cb6dd1c81e6791a37e1e81f1a7ccf6d"
+      },
+      "congress:P000595": {
+        "bytes": 835970,
+        "path": "partitions/timelines/congress-p000595.json",
+        "sha256": "103d3b2426e1683f18ad4b5b57eb20ca469bfe1e929974ef32540730a83a68fa"
       },
       "congress:P000597": {
-        "bytes": 328097,
+        "bytes": 542449,
         "path": "partitions/timelines/congress-p000597.json",
-        "sha256": "8446fbeb21cdb25d00643138071e0aef953786fee6b93512ed1a16abf0b5d2e8"
+        "sha256": "a2c2e0c47276d2b299377f15c30f556675c98b164bd1559ab92d7c069f379680"
+      },
+      "congress:P000603": {
+        "bytes": 398888,
+        "path": "partitions/timelines/congress-p000603.json",
+        "sha256": "f6403d8fa9e565fe30d63d8064121bb28ad5596818ec3557cab656a61e17aa6f"
       },
       "congress:P000607": {
-        "bytes": 225367,
+        "bytes": 367955,
         "path": "partitions/timelines/congress-p000607.json",
-        "sha256": "8afff169c6366ad81cb1cc59ee9290d46601b5fe77af823ab75b6064fa8ab01a"
+        "sha256": "86641d9d5c3142bed536122c76dece29036855556bddb2959e8a65916ba5c776"
       },
       "congress:P000608": {
-        "bytes": 1322738,
+        "bytes": 1343038,
         "path": "partitions/timelines/congress-p000608.json",
-        "sha256": "6ee733068838378283fdcb0917f4c9522abcea5f4da5d3dad912c34dde24a47d"
+        "sha256": "61c240e3b0cef5ac88ed912ebe8d95f23f7b185b06727e5b2dd0bbb299b26e3c"
       },
       "congress:P000609": {
-        "bytes": 492255,
+        "bytes": 572068,
         "path": "partitions/timelines/congress-p000609.json",
-        "sha256": "29b1a370140981c4ebaecc25bbe557e48d9867a94740d2f2f20c619dd1c2c8cf"
+        "sha256": "397dd0ad00b16218c886dbafe033bc8d254633e3a9c4945145fc031c04019ac1"
       },
       "congress:P000611": {
-        "bytes": 61147,
+        "bytes": 101625,
         "path": "partitions/timelines/congress-p000611.json",
-        "sha256": "08b60202579e3ca41b9eef55c02d344378e095fc9ba08083435e486c291c358c"
+        "sha256": "b715bf85a06e04a4da2e4049409e5b5434f4e6cae0759a28d2aba68d4ee1ac93"
+      },
+      "congress:P000612": {
+        "bytes": 2320798,
+        "path": "partitions/timelines/congress-p000612.json",
+        "sha256": "e7a371b6a3e7817a4d8a96d2b48df54a7a3f316b7d70c98f3af7c2c0c8a7baef"
       },
       "congress:P000616": {
-        "bytes": 1103424,
+        "bytes": 779401,
         "path": "partitions/timelines/congress-p000616.json",
-        "sha256": "47ece704b4c0bb3b070d42a445d10f03291fb405eefeb4b08bf667cbe38cd575"
+        "sha256": "0ca897f5576d2469f31a520bcc9f851b38bd05664eec595431395f23e080ede6"
       },
       "congress:R000011": {
-        "bytes": 97249,
+        "bytes": 156582,
         "path": "partitions/timelines/congress-r000011.json",
-        "sha256": "1cab9e3366c1bb817009f8e4ff4569059e66b02e1e2a27239ce7ac434f5826b8"
+        "sha256": "df8b19789221926ee17d1f45471cac8171a798919c80362e98a72c10b60043b9"
+      },
+      "congress:R000122": {
+        "bytes": 438807,
+        "path": "partitions/timelines/congress-r000122.json",
+        "sha256": "7d06b52e05f1d114c85f3da2fd123fc3c7d7fac3dd9eaea840d5279670fca7d9"
       },
       "congress:R000305": {
-        "bytes": 140688,
+        "bytes": 243655,
         "path": "partitions/timelines/congress-r000305.json",
-        "sha256": "6a311549a4c4fe5ab4f5c6da346c1deddf68c87c05a52618e7c06aca6d867f61"
+        "sha256": "e56595e07cc93a5d2d199c455cb22384ab74896e56ac8c488367b03686427489"
+      },
+      "congress:R000307": {
+        "bytes": 1190440,
+        "path": "partitions/timelines/congress-r000307.json",
+        "sha256": "d3bc413baf1853ff281acc626b79d29f22b76c552c4073b92aa0ec3b7759aefe"
       },
       "congress:R000570": {
-        "bytes": 152658,
+        "bytes": 228825,
         "path": "partitions/timelines/congress-r000570.json",
-        "sha256": "a87ebcf10db03bc16e173b4ea11875d555ad772b5d49c3551d7f8c2317646bea"
+        "sha256": "f3e5fa3678e28ba26cbd870136a6a3228729b171177a92b5dfdcf861af38e93d"
       },
       "congress:R000579": {
-        "bytes": 83208,
+        "bytes": 151429,
         "path": "partitions/timelines/congress-r000579.json",
-        "sha256": "7bf4325aaaa0200155443d6eeaa5880261a2ed6b1bdfa6927b6a0dba35e22a79"
+        "sha256": "c21de372ad6642645e5338d109bc84e040ded5c293fa8ec39718056c5f9e0297"
       },
       "congress:R000583": {
-        "bytes": 1029776,
+        "bytes": 929530,
         "path": "partitions/timelines/congress-r000583.json",
-        "sha256": "cb334588d9d5ea45b280f384c810b9fe99fb811de9dc8c88dec4ef02b87801fb"
+        "sha256": "bb65644f57fa4182bd36c4e521f6bcf2fda23d61121ae6c6cba2fe0e29aef053"
       },
       "congress:R000589": {
-        "bytes": 238134,
+        "bytes": 299974,
         "path": "partitions/timelines/congress-r000589.json",
-        "sha256": "fbbf5430ae36da0ea451e792c4f201eb148ea90f16ee9cf3e9e1ad7ae1a7dcd3"
+        "sha256": "1ac40a3ae31afb8df96571986a2525b5a8137752885b0c49e0658e871b0e9f37"
       },
       "congress:R000591": {
-        "bytes": 157678,
+        "bytes": 236967,
         "path": "partitions/timelines/congress-r000591.json",
-        "sha256": "b4d4459a8abbd93abde35eda06b8d8a4660dfa8a54a41ea73566cdcc78fe4a7a"
+        "sha256": "76e6d58c062aea59f5234cfd2b74f2f1a01e568036314f5e8147fae055ccf863"
+      },
+      "congress:R000595": {
+        "bytes": 386475,
+        "path": "partitions/timelines/congress-r000595.json",
+        "sha256": "0a626022147b3acd01081ded1747a14593b673b012a5e1abe2d37acd09074b65"
       },
       "congress:R000597": {
-        "bytes": 188312,
+        "bytes": 277948,
         "path": "partitions/timelines/congress-r000597.json",
-        "sha256": "255f710ac897eb1e2795c732fa5f57f620999b6ebe3fd255a4e2cd17eaeabe69"
+        "sha256": "c20d6522579745c53d7f49962a20ba079555c1af60bf2fca705c10314ab89f21"
       },
       "congress:R000598": {
-        "bytes": 98069,
+        "bytes": 159811,
         "path": "partitions/timelines/congress-r000598.json",
-        "sha256": "fe31163d3f8975ce4204b27075e6da8df9587302f230c10b530889614f8e7c38"
+        "sha256": "98ab3287bed00ebe2b51e129710b3507fe4fd34bce90053a1ff1a3383a3f3d21"
       },
       "congress:R000599": {
-        "bytes": 244830,
+        "bytes": 399330,
         "path": "partitions/timelines/congress-r000599.json",
-        "sha256": "5ccd01895aed22913ce0dd742e629038ee74f71edbcb5e183e46c4023831ce85"
+        "sha256": "318c0ce1f6f03139440c13cd0b8d36ac623d070a16c61555cd45e4240d6d7e10"
       },
       "congress:R000603": {
-        "bytes": 238224,
+        "bytes": 399185,
         "path": "partitions/timelines/congress-r000603.json",
-        "sha256": "10b1b6e81ee79003add6908599c178929f53412bc5c8eec809970ea2a08510d0"
+        "sha256": "64ab2d426da2b4033f1efc2d48e63bf91d063c4f4ca4c93ac4ccfa14bbc10c01"
+      },
+      "congress:R000605": {
+        "bytes": 368206,
+        "path": "partitions/timelines/congress-r000605.json",
+        "sha256": "6eabe728ef8c8918bde85beb1ecd85903679733b3cf03edaf3c95be2f9ea6725"
       },
       "congress:R000606": {
-        "bytes": 174646,
+        "bytes": 292518,
         "path": "partitions/timelines/congress-r000606.json",
-        "sha256": "9be475aa6af77fa1a1a2f468e8bce4b76a3f7b4ffdec2d8cdce26b7eb485c612"
+        "sha256": "94a565f4d9ce8c2cbeb90cef2afaa6566e11610d8e38492fbe5f8e4d4535cde0"
       },
       "congress:R000608": {
-        "bytes": 193318,
+        "bytes": 331280,
         "path": "partitions/timelines/congress-r000608.json",
-        "sha256": "16deeea693510fbb68d044771e70afd11e36e1fb6a316716c14f19f2bb46e235"
+        "sha256": "5cb5470efe4b840db37126c167170535c3f5d18fddb60f0eff0a0907b22bfeac"
       },
       "congress:R000609": {
-        "bytes": 614202,
+        "bytes": 662405,
         "path": "partitions/timelines/congress-r000609.json",
-        "sha256": "1c567901e74ccd840cdf20e375f82a5bdfe3e1f6d9a440f917bb707537b1a102"
+        "sha256": "139983b1e656160e1be97eb3510e058df96763899d327f5480b30bb52c172c85"
       },
       "congress:R000610": {
-        "bytes": 141309,
+        "bytes": 233937,
         "path": "partitions/timelines/congress-r000610.json",
-        "sha256": "f60e04dcff97fdb40afeea2183d1f6501814c45ebed3f0b6a0d3fa02f4ee1bef"
+        "sha256": "17d6ad13956374b3d76ca077d44ecab3761b22c5333b819c5ffe8393ea53cabf"
       },
       "congress:R000612": {
-        "bytes": 166832,
+        "bytes": 262095,
         "path": "partitions/timelines/congress-r000612.json",
-        "sha256": "2603cb4f078a535eb36b1b3dd1e9889351c70baac3f7e9cc6b62567e12548fe2"
+        "sha256": "8e4cd51b63dee0c89a434a6ee21d5d65122796f6b1d27ea2274d5186f60bf6b7"
       },
       "congress:R000614": {
-        "bytes": 151752,
+        "bytes": 246049,
         "path": "partitions/timelines/congress-r000614.json",
-        "sha256": "1fc0bf847914139e8a7726475b176d9ac6a7908070c65997b132e0096008e5a2"
+        "sha256": "7c99bf4b369179abeaf2be4c937f013d36f01875dde2a4e239507d4066c1db2b"
       },
       "congress:R000616": {
-        "bytes": 51521,
+        "bytes": 72609,
         "path": "partitions/timelines/congress-r000616.json",
-        "sha256": "e229c053bb23074370eb0817e51075b2e3cf521b6318b370e20a9c38578a3cbe"
+        "sha256": "5c4d1b58db068b6b4ab1cb995e65ba98e8ecccf1e80aebb75bf69164610c9f30"
       },
       "congress:R000621": {
-        "bytes": 51752,
+        "bytes": 104408,
         "path": "partitions/timelines/congress-r000621.json",
-        "sha256": "8d0ddebe31c4dc8cd96023616fe1f11bc1ce02bb25ece93b9313cd1f4ddf0e83"
+        "sha256": "fca2d0e069ea620ff8085f6b816b1fb1f3b816272e8851c9ceeed3e748450bdd"
       },
       "congress:S000051": {
-        "bytes": 88829,
+        "bytes": 140552,
         "path": "partitions/timelines/congress-s000051.json",
-        "sha256": "ee9083cf79de925405463f024483ce784ac7388006f3ed832b254a61bf2de684"
+        "sha256": "57487962b2d49162bb8b6dbe99afa0cf2f37e93e47ddfb5a4089be7dbd917ee7"
       },
       "congress:S000168": {
-        "bytes": 235656,
+        "bytes": 328097,
         "path": "partitions/timelines/congress-s000168.json",
-        "sha256": "02d3463dbed283b36c70447458c9f530d0678380aa7cab9e209ced2bf5b5381b"
+        "sha256": "d9257ef5745abfc4b9d9f7bc0bdb5c2d641c97210d61bc7d466dcd94562dd02b"
       },
       "congress:S000185": {
-        "bytes": 337947,
+        "bytes": 545257,
         "path": "partitions/timelines/congress-s000185.json",
-        "sha256": "3d17063829c7e6f3fbb82b361f57c34c4375ac59bac5692bbb224d43b6d7a230"
+        "sha256": "352c0e222b3f5ea7ac0cd1290f637584c3d2fc792483385db0b2cea8e35b29a9"
       },
       "congress:S000250": {
-        "bytes": 862133,
+        "bytes": 1192035,
         "path": "partitions/timelines/congress-s000250.json",
-        "sha256": "0af9911d802cf530a0f0c3f0d3cc958cc8038cbd88d39e08f3344c049155cc0f"
+        "sha256": "0ef20a8461f952a36cfc2a13b59450033c257a788102a7e4827c9c016082ece5"
+      },
+      "congress:S000320": {
+        "bytes": 300108,
+        "path": "partitions/timelines/congress-s000320.json",
+        "sha256": "03dd23963f051fa683d658bd62d5755819911f6b1ce566a6c5494cb5018bb81a"
       },
       "congress:S000344": {
-        "bytes": 299485,
+        "bytes": 493413,
         "path": "partitions/timelines/congress-s000344.json",
-        "sha256": "12a98a09d3f2ea7eff3cb902d3a1725ffaaec3fb081c55677d837a73b6fbf19f"
+        "sha256": "1460d2a909018ef84840f7b06d9f56fd4d80cf931123a445e8b4446e23e16ee4"
       },
       "congress:S000480": {
-        "bytes": 170594,
+        "bytes": 285538,
         "path": "partitions/timelines/congress-s000480.json",
-        "sha256": "c8ad8868553b13713a5de04e03786858db2e03124604b2a66d7a3425e5642863"
+        "sha256": "131d7d74f504dc1c61638e1da6a396a92fa4214da8ddddc2ab325f65db1c69ea"
       },
       "congress:S000510": {
-        "bytes": 305262,
+        "bytes": 494503,
         "path": "partitions/timelines/congress-s000510.json",
-        "sha256": "36b68dae9681bafe3db2795156ca2fabc68b52af65421469c4078277a32a9daa"
+        "sha256": "d0246aa817f7c6c4d43e1dcbbd46849a4b0b5857184041671bfc8aca6a8ed6c7"
       },
       "congress:S000583": {
-        "bytes": 704722,
+        "bytes": 688249,
         "path": "partitions/timelines/congress-s000583.json",
-        "sha256": "5edfac680ed0dbebf935be815d4f0b9abaf640bb5738cddc6b4d14ba0d730f8d"
+        "sha256": "b59a2968296cd8f4b34d39d9d8bc6acd67ff11de33ee5d5a0b7e8ac1f2c236cf"
       },
       "congress:S000929": {
-        "bytes": 149548,
+        "bytes": 261197,
         "path": "partitions/timelines/congress-s000929.json",
-        "sha256": "4dac69404cfc9c063a031b1d07712652d64349fca3c6b922918eedf7ce518577"
+        "sha256": "dbbbb4e6c40d0af05ec46c25530023765343afc69f8b3ad6b758ea15989e1ab2"
       },
       "congress:S001148": {
-        "bytes": 451671,
+        "bytes": 652710,
         "path": "partitions/timelines/congress-s001148.json",
-        "sha256": "101cdde24652d28ff9199fffcd34501b81ebe72a5c324745f599dd9bd436f934"
+        "sha256": "1927f3b57b43a71b930ab9ee3999af6549401432620406a4c6e0968f021f6575"
       },
       "congress:S001150": {
-        "bytes": 287424,
+        "bytes": 522057,
         "path": "partitions/timelines/congress-s001150.json",
-        "sha256": "9842f70fbd652cd163e680c8014de9dc6404c6fd0a1f9ee92f941b92602433f2"
+        "sha256": "0a500a9e58d6e4f6daa611bbd1a628cb1759370dbcda2fc540196b195823935d"
       },
       "congress:S001156": {
-        "bytes": 314055,
+        "bytes": 515098,
         "path": "partitions/timelines/congress-s001156.json",
-        "sha256": "8f0ccd0e4e9af624420b3829ec8711bdc8d5373a2423594ec2d8517a2f383642"
+        "sha256": "ab8df3dccfe440ed077e05ec4dce2b75784afa86b6878c6ec87e791f30e4ed35"
       },
       "congress:S001172": {
-        "bytes": 283609,
+        "bytes": 480319,
         "path": "partitions/timelines/congress-s001172.json",
-        "sha256": "f7bdeba1c387be3ce1c966b21eb0a497f2c0b77f65276a551b1e5822067c6fb6"
+        "sha256": "120ab8ac001b9f94733d9591cdf635c11880f42060f802a648de4533ebee6237"
       },
       "congress:S001175": {
-        "bytes": 236936,
+        "bytes": 369015,
         "path": "partitions/timelines/congress-s001175.json",
-        "sha256": "753ffcc6007dfc2d6027ad5a15fbe3669d36a002df1b459cf5734bee1305dda7"
+        "sha256": "e1f372ba183ee85c967906c92b162b0719e90dd2af9b5dcf590da3e1a964f1fc"
+      },
+      "congress:S001181": {
+        "bytes": 463062,
+        "path": "partitions/timelines/congress-s001181.json",
+        "sha256": "53c2bcf6f70e3088eef253c23964fe614ed7775f318e4cdd27925016a53409cb"
       },
       "congress:S001185": {
-        "bytes": 259217,
+        "bytes": 427361,
         "path": "partitions/timelines/congress-s001185.json",
-        "sha256": "b8b37a1d75556696aaa0413bad6823bf32825b6b19605f69e4987fbcaeec2a84"
+        "sha256": "41771b2698e376afd009ab8eec0f2cde33e1a2c1a510ddedaedc4f5fa55b1472"
       },
       "congress:S001189": {
-        "bytes": 393718,
+        "bytes": 581892,
         "path": "partitions/timelines/congress-s001189.json",
-        "sha256": "6fbeb4d7cd17200782e9cca92eb0a1f1f69d7a78de30782d4416ad1c8074d1d9"
+        "sha256": "eba0dfbfb6c4cc60f8683d7e2e2d1ce84c5621462f0006108ab912c1ebd76be8"
       },
       "congress:S001190": {
-        "bytes": 419075,
+        "bytes": 583788,
         "path": "partitions/timelines/congress-s001190.json",
-        "sha256": "de817cb921437d767d9fbe20c7b32ab84e4ae6db540286fee16864121168ecf1"
+        "sha256": "c38b8ba972a56217b0a5296afb5ebd977309aa0074bf3e9801351db8b3c69023"
       },
       "congress:S001199": {
-        "bytes": 226472,
+        "bytes": 375975,
         "path": "partitions/timelines/congress-s001199.json",
-        "sha256": "3fc9d8a57baf1f5e2702122db90eeb79875f2a1655f72fba9ee14faa4f3cf38c"
+        "sha256": "e0de32be3fce8e718adb8dcafaf556e407802b87ee695c226d4215c5b6744388"
       },
       "congress:S001201": {
-        "bytes": 1041247,
+        "bytes": 1110629,
         "path": "partitions/timelines/congress-s001201.json",
-        "sha256": "d28a550ee1e9cc8d5dfa33641f8ee5d5ada8b2a2a266930ad8bd5d264d5919a9"
+        "sha256": "ef6d955bc18ca3700222e6fccc5a68bdcc478fc743baff1653c7f19d8b0ddb3e"
+      },
+      "congress:S001203": {
+        "bytes": 371243,
+        "path": "partitions/timelines/congress-s001203.json",
+        "sha256": "dc2082a2e3732ad56a7da45c2210e3ef839811b574c2accb05dfc70c565dfbec"
       },
       "congress:S001205": {
-        "bytes": 167149,
+        "bytes": 265170,
         "path": "partitions/timelines/congress-s001205.json",
-        "sha256": "d11bf3c24c23d976289ec10740e0eb0221bd744d96e603593b1fb96bdc1fd930"
+        "sha256": "1fc3940503aa6d3d5d4e56b6d6a51bce3833fb165a7b22f46f52bc651ecff9f5"
       },
       "congress:S001206": {
-        "bytes": 621309,
+        "bytes": 450345,
         "path": "partitions/timelines/congress-s001206.json",
-        "sha256": "8a176708d47ab710c3c6e3fdaa45d0a99e0521d1adca5e0d05a2e836a2e2c182"
+        "sha256": "1692e445ca90e9e668766b15fc363f42466cb368a54ff288168db0faa1b856aa"
       },
       "congress:S001207": {
-        "bytes": 465102,
+        "bytes": 481594,
         "path": "partitions/timelines/congress-s001207.json",
-        "sha256": "43e685be32e8e0494a7838ae8939fba65b7b817d1e8e17e2223f592b39c0e2df"
+        "sha256": "e2826bfde4b7d8fc8d897553166fa67b7f8a3cbe7de362dcdccc1f728dc9a6b3"
       },
       "congress:S001209": {
-        "bytes": 109557,
+        "bytes": 155944,
         "path": "partitions/timelines/congress-s001209.json",
-        "sha256": "696c4bf1a4d87e309e666d87a957fcd7b8693f462c3055f433ecd9f07b52bbbd"
+        "sha256": "f9b75b5f43b3eae9e2b4477c44d92f9b7bd09c8883a3a92cc529675993f026ef"
       },
       "congress:S001211": {
-        "bytes": 358361,
+        "bytes": 419788,
         "path": "partitions/timelines/congress-s001211.json",
-        "sha256": "18644868e41822ac47dc7c87503e23f31653a408dc22ae1e45192472bdb73eb2"
+        "sha256": "0977ded2e39010ed06633ba53cce61e22bc299e03c802cb153683a967c37efab"
       },
       "congress:S001212": {
-        "bytes": 135740,
+        "bytes": 225113,
         "path": "partitions/timelines/congress-s001212.json",
-        "sha256": "e1f56b4e148fbc25f144e67db6150b9f6f829eb5d6c6cfb76509e999cf6bcbf8"
+        "sha256": "19d7af5211ea8cf8b210e294f24c16f4a159db0eb7235a81272e611aaaddb0c8"
       },
       "congress:S001213": {
-        "bytes": 154088,
+        "bytes": 247207,
         "path": "partitions/timelines/congress-s001213.json",
-        "sha256": "a3491985544ae8acffe61b3e5f15987148823eed30dc8bd7e2fb02745a0aabc6"
+        "sha256": "c809def3240386c9be4a91ab9dc15947c7da89e343d9a2f7a10c145772fd6402"
       },
       "congress:S001214": {
-        "bytes": 177522,
+        "bytes": 293676,
         "path": "partitions/timelines/congress-s001214.json",
-        "sha256": "91c4f83245ccab8f89a8fa05eced60f08e3765de4162886500a9d98430f29c21"
+        "sha256": "dab5f4b353661663fb5ca49aba91528ff197bb4430e1f12ae5699aa023bc5f09"
       },
       "congress:S001216": {
-        "bytes": 195893,
+        "bytes": 301218,
         "path": "partitions/timelines/congress-s001216.json",
-        "sha256": "d3e95c00d15f43737e00608d0f28b79947411c892f3678e14f3977bad7bec87b"
+        "sha256": "9a3ca372da1dfb470f818e4c4f7c2334f5eab7f3c616fae5dbde651e1b4c5cc3"
+      },
+      "congress:S001217": {
+        "bytes": 804456,
+        "path": "partitions/timelines/congress-s001217.json",
+        "sha256": "a4b5e025d0236431b61b64053dfc145ad9105cdc398933345ab5f2674c204f4d"
       },
       "congress:S001229": {
-        "bytes": 670590,
+        "bytes": 528990,
         "path": "partitions/timelines/congress-s001229.json",
-        "sha256": "c4fa6469bb23107a2d53188a6cd9cf144525892fc47f84e207cdbbe0173c3ca1"
+        "sha256": "adfb1c72a3437c669e810b38d9a7a3ebe0a92cfb100373e3145ed66b38260869"
+      },
+      "congress:T000250": {
+        "bytes": 458475,
+        "path": "partitions/timelines/congress-t000250.json",
+        "sha256": "8d882285af9b23293db1e1b66e04ebaea9c14fff64f27ab6c6683070590deb48"
+      },
+      "congress:T000461": {
+        "bytes": 811327,
+        "path": "partitions/timelines/congress-t000461.json",
+        "sha256": "cee3cefc48b6a991ebdfe2eb0e437f06f9119cceebc553ad9d819ede56319619"
       },
       "congress:T000463": {
-        "bytes": 312256,
+        "bytes": 497003,
         "path": "partitions/timelines/congress-t000463.json",
-        "sha256": "c004c026457c8557c751537509a5a9a9c6207dcecb2bed328dd46224e39e9416"
+        "sha256": "88a7ec0bf71e2f599a93e520ff8fc3bf71b87ea4f23af9e5cc8ad2bfd7c86139"
       },
       "congress:T000465": {
-        "bytes": 144524,
+        "bytes": 244315,
         "path": "partitions/timelines/congress-t000465.json",
-        "sha256": "d4f3dc1000f44826e65c1ddc61a37709172b9e4250f77d54549f08c792de91e6"
+        "sha256": "2c3124ae9c72c59a1556673e46e778f5eef13048576eb1c732019e0965d5bf17"
       },
       "congress:T000475": {
-        "bytes": 786634,
+        "bytes": 617262,
         "path": "partitions/timelines/congress-t000475.json",
-        "sha256": "2b72758776ee8b86f00fc36ae1c838564ad9db02210dbd73db92312c84a415b5"
+        "sha256": "6ee34d8afe218ca8b90dd85db6922d0f4838d437c94663136ff190727a01aae4"
+      },
+      "congress:T000476": {
+        "bytes": 415845,
+        "path": "partitions/timelines/congress-t000476.json",
+        "sha256": "ab9cac431a15a2e33c4fc14b8ca24075c9cbc224d265871ffb01fb4186f7a2ce"
       },
       "congress:T000479": {
-        "bytes": 524808,
+        "bytes": 409337,
         "path": "partitions/timelines/congress-t000479.json",
-        "sha256": "6f4b461a3cb388065e84769b0a4e7f591eef83ce5711e99da7b7b8f80c656631"
+        "sha256": "df19c761e2511bbc1e4f74a5d40382c33f95f15f1beeff5ac4065a6eceda2317"
       },
       "congress:T000480": {
-        "bytes": 162518,
+        "bytes": 259880,
         "path": "partitions/timelines/congress-t000480.json",
-        "sha256": "58640bda8e8625617ab14084d17abc06a6a9aab37c2ed62451f266cbb0c44f81"
+        "sha256": "a7187404fe159946bc215357a1e006b843001fd575d915c23dd4845f09d911da"
       },
       "congress:T000482": {
-        "bytes": 154311,
+        "bytes": 244566,
         "path": "partitions/timelines/congress-t000482.json",
-        "sha256": "aaefa61d973511383dc61f00526a8c4077eed427364369d52c9b05f87455a02d"
+        "sha256": "f96ad5744c1d815cfac50d25e90f77fd7fbc53c5c7058fdafab2fd22f567d607"
       },
       "congress:T000483": {
-        "bytes": 170404,
+        "bytes": 207668,
         "path": "partitions/timelines/congress-t000483.json",
-        "sha256": "9af1720fe3876bc7751085edb42b9c4077ed43256d5b1df1fe20fb0d1f6d0a3e"
+        "sha256": "b554a67f0548b37b970bf38bb5092bdb6a2b8cf8c2558ad2c3156d0205cef8b8"
       },
       "congress:T000486": {
-        "bytes": 294179,
+        "bytes": 347483,
         "path": "partitions/timelines/congress-t000486.json",
-        "sha256": "61db7fdd746a7c57098031e74681fc0e419ddb433ac24e41a58ee10d11542f0f"
+        "sha256": "388c1453ec73bcde0b0a393892aca3ede29704d25ea83dc425f2d6d7a12cfd46"
       },
       "congress:T000488": {
-        "bytes": 123664,
+        "bytes": 214127,
         "path": "partitions/timelines/congress-t000488.json",
-        "sha256": "745cfd5dc1cde0cbef192befe88c21e06f167f73282f5c4b8770c9292dca614c"
+        "sha256": "2e9107ee31356838543f8431cd8b81ad1e9a95b7225f22f1b9428574589f1cec"
       },
       "congress:T000490": {
-        "bytes": 271014,
+        "bytes": 375794,
         "path": "partitions/timelines/congress-t000490.json",
-        "sha256": "2579650bb747866aebf0e604ee117509e3e92c6fe4897c70fab40badd6ee0144"
+        "sha256": "b656a94a8c61b5c63e4e42911e4874af0c45adacbeca5421dc4873707a0516dc"
+      },
+      "congress:U000039": {
+        "bytes": 257462,
+        "path": "partitions/timelines/congress-u000039.json",
+        "sha256": "f4fd43853f0c96ae3289313be7b327ee6bd622ff9064b24f2e2f49f23a6a599e"
       },
       "congress:V000108": {
-        "bytes": 196731,
+        "bytes": 308221,
         "path": "partitions/timelines/congress-v000108.json",
-        "sha256": "d8abae97f3961786c17e5b03ea2d66eaf783b5913dd585fcf2c3f8606e47a1e9"
+        "sha256": "7adaa067e07281758f7e2e46d8c6c7d26af905c0bff16fe3a2359b99196e1f02"
+      },
+      "congress:V000128": {
+        "bytes": 493936,
+        "path": "partitions/timelines/congress-v000128.json",
+        "sha256": "fea668a6b61a919db2c9dd6e233cfab07f84df938181e2826224e318501f6786"
       },
       "congress:V000131": {
-        "bytes": 218408,
+        "bytes": 365168,
         "path": "partitions/timelines/congress-v000131.json",
-        "sha256": "3d12a174ece4625b19c5ae1c9f8a466d117e8286de0acc29316017d9ff2e30b9"
+        "sha256": "f3606d347b2c011689d97425ca68a0836e487e3994e35350e54306ee2cb5530e"
       },
       "congress:V000139": {
-        "bytes": 55430,
+        "bytes": 115108,
         "path": "partitions/timelines/congress-v000139.json",
-        "sha256": "0f601ce00109589803f35cd6db39245ced31170610e840df9265ad0d7cca00e3"
+        "sha256": "2c88cf10f84e6759d39e79de1eb795b0c314f9edd982ca8074a132c5d256d3e3"
       },
       "congress:W000413": {
-        "bytes": 263245,
+        "bytes": 333769,
         "path": "partitions/timelines/congress-w000413.json",
-        "sha256": "cd550a48097e33e239bbf121ced2603aa4e032563f5e7cc255e964df72494295"
+        "sha256": "17afcbf68da8a253ad8f864cf70b53bfac4aab2dca72166571a88d2cffaebd7f"
+      },
+      "congress:W000437": {
+        "bytes": 491696,
+        "path": "partitions/timelines/congress-w000437.json",
+        "sha256": "6a030ab398076fb604fb474da55410db9fdfd09984c594a7211daf8da3372718"
+      },
+      "congress:W000779": {
+        "bytes": 923466,
+        "path": "partitions/timelines/congress-w000779.json",
+        "sha256": "39269ae4df2c9bb1a91ac2776386183dda44cc48b8ce909e38d07165b429daff"
       },
       "congress:W000797": {
-        "bytes": 493891,
+        "bytes": 746028,
         "path": "partitions/timelines/congress-w000797.json",
-        "sha256": "110d83f7a6dbe807c312897af9f0b500a660d570fc3d09810e63fa883ea4c925"
+        "sha256": "bde6bb81dc676aa405cb10992b5a751768b869e44cbbfdd9f9f9fa738f782da0"
       },
       "congress:W000798": {
-        "bytes": 271569,
+        "bytes": 434286,
         "path": "partitions/timelines/congress-w000798.json",
-        "sha256": "039fa3d187d3bb7b09658e81f0722a4a3efb499801d354f1422ed142ac1feb3d"
+        "sha256": "34f9e74c1cc4a6963f904d6f3e8ad15527275c1ea6139f0299fa0cc362dd26bc"
       },
       "congress:W000800": {
-        "bytes": 450488,
+        "bytes": 716966,
         "path": "partitions/timelines/congress-w000800.json",
-        "sha256": "c3767dacd429f2e3fff483e351a28b7cb972ec4b90e4583715ccdaa0ef8bda2c"
+        "sha256": "79734a64907c64364d246ad3010e301ec68d4edf1075d86479dfe1c17f3ee6ed"
+      },
+      "congress:W000802": {
+        "bytes": 1775339,
+        "path": "partitions/timelines/congress-w000802.json",
+        "sha256": "f20a0471ef7daa250255a63598b47d445583fa70daeeea9b3b1c6ecbe3b0a60f"
       },
       "congress:W000804": {
-        "bytes": 705703,
+        "bytes": 968287,
         "path": "partitions/timelines/congress-w000804.json",
-        "sha256": "d3ff25b382d18bf2e90bd99e4c70e3f691533ba75df30de9728e8b4c34f4450d"
+        "sha256": "6132eab10fce0e03f91df94395ff5acf68a98e7045c8267eddd0d00a98839537"
+      },
+      "congress:W000805": {
+        "bytes": 784538,
+        "path": "partitions/timelines/congress-w000805.json",
+        "sha256": "28dad81678bf7ef3006c985fcae23a06e4c9ede707c8f19ec152317ab9c8566b"
       },
       "congress:W000806": {
-        "bytes": 264580,
+        "bytes": 429886,
         "path": "partitions/timelines/congress-w000806.json",
-        "sha256": "63110f69bd7050d7a7b36bafed2ae1446c1b1469ac409fd700d06bfb2e291ad0"
+        "sha256": "79bef44bcbce7b2902bf21bf378554a693848ce6b26c4e4a25cad3805a26282c"
       },
       "congress:W000809": {
-        "bytes": 263466,
+        "bytes": 433878,
         "path": "partitions/timelines/congress-w000809.json",
-        "sha256": "a90fb4ad1d019ffe3afa2f106becf0a547c996b247053e1dc36a1d7d6f617736"
+        "sha256": "ea9003d19888408ab4a5a2140d6842a7507e2bb9924bc2fcf38eeaa590226547"
       },
       "congress:W000810": {
-        "bytes": 150836,
+        "bytes": 231739,
         "path": "partitions/timelines/congress-w000810.json",
-        "sha256": "d35ab1fcaa62723257e24d4ff6e584625666c23c9ab95006050162a2b7ad9a69"
+        "sha256": "1f9472bdbfe25887b499204749dba3289bb14bdc979095d85118c0f00bd15b9e"
       },
       "congress:W000812": {
-        "bytes": 238640,
+        "bytes": 459382,
         "path": "partitions/timelines/congress-w000812.json",
-        "sha256": "0fe9f60899ca52dcd81330d54a1f5b70d5e852059526c952a5f69ae000e5caf8"
+        "sha256": "264aaf70dc9008bb131f2040231fe7821f2cc51de5c587ad9ce31126a8bd355f"
       },
       "congress:W000816": {
-        "bytes": 280585,
+        "bytes": 448598,
         "path": "partitions/timelines/congress-w000816.json",
-        "sha256": "0ae221038fcdbf59cc1e128ba63f6e3021796a9dfd703ef8d7dda7c69b6f5764"
+        "sha256": "9d36fcd810ab55ac7656ee8e2196aa41d3f6ca2c1d34ca02d360b41f270254df"
+      },
+      "congress:W000817": {
+        "bytes": 355631,
+        "path": "partitions/timelines/congress-w000817.json",
+        "sha256": "a79354df12e7b72fc4e95e3cbdf9be19ea2bfc18f2bdd66740aca52d34f561ce"
       },
       "congress:W000821": {
-        "bytes": 418932,
+        "bytes": 514221,
         "path": "partitions/timelines/congress-w000821.json",
-        "sha256": "f4bbb79d58878919abf5c1ff6658b312391046bb535c2a14fb7499efd7db7967"
+        "sha256": "3b68b919743dcd5a0b455c73e8ea4966e9e8e6b24664b406970bfcadeeaa4ea9"
       },
       "congress:W000823": {
-        "bytes": 141667,
+        "bytes": 227308,
         "path": "partitions/timelines/congress-w000823.json",
-        "sha256": "7c3513da8da0e5c6f9a9dcec4b62019d03e7c7aa3af35e377f2ea3a10ad63ef1"
+        "sha256": "0113dd03238d540e2d39ecfb3eb87e5876d1b58a2534c3ddd97c529d64e7149c"
       },
       "congress:W000828": {
-        "bytes": 33419,
+        "bytes": 46759,
         "path": "partitions/timelines/congress-w000828.json",
-        "sha256": "490bb179b0b291b92011168ff89a093202c45d83b13c51abe90e18bc0045f4f0"
+        "sha256": "e0a3077cc999cd58318849c7601465325ec6f20610d39b92104dea19d81d02cf"
       },
       "congress:W000830": {
-        "bytes": 78376,
+        "bytes": 132403,
         "path": "partitions/timelines/congress-w000830.json",
-        "sha256": "c419f1a6f5fbb7090fa01a465767927d88ecf15275a5d94237ca8e4862cc4eda"
+        "sha256": "ac92441d3c1ddc728b4c213182c33c114e5919f19b559f7871759e315b48258a"
       },
       "congress:Y000062": {
-        "bytes": 649846,
+        "bytes": 733503,
         "path": "partitions/timelines/congress-y000062.json",
-        "sha256": "daea11ea6aa7820546c06cd1c1638e9de64955b9207d764754618cfbb2b0ca2c"
+        "sha256": "f90e5e21f870dbf4bbef496be57e0b7c6d8b6058c2fb9a6fcdb9600b22e2e850"
       },
       "congress:Y000063": {
-        "bytes": 150334,
+        "bytes": 232152,
         "path": "partitions/timelines/congress-y000063.json",
-        "sha256": "b2b48d387af58c722608227c8d426b0cae5b46489deb77ffd50f879a0b1bb848"
+        "sha256": "b06da72a6b1a9bedc4fb999e71ccf2ba496728a136089feede7279cb8c52a07e"
       },
       "congress:Y000067": {
-        "bytes": 134562,
+        "bytes": 239306,
         "path": "partitions/timelines/congress-y000067.json",
-        "sha256": "13c8047237a8ca3fd65bf21d486eefb2d7bb49b9e456c99fc438d65aaf3dfdc0"
+        "sha256": "6d26dcb79882dfaaa301494add042f7d33b809e5502d86410e86ad39860c87d8"
       },
       "exec:barack-obama": {
-        "bytes": 151726,
+        "bytes": 280736,
         "path": "partitions/timelines/exec-barack-obama.json",
-        "sha256": "14e926ec563b37a032296b9ea65959c7efcdaeb3dd2a28ff778758c77565cf27"
+        "sha256": "69d763b5819fd4850c899d3426341331e20ecb98be853df7739540ca37475fb9"
       },
       "exec:donald-j-trump": {
-        "bytes": 1035418,
+        "bytes": 4749428,
         "path": "partitions/timelines/exec-donald-j-trump.json",
-        "sha256": "1377f27ccef4735bef2b49f6fdeab9286e097131ed6dd3da5c11c42a9342f22c"
+        "sha256": "c04fea1eeebb8eb19622e055e136776f1be78cd837da0c858ff2ebe2d2b2b897"
       },
       "exec:joseph-r-biden": {
-        "bytes": 95058,
+        "bytes": 137714,
         "path": "partitions/timelines/exec-joseph-r-biden.json",
-        "sha256": "328f2768a13e7da123f34c0f0c26b2787d2d77e1273ce504e06750ab63ec59b5"
+        "sha256": "c476a446dde3ea64e0157773d4166931a8ac6349a0d301104c7eed4eafad5488"
       }
     }
   },

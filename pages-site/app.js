@@ -474,6 +474,7 @@ function removeOfficial(id) {
   state.selectedIds = state.selectedIds.filter((selectedId) => selectedId !== id);
   state.selectedTradeId = "";
   state.zoomPercent = null;
+  renderDatasetStatus();
   loadSelectedTimelines();
 }
 
@@ -518,8 +519,11 @@ async function loadTimeline(id) {
     return placeholder;
   }
   const payload = await fetchJson(partition);
-  state.timelineCache.set(id, payload.official);
-  return payload.official;
+  const official = payload.official;
+  const tradeDefaults = official.trade_record_defaults || {};
+  official.trades = (official.trades || []).map((trade) => ({ ...tradeDefaults, ...trade }));
+  state.timelineCache.set(id, official);
+  return official;
 }
 
 async function loadSelectedTimelines() {
@@ -954,7 +958,7 @@ function tooltipFormatter(params) {
           event.nearest_trade_days === 0
             ? "same day as nearest transaction"
             : `${Math.abs(event.nearest_trade_days)}d ${event.nearest_trade_days > 0 ? "after" : "before"} nearest transaction`
-        )}`
+        )}${event.candidate_score != null ? `<br>Evidence rank ${numberFormat.format(event.candidate_rank || 0)} / score ${Number(event.candidate_score).toFixed(1)}` : ""}`
       : "";
     return `
       <strong>${escapeHtml(event.label)}</strong><br>
@@ -1152,11 +1156,26 @@ function renderRecordDetail() {
   }
   const { trade, official } = found;
   const stateInfo = recordState(trade);
-  const sourceLink = trade.source_url
-    ? `<a href="${escapeHtml(trade.source_url)}" target="_blank" rel="noopener noreferrer">Official source document</a>`
+  const sourceDocument = (official.disclosure_documents || []).find(
+    (document) => document.document_id === trade.document_id
+  );
+  const sourceUrl = trade.source_url || sourceDocument?.source_url;
+  const filingLabel = trade.filing_label || sourceDocument?.filing_label || sourceDocument?.portal_report_title;
+  const sourceLink = sourceUrl
+    ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Official source document</a>`
     : "";
   const price = trade.price_window?.closest_close;
   const benchmark = trade.benchmark_price_window?.closest_close;
+  const reactionWindows = trade.market_reaction?.post_windows || [];
+  const reactionSummary = reactionWindows.length
+    ? reactionWindows
+        .map(
+          (window) =>
+            `${numberFormat.format(window.session_count)} session${window.session_count === 1 ? "" : "s"}: ${Number(window.asset_return_pct).toFixed(2)}% asset / ${Number(window.benchmark_adjusted_return_pct).toFixed(2)}% benchmark-adjusted`
+        )
+        .join("; ")
+    : "";
+  const resolvedAsset = trade.asset_resolution || {};
   $("recordDetail").innerHTML = `
     <p class="eyebrow">Transaction evidence</p>
     <h2>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker || trade.asset_display_name}`)}</h2>
@@ -1173,7 +1192,9 @@ function renderRecordDetail() {
       ${benchmark ? `<span>${escapeHtml(trade.benchmark_symbol)} close ${escapeHtml(benchmark)}</span>` : ""}
       ${trade.parsing_confidence != null ? `<span>Parser confidence ${Math.round(Number(trade.parsing_confidence) * 100)}%</span>` : ""}
       ${trade.source_page ? `<span>Source page ${numberFormat.format(trade.source_page)}</span>` : ""}
-      ${trade.filing_label ? `<span>${escapeHtml(trade.filing_label)}</span>` : ""}
+      ${filingLabel ? `<span>${escapeHtml(filingLabel)}</span>` : ""}
+      ${trade.source_account_label ? `<span>${escapeHtml(trade.source_account_label)}</span>` : ""}
+      ${resolvedAsset.canonical_name ? `<span>Resolved: ${escapeHtml(resolvedAsset.canonical_name)}</span>` : ""}
     </div>
     <div class="evidence-links">${sourceLink || '<span class="state-label">Source link unavailable in this snapshot</span>'}</div>
     ${
@@ -1183,6 +1204,16 @@ function renderRecordDetail() {
             trade.disclosure_attribution_note ||
               "This transaction appears on the official's disclosure; the source filing controls ownership and decision-authority attribution."
           )}</p>`
+    }
+    ${
+      reactionSummary
+        ? `<p class="evidence-note"><strong>Descriptive post-trade price context:</strong> ${escapeHtml(reactionSummary)}. Returns are unsigned with respect to BUY or SELL and do not establish causation or performance.</p>`
+        : ""
+    }
+    ${
+      trade.duplicate_candidate
+        ? '<p class="evidence-note"><strong>Duplicate review flag:</strong> This row shares a conservative duplicate signature with another disclosure row and remains visible pending amendment/source review.</p>'
+        : ""
     }
     <p>No causation, intent, ethics, legality, or investment conclusion is implied.</p>`;
 }
@@ -1219,6 +1250,17 @@ function renderEventDetail() {
       ? "Same day as the nearest disclosed transaction"
       : `${Math.abs(event.nearest_trade_days)} days ${event.nearest_trade_days > 0 ? "after" : "before"} the nearest disclosed transaction`
     : "";
+  const scoreComponents = event.candidate_score_components || {};
+  const officialInvolvement = event.official_involvement || [];
+  const involvementSummary = officialInvolvement
+    .map((relationship) => {
+      const label = titleCase(relationship.relationship_type || "official record");
+      return relationship.vote_cast ? `${label}: ${relationship.vote_cast}` : label;
+    })
+    .join("; ");
+  const candidateScore = event.candidate_score != null
+    ? `Rank ${numberFormat.format(event.candidate_rank || 0)} / score ${Number(event.candidate_score).toFixed(1)}: relationship ${Number(scoreComponents.relationship_specificity || 0).toFixed(1)}, timing ${Number(scoreComponents.temporal_proximity || 0).toFixed(1)}, descriptive market movement ${Number(scoreComponents.descriptive_market_movement || 0).toFixed(1)}`
+    : "";
   const sourceReference = event.docket_number
     ? `Docket ${event.docket_number}${event.citation ? ` / ${event.citation}` : ""}`
     : event.law_number
@@ -1236,11 +1278,17 @@ function renderEventDetail() {
       <span>${escapeHtml(event.source || "CivicLedger event source")}</span>
       ${sourceReference ? `<span>${escapeHtml(sourceReference)}</span>` : ""}
       ${event.trade_context_candidate ? '<span class="state-label preview">Automated context candidate</span>' : ""}
+      ${event.review_status ? `<span class="state-label preview">${escapeHtml(titleCase(event.review_status))}</span>` : ""}
     </div>
     ${reasons.length ? `<p>${escapeHtml(reasons.join("; "))}</p>` : ""}
     ${
+      involvementSummary
+        ? `<p class="evidence-note"><strong>Official involvement record:</strong> ${escapeHtml(involvementSummary)}. The cited record's specific scope controls; procedural votes are not treated as positions on final legislation.</p>`
+        : ""
+    }
+    ${
       candidateTiming
-        ? `<p class="evidence-note"><strong>${escapeHtml(candidateTiming)}.</strong> This marker is selected from source-backed public events by timing and entity or institutional relevance. It does not establish knowledge, intent, causation, or market impact.</p>`
+        ? `<p class="evidence-note"><strong>${escapeHtml(candidateTiming)}.</strong> ${candidateScore ? `${escapeHtml(candidateScore)}. ` : ""}This marker is selected from attributed public events by source specificity, timing, institutional or asset relevance, and descriptive market context. It does not establish knowledge, intent, causation, or market impact.</p>`
         : ""
     }
     <div class="evidence-links">${sources || '<span class="state-label">No source link recorded</span>'}</div>
@@ -1377,9 +1425,16 @@ async function renderMarketChart() {
 
 function renderDatasetStatus() {
   const summary = state.overview.summary;
+  const newsSummary = state.overview.historical_news_context?.summary || {};
+  const newsCoverage = newsSummary.coverage_status_counts || {};
+  const newsStatus = newsSummary.event_count
+    ? `${numberFormat.format(newsSummary.event_count)} attributed news candidates`
+    : newsCoverage.unavailable
+      ? "historical-news provider unavailable in this build"
+      : "no historical-news candidates in this build";
   $("dataNotice").innerHTML = `
     <strong>Current record boundary</strong>
-    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}.</span>`;
+    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}. Context coverage: ${numberFormat.format(summary.sec_filing_event_count || 0)} SEC filing events; ${escapeHtml(newsStatus)}.</span>`;
   $("footerDataset").textContent = `Dataset ${state.overview.dataset_version} / generated ${state.overview.generated_at}`;
 
   const metrics = [
@@ -1388,6 +1443,8 @@ function renderDatasetStatus() {
     [summary.house_ptr_machine_readable_document_count, "Machine-readable PTRs"],
     [summary.house_ptr_parser_preview_transaction_count, "House preview rows"],
     [summary.house_ptr_ocr_required_document_count, "OCR backlog"],
+    [summary.senate_ptr_matched_document_count, "Senate matched PTRs"],
+    [summary.senate_ptr_parser_preview_transaction_count, "Senate preview rows"],
     [summary.market_price_point_count + summary.crypto_price_point_count, "Market price points"],
   ];
   $("coverageMetrics").innerHTML = metrics

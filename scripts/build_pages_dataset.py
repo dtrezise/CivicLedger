@@ -39,11 +39,18 @@ EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
 CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
 COMPANY_ENTITY_REFERENCE = ROOT / "data" / "context" / "company_entity_reference.json"
+ASSET_RESOLUTION = ROOT / "data" / "context" / "asset_resolution.json"
+TRADE_MARKET_REACTIONS = ROOT / "data" / "context" / "trade_market_reactions.json"
+HISTORICAL_NEWS_CONTEXT = ROOT / "data" / "context" / "historical_news_context.json"
+SEC_FILING_EVENTS = ROOT / "data" / "context" / "sec_filing_events.json"
+OFFICIAL_EVENT_INVOLVEMENT = ROOT / "data" / "context" / "official_event_involvement.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
 PRESIDENTIAL_OGE_DOCUMENTS = ROOT / "data" / "disclosures" / "presidential_oge_documents.json"
 PRESIDENTIAL_OGE_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
 HOUSE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
 HOUSE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
+SENATE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
+SENATE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
 DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
@@ -313,10 +320,52 @@ def market_snapshot(series: list[dict], metadata: dict) -> dict:
 def load_events() -> list[dict]:
     curated = load_json_file(CURATED_TIMELINE_EVENTS, {"events": []}).get("events", [])
     federal = load_json_file(FEDERAL_EVENTS, {"events": []}).get("events", [])
+    news_context = load_json_file(HISTORICAL_NEWS_CONTEXT, {"events": []})
+    sec_context = load_json_file(SEC_FILING_EVENTS, {"events": []})
+    news_events = [
+        {
+            **event,
+            "label": event.get("title") or "Historical news report",
+            "description": event.get("context_note") or "Publisher-attributed news discovery candidate.",
+            "source": event.get("publisher_domain") or "Attributed publisher",
+            "sources": event.get("source_urls", []),
+            "branch_scope": ["Executive", "Legislative", "Judicial"],
+            "sector_scope": [],
+            "asset_scope": [],
+            "ticker_scope": [],
+            "editor_status": "review_pending",
+        }
+        for event in news_context.get("events", [])
+        if event.get("date")
+    ]
+    sec_events = []
+    for event in sec_context.get("events", []):
+        company = event.get("company") or {}
+        filing = event.get("filing") or {}
+        items = ", ".join(filing.get("items") or [])
+        sec_events.append(
+            {
+                **event,
+                "label": event.get("title") or "SEC filing",
+                "description": (
+                    f"Official SEC {filing.get('form', 'filing')} record"
+                    + (f"; reported items {items}" if items else "")
+                    + ". Filing presence is context only and does not establish trade relevance."
+                ),
+                "source": "SEC EDGAR",
+                "sources": event.get("source_urls", []),
+                "branch_scope": ["Executive", "Legislative", "Judicial"],
+                "sector_scope": [],
+                "asset_scope": [],
+                "entity_scope": [company.get("name")] if company.get("name") else [],
+                "ticker_scope": company.get("tickers") or [],
+                "editor_status": "review_pending",
+            }
+        )
     rows = []
     seen_ids = set()
     seen_primary_urls = set()
-    for event in [*curated, *federal]:
+    for event in [*curated, *federal, *news_events, *sec_events]:
         event_id = event.get("id")
         primary_url = next(iter(event.get("sources", [])), None)
         if event_id and event_id in seen_ids:
@@ -335,6 +384,29 @@ def load_json_file(path: Path, fallback: dict) -> dict:
     if not path.exists():
         return fallback
     return json.loads(path.read_text())
+
+
+def load_official_event_involvement() -> dict:
+    dataset = load_json_file(
+        OFFICIAL_EVENT_INVOLVEMENT,
+        {"summary": {}, "actors": [], "relationships": []},
+    )
+    if not dataset.get("relationships_partitioned"):
+        return dataset
+    relationships = []
+    for key, record in sorted(dataset.get("relationship_partitions", {}).items()):
+        partition_path = ROOT / record["path"]
+        encoded = partition_path.read_bytes()
+        if len(encoded) != record["bytes"]:
+            raise ValueError(f"Official-involvement partition byte mismatch: {key}")
+        if hashlib.sha256(encoded).hexdigest() != record["sha256"]:
+            raise ValueError(f"Official-involvement partition hash mismatch: {key}")
+        payload = json.loads(encoded)
+        rows = payload.get("relationships", [])
+        if len(rows) != record["relationship_count"]:
+            raise ValueError(f"Official-involvement partition count mismatch: {key}")
+        relationships.extend(rows)
+    return {**dataset, "relationships": relationships}
 
 
 def load_event_entity_map() -> dict:
@@ -718,8 +790,16 @@ def timeline_event_rows(
                 "jurisdiction_scope": sorted(
                     set(event.get("jurisdiction_scope", []) + mapped.get("jurisdiction_scope", []))
                 ),
-                "entity_scope": mapped.get("entity_scope", []),
-                "ticker_scope": sorted(set(mapped.get("ticker_scope", []) + company_tickers)),
+                "entity_scope": sorted(
+                    set(event.get("entity_scope", []) + mapped.get("entity_scope", []))
+                ),
+                "ticker_scope": sorted(
+                    set(
+                        event.get("ticker_scope", [])
+                        + mapped.get("ticker_scope", [])
+                        + company_tickers
+                    )
+                ),
                 "company_entity_scope": matched_entities,
                 "market_topic_ids": event.get("market_topic_ids", []),
                 "editor_status": event.get("editor_status", "fixture"),
@@ -733,6 +813,19 @@ def timeline_event_rows(
                 "docket_number": event.get("docket_number"),
                 "citation": event.get("citation"),
                 "term_year": event.get("term_year"),
+                "record_status": event.get("record_status"),
+                "review_status": event.get("review_status"),
+                "review_required_before_publication": event.get(
+                    "review_required_before_publication", False
+                ),
+                "public_production_event": event.get("public_production_event"),
+                "source_attribution_complete": event.get("source_attribution_complete"),
+                "publisher_domain": event.get("publisher_domain"),
+                "matched_query_ids": event.get("matched_query_ids", []),
+                "matched_request_ids": event.get("matched_request_ids", []),
+                "company": event.get("company"),
+                "filing": event.get("filing"),
+                "context_note": event.get("context_note"),
             }
         )
     for index, event in enumerate(fred_context.get("release_events", []), start=1):
@@ -874,8 +967,18 @@ def timeline_trade_row(
     periods: list[dict],
     market_points_by_symbol: dict[str, list[dict]],
     crypto_points_by_symbol: dict[str, list[dict]],
+    asset_resolution: dict | None = None,
+    market_reaction: dict | None = None,
 ) -> dict:
     reference = asset_reference(trade.get("ticker"), trade.get("asset_class"))
+    if asset_resolution and asset_resolution.get("resolution_status") == "resolved":
+        reference = {
+            **reference,
+            "symbol": asset_resolution.get("identifier"),
+            "asset_class": asset_resolution.get("asset_class"),
+            "sector": asset_resolution.get("sector"),
+            "benchmark_symbol": asset_resolution.get("benchmark_symbol"),
+        }
     midpoint = value_midpoint(trade)
     row = {
         "id": trade["id"],
@@ -883,7 +986,7 @@ def timeline_trade_row(
         "career_day": active_service_day(trade.get("trade_date"), periods),
         "reported_date": trade["reported_date"],
         "action": trade["action"],
-        "ticker": normalize_asset_symbol(trade.get("ticker")),
+        "ticker": normalize_asset_symbol(reference.get("symbol") or trade.get("ticker")),
         "asset_display_name": trade["asset_display_name"],
         "asset_class": reference.get("asset_class") or trade.get("asset_class") or "unknown",
         "sector": reference.get("sector", "Unmapped"),
@@ -893,39 +996,91 @@ def timeline_trade_row(
         "value_midpoint": midpoint,
         "disclosure_lag_days": trade.get("disclosure_lag_days"),
         "record_status": trade.get("record_status", "fixture_demo"),
-        "confidence_label": trade.get("confidence_label", "Fixture/demo trade"),
         "parsing_confidence": trade.get("parsing_confidence"),
         "document_id": trade.get("document_id"),
-        "source_url": trade.get("source_url"),
         "source_page": trade.get("source_page"),
+        "source_row": trade.get("source_row"),
+        "source_account_label": trade.get("source_account_label"),
+        "chamber": trade.get("chamber"),
         "review_required_before_public_trade": trade.get("review_required_before_public_trade", False),
         "public_production_trade": trade.get("public_production_trade"),
         "benchmark_symbol": reference.get("benchmark_symbol", "SPY"),
     }
-    for key in [
-        "filing_type",
-        "filing_label",
-        "form_section",
-        "decision_authority_status",
-        "decision_authority_note",
-        "disclosure_attribution_note",
-        "normalization_method",
-    ]:
+    for key in ["decision_authority_note", "normalization_method"]:
         if trade.get(key) is not None:
             row[key] = trade[key]
+    if trade.get("decision_authority_status") not in {None, "not_stated_in_transaction_page"}:
+        row["decision_authority_status"] = trade["decision_authority_status"]
+    if trade.get("data_quality_flags"):
+        row["data_quality_flags"] = trade["data_quality_flags"]
+    if trade.get("duplicate_candidate"):
+        row["duplicate_candidate"] = True
+        row["duplicate_candidate_group_id"] = trade.get("duplicate_candidate_group_id")
+    if asset_resolution:
+        row["asset_resolution"] = {
+            key: asset_resolution.get(key)
+            for key in [
+                "resolution_status",
+                "match_method",
+                "identifier",
+                "identifier_type",
+                "canonical_name",
+                "issuer_name",
+                "fund_family",
+                "asset_class",
+                "sector",
+                "benchmark_symbol",
+            ]
+            if asset_resolution.get(key) is not None
+        }
+    if market_reaction:
+        row["market_reaction"] = compact_market_reaction(market_reaction)
     if row["asset_class"] == "crypto":
         row["price_window"] = crypto_price_window(row["ticker"], row["date"], crypto_points_by_symbol)
     else:
         row["price_window"] = market_price_window(
             row["ticker"], row["date"], market_points_by_symbol, "Tiingo"
         )
-    row["benchmark_price_window"] = market_price_window(
-        row["benchmark_symbol"], row["date"], market_points_by_symbol, "Tiingo"
-    )
+    if row["price_window"] is None:
+        row.pop("price_window")
     return row
 
 
-def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
+def compact_market_reaction(reaction: dict) -> dict:
+    def compact_window(window: dict) -> dict:
+        return {
+            key: window.get(key)
+            for key in [
+                "direction",
+                "session_count",
+                "start_date",
+                "end_date",
+                "asset_return_pct",
+                "benchmark_return_pct",
+                "benchmark_adjusted_return_pct",
+            ]
+            if window.get(key) is not None
+        }
+
+    return {
+        "status": reaction.get("status"),
+        "coverage_reason": reaction.get("coverage_reason"),
+        "asset_symbol": reaction.get("asset_symbol"),
+        "benchmark_symbol": reaction.get("benchmark_symbol"),
+        "anchor_date": reaction.get("anchor_date"),
+        "window_unit": reaction.get("window_unit"),
+        "pre_windows": [compact_window(row) for row in reaction.get("pre_windows", [])],
+        "post_windows": [compact_window(row) for row in reaction.get("post_windows", [])],
+        "context_label": reaction.get("context_label"),
+    }
+
+
+def event_relevance(
+    event: dict,
+    official: dict,
+    trades: list[dict],
+    official_involvement: list[dict] | None = None,
+) -> dict:
     reasons = []
     event_type = event.get("event_type", "")
     branch = official.get("branch")
@@ -959,6 +1114,27 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
     entity_match = sorted(scope for scope in entity_scope if scope in role_text)
 
     inferred_from_title = event.get("market_relevance") == "title_keyword_match"
+    official_involvement = official_involvement or []
+    direct_records = [
+        row
+        for row in official_involvement
+        if row.get("relationship_class") == "direct_official_record"
+    ]
+    contextual_records = [
+        row
+        for row in official_involvement
+        if row.get("relationship_class") != "direct_official_record"
+    ]
+    for relationship in direct_records:
+        relationship_type = relationship.get("relationship_type", "official record")
+        reason = f"official {relationship_type.replace('_', ' ')} record"
+        if relationship.get("vote_cast"):
+            reason += f": {relationship['vote_cast']}"
+        reasons.append(reason)
+    for relationship in contextual_records:
+        reasons.append(
+            relationship.get("relationship_type", "institutional context").replace("_", " ")
+        )
     if ticker_match:
         reasons.append(f"asset or ticker scope: {', '.join(ticker_match)}")
     if jurisdiction_match:
@@ -982,7 +1158,9 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
     if institutional:
         reasons.append("institutional event type")
 
-    if event.get("relevance") == "macro":
+    if direct_records:
+        tier = "direct"
+    elif event.get("relevance") == "macro":
         tier = "general_macro"
         reasons.append("general macro context")
     elif ticker_match and not inferred_from_title:
@@ -1011,7 +1189,7 @@ def event_relevance(event: dict, official: dict, trades: list[dict]) -> dict:
         "tier": tier,
         "tier_rank": tier_rank[tier],
         "reasons": reasons,
-        "display_default": tier in {"direct", "asset_specific", "jurisdictional"},
+        "display_default": False,
     }
 
 
@@ -1022,6 +1200,23 @@ def trade_context_candidates(
     window_days: int = 45,
     cluster_days: int = 14,
 ) -> None:
+    def market_movement_magnitude(trade: dict) -> float:
+        reaction = trade.get("market_reaction") or {}
+        values = [
+            abs(float(window["benchmark_adjusted_return_pct"]))
+            for window in reaction.get("post_windows", [])
+            if window.get("benchmark_adjusted_return_pct") is not None
+        ]
+        return max(values, default=0.0)
+
+    def source_specificity(event: dict) -> tuple[int, str]:
+        source_tier = event.get("source_tier")
+        if source_tier == "official":
+            return (10, "official public record")
+        if source_tier in {"news_publisher", "news_publisher_via_aggregator"}:
+            return (5, "attributed publisher report")
+        return (0, "general attributed context")
+
     dated_trades = sorted(
         [trade for trade in trades if trade.get("date")],
         key=lambda row: (row["date"], row["id"]),
@@ -1067,10 +1262,17 @@ def trade_context_candidates(
             )
             if not eligible:
                 continue
+            source_bonus, _ = source_specificity(event)
+            movement_bonus = min(
+                40,
+                round(max((market_movement_magnitude(trade) for trade in group), default=0) * 2),
+            )
             score = (
                 relationship["relationship_tier_rank"] * 100
                 - distance * 2
                 + (15 if event.get("editor_status") == "curated" else 0)
+                + source_bonus
+                + movement_bonus
             )
             buckets[bucket].append((score, -distance, relationship["date"], relationship["id"]))
 
@@ -1097,16 +1299,57 @@ def trade_context_candidates(
         else:
             timing_reason = f"{abs(nearest_days)} days before the nearest disclosed transaction"
         relationship["trade_context_candidate"] = True
-        relationship["trade_context_methodology"] = "trade-window-v1"
-        relationship["candidate_basis"] = "temporal_and_entity_context_only"
+        relationship["trade_context_methodology"] = "trade-window-v2"
+        relationship["candidate_basis"] = (
+            "source_specificity_temporal_proximity_and_descriptive_market_context"
+        )
         relationship["nearest_trade_days"] = nearest_days
         relationship["nearby_trade_count"] = len(nearby)
         relationship["nearby_trade_ids"] = [item[3] for item in nearby[:12]]
+        event = events_by_id.get(relationship["id"], {})
+        source_bonus, source_label = source_specificity(event)
+        nearby_trade_ids = set(relationship["nearby_trade_ids"])
+        movement_magnitude = max(
+            (
+                market_movement_magnitude(trade)
+                for trade in dated_trades
+                if trade["id"] in nearby_trade_ids
+            ),
+            default=0.0,
+        )
+        relationship_score = min(
+            60,
+            relationship["relationship_tier_rank"] * 10 + source_bonus,
+        )
+        temporal_score = round(25 * (1 - min(abs(nearest_days), window_days) / window_days), 1)
+        market_score = round(min(15, movement_magnitude * 1.5), 1)
+        relationship["candidate_score"] = round(
+            relationship_score + temporal_score + market_score,
+            1,
+        )
+        relationship["candidate_score_components"] = {
+            "relationship_specificity": relationship_score,
+            "temporal_proximity": temporal_score,
+            "descriptive_market_movement": market_score,
+        }
+        relationship["source_specificity_label"] = source_label
+        relationship["max_abs_benchmark_adjusted_post_return_pct"] = round(
+            movement_magnitude,
+            4,
+        )
         relationship["relationship_reasons"] = [
             *relationship["relationship_reasons"],
             timing_reason,
         ]
         relationship["display_default"] = True
+
+    ranked = sorted(
+        (row for row in relationships if row.get("trade_context_candidate")),
+        key=lambda row: (-row.get("candidate_score", 0), row["date"], row["id"]),
+    )
+    for rank, relationship in enumerate(ranked, start=1):
+        relationship["candidate_rank"] = rank
+        relationship["display_default"] = rank <= 24
 
 
 def timeline_event_positions(
@@ -1114,15 +1357,22 @@ def timeline_event_positions(
     periods: list[dict],
     official: dict,
     trades: list[dict],
+    official_id: str | None = None,
+    involvement_by_event_and_official: dict | None = None,
 ) -> list[dict]:
     if not periods:
         return []
     rows = []
+    involvement_by_event_and_official = involvement_by_event_and_official or {}
     for event in events:
         career_day = active_service_day(event["date"], periods)
         if career_day is None:
             continue
-        relevance = event_relevance(event, official, trades)
+        official_involvement = involvement_by_event_and_official.get(
+            (event["id"], official_id),
+            [],
+        )
+        relevance = event_relevance(event, official, trades, official_involvement)
         rows.append(
             {
                 "id": event["id"],
@@ -1132,6 +1382,7 @@ def timeline_event_positions(
                 "relationship_tier_rank": relevance["tier_rank"],
                 "relationship_reasons": relevance["reasons"],
                 "display_default": relevance["display_default"],
+                "official_involvement": official_involvement,
             }
         )
     trade_context_candidates(rows, trades, {event["id"]: event for event in events})
@@ -1165,6 +1416,47 @@ def cluster_row(rows: list[dict], window_days: int) -> dict:
     }
 
 
+def official_involvement_index(dataset: dict) -> dict[tuple[str, str], list[dict]]:
+    actors = {row["id"]: row for row in dataset.get("actors", []) if row.get("id")}
+    direct_types = set(dataset.get("methodology", {}).get("direct_relationship_types", []))
+    indexed = defaultdict(list)
+    for relationship in dataset.get("relationships", []):
+        actor = actors.get(relationship.get("actor_id"), {})
+        person_id = actor.get("external_person_id")
+        if not person_id:
+            person_id = (relationship.get("actor") or {}).get("external_person_id")
+        event_id = relationship.get("event_id")
+        if not event_id or not person_id:
+            continue
+        compact = {
+            key: relationship.get(key)
+            for key in [
+                "id",
+                "relationship_class",
+                "relationship_type",
+                "relationship_date",
+                "context_date",
+                "vote_cast",
+                "vote_classification",
+                "roll_call_id",
+            ]
+            if relationship.get(key) not in (None, "", [], {})
+        }
+        compact["relationship_class"] = relationship.get("relationship_class") or (
+            "direct_official_record"
+            if relationship.get("relationship_type") in direct_types
+            else "contextual_record"
+        )
+        indexed[(event_id, person_id)].append(compact)
+    return {
+        key: sorted(
+            rows,
+            key=lambda row: (row.get("relationship_type", ""), row.get("id", "")),
+        )
+        for key, rows in indexed.items()
+    }
+
+
 def career_trade_timeline(
     public_officials: dict,
     fixture_people: list[dict],
@@ -1177,8 +1469,12 @@ def career_trade_timeline(
     presidential_oge_documents: dict,
     presidential_oge_transactions: dict,
     house_ptr_transactions: dict,
+    senate_ptr_transactions: dict,
     event_entity_map: dict,
     company_reference: dict,
+    asset_resolution_context: dict,
+    market_reaction_context: dict,
+    official_event_involvement: dict,
     include_fixture_timelines: bool = False,
 ) -> dict:
     roles_by_person = public_roles_by_person(public_officials)
@@ -1190,6 +1486,17 @@ def career_trade_timeline(
     president_ids = []
     official_rows = []
     events = timeline_event_rows(fred_context, civic_events, event_entity_map, company_reference)
+    involvement_by_event_and_official = official_involvement_index(official_event_involvement)
+    asset_resolution_by_transaction = {
+        row["transaction_id"]: row
+        for row in asset_resolution_context.get("transaction_resolutions", [])
+        if row.get("transaction_id")
+    }
+    market_reaction_by_transaction = {
+        row["transaction_id"]: row
+        for row in market_reaction_context.get("reactions", [])
+        if row.get("transaction_id")
+    }
     oge_by_official = defaultdict(list)
     for status in presidential_oge_status.get("officials", []):
         oge_by_official[status["official_id"]].append(status)
@@ -1209,6 +1516,13 @@ def career_trade_timeline(
     for document in house_ptr_transactions.get("documents", []):
         if document.get("official_id"):
             house_documents_by_official[document["official_id"]].append(document)
+    senate_transactions_by_official = defaultdict(list)
+    for transaction in senate_ptr_transactions.get("transactions", []):
+        senate_transactions_by_official[transaction["official_id"]].append(transaction)
+    senate_documents_by_official = defaultdict(list)
+    for document in senate_ptr_transactions.get("documents", []):
+        if document.get("official_id"):
+            senate_documents_by_official[document["official_id"]].append(document)
     crypto_points_by_symbol = {
         symbol: series.get("points", [])
         for symbol, series in crypto_prices.get("series", {}).items()
@@ -1226,14 +1540,29 @@ def career_trade_timeline(
         if not presidential_roles:
             continue
         person = public_people_by_id.get(external_id, {})
-        preview_trade_source_rows = sorted(
+        raw_preview_trade_source_rows = sorted(
             oge_transactions_by_official.get(external_id, []),
             key=lambda item: (item["trade_date"], item["id"]),
+        )
+        preview_trade_source_rows = [
+            trade
+            for trade in raw_preview_trade_source_rows
+            if trade.get("timeline_inclusion") is not False
+        ]
+        cross_filing_duplicate_count = (
+            len(raw_preview_trade_source_rows) - len(preview_trade_source_rows)
         )
         periods = service_periods(presidential_roles, preview_trade_source_rows)
         start, end = service_bounds(periods)
         normalized_timeline_trades = [
-            timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
+            timeline_trade_row(
+                trade,
+                periods,
+                market_points_by_symbol,
+                crypto_points_by_symbol,
+                asset_resolution_by_transaction.get(trade["id"]),
+                market_reaction_by_transaction.get(trade["id"]),
+            )
             for trade in preview_trade_source_rows
         ]
         timeline_trades = [trade for trade in normalized_timeline_trades if trade["career_day"] is not None]
@@ -1256,6 +1585,11 @@ def career_trade_timeline(
                 f"{document_count} official OGE documents indexed; "
                 f"{source_preview_trade_count} review-gated disclosed transactions"
             )
+            if cross_filing_duplicate_count:
+                disclosure_status += (
+                    f"; {cross_filing_duplicate_count} cross-filing duplicate"
+                    f"{'s' if cross_filing_duplicate_count != 1 else ''} excluded"
+                )
             if out_of_service_trade_count:
                 disclosure_status += (
                     f"; {preview_trade_count} fall within active presidential service"
@@ -1302,11 +1636,15 @@ def career_trade_timeline(
                     periods,
                     {"branch": "Executive", "roles": presidential_roles},
                     timeline_trades,
+                    external_id,
+                    involvement_by_event_and_official,
                 ),
                 "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
                     "trade_count": preview_trade_count,
+                    "raw_parser_preview_trade_count": len(raw_preview_trade_source_rows),
                     "parser_preview_trade_count": source_preview_trade_count,
+                    "cross_filing_duplicate_count": cross_filing_duplicate_count,
                     "timeline_trade_count": preview_trade_count,
                     "out_of_service_trade_count": out_of_service_trade_count,
                     "document_count": document_count,
@@ -1334,7 +1672,14 @@ def career_trade_timeline(
         start, end = service_bounds(periods)
         timeline_trades = []
         for trade in sorted(source_rows, key=lambda item: (item["trade_date"], item["id"])):
-            row = timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
+            row = timeline_trade_row(
+                trade,
+                periods,
+                market_points_by_symbol,
+                crypto_points_by_symbol,
+                asset_resolution_by_transaction.get(trade["id"]),
+                market_reaction_by_transaction.get(trade["id"]),
+            )
             if row["career_day"] is None:
                 house_out_of_service_trade_count += 1
                 continue
@@ -1359,17 +1704,22 @@ def career_trade_timeline(
                         "record_status": "official_house_parser_preview_not_promoted",
                     }
                 ],
+                "disclosure_documents": documents,
                 "events": timeline_event_positions(
                     events,
                     periods,
                     {"branch": "Legislative", "roles": roles},
                     timeline_trades,
+                    external_id,
+                    involvement_by_event_and_official,
                 ),
                 "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
                     "trade_count": len(timeline_trades),
                     "parser_preview_trade_count": len(timeline_trades),
                     "document_count": len(documents),
+                    "house_trade_count": len(timeline_trades),
+                    "house_document_count": len(documents),
                     "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
                     "sell_count": sum(1 for trade in timeline_trades if trade["action"] == "SELL"),
                     "crypto_count": sum(1 for trade in timeline_trades if trade["asset_class"] == "crypto"),
@@ -1386,6 +1736,173 @@ def career_trade_timeline(
             }
         )
 
+    senate_out_of_service_trade_count = 0
+    senate_official_ids = sorted(
+        set(senate_documents_by_official) | set(senate_transactions_by_official)
+    )
+    for external_id in senate_official_ids:
+        source_rows = senate_transactions_by_official.get(external_id, [])
+        roles = roles_by_person.get(external_id, [])
+        if not roles:
+            continue
+        person = public_people_by_id.get(external_id, {})
+        periods = service_periods(roles, source_rows)
+        start, end = service_bounds(periods)
+        timeline_trades = []
+        for trade in sorted(source_rows, key=lambda item: (item["trade_date"], item["id"])):
+            row = timeline_trade_row(
+                trade,
+                periods,
+                market_points_by_symbol,
+                crypto_points_by_symbol,
+                asset_resolution_by_transaction.get(trade["id"]),
+                market_reaction_by_transaction.get(trade["id"]),
+            )
+            if row["career_day"] is None:
+                senate_out_of_service_trade_count += 1
+                continue
+            timeline_trades.append(row)
+        documents = senate_documents_by_official.get(external_id, [])
+        structured_documents = sum(
+            document.get("report_format") == "electronic_html" for document in documents
+        )
+        paper_documents = sum(
+            document.get("report_format") == "paper_images" for document in documents
+        )
+        disclosure_status = (
+            f"{len(documents)} official Senate PTR documents indexed; "
+            f"{len(source_rows)} review-gated structured transaction rows"
+        )
+        if paper_documents:
+            disclosure_status += (
+                f"; {paper_documents} paper-image report"
+                f"{'s' if paper_documents != 1 else ''} require OCR and review"
+            )
+        senate_row = {
+                "id": external_id,
+                "full_name": person.get("full_name", external_id),
+                "branch": "Legislative",
+                "timeline_group": "official_senate_ptr_preview",
+                "service_start": start,
+                "service_end": end,
+                "service_periods": periods,
+                "active_service_days": periods[-1]["career_end_day"] + 1 if periods else 0,
+                "roles": roles,
+                "trades": timeline_trades,
+                "disclosure_sources": [
+                    {
+                        "source_id": "senate-public-financial-disclosure",
+                        "source_url": "https://efdsearch.senate.gov/search/home/",
+                        "record_status": "official_senate_parser_preview_not_promoted",
+                    }
+                ],
+                "disclosure_documents": documents,
+                "events": timeline_event_positions(
+                    events,
+                    periods,
+                    {"branch": "Legislative", "roles": roles},
+                    timeline_trades,
+                    external_id,
+                    involvement_by_event_and_official,
+                ),
+                "trade_clusters": trade_clusters(timeline_trades),
+                "stats": {
+                    "trade_count": len(timeline_trades),
+                    "parser_preview_trade_count": len(source_rows),
+                    "timeline_trade_count": len(timeline_trades),
+                    "out_of_service_trade_count": len(source_rows) - len(timeline_trades),
+                    "document_count": len(documents),
+                    "senate_trade_count": len(timeline_trades),
+                    "senate_document_count": len(documents),
+                    "structured_document_count": structured_documents,
+                    "paper_image_document_count": paper_documents,
+                    "buy_count": sum(1 for trade in timeline_trades if trade["action"] == "BUY"),
+                    "sell_count": sum(1 for trade in timeline_trades if trade["action"] == "SELL"),
+                    "crypto_count": sum(
+                        1 for trade in timeline_trades if trade["asset_class"] == "crypto"
+                    ),
+                    "total_value_midpoint": round(
+                        sum(trade["value_midpoint"] or 0 for trade in timeline_trades),
+                        2,
+                    ),
+                    "disclosure_status": disclosure_status,
+                    "record_status": "official_senate_parser_preview_not_promoted",
+                    "confidence_label": "Official Senate PTR parser preview; review required",
+                    "public_production_trade_count": 0,
+                    "review_required_before_public_trade": True,
+                },
+            }
+        existing = next(
+            (
+                row
+                for row in official_rows
+                if row["id"] == external_id
+                and row.get("timeline_group") == "official_house_ptr_preview"
+            ),
+            None,
+        )
+        if existing is None:
+            official_rows.append(senate_row)
+            continue
+
+        combined_trades = sorted(
+            [*existing.get("trades", []), *senate_row.get("trades", [])],
+            key=lambda row: (row["date"], row["id"]),
+        )
+        combined_documents = [
+            *existing.get("disclosure_documents", []),
+            *senate_row.get("disclosure_documents", []),
+        ]
+        existing["timeline_group"] = "official_congress_ptr_preview"
+        existing["trades"] = combined_trades
+        existing["disclosure_sources"] = [
+            *existing.get("disclosure_sources", []),
+            *senate_row.get("disclosure_sources", []),
+        ]
+        existing["disclosure_documents"] = combined_documents
+        existing["events"] = timeline_event_positions(
+            events,
+            existing["service_periods"],
+            {"branch": "Legislative", "roles": existing["roles"]},
+            combined_trades,
+            external_id,
+            involvement_by_event_and_official,
+        )
+        existing["trade_clusters"] = trade_clusters(combined_trades)
+        house_stats = existing["stats"]
+        senate_stats = senate_row["stats"]
+        existing["stats"] = {
+            **house_stats,
+            "trade_count": len(combined_trades),
+            "parser_preview_trade_count": (
+                house_stats.get("parser_preview_trade_count", 0)
+                + senate_stats.get("parser_preview_trade_count", 0)
+            ),
+            "timeline_trade_count": len(combined_trades),
+            "out_of_service_trade_count": senate_stats.get("out_of_service_trade_count", 0),
+            "document_count": len(combined_documents),
+            "senate_trade_count": senate_stats.get("senate_trade_count", 0),
+            "senate_document_count": senate_stats.get("senate_document_count", 0),
+            "structured_document_count": senate_stats.get("structured_document_count", 0),
+            "paper_image_document_count": senate_stats.get("paper_image_document_count", 0),
+            "buy_count": sum(1 for trade in combined_trades if trade["action"] == "BUY"),
+            "sell_count": sum(1 for trade in combined_trades if trade["action"] == "SELL"),
+            "crypto_count": sum(
+                1 for trade in combined_trades if trade["asset_class"] == "crypto"
+            ),
+            "total_value_midpoint": round(
+                sum(trade["value_midpoint"] or 0 for trade in combined_trades),
+                2,
+            ),
+            "disclosure_status": (
+                f"{house_stats.get('house_document_count', 0)} House and "
+                f"{senate_stats.get('senate_document_count', 0)} Senate official PTR documents; "
+                f"{len(combined_trades)} review-gated timeline transactions"
+            ),
+            "record_status": "official_congress_parser_preview_not_promoted",
+            "confidence_label": "Official congressional PTR parser previews; review required",
+        }
+
     for person in fixture_people if include_fixture_timelines else []:
         person_trades = sorted(trades_by_person.get(person["id"], []), key=lambda item: (item["trade_date"], item["id"]))
         fixture_roles = [
@@ -1400,7 +1917,14 @@ def career_trade_timeline(
         periods = service_periods(fixture_roles, person_trades)
         start, end = service_bounds(periods)
         timeline_trades = [
-            timeline_trade_row(trade, periods, market_points_by_symbol, crypto_points_by_symbol)
+            timeline_trade_row(
+                trade,
+                periods,
+                market_points_by_symbol,
+                crypto_points_by_symbol,
+                asset_resolution_by_transaction.get(trade["id"]),
+                market_reaction_by_transaction.get(trade["id"]),
+            )
             for trade in person_trades
         ]
         official_rows.append(
@@ -1416,7 +1940,14 @@ def career_trade_timeline(
                 "roles": fixture_roles,
                 "trades": timeline_trades,
                 "disclosure_sources": [],
-                "events": timeline_event_positions(events, periods, person, timeline_trades),
+                "events": timeline_event_positions(
+                    events,
+                    periods,
+                    person,
+                    timeline_trades,
+                    person["id"],
+                    involvement_by_event_and_official,
+                ),
                 "trade_clusters": trade_clusters(timeline_trades),
                 "stats": {
                     "trade_count": len(timeline_trades),
@@ -1441,12 +1972,17 @@ def career_trade_timeline(
     )
     return {
         "schema_version": "career-trade-timeline-v3",
-        "event_relationship_methodology_version": "event-relevance-v3",
+        "event_relationship_methodology_version": "event-relevance-v4",
         "trade_context_methodology": {
-            "version": "trade-window-v1",
+            "version": "trade-window-v2",
             "window_days": 45,
             "trade_cluster_days": 14,
             "selection": "Up to two source-backed context candidates before, during, and after each trade cluster.",
+            "ranking": (
+                "Transparent score from relationship specificity, temporal proximity, and unsigned "
+                "absolute benchmark-adjusted post-trade movement when market coverage exists."
+            ),
+            "focused_display_limit_per_official": 24,
             "interpretation": (
                 "Candidate markers identify timing and entity or institutional context only. "
                 "They do not establish knowledge, intent, causation, ethics, legality, or market impact."
@@ -1493,11 +2029,21 @@ def career_trade_timeline(
                 "parser_preview_transaction_count", 0
             ),
             "house_ptr_timeline_transaction_count": sum(
-                len(official["trades"])
+                sum(1 for trade in official["trades"] if trade.get("chamber") == "House")
                 for official in official_rows
-                if official["timeline_group"] == "official_house_ptr_preview"
             ),
             "house_ptr_out_of_service_trade_count": house_out_of_service_trade_count,
+            "senate_ptr_document_count": senate_ptr_transactions.get("summary", {}).get(
+                "processed_document_count", 0
+            ),
+            "senate_ptr_parser_preview_transaction_count": senate_ptr_transactions.get(
+                "summary", {}
+            ).get("parser_preview_transaction_count", 0),
+            "senate_ptr_timeline_transaction_count": sum(
+                sum(1 for trade in official["trades"] if trade.get("chamber") == "Senate")
+                for official in official_rows
+            ),
+            "senate_ptr_out_of_service_trade_count": senate_out_of_service_trade_count,
         },
         "officials": official_rows,
         "events": events,
@@ -1650,6 +2196,14 @@ def build_dataset() -> dict:
     fred_context = load_fred_context()
     civic_events = load_events()
     federal_event_context = load_json_file(FEDERAL_EVENTS, {"summary": {}, "sources": []})
+    historical_news_context = load_json_file(
+        HISTORICAL_NEWS_CONTEXT,
+        {"summary": {}, "coverage_report": {}},
+    )
+    sec_filing_context = load_json_file(
+        SEC_FILING_EVENTS,
+        {"summary": {}, "coverage_report": {}},
+    )
     context_maps = load_context_maps()
     disclosure_artifacts = load_disclosure_artifacts()
     market_series, market_metadata = load_market_prices()
@@ -1658,7 +2212,21 @@ def build_dataset() -> dict:
     presidential_oge_documents = load_presidential_oge_documents()
     presidential_oge_transactions = load_presidential_oge_transactions()
     house_ptr_transactions = load_house_ptr_transactions()
+    senate_ptr_transactions = load_json_file(
+        SENATE_PTR_TRANSACTIONS,
+        {"summary": {}, "documents": [], "transactions": []},
+    )
+    asset_resolution_context = load_json_file(
+        ASSET_RESOLUTION,
+        {"summary": {}, "transaction_resolutions": []},
+    )
+    market_reaction_context = load_json_file(
+        TRADE_MARKET_REACTIONS,
+        {"summary": {}, "reactions": []},
+    )
+    official_event_involvement = load_official_event_involvement()
     house_disclosure_index = load_json_file(HOUSE_DISCLOSURE_INDEX, {"summary": {}})
+    senate_disclosure_index = load_json_file(SENATE_DISCLOSURE_INDEX, {"summary": {}})
     people = create_people()
     all_people = []
     all_filings = []
@@ -1781,8 +2349,12 @@ def build_dataset() -> dict:
         presidential_oge_documents,
         presidential_oge_transactions,
         house_ptr_transactions,
+        senate_ptr_transactions,
         context_maps["event_entity_map"],
         context_maps["company_entity_reference"],
+        asset_resolution_context,
+        market_reaction_context,
+        official_event_involvement,
     )
     branch_counts = Counter(official["branch"] for official in career_timeline["officials"])
     sources = []
@@ -1826,8 +2398,8 @@ def build_dataset() -> dict:
         "parser_version": settings.PARSER_VERSION,
         "site_mode": "public_research_preview",
         "disclaimer": (
-            "This public research preview combines source-backed official rosters, official House Clerk and OGE "
-            "parser previews, and market context. Development fixtures are excluded from public timelines. "
+            "This public research preview combines source-backed official rosters, official House Clerk, Senate, "
+            "and OGE parser previews, and market context. Development fixtures are excluded from public timelines. "
             "Parser previews require review and are not reviewed public-production trades."
         ),
         "summary": {
@@ -1840,6 +2412,18 @@ def build_dataset() -> dict:
             "raw_document_count": len(all_raw_documents),
             "event_count": len(civic_events),
             "source_ingested_federal_event_count": federal_event_context.get("summary", {}).get(
+                "event_count", 0
+            ),
+            "official_event_relationship_count": official_event_involvement.get(
+                "summary", {}
+            ).get("relationship_count", 0),
+            "official_event_roll_call_count": official_event_involvement.get("summary", {}).get(
+                "roll_call_count", 0
+            ),
+            "historical_news_candidate_count": historical_news_context.get("summary", {}).get(
+                "event_count", 0
+            ),
+            "sec_filing_event_count": sec_filing_context.get("summary", {}).get(
                 "event_count", 0
             ),
             "macro_series_count": fred_context["summary"].get("series_count", 0),
@@ -1880,7 +2464,24 @@ def build_dataset() -> dict:
             "house_ptr_timeline_official_count": sum(
                 1
                 for official in career_timeline["officials"]
-                if official["timeline_group"] == "official_house_ptr_preview"
+                if official.get("stats", {}).get("house_document_count", 0)
+            ),
+            "senate_ptr_indexed_document_count": senate_disclosure_index.get("summary", {}).get(
+                "document_count", 0
+            ),
+            "senate_ptr_matched_document_count": senate_disclosure_index.get("summary", {}).get(
+                "matched_document_count", 0
+            ),
+            "senate_ptr_processed_document_count": senate_ptr_transactions.get("summary", {}).get(
+                "processed_document_count", 0
+            ),
+            "senate_ptr_parser_preview_transaction_count": senate_ptr_transactions.get(
+                "summary", {}
+            ).get("parser_preview_transaction_count", 0),
+            "senate_ptr_timeline_official_count": sum(
+                1
+                for official in career_timeline["officials"]
+                if official.get("stats", {}).get("senate_document_count", 0)
             ),
             "disclosure_queue_item_count": disclosure_artifacts["ingestion_queue"].get("summary", {}).get("queue_item_count", 0),
             "archived_source_document_count": disclosure_artifacts["raw_archive_index"].get("summary", {}).get("archived_document_count", 0),
@@ -1941,6 +2542,62 @@ def build_dataset() -> dict:
                 "summary": house_disclosure_index.get("summary", {}),
             },
             "transactions_manifest": house_ptr_transactions.get("manifest", {}),
+        },
+        "senate_disclosures": {
+            "index": {
+                "schema_version": senate_disclosure_index.get("schema_version"),
+                "generated_at": senate_disclosure_index.get("generated_at"),
+                "source": senate_disclosure_index.get("source", {}),
+                "scope": senate_disclosure_index.get("scope", {}),
+                "summary": senate_disclosure_index.get("summary", {}),
+                "validation": senate_disclosure_index.get("validation", {}),
+            },
+            "transactions": {
+                "schema_version": senate_ptr_transactions.get("schema_version"),
+                "generated_at": senate_ptr_transactions.get("generated_at"),
+                "source": senate_ptr_transactions.get("source", {}),
+                "summary": senate_ptr_transactions.get("summary", {}),
+                "validation": senate_ptr_transactions.get("validation", {}),
+                "context_label": senate_ptr_transactions.get("context_label"),
+            },
+        },
+        "asset_resolution_context": {
+            "schema_version": asset_resolution_context.get("schema_version"),
+            "generated_at": asset_resolution_context.get("generated_at"),
+            "summary": asset_resolution_context.get("summary", {}),
+            "methodology": asset_resolution_context.get("methodology", {}),
+            "context_label": asset_resolution_context.get("context_label"),
+        },
+        "market_reaction_context": {
+            "schema_version": market_reaction_context.get("schema_version"),
+            "generated_at": market_reaction_context.get("generated_at"),
+            "summary": market_reaction_context.get("summary", {}),
+            "methodology": market_reaction_context.get("methodology", {}),
+            "context_label": market_reaction_context.get("context_label"),
+        },
+        "official_event_involvement": {
+            "schema_version": official_event_involvement.get("schema_version"),
+            "methodology_version": official_event_involvement.get("methodology_version"),
+            "generated_at": official_event_involvement.get("generated_at"),
+            "summary": official_event_involvement.get("summary", {}),
+            "methodology": official_event_involvement.get("methodology", {}),
+            "context_label": official_event_involvement.get("context_label"),
+        },
+        "historical_news_context": {
+            "schema_version": historical_news_context.get("schema_version"),
+            "artifact_date": historical_news_context.get("artifact_date"),
+            "source": historical_news_context.get("source", {}),
+            "summary": historical_news_context.get("summary", {}),
+            "coverage_report": historical_news_context.get("coverage_report", {}),
+            "context_label": historical_news_context.get("context_label"),
+        },
+        "sec_filing_context": {
+            "schema_version": sec_filing_context.get("schema_version"),
+            "artifact_date": sec_filing_context.get("artifact_date"),
+            "source": sec_filing_context.get("source", {}),
+            "summary": sec_filing_context.get("summary", {}),
+            "coverage_report": sec_filing_context.get("coverage_report", {}),
+            "context_label": sec_filing_context.get("context_label"),
         },
         "disclosure_pipeline": public_disclosure_artifacts(disclosure_artifacts),
         "context_maps": context_maps,
@@ -2076,7 +2733,13 @@ def coverage_payload(dataset: dict) -> dict:
                 if dataset["summary"].get("house_ptr_ocr_required_document_count", 0)
                 else []
             ),
-            "Senate disclosure documents are not ingested because the official portal acknowledgement workflow is not automated.",
+            *(
+                [
+                    f"{dataset['summary'].get('senate_ptr_indexed_document_count', 0):,} Senate PTRs are indexed; paper-image filings still require OCR and evidence review."
+                ]
+                if dataset["summary"].get("senate_ptr_indexed_document_count", 0)
+                else ["Senate disclosure documents have not been indexed."]
+            ),
             "Judicial disclosure documents are not ingested; the official JEFS requester and acknowledgement workflow remains external.",
             "Executive disclosure coverage beyond the presidential OGE index is incomplete.",
             "The House Clerk's structured periodic-transaction index in this dataset begins in 2015; earlier Obama-era House transaction backfill remains incomplete.",
@@ -2102,7 +2765,6 @@ def compact_public_event(event: dict) -> dict:
         "jurisdiction_scope",
         "ticker_scope",
         "entity_scope",
-        "company_entity_scope",
         "market_topic_ids",
         "market_relevance",
         "law_number",
@@ -2110,13 +2772,60 @@ def compact_public_event(event: dict) -> dict:
         "docket_number",
         "citation",
         "term_year",
+        "record_status",
+        "review_status",
+        "review_required_before_publication",
+        "public_production_event",
+        "source_attribution_complete",
+        "publisher_domain",
+        "matched_query_ids",
+        "matched_request_ids",
     ]
     row = {key: event.get(key) for key in keys if event.get(key) not in (None, "", [], {})}
+    company = event.get("company") or {}
+    filing = event.get("filing") or {}
+    if company.get("cik"):
+        row["sec_company_cik"] = company["cik"]
+    if filing:
+        row["sec_filing"] = {
+            key: filing.get(key)
+            for key in ["accession_number", "form", "report_date", "items"]
+            if filing.get(key) not in (None, "", [], {})
+        }
     for key in ["announcement_date", "effective_date", "publication_date"]:
         value = event.get(key)
         if value and value != event.get("date"):
             row[key] = value
     return row
+
+
+def compact_timeline_official(official: dict) -> dict:
+    stats = official.get("stats", {})
+    defaults = {
+        "record_status": stats.get("record_status"),
+        "review_required_before_public_trade": stats.get(
+            "review_required_before_public_trade"
+        ),
+        "public_production_trade": False,
+        "benchmark_symbol": "SPY",
+        "ticker": "",
+        "sector": "Unmapped",
+    }
+    defaults = {key: value for key, value in defaults.items() if value is not None}
+    compact_trades = []
+    for trade in official.get("trades", []):
+        compact_trades.append(
+            {
+                key: value
+                for key, value in trade.items()
+                if key not in defaults or value != defaults[key]
+            }
+        )
+    return {
+        **official,
+        "trade_record_defaults": defaults,
+        "trades": compact_trades,
+    }
 
 
 def write_partition(relative_path: str, payload) -> dict:
@@ -2157,6 +2866,12 @@ def write_public_partitions(dataset: dict) -> None:
                 "unavailable_documents": dataset["presidential_oge_documents"].get("unavailable_documents", []),
             },
             "house_disclosures": dataset.get("house_disclosures", {}),
+            "senate_disclosures": dataset.get("senate_disclosures", {}),
+            "asset_resolution_context": dataset.get("asset_resolution_context", {}),
+            "market_reaction_context": dataset.get("market_reaction_context", {}),
+            "official_event_involvement": dataset.get("official_event_involvement", {}),
+            "historical_news_context": dataset.get("historical_news_context", {}),
+            "sec_filing_context": dataset.get("sec_filing_context", {}),
             "federal_event_context": dataset.get("federal_event_context", {}),
         },
     )
@@ -2187,7 +2902,7 @@ def write_public_partitions(dataset: dict) -> None:
             relative,
             {
                 "schema_version": dataset["career_trade_timeline"]["schema_version"],
-                "official": official,
+                "official": compact_timeline_official(official),
             },
         )
         timeline_official_summaries.append(

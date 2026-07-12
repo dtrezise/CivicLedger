@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from datetime import date, datetime
 from decimal import Decimal
+from enum import Enum
 from uuid import UUID
 from typing import Optional
+
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 
 
 # ---- People ----
@@ -400,6 +402,86 @@ class SupersedeFilingRequest(BaseModel):
     superseded_by_filing_id: UUID
     reviewer: str
     reason: str
+
+
+# ---- Relationship Candidate Review ----
+
+class RelationshipReviewDecision(str, Enum):
+    ACCEPT = "accept"
+    NARROW = "narrow"
+    REJECT = "reject"
+    SUPERSEDE = "supersede"
+
+
+class RelationshipCandidateStatus(str, Enum):
+    CANDIDATE = "candidate"
+    ACCEPTED = "accepted"
+    NARROWED = "narrowed"
+    REJECTED = "rejected"
+    SUPERSEDED = "superseded"
+
+
+class RelationshipReviewCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    decision: RelationshipReviewDecision
+    reviewer: str = Field(min_length=1, max_length=200)
+    evidence_note: str = Field(
+        min_length=1,
+        max_length=5000,
+        validation_alias=AliasChoices("evidence_note", "reason"),
+    )
+
+    @field_validator("reviewer", "evidence_note")
+    @classmethod
+    def strip_required_text(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("must not be blank")
+        return value
+
+
+class RelationshipReviewHistoryItem(BaseModel):
+    id: UUID
+    candidate_id: UUID
+    decision: RelationshipReviewDecision
+    reviewer: str
+    evidence_note: str
+    reviewed_at: datetime
+
+
+class TradeEventCandidateReviewItem(BaseModel):
+    id: UUID
+    trade_id: UUID
+    event_id: UUID
+    person_id: UUID
+    person_name: str
+    trade_date: date
+    reported_date: date
+    action: str
+    asset_display_name: str
+    ticker: Optional[str] = None
+    asset_class: str
+    value_range_label: str
+    event_date: date
+    event_label: str
+    event_type: str
+    event_description: Optional[str] = None
+    days_from_event: int
+    evidence_tier: str
+    relationship_reasons: list[str | dict]
+    internal_rank: Optional[Decimal] = None
+    methodology_version: str
+    review_status: RelationshipCandidateStatus
+    created_at: Optional[datetime] = None
+    reviews: list[RelationshipReviewHistoryItem]
+
+
+class TradeEventCandidateReviewListResponse(BaseModel):
+    items: list[TradeEventCandidateReviewItem]
+    page: int
+    page_size: int
+    total: int
 
 
 class IngestionRunItem(BaseModel):

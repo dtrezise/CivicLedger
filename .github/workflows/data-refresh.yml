@@ -59,6 +59,16 @@ jobs:
           PYTHONPATH: backend
           CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
         run: python scripts/build_federal_events_dataset.py --start 2009-01-20
+      - name: Refresh official event involvement weekly
+        env:
+          PYTHONPATH: backend
+          CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "7" ]; then
+            python scripts/build_official_event_involvement.py
+          else
+            echo "Skipping weekly official-involvement refresh."
+          fi
       - name: Rebuild presidential OGE source index
         env:
           PYTHONPATH: backend
@@ -67,6 +77,16 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_presidential_oge_documents.py --refresh
+      - name: Refresh Senate disclosure index and weekly report pages
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/build_senate_disclosure_index.py --all-senators --acknowledge-senate-terms
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "7" ]; then
+            python scripts/build_senate_ptr_transactions.py --all-indexed --acknowledge-senate-terms
+          else
+            echo "Skipping weekly Senate report-page refresh."
+          fi
       - name: Rebuild disclosure source pipeline artifacts
         env:
           PYTHONPATH: backend
@@ -96,6 +116,26 @@ jobs:
         run: python scripts/build_crypto_price_dataset.py --start 2009-01-20
       - name: Check market price coverage
         run: python scripts/check_market_price_dataset.py
+      - name: Rebuild asset resolution and market reaction context
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/build_asset_resolution_dataset.py
+          python scripts/build_trade_market_reactions.py
+      - name: Refresh official SEC issuer filing context
+        env:
+          PYTHONPATH: backend
+          SEC_EDGAR_USER_AGENT: CivicLedger github-actions[bot]@users.noreply.github.com
+        run: >-
+          python scripts/build_sec_filing_events.py
+          --cik apple=0000320193
+          --cik microsoft=0000789019
+          --cik alphabet=0001652044
+          --cik nvidia=0001045810
+          --cik jpmorgan=0000019617
+          --cik amazon=0001018724
+          --start 2025-01-01
+          --forms 8-K,10-K,10-Q
       - name: Check source freshness
         run: python scripts/check_source_freshness.py
       - name: Rebuild Pages data
