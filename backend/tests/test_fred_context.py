@@ -4,6 +4,7 @@ from pathlib import Path
 from app.services.fred_context import (
     CONTEXT_SOURCE_PRIORITIES,
     FRED_CONTEXT_SERIES,
+    FRED_RELEASES,
     parse_observations,
     parse_release_dates,
 )
@@ -49,3 +50,9 @@ def test_context_source_priority_keeps_fred_active_and_defers_campaign_spending(
     assert by_source["FEC"]["status"] == "deferred"
     assert by_source["USAspending"]["status"] == "deferred"
     assert {"FEDFUNDS", "CPIAUCSL", "DGS10", "DGS2", "UNRATE", "USREC"} <= set(FRED_CONTEXT_SERIES)
+    assert {
+        "cpi": 10,
+        "employment_situation": 50,
+        "gdp": 53,
+        "fomc": 101,
+    } == {key: value["release_id"] for key, value in FRED_RELEASES.items()}

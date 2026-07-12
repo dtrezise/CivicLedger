@@ -17,9 +17,9 @@ Federal public financial disclosure tracker. View reporting timelines, disclosur
 - 53,673 House parser-preview transactions for 295 officials; 1,983 image-only reports remain in the OCR queue.
 - 2,103 Senate PTRs indexed from 2012-present; 1,820 matched reports were acquired for 65 senators, yielding 10,882 structured parser-preview transactions while 551 paper-image reports remain review work.
 - 19 presidential OGE documents and 7,182 source rows: 15 in-service Obama rows, 13 Biden rows, and 7,151 Trump rows across both terms. Six Obama reports and four Biden reports explicitly state no reportable transactions.
-- 924 official federal events enriched with 520 Congress.gov bill records, 745 official roll calls, and 218,861 sourced official-event relationships.
+- 1,505 official federal events, including legislation, executive orders, court decisions, funding actions, and significant Federal Register rules and notices; enriched with 748 official roll calls and 222,782 sourced official-event relationships.
 - 164 review-gated SEC filing events for six frequently disclosed issuers; the independent historical-news provider records provider outages as coverage gaps.
-- 902 conservatively resolved fund/ETF/529 transaction identities and 4,080 neutral pre/post market-reaction contexts.
+- 902 conservatively resolved fund/ETF/529 transaction identities and 4,264 neutral pre/post market-reaction contexts with 7-, 30-, and 90-day windows.
 - 91,092 equity/ETF market points, 14,215 crypto points, and 9,955 FRED observations backfilled to 2009 or provider inception.
 - Zero reviewed public-production trades. Every visible transaction remains a source-linked, review-gated parser preview.
 
@@ -34,8 +34,8 @@ docker compose up --build
 ```
 
 This will:
-1. Start PostgreSQL with the schema (`init.sql`)
-2. Start the FastAPI backend on **:8000** (runs seed script on first boot)
+1. Start PostgreSQL and apply all Alembic migrations
+2. Start the FastAPI backend on **:8000** (then runs the idempotent seed script)
 3. Start the Next.js frontend on **:3000**
 
 ## URLs
@@ -64,7 +64,7 @@ On first startup the backend automatically seeds the database with:
 .
 ├── frontend/          Next.js 14 + TypeScript + Recharts + TailwindCSS
 ├── backend/           FastAPI + SQLAlchemy + Pydantic
-├── db/                PostgreSQL schema (init.sql)
+├── db/                Legacy baseline SQL retained for reference
 ├── docs/              Product, architecture, provenance, roadmap, and agent roles
 └── docker-compose.yml
 ```
@@ -80,6 +80,7 @@ On first startup the backend automatically seeds the database with:
 | `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
 | `docs/roadmap.md` | Stabilization and phased build plan |
 | `docs/release_readiness_120_steps.md` | 120-step release execution program |
+| `docs/autonomous_release_sprint_120.md` | Completed 120-outcome autonomous release sprint ledger |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
 
 ## Public GitHub Pages Demo

@@ -192,6 +192,59 @@ export interface EventItem {
   description: string | null;
 }
 
+export type RelationshipDecision = "accept" | "narrow" | "reject" | "supersede";
+export type RelationshipStatus =
+  | "candidate"
+  | "accepted"
+  | "narrowed"
+  | "rejected"
+  | "superseded";
+export type RelationshipSort = "priority" | "newest" | "oldest" | "event_date" | "trade_date";
+
+export interface RelationshipReview {
+  id: string;
+  candidate_id: string;
+  decision: RelationshipDecision;
+  reviewer: string;
+  evidence_note: string;
+  reviewed_at: string;
+}
+
+export interface RelationshipCandidate {
+  id: string;
+  trade_id: string;
+  event_id: string;
+  person_id: string;
+  person_name: string;
+  trade_date: string;
+  reported_date: string;
+  action: string;
+  asset_display_name: string;
+  ticker: string | null;
+  asset_class: string;
+  value_range_label: string;
+  event_date: string;
+  event_label: string;
+  event_type: string;
+  event_description: string | null;
+  days_from_event: number;
+  evidence_tier: string;
+  relationship_reasons: Array<string | Record<string, unknown>>;
+  internal_rank: string | number | null;
+  methodology_version: string;
+  review_status: RelationshipStatus;
+  created_at: string | null;
+  reviews: RelationshipReview[];
+}
+
+export interface RelationshipCandidateListResponse {
+  items: RelationshipCandidate[];
+  page: number;
+  page_size: number;
+  total: number;
+  sort: RelationshipSort;
+}
+
 export interface ShareCardCreateResponse {
   sharecard_id: string;
   render_url: string | null;

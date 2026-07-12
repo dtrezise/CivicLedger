@@ -366,3 +366,66 @@ def test_missing_candidate_returns_404_without_a_write():
     assert session.added == []
     assert session.commit_count == 0
     assert session.rollback_count == 1
+
+
+def test_candidate_queue_combines_priority_filters_and_reports_sort():
+    row = make_candidate_row(status="candidate")
+    session = SequenceSession(
+        [
+            FakeResult(scalar=1),
+            FakeResult(rows=[row]),
+            FakeResult(rows=[]),
+        ]
+    )
+
+    with client_for(session) as client:
+        response = client.get(
+            "/review/relationship-candidates",
+            params={
+                "status": "candidate",
+                "evidence_tier": "entity_and_timing",
+                "event_type": "regulatory_action",
+                "q": "Example",
+                "max_abs_days": 30,
+                "min_internal_rank": 0.8,
+                "has_reviews": "false",
+                "sort": "priority",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json()["sort"] == "priority"
+    assert response.json()["items"][0]["person_name"] == "Jordan Example"
+    count_sql = str(session.statements[0])
+    items_sql = str(session.statements[1])
+    for fragment in (
+        "evidence_tier",
+        "event_type",
+        "lower(people.full_name)",
+        "abs(trade_event_candidates.days_from_event)",
+        "internal_rank",
+        "relationship_reviews",
+    ):
+        assert fragment in count_sql
+    assert "CASE WHEN" in items_sql
+
+
+def test_decision_rejects_stale_expected_status_before_writing():
+    session = WorkflowSession(status="accepted")
+
+    with client_for(session) as client:
+        response = client.post(
+            f"/review/relationship-candidates/{CANDIDATE_ID}/decisions",
+            json={
+                "decision": "reject",
+                "reviewer": "Second Reviewer",
+                "evidence_note": "The current review view was loaded before acceptance.",
+                "expected_status": "candidate",
+            },
+        )
+
+    assert response.status_code == 409
+    assert "status changed" in response.json()["detail"]
+    assert session.added == []
+    assert session.commit_count == 0
+    assert session.rollback_count == 1

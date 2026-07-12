@@ -92,6 +92,8 @@ jobs:
           PYTHONPATH: backend
         run: |
           python scripts/archive_disclosure_documents.py
+          python scripts/build_executive_disclosure_manifest.py
+          python scripts/build_judicial_disclosure_manifest.py
           python scripts/build_disclosure_ingestion_queue.py
           python scripts/build_reviewed_disclosure_promotions.py
           python scripts/build_disclosure_retrieval_batches.py
@@ -136,6 +138,12 @@ jobs:
           --cik amazon=0001018724
           --start 2025-01-01
           --forms 8-K,10-K,10-Q
+      - name: Rebuild canonical entities and source snapshots
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/build_entity_reference_dataset.py
+          python scripts/build_source_snapshot_index.py
       - name: Check source freshness
         run: python scripts/check_source_freshness.py
       - name: Rebuild Pages data
@@ -144,14 +152,23 @@ jobs:
         run: python scripts/build_pages_dataset.py
       - name: Validate public release contract
         run: python scripts/check_public_release_dataset.py
+      - name: Validate static release gates
+        run: |
+          python scripts/check_release_accessibility.py
+          python scripts/check_release_static_contract.py
+          python scripts/check_release_links.py
+          python scripts/check_release_performance.py
+          python scripts/check_release_determinism.py
+          python scripts/build_release_checksum_inventory.py
+          python scripts/build_release_checksum_inventory.py --check
       - name: Commit refreshed generated data
         run: |
-          if git diff --quiet -- data pages-site/data backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
+          if git diff --quiet -- data pages-site/data pages-site/release-checksums.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
             echo "No generated data changes to commit."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data pages-site/data backend/tests/fixtures/parsers/oge_public_sample_fixture.json
+            git add data pages-site/data pages-site/release-checksums.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json
             git commit -m "Refresh live context data"
             git push
           fi

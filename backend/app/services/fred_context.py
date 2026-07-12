@@ -56,6 +56,24 @@ FRED_RELEASES = {
         "category": "inflation_release",
         "context_use": "CPI publication date near reported trades.",
     },
+    "employment_situation": {
+        "release_id": 50,
+        "label": "Employment Situation Release",
+        "category": "labor_release",
+        "context_use": "Official labor-market publication date near reported trades.",
+    },
+    "gdp": {
+        "release_id": 53,
+        "label": "Gross Domestic Product Release",
+        "category": "growth_release",
+        "context_use": "Official GDP publication date near reported trades.",
+    },
+    "fomc": {
+        "release_id": 101,
+        "label": "FOMC Press Release",
+        "category": "monetary_policy_release",
+        "context_use": "Federal Open Market Committee release date near reported trades.",
+    },
 }
 
 CONTEXT_SOURCE_PRIORITIES = [

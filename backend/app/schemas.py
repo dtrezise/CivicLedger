@@ -421,6 +421,14 @@ class RelationshipCandidateStatus(str, Enum):
     SUPERSEDED = "superseded"
 
 
+class RelationshipCandidateSort(str, Enum):
+    PRIORITY = "priority"
+    NEWEST = "newest"
+    OLDEST = "oldest"
+    EVENT_DATE = "event_date"
+    TRADE_DATE = "trade_date"
+
+
 class RelationshipReviewCreateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -431,6 +439,7 @@ class RelationshipReviewCreateRequest(BaseModel):
         max_length=5000,
         validation_alias=AliasChoices("evidence_note", "reason"),
     )
+    expected_status: RelationshipCandidateStatus | None = None
 
     @field_validator("reviewer", "evidence_note")
     @classmethod
@@ -482,6 +491,7 @@ class TradeEventCandidateReviewListResponse(BaseModel):
     page: int
     page_size: int
     total: int
+    sort: RelationshipCandidateSort = RelationshipCandidateSort.PRIORITY
 
 
 class IngestionRunItem(BaseModel):

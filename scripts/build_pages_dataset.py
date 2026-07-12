@@ -44,13 +44,17 @@ TRADE_MARKET_REACTIONS = ROOT / "data" / "context" / "trade_market_reactions.jso
 HISTORICAL_NEWS_CONTEXT = ROOT / "data" / "context" / "historical_news_context.json"
 SEC_FILING_EVENTS = ROOT / "data" / "context" / "sec_filing_events.json"
 OFFICIAL_EVENT_INVOLVEMENT = ROOT / "data" / "context" / "official_event_involvement.json"
+SOURCE_SNAPSHOTS = ROOT / "data" / "context" / "source_snapshots.json"
+ENTITY_REFERENCE = ROOT / "data" / "context" / "entity_reference.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
 PRESIDENTIAL_OGE_DOCUMENTS = ROOT / "data" / "disclosures" / "presidential_oge_documents.json"
 PRESIDENTIAL_OGE_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
+EXECUTIVE_OGE_MANIFEST = ROOT / "data" / "disclosures" / "executive_oge_disclosure_manifest.json"
 HOUSE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
 HOUSE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 SENATE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
 SENATE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
+JUDICIAL_DISCLOSURE_MANIFEST = ROOT / "data" / "disclosures" / "judicial_disclosure_manifest.json"
 DISCLOSURE_QUEUE = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 RAW_ARCHIVE_INDEX = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 REVIEWED_PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.json"
@@ -2211,10 +2215,18 @@ def build_dataset() -> dict:
     presidential_oge_status = load_presidential_oge_status()
     presidential_oge_documents = load_presidential_oge_documents()
     presidential_oge_transactions = load_presidential_oge_transactions()
+    executive_oge_manifest = load_json_file(
+        EXECUTIVE_OGE_MANIFEST,
+        {"summary": {}, "collection_policy": {}, "officials": []},
+    )
     house_ptr_transactions = load_house_ptr_transactions()
     senate_ptr_transactions = load_json_file(
         SENATE_PTR_TRANSACTIONS,
         {"summary": {}, "documents": [], "transactions": []},
+    )
+    judicial_disclosure_manifest = load_json_file(
+        JUDICIAL_DISCLOSURE_MANIFEST,
+        {"summary": {}, "access_policy": {}, "officials": []},
     )
     asset_resolution_context = load_json_file(
         ASSET_RESOLUTION,
@@ -2225,6 +2237,11 @@ def build_dataset() -> dict:
         {"summary": {}, "reactions": []},
     )
     official_event_involvement = load_official_event_involvement()
+    source_snapshots = load_json_file(SOURCE_SNAPSHOTS, {"summary": {}, "snapshots": []})
+    entity_reference = load_json_file(
+        ENTITY_REFERENCE,
+        {"summary": {}, "organizations": [], "assets": [], "ticker_histories": []},
+    )
     house_disclosure_index = load_json_file(HOUSE_DISCLOSURE_INDEX, {"summary": {}})
     senate_disclosure_index = load_json_file(SENATE_DISCLOSURE_INDEX, {"summary": {}})
     people = create_people()
@@ -2373,10 +2390,29 @@ def build_dataset() -> dict:
                 "OCR extraction and validation for image-only filings",
                 "reviewed public filing promotion",
             ]
+        if source["id"] == "judicial-financial-disclosure" and judicial_disclosure_manifest.get(
+            "summary", {}
+        ).get("official_count"):
+            source_status = "official_roster_manifest_ready"
+            missing_capabilities = [
+                "requester-governed JEFS document acquisition",
+                "raw-document OCR and parser review",
+                "reviewed public filing promotion",
+            ]
+        if source["id"] == "oge-individual-disclosures" and executive_oge_manifest.get(
+            "summary", {}
+        ).get("official_count"):
+            source_status = "official_roster_and_presidential_documents_ready"
+            missing_capabilities = [
+                "non-presidential OGE collection search and raw-document archive",
+                "reviewed public filing promotion",
+            ]
         status_label = {
             "parser_preview_ready": "Parser preview ready",
             "source_index_ready": "Source index ready",
             "official_index_and_parser_preview": "Official index and parser previews ready",
+            "official_roster_manifest_ready": "Official roster manifest ready",
+            "official_roster_and_presidential_documents_ready": "Official roster and presidential documents ready",
             "planned": "Planned",
         }.get(source_status, source_status)
         sources.append(
@@ -2420,6 +2456,18 @@ def build_dataset() -> dict:
             "official_event_roll_call_count": official_event_involvement.get("summary", {}).get(
                 "roll_call_count", 0
             ),
+            "normalized_source_snapshot_count": source_snapshots.get("summary", {}).get(
+                "snapshot_count", 0
+            ),
+            "canonical_organization_count": entity_reference.get("summary", {}).get(
+                "organization_count", 0
+            ),
+            "canonical_asset_count": entity_reference.get("summary", {}).get(
+                "asset_count", 0
+            ),
+            "entity_quality_issue_count": entity_reference.get("summary", {}).get(
+                "quality_issue_count", 0
+            ),
             "historical_news_candidate_count": historical_news_context.get("summary", {}).get(
                 "event_count", 0
             ),
@@ -2444,6 +2492,15 @@ def build_dataset() -> dict:
             "presidential_oge_public_production_trade_count": career_timeline["summary"][
                 "presidential_oge_public_production_trade_count"
             ],
+            "executive_oge_manifest_official_count": executive_oge_manifest.get("summary", {}).get(
+                "official_count", 0
+            ),
+            "executive_oge_manifest_role_count": executive_oge_manifest.get("summary", {}).get(
+                "role_count", 0
+            ),
+            "executive_oge_indexed_document_count": executive_oge_manifest.get("summary", {}).get(
+                "indexed_document_count", 0
+            ),
             "house_ptr_indexed_document_count": house_disclosure_index.get("summary", {})
             .get("member_ptr_document_count", 0),
             "house_ptr_processed_document_count": house_ptr_transactions["summary"].get(
@@ -2482,6 +2539,18 @@ def build_dataset() -> dict:
                 1
                 for official in career_timeline["officials"]
                 if official.get("stats", {}).get("senate_document_count", 0)
+            ),
+            "judicial_manifest_official_count": judicial_disclosure_manifest.get("summary", {}).get(
+                "official_count", 0
+            ),
+            "judicial_manifest_role_count": judicial_disclosure_manifest.get("summary", {}).get(
+                "role_count", 0
+            ),
+            "judicial_indexed_document_count": judicial_disclosure_manifest.get("summary", {}).get(
+                "indexed_document_count", 0
+            ),
+            "judicial_reviewed_trade_count": judicial_disclosure_manifest.get("summary", {}).get(
+                "reviewed_trade_count", 0
             ),
             "disclosure_queue_item_count": disclosure_artifacts["ingestion_queue"].get("summary", {}).get("queue_item_count", 0),
             "archived_source_document_count": disclosure_artifacts["raw_archive_index"].get("summary", {}).get("archived_document_count", 0),
@@ -2533,6 +2602,14 @@ def build_dataset() -> dict:
             "summary": presidential_oge_transactions.get("summary", {}),
             "transactions": presidential_oge_transactions.get("transactions", []),
         },
+        "executive_oge_manifest": {
+            "schema_version": executive_oge_manifest.get("schema_version"),
+            "generated_at": executive_oge_manifest.get("generated_at"),
+            "source": executive_oge_manifest.get("source", {}),
+            "collection_policy": executive_oge_manifest.get("collection_policy", {}),
+            "interpretation_boundary": executive_oge_manifest.get("interpretation_boundary"),
+            "summary": executive_oge_manifest.get("summary", {}),
+        },
         "house_disclosures": {
             "index": {
                 "schema_version": house_disclosure_index.get("schema_version"),
@@ -2561,6 +2638,16 @@ def build_dataset() -> dict:
                 "context_label": senate_ptr_transactions.get("context_label"),
             },
         },
+        "judicial_disclosures": {
+            "schema_version": judicial_disclosure_manifest.get("schema_version"),
+            "generated_at": judicial_disclosure_manifest.get("generated_at"),
+            "source": judicial_disclosure_manifest.get("source", {}),
+            "access_policy": judicial_disclosure_manifest.get("access_policy", {}),
+            "interpretation_boundary": judicial_disclosure_manifest.get(
+                "interpretation_boundary"
+            ),
+            "summary": judicial_disclosure_manifest.get("summary", {}),
+        },
         "asset_resolution_context": {
             "schema_version": asset_resolution_context.get("schema_version"),
             "generated_at": asset_resolution_context.get("generated_at"),
@@ -2582,6 +2669,26 @@ def build_dataset() -> dict:
             "summary": official_event_involvement.get("summary", {}),
             "methodology": official_event_involvement.get("methodology", {}),
             "context_label": official_event_involvement.get("context_label"),
+        },
+        "source_snapshots": {
+            "schema_version": source_snapshots.get("schema_version"),
+            "generated_at": source_snapshots.get("generated_at"),
+            "summary": source_snapshots.get("summary", {}),
+            "interpretation_boundary": source_snapshots.get("interpretation_boundary"),
+        },
+        "entity_reference": {
+            "schema_version": entity_reference.get("schema_version"),
+            "generated_at": entity_reference.get("generated_at"),
+            "dataset_hash": entity_reference.get("dataset_hash"),
+            "summary": entity_reference.get("summary", {}),
+            "methodology": entity_reference.get("methodology", {}),
+            "context_label": entity_reference.get("context_label"),
+            "organizations": entity_reference.get("organizations", []),
+            "assets": entity_reference.get("assets", []),
+            "sectors": entity_reference.get("sectors", []),
+            "ticker_histories": entity_reference.get("ticker_histories", []),
+            "relationships": entity_reference.get("relationships", []),
+            "source_snapshots": entity_reference.get("source_snapshots", []),
         },
         "historical_news_context": {
             "schema_version": historical_news_context.get("schema_version"),
@@ -2740,8 +2847,14 @@ def coverage_payload(dataset: dict) -> dict:
                 if dataset["summary"].get("senate_ptr_indexed_document_count", 0)
                 else ["Senate disclosure documents have not been indexed."]
             ),
-            "Judicial disclosure documents are not ingested; the official JEFS requester and acknowledgement workflow remains external.",
-            "Executive disclosure coverage beyond the presidential OGE index is incomplete.",
+            (
+                f"Judicial roster coverage includes {dataset['summary'].get('judicial_manifest_official_count', 0):,} officials, "
+                "but no JEFS documents are ingested; requester identity and acknowledgement remain external."
+            ),
+            (
+                f"Executive roster coverage includes {dataset['summary'].get('executive_oge_manifest_official_count', 0):,} officials, "
+                "but non-presidential OGE document acquisition remains incomplete."
+            ),
             "The House Clerk's structured periodic-transaction index in this dataset begins in 2015; earlier Obama-era House transaction backfill remains incomplete.",
             "Structured Supreme Court slip-opinion ingestion begins with October Term 2017; official bound-volume backfill for 2009-2016 remains pending.",
         ],
@@ -2799,6 +2912,25 @@ def compact_public_event(event: dict) -> dict:
     return row
 
 
+def compact_event_index_row(event: dict) -> dict:
+    keys = [
+        "id",
+        "date",
+        "label",
+        "event_type",
+        "source",
+        "source_tier",
+        "editor_status",
+        "branch_scope",
+        "market_topic_ids",
+        "sector_scope",
+        "jurisdiction_scope",
+        "ticker_scope",
+        "entity_scope",
+    ]
+    return {key: event.get(key) for key in keys if event.get(key) not in (None, "", [], {})}
+
+
 def compact_timeline_official(official: dict) -> dict:
     stats = official.get("stats", {})
     defaults = {
@@ -2821,10 +2953,20 @@ def compact_timeline_official(official: dict) -> dict:
                 if key not in defaults or value != defaults[key]
             }
         )
+    context_events = [
+        event
+        for event in official.get("events", [])
+        if event.get("trade_context_candidate") is True
+    ]
     return {
         **official,
         "trade_record_defaults": defaults,
         "trades": compact_trades,
+        "events": context_events,
+        "event_record_policy": (
+            "Actor timeline partitions retain ranked trade-context candidates only; "
+            "the complete event catalog is partitioned by year."
+        ),
     }
 
 
@@ -2865,11 +3007,22 @@ def write_public_partitions(dataset: dict) -> None:
                 "summary": dataset["presidential_oge_documents"].get("summary", {}),
                 "unavailable_documents": dataset["presidential_oge_documents"].get("unavailable_documents", []),
             },
+            "executive_oge_manifest": dataset.get("executive_oge_manifest", {}),
             "house_disclosures": dataset.get("house_disclosures", {}),
             "senate_disclosures": dataset.get("senate_disclosures", {}),
+            "judicial_disclosures": dataset.get("judicial_disclosures", {}),
             "asset_resolution_context": dataset.get("asset_resolution_context", {}),
             "market_reaction_context": dataset.get("market_reaction_context", {}),
             "official_event_involvement": dataset.get("official_event_involvement", {}),
+            "source_snapshots": dataset.get("source_snapshots", {}),
+            "entity_reference": {
+                "schema_version": dataset.get("entity_reference", {}).get("schema_version"),
+                "generated_at": dataset.get("entity_reference", {}).get("generated_at"),
+                "dataset_hash": dataset.get("entity_reference", {}).get("dataset_hash"),
+                "summary": dataset.get("entity_reference", {}).get("summary", {}),
+                "methodology": dataset.get("entity_reference", {}).get("methodology", {}),
+                "context_label": dataset.get("entity_reference", {}).get("context_label"),
+            },
             "historical_news_context": dataset.get("historical_news_context", {}),
             "sec_filing_context": dataset.get("sec_filing_context", {}),
             "federal_event_context": dataset.get("federal_event_context", {}),
@@ -2879,18 +3032,41 @@ def write_public_partitions(dataset: dict) -> None:
         "partitions/officials-index.json",
         {"schema_version": "official-index-v1", "officials": officials},
     )
+    files["entity_reference"] = write_partition(
+        "partitions/entity-reference.json",
+        dataset.get("entity_reference", {}),
+    )
     files["coverage"] = write_partition("partitions/coverage.json", coverage_payload(dataset))
+    public_events = [
+        compact_public_event(event)
+        for event in dataset["career_trade_timeline"].get("events", [])
+    ]
+    events_by_year = defaultdict(list)
+    for event in public_events:
+        event_year = str(event.get("date") or "")[:4]
+        events_by_year[event_year if event_year.isdigit() else "unknown"].append(event)
+    event_partitions = {}
+    for year, events in sorted(events_by_year.items()):
+        event_partitions[year] = write_partition(
+            f"partitions/events/{year}.json",
+            {
+                "schema_version": "timeline-events-v3",
+                "year": int(year) if year.isdigit() else None,
+                "methodology_version": dataset["career_trade_timeline"].get(
+                    "event_relationship_methodology_version"
+                ),
+                "events": events,
+            },
+        )
     files["events"] = write_partition(
         "partitions/events.json",
         {
-            "schema_version": "timeline-events-v2",
+            "schema_version": "timeline-event-index-v1",
             "methodology_version": dataset["career_trade_timeline"].get(
                 "event_relationship_methodology_version"
             ),
-            "events": [
-                compact_public_event(event)
-                for event in dataset["career_trade_timeline"].get("events", [])
-            ],
+            "partition_years": sorted(events_by_year),
+            "events": [compact_event_index_row(event) for event in public_events],
         },
     )
 
@@ -2913,7 +3089,11 @@ def write_public_partitions(dataset: dict) -> None:
                 "timeline_group": official["timeline_group"],
                 "record_status": official.get("stats", {}).get("record_status"),
                 "trade_count": len(official.get("trades", [])),
-                "event_count": len(official.get("events", [])),
+                "event_count": sum(
+                    1
+                    for event in official.get("events", [])
+                    if event.get("trade_context_candidate") is True
+                ),
                 "document_count": official.get("stats", {}).get("document_count", 0),
                 "no_transaction_document_count": official.get("stats", {}).get(
                     "no_transaction_document_count", 0
@@ -2987,23 +3167,25 @@ def write_public_partitions(dataset: dict) -> None:
             "timelines": timeline_partitions,
             "roles": role_partitions,
             "market": market_partitions,
+            "events": event_partitions,
         },
     }
     PUBLIC_MANIFEST.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
 
 
 def compatibility_snapshot(dataset: dict) -> dict:
-    """Keep the retired monolith useful without duplicating every public partition."""
+    """Keep metadata compatibility without duplicating runtime partitions."""
     timeline = dataset["career_trade_timeline"]
-    default_ids = set(timeline["default_official_ids"])
     compact_timeline = {
         key: value
         for key, value in timeline.items()
-        if key not in {"officials", "event_windows"}
+        if key not in {"officials", "events", "event_windows"}
     }
-    compact_timeline["officials"] = [
-        official for official in timeline["officials"] if official["id"] in default_ids
-    ]
+    compact_timeline["officials"] = []
+    compact_timeline["events"] = []
+    compact_timeline["partition_notice"] = (
+        "Official timelines and event records are available through manifest.json partitions."
+    )
     return {
         "schema_version": "civicledger-static-compat-v2",
         "generated_at": dataset["generated_at"],
@@ -3011,13 +3193,26 @@ def compatibility_snapshot(dataset: dict) -> dict:
         "methodology_version": dataset["methodology_version"],
         "parser_version": dataset["parser_version"],
         "site_mode": dataset["site_mode"],
+        "compatibility_notice": (
+            "This non-runtime file contains metadata only. Load manifest.json for current public records."
+        ),
         "disclaimer": dataset["disclaimer"],
         "summary": dataset["summary"],
         "sources": dataset["sources"],
         "presidential_oge_status": dataset["presidential_oge_status"],
-        "presidential_oge_documents": dataset["presidential_oge_documents"],
-        "presidential_oge_transactions": dataset["presidential_oge_transactions"],
+        "presidential_oge_documents": {
+            "context_label": dataset["presidential_oge_documents"].get("context_label"),
+            "summary": dataset["presidential_oge_documents"].get("summary", {}),
+            "unavailable_documents": dataset["presidential_oge_documents"].get("unavailable_documents", []),
+        },
+        "presidential_oge_transactions": {
+            "context_label": dataset["presidential_oge_transactions"].get("context_label"),
+            "summary": dataset["presidential_oge_transactions"].get("summary", {}),
+        },
+        "executive_oge_manifest": dataset["executive_oge_manifest"],
         "house_disclosures": dataset["house_disclosures"],
+        "senate_disclosures": dataset["senate_disclosures"],
+        "judicial_disclosures": dataset["judicial_disclosures"],
         "disclosure_pipeline": dataset["disclosure_pipeline"],
         "career_trade_timeline": compact_timeline,
         "manifest_path": "manifest.json",

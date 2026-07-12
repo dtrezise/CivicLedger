@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import date
 import re
+from typing import Iterable
 import unicodedata
+
+from app.services.market_prices import TICKER_HISTORY, TickerHistoryMapping, resolve_ticker_history
 
 
 TARGET_ASSET_CLASSES = frozenset({"etf", "fund", "mutual_fund", "529", "529_portfolio"})
@@ -705,6 +709,8 @@ def resolve_asset_name(
     asset_name: str | None,
     disclosed_ticker: str | None = None,
     asset_class: str | None = None,
+    effective_date: str | date | None = None,
+    ticker_history: Iterable[TickerHistoryMapping] = TICKER_HISTORY,
 ) -> dict | None:
     if not asset_name or _DERIVATIVE_RE.search(asset_name):
         return None
@@ -726,29 +732,43 @@ def resolve_asset_name(
     if asset_class and not is_target_asset(asset_name, asset_class):
         return None
 
-    return {
+    resolved = {
         "resolution_status": "resolved",
         "match_method": match_method,
         "matched_value": matched_value,
         "normalized_name": normalized,
         **reference.as_dict(),
     }
+    if effective_date is not None:
+        ticker_mapping = resolve_ticker_history(reference.identifier, effective_date, ticker_history)
+        resolved.update(
+            {
+                "ticker_history_status": ticker_mapping["status"],
+                "ticker_history_effective_date": ticker_mapping["effective_date"],
+                "ticker_history_mapping": ticker_mapping.get("mapping"),
+            }
+        )
+        if ticker_mapping.get("market_symbol"):
+            resolved["market_symbol"] = ticker_mapping["market_symbol"]
+    return resolved
 
 
 def resolve_asset(
     asset_name: str | None,
     disclosed_ticker: str | None = None,
     asset_class: str | None = None,
+    effective_date: str | date | None = None,
 ) -> dict | None:
-    return resolve_asset_name(asset_name, disclosed_ticker, asset_class)
+    return resolve_asset_name(asset_name, disclosed_ticker, asset_class, effective_date)
 
 
 def asset_resolution_record(
     asset_name: str | None,
     disclosed_ticker: str | None = None,
     asset_class: str | None = None,
+    effective_date: str | date | None = None,
 ) -> dict:
-    resolved = resolve_asset_name(asset_name, disclosed_ticker, asset_class)
+    resolved = resolve_asset_name(asset_name, disclosed_ticker, asset_class, effective_date)
     if resolved:
         return resolved
     return {
@@ -767,6 +787,9 @@ def asset_resolution_record(
         "sector": None,
         "sectors": [],
         "benchmark_symbol": None,
+        "ticker_history_status": None,
+        "ticker_history_effective_date": str(effective_date)[:10] if effective_date else None,
+        "ticker_history_mapping": None,
     }
 
 
@@ -779,3 +802,42 @@ def curated_asset_reference(identifier: str | None) -> dict | None:
 
 def asset_reference(identifier: str | None) -> dict | None:
     return curated_asset_reference(identifier)
+
+
+def asset_resolution_diagnostics(records: Iterable[dict]) -> dict:
+    rows = list(records)
+    unresolved = [row for row in rows if row.get("resolution_status") != "resolved"]
+    stale_mappings = [
+        row
+        for row in rows
+        if row.get("ticker_history_status")
+        in {"outside_effective_range", "ambiguous_effective_range", "missing_effective_date"}
+    ]
+    changed_symbols = [
+        row
+        for row in rows
+        if (row.get("ticker_history_mapping") or {}).get("disclosed_symbol")
+        and (row.get("ticker_history_mapping") or {}).get("market_symbol")
+        != (row.get("ticker_history_mapping") or {}).get("disclosed_symbol")
+    ]
+    missing_effective_dates = [
+        row
+        for row in rows
+        if row.get("resolution_status") == "resolved" and not row.get("ticker_history_effective_date")
+    ]
+    methods: dict[str, int] = {}
+    for row in rows:
+        method = str(row.get("match_method") or "unresolved")
+        methods[method] = methods.get(method, 0) + 1
+    return {
+        "record_count": len(rows),
+        "resolved_count": len(rows) - len(unresolved),
+        "unresolved_count": len(unresolved),
+        "stale_or_invalid_mapping_count": len(stale_mappings),
+        "historical_symbol_change_count": len(changed_symbols),
+        "missing_effective_date_count": len(missing_effective_dates),
+        "match_method_counts": dict(sorted(methods.items())),
+        "stale_or_invalid_mapping_transaction_ids": sorted(
+            {str(row.get("transaction_id")) for row in stale_mappings if row.get("transaction_id")}
+        ),
+    }

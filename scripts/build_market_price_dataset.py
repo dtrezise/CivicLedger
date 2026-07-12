@@ -19,6 +19,10 @@ from app.services.market_prices import (  # noqa: E402
     TICKER_REFERENCE,
     NasdaqClient,
     TiingoClient,
+    diagnose_price_series,
+    partition_price_points_by_symbol_year,
+    resolve_ticker_history,
+    symbol_year_partition_path,
 )
 
 
@@ -61,6 +65,22 @@ def _coverage_from_series(status: str, item: dict, **extra: str) -> dict:
         "last_date": point_rows[-1]["date"] if point_rows else None,
         **extra,
     }
+
+
+def build_symbol_year_partition_manifest(series: dict) -> dict:
+    partitions = partition_price_points_by_symbol_year(series)
+    manifest = {}
+    for key, points in partitions.items():
+        symbol, year = key.split(":", 1)
+        manifest[key] = {
+            "symbol": symbol,
+            "year": int(year),
+            "path": symbol_year_partition_path(symbol, year),
+            "point_count": len(points),
+            "first_date": points[0]["date"],
+            "last_date": points[-1]["date"],
+        }
+    return manifest
 
 
 def build_dataset(
@@ -146,6 +166,19 @@ def build_dataset(
     if provider_counts and not provider_counts.get("tiingo"):
         active_provider = "Nasdaq fallback"
 
+    series_diagnostics = {
+        symbol: diagnose_price_series(symbol, item.get("points", []), as_of=end)
+        for symbol, item in sorted(series.items())
+    }
+    ticker_history_diagnostics = {
+        symbol: {
+            "observation_start_mapping": resolve_ticker_history(symbol, start),
+            "observation_end_mapping": resolve_ticker_history(symbol, end),
+        }
+        for symbol in sorted({item.upper() for item in symbols})
+    }
+    partition_manifest = build_symbol_year_partition_manifest(series)
+
     return {
         "generated_at": date.today().isoformat(),
         "source": {
@@ -176,6 +209,16 @@ def build_dataset(
             "covered_symbol_count": sum(1 for item in coverage.values() if item["status"] in {"covered", "cached"}),
             "missing_symbol_count": sum(1 for item in coverage.values() if item["status"] not in {"covered", "cached"}),
             "anomaly_count": len(anomalies),
+            "stale_series_count": sum(
+                1 for diagnostics in series_diagnostics.values() if diagnostics["is_stale"]
+            ),
+            "corporate_action_count": sum(
+                diagnostics["corporate_action_count"] for diagnostics in series_diagnostics.values()
+            ),
+            "extreme_move_count": sum(
+                diagnostics["extreme_move_count"] for diagnostics in series_diagnostics.values()
+            ),
+            "symbol_year_partition_count": len(partition_manifest),
         },
         "ticker_reference": {
             symbol: TICKER_REFERENCE.get(symbol, {})
@@ -183,6 +226,9 @@ def build_dataset(
         },
         "coverage_report": coverage,
         "anomaly_report": anomalies,
+        "series_diagnostics": series_diagnostics,
+        "ticker_history_diagnostics": ticker_history_diagnostics,
+        "symbol_year_partition_manifest": partition_manifest,
         "series": series,
         "context_label": "Market-price overlays prefer Tiingo adjusted close data and disclose Nasdaq close fallback when used. Context only - no inference of causation, intent, legality, ethics, or investment performance.",
     }

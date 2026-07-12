@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "backend"))
 
 from app.services.asset_resolution import (  # noqa: E402
     CURATED_ASSET_REFERENCES,
+    asset_resolution_diagnostics,
     asset_resolution_record,
     is_target_asset,
 )
@@ -114,6 +115,7 @@ def build_dataset(transactions: Iterable[dict], generated_at: str | None = None)
             asset_name,
             transaction.get("ticker"),
             asset_class,
+            transaction.get("trade_date"),
         )
         source_record = _source_record(transaction, resolution)
         transaction_resolutions.append(source_record)
@@ -168,6 +170,24 @@ def build_dataset(transactions: Iterable[dict], generated_at: str | None = None)
         for row in transaction_resolutions
         if row["resolution_status"] == "resolved"
     )
+    diagnostics = asset_resolution_diagnostics(transaction_resolutions)
+    source_year_counts = Counter(
+        (
+            str(row.get("source_dataset") or "unknown"),
+            str(row.get("trade_date") or "unknown")[:4],
+        )
+        for row in transaction_resolutions
+    )
+    transaction_ids = [
+        str(row["transaction_id"])
+        for row in transaction_resolutions
+        if row.get("transaction_id")
+    ]
+    duplicate_transaction_ids = sorted(
+        transaction_id
+        for transaction_id, count in Counter(transaction_ids).items()
+        if count > 1
+    )
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at or date.today().isoformat(),
@@ -189,6 +209,10 @@ def build_dataset(transactions: Iterable[dict], generated_at: str | None = None)
                 "and belongs to the curated reference table."
             ),
             "unresolved_policy": "Ambiguous or unsupported names remain unresolved.",
+            "ticker_history": (
+                "Resolved market symbols are evaluated against explicit effective-date ranges using trade_date; "
+                "mappings outside a known range remain diagnostic rather than being guessed."
+            ),
         },
         "summary": {
             "source_transaction_count": len(source_rows),
@@ -202,6 +226,18 @@ def build_dataset(transactions: Iterable[dict], generated_at: str | None = None)
             "review_required_transaction_count": sum(
                 1 for row in transaction_resolutions if row["review_required_before_public_trade"]
             ),
+            "stale_or_invalid_mapping_count": diagnostics["stale_or_invalid_mapping_count"],
+            "historical_symbol_change_count": diagnostics["historical_symbol_change_count"],
+            "missing_effective_date_count": diagnostics["missing_effective_date_count"],
+            "duplicate_transaction_id_count": len(duplicate_transaction_ids),
+        },
+        "coverage_diagnostics": {
+            **diagnostics,
+            "source_year_counts": {
+                f"{source}:{year}": count
+                for (source, year), count in sorted(source_year_counts.items())
+            },
+            "duplicate_transaction_ids": duplicate_transaction_ids,
         },
         "assets": assets,
         "transaction_resolutions": transaction_resolutions,

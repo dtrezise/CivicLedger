@@ -17,6 +17,12 @@ PROMOTIONS = ROOT / "data" / "disclosures" / "reviewed_disclosure_promotions.jso
 PRODUCTION_PROMOTIONS = ROOT / "data" / "disclosures" / "production_trade_promotions.json"
 RETRIEVAL_BATCHES = ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json"
 STALE_ALERTS = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
+HOUSE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
+HOUSE_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
+SENATE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
+SENATE_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
+EXECUTIVE_MANIFEST = ROOT / "data" / "disclosures" / "executive_oge_disclosure_manifest.json"
+JUDICIAL_MANIFEST = ROOT / "data" / "disclosures" / "judicial_disclosure_manifest.json"
 OUTPUT = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 
 
@@ -58,11 +64,50 @@ def build_dataset() -> dict:
     production_promotions = read_json(PRODUCTION_PROMOTIONS, {"summary": {}})
     retrieval_batches = read_json(RETRIEVAL_BATCHES, {"batches": [], "summary": {}})
     stale_alerts = read_json(STALE_ALERTS, {"alerts": [], "summary": {}})
+    house_index = read_json(HOUSE_INDEX, {"summary": {}})
+    house_transactions = read_json(HOUSE_TRANSACTIONS, {"summary": {}})
+    senate_index = read_json(SENATE_INDEX, {"summary": {}})
+    senate_transactions = read_json(SENATE_TRANSACTIONS, {"summary": {}})
+    executive_manifest = read_json(EXECUTIVE_MANIFEST, {"summary": {}})
+    judicial_manifest = read_json(JUDICIAL_MANIFEST, {"summary": {}})
+
+    source_coverage = {
+        "house-financial-disclosure": {
+            "metadata_official_count": house_transactions.get("summary", {}).get("official_count", 0),
+            "indexed_document_count": house_index.get("summary", {}).get("member_ptr_document_count", 0),
+            "processed_document_count": house_transactions.get("summary", {}).get("processed_document_count", 0),
+            "parser_preview_transaction_count": house_transactions.get("summary", {}).get("parser_preview_transaction_count", 0),
+            "image_or_ocr_backlog_count": house_transactions.get("summary", {}).get("document_status_counts", {}).get("ocr_required", 0),
+        },
+        "senate-public-financial-disclosure": {
+            "metadata_official_count": senate_transactions.get("summary", {}).get("processed_official_count", 0),
+            "indexed_document_count": senate_index.get("summary", {}).get("document_count", 0),
+            "processed_document_count": senate_transactions.get("summary", {}).get("processed_document_count", 0),
+            "parser_preview_transaction_count": senate_transactions.get("summary", {}).get("parser_preview_transaction_count", 0),
+            "image_or_ocr_backlog_count": senate_transactions.get("summary", {}).get("document_status_counts", {}).get("paper_images_review_required", 0),
+        },
+        "oge-individual-disclosures": {
+            "metadata_official_count": executive_manifest.get("summary", {}).get("official_count", 0),
+            "indexed_document_count": executive_manifest.get("summary", {}).get("indexed_document_count", 0),
+            "processed_document_count": executive_manifest.get("summary", {}).get("indexed_document_count", 0),
+            "parser_preview_transaction_count": 0,
+            "image_or_ocr_backlog_count": 0,
+        },
+        "judicial-financial-disclosure": {
+            "metadata_official_count": judicial_manifest.get("summary", {}).get("official_count", 0),
+            "indexed_document_count": judicial_manifest.get("summary", {}).get("indexed_document_count", 0),
+            "processed_document_count": 0,
+            "parser_preview_transaction_count": 0,
+            "image_or_ocr_backlog_count": 0,
+        },
+    }
 
     role_counts = Counter(key_for(role, role_row=True) for role in officials.get("roles", []))
     people_by_key = defaultdict(set)
+    people_by_branch = defaultdict(set)
     for role in officials.get("roles", []):
         people_by_key[key_for(role, role_row=True)].add(role.get("external_person_id"))
+        people_by_branch[role.get("branch") or "Unknown"].add(role.get("external_person_id"))
     queue_counts = Counter(key_for(row) for row in queue.get("entries", []))
     current_queue_counts = Counter(
         key_for(row)
@@ -81,13 +126,18 @@ def build_dataset() -> dict:
     for branch, term, source_id in all_keys:
         role_count = role_counts[(branch, term, source_id)]
         queue_count = queue_counts[(branch, term, source_id)]
-        raw_count = 0
+        raw_count = raw_counts_by_source[source_id]
+        coverage = source_coverage.get(source_id, {})
         source_pipeline_started = raw_counts_by_source[source_id] > 0
         readiness = "needs_raw_documents"
-        if raw_count:
+        if coverage.get("parser_preview_transaction_count", 0):
+            readiness = "parser_preview_ready"
+        elif coverage.get("indexed_document_count", 0):
+            readiness = "documents_indexed"
+        elif coverage.get("metadata_official_count", 0):
+            readiness = "roster_manifest_ready"
+        elif raw_count:
             readiness = "raw_archive_started"
-        elif source_pipeline_started:
-            readiness = "source_pipeline_started"
         if reviewed_count and raw_count:
             readiness = "reviewed_promotions_started"
         rows.append(
@@ -99,7 +149,13 @@ def build_dataset() -> dict:
                 "role_count": role_count,
                 "queue_item_count": queue_count,
                 "current_queue_item_count": current_queue_counts[(branch, term, source_id)],
+                "source_archived_raw_document_count": raw_count,
                 "archived_raw_document_count": raw_count,
+                "source_metadata_official_count": coverage.get("metadata_official_count", 0),
+                "source_indexed_document_count": coverage.get("indexed_document_count", 0),
+                "source_processed_document_count": coverage.get("processed_document_count", 0),
+                "source_parser_preview_transaction_count": coverage.get("parser_preview_transaction_count", 0),
+                "source_image_or_ocr_backlog_count": coverage.get("image_or_ocr_backlog_count", 0),
                 "reviewed_public_trade_count": 0,
                 "readiness_status": readiness,
                 "source_pipeline_started": source_pipeline_started,
@@ -121,19 +177,35 @@ def build_dataset() -> dict:
             batch_by_source.get(source_id, {}).get("candidate_count", 0)
             for source_id in branch_sources[branch]
         )
+        branch_indexed_count = sum(
+            source_coverage.get(source_id, {}).get("indexed_document_count", 0)
+            for source_id in branch_sources[branch]
+        )
+        branch_preview_count = sum(
+            source_coverage.get(source_id, {}).get("parser_preview_transaction_count", 0)
+            for source_id in branch_sources[branch]
+        )
         branch_rows.append(
             {
                 "branch": branch,
-                "official_count": sum(row["official_count"] for row in branch_items),
+                "official_count": len(people_by_branch[branch]),
                 "role_count": sum(row["role_count"] for row in branch_items),
                 "queue_item_count": sum(row["queue_item_count"] for row in branch_items),
                 "archived_raw_document_count": branch_raw_count,
+                "indexed_document_count": branch_indexed_count,
+                "parser_preview_transaction_count": branch_preview_count,
                 "reviewed_public_trade_count": sum(row["reviewed_public_trade_count"] for row in branch_items),
                 "retrieval_candidate_count": branch_candidate_count,
                 "open_alert_count": sum(row["open_alert_count"] for row in branch_items),
-                "readiness_status": "raw_archive_started"
-                if branch_raw_count
-                else "needs_raw_documents",
+                "readiness_status": (
+                    "parser_preview_ready"
+                    if branch_preview_count
+                    else "documents_indexed"
+                    if branch_indexed_count
+                    else "raw_archive_started"
+                    if branch_raw_count
+                    else "roster_manifest_ready"
+                ),
             }
         )
 
@@ -155,6 +227,7 @@ def build_dataset() -> dict:
             "retrieval_candidate_count": retrieval_batches.get("summary", {}).get("candidate_count", 0),
             "open_warning_count": stale_alerts.get("summary", {}).get("open_warning_count", 0),
             "review_required_before_public_trade": True,
+            "source_coverage": source_coverage,
         },
         "branches": branch_rows,
         "rows": rows,

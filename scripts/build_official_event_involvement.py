@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 import os
@@ -85,13 +86,30 @@ def write_partitioned_dataset(path: Path, dataset: dict) -> dict:
         key = str(congress) if congress is not None else "institutional"
         grouped.setdefault(key, []).append(relationship)
 
+    roll_call_sources = {
+        row["id"]: row.get("source_snapshot_ids", [])
+        for row in dataset.get("roll_calls", [])
+        if row.get("id")
+    }
+
     partition_records = {}
     for key, relationships in sorted(grouped.items()):
         partition_path = partition_dir / f"relationships-{key}.json"
+        priority_counts = Counter(
+            str(row.get("review_priority_band") or "unset") for row in relationships
+        )
+        missing_source_count = sum(
+            1
+            for row in relationships
+            if not row.get("source_snapshot_ids")
+            and not roll_call_sources.get(row.get("roll_call_id"))
+        )
         payload = {
             "schema_version": "official-event-involvement-relationships-v1",
             "partition": key,
             "relationship_count": len(relationships),
+            "review_priority_counts": dict(sorted(priority_counts.items())),
+            "missing_relationship_source_snapshot_count": missing_source_count,
             "relationships": relationships,
         }
         write_json_atomic(partition_path, payload)
@@ -101,6 +119,8 @@ def write_partitioned_dataset(path: Path, dataset: dict) -> dict:
             "bytes": len(encoded),
             "sha256": hashlib.sha256(encoded).hexdigest(),
             "relationship_count": len(relationships),
+            "review_priority_counts": dict(sorted(priority_counts.items())),
+            "missing_relationship_source_snapshot_count": missing_source_count,
         }
 
     manifest = {
@@ -109,8 +129,8 @@ def write_partitioned_dataset(path: Path, dataset: dict) -> dict:
     manifest["relationships_partitioned"] = True
     manifest["relationship_partitions"] = partition_records
     write_json_atomic(path, manifest)
-    return manifest
     path.chmod(0o644)
+    return manifest
 
 
 def progress_reporter(message: str) -> None:

@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from bisect import bisect_left
-from datetime import date
+from bisect import bisect_left, bisect_right
+from datetime import date, timedelta
 import math
 from typing import Iterable
 
 
 DEFAULT_WINDOW_SESSIONS = (1, 5, 20)
+DEFAULT_WINDOW_DAYS = (7, 30, 90)
 MARKET_CONTEXT_LABEL = (
     "Descriptive price context only. Windows are anchored to the first common market "
     "date on or after the reported trade date. Date proximity and benchmark-adjusted "
@@ -52,6 +53,7 @@ def build_price_index(market_prices: dict) -> dict[str, tuple[dict, ...]]:
         symbol = str(raw_symbol).upper()
         points = series.get("points", []) if isinstance(series, dict) else series
         series_source = series.get("source") if isinstance(series, dict) else None
+        series_source_url = series.get("source_url") if isinstance(series, dict) else None
         by_date: dict[str, dict] = {}
         for point in points:
             if not isinstance(point, dict) or not point.get("date"):
@@ -68,6 +70,8 @@ def build_price_index(market_prices: dict) -> dict[str, tuple[dict, ...]]:
                 "value": value,
                 "price_field": price_field,
                 "source": point.get("source") or series_source,
+                "source_url": point.get("source_url") or series_source_url,
+                "dataset_generated_at": market_prices.get("generated_at"),
             }
         if by_date:
             index[symbol] = tuple(by_date[key] for key in sorted(by_date))
@@ -103,7 +107,62 @@ def _window_row(
         "benchmark_return_pct": benchmark_return,
         "benchmark_adjusted_return_pct": round(asset_return - benchmark_return, 6),
         "adjustment_method": "asset_return_pct_minus_benchmark_return_pct",
+        "provider_provenance": {
+            "asset": {
+                "start_provider": asset_start.get("source"),
+                "end_provider": asset_end.get("source"),
+                "source_url": asset_start.get("source_url") or asset_end.get("source_url"),
+                "price_fields": sorted(
+                    {field for field in (asset_start.get("price_field"), asset_end.get("price_field")) if field}
+                ),
+                "dataset_generated_at": asset_start.get("dataset_generated_at"),
+            },
+            "benchmark": {
+                "start_provider": benchmark_start.get("source"),
+                "end_provider": benchmark_end.get("source"),
+                "source_url": benchmark_start.get("source_url") or benchmark_end.get("source_url"),
+                "price_fields": sorted(
+                    {
+                        field
+                        for field in (benchmark_start.get("price_field"), benchmark_end.get("price_field"))
+                        if field
+                    }
+                ),
+                "dataset_generated_at": benchmark_start.get("dataset_generated_at"),
+            },
+        },
     }
+
+
+def _calendar_window_row(
+    direction: str,
+    day_count: int,
+    target_date: str,
+    asset_start: dict,
+    asset_end: dict,
+    benchmark_start: dict,
+    benchmark_end: dict,
+) -> dict:
+    row = _window_row(
+        direction,
+        day_count,
+        asset_start,
+        asset_end,
+        benchmark_start,
+        benchmark_end,
+    )
+    row.pop("session_count")
+    row.update(
+        {
+            "day_count": day_count,
+            "window_label": f"{direction}_{day_count}_calendar_days",
+            "target_date": target_date,
+            "actual_calendar_days": (
+                date.fromisoformat(row["end_date"]) - date.fromisoformat(row["start_date"])
+            ).days,
+        }
+    )
+    return row
 
 
 def _normalized_windows(window_sessions: Iterable[int]) -> tuple[int, ...]:
@@ -145,11 +204,13 @@ class MarketReactionCalculator:
         benchmark_symbol: str,
         event_date: str | date,
         window_sessions: Iterable[int] = DEFAULT_WINDOW_SESSIONS,
+        window_days: Iterable[int] = DEFAULT_WINDOW_DAYS,
     ) -> dict:
         asset_symbol = asset_symbol.upper()
         benchmark_symbol = benchmark_symbol.upper()
         event_date_iso = _iso_date(event_date)
         windows = _normalized_windows(window_sessions)
+        calendar_days = _normalized_windows(window_days)
 
         base = {
             "asset_symbol": asset_symbol,
@@ -159,8 +220,11 @@ class MarketReactionCalculator:
             "window_unit": "common_trading_sessions",
             "price_method": PRICE_METHOD,
             "requested_session_counts": list(windows),
+            "requested_calendar_day_counts": list(calendar_days),
             "pre_windows": [],
             "post_windows": [],
+            "calendar_pre_windows": [],
+            "calendar_post_windows": [],
             "context_label": MARKET_CONTEXT_LABEL,
         }
         if asset_symbol not in self.price_index:
@@ -209,6 +273,41 @@ class MarketReactionCalculator:
                     )
                 )
 
+        event_day = date.fromisoformat(event_date_iso)
+        calendar_pre_windows = []
+        calendar_post_windows = []
+        for day_count in calendar_days:
+            pre_target = (event_day - timedelta(days=day_count)).isoformat()
+            pre_index = bisect_right(dates, pre_target) - 1
+            if 0 <= pre_index < anchor_index:
+                start = aligned[pre_index]
+                calendar_pre_windows.append(
+                    _calendar_window_row(
+                        "pre",
+                        day_count,
+                        pre_target,
+                        start["asset"],
+                        anchor["asset"],
+                        start["benchmark"],
+                        anchor["benchmark"],
+                    )
+                )
+            post_target = (event_day + timedelta(days=day_count)).isoformat()
+            post_index = bisect_left(dates, post_target)
+            if anchor_index < post_index < len(aligned):
+                end = aligned[post_index]
+                calendar_post_windows.append(
+                    _calendar_window_row(
+                        "post",
+                        day_count,
+                        post_target,
+                        anchor["asset"],
+                        end["asset"],
+                        anchor["benchmark"],
+                        end["benchmark"],
+                    )
+                )
+
         available_count = len(pre_windows) + len(post_windows)
         requested_count = len(windows) * 2
         if not available_count:
@@ -228,6 +327,39 @@ class MarketReactionCalculator:
             "anchor_date": anchor["date"],
             "pre_windows": pre_windows,
             "post_windows": post_windows,
+            "calendar_pre_windows": calendar_pre_windows,
+            "calendar_post_windows": calendar_post_windows,
+            "calendar_coverage": {
+                "available_window_count": len(calendar_pre_windows) + len(calendar_post_windows),
+                "requested_window_count": len(calendar_days) * 2,
+                "complete": len(calendar_pre_windows) + len(calendar_post_windows) == len(calendar_days) * 2,
+            },
+            "provider_provenance": {
+                "asset_providers": sorted(
+                    {point["asset"].get("source") for point in aligned if point["asset"].get("source")}
+                ),
+                "benchmark_providers": sorted(
+                    {
+                        point["benchmark"].get("source")
+                        for point in aligned
+                        if point["benchmark"].get("source")
+                    }
+                ),
+                "asset_source_urls": sorted(
+                    {
+                        point["asset"].get("source_url")
+                        for point in aligned
+                        if point["asset"].get("source_url")
+                    }
+                ),
+                "benchmark_source_urls": sorted(
+                    {
+                        point["benchmark"].get("source_url")
+                        for point in aligned
+                        if point["benchmark"].get("source_url")
+                    }
+                ),
+            },
         }
 
 
@@ -237,12 +369,14 @@ def compute_market_reaction(
     benchmark_symbol: str,
     event_date: str | date,
     window_sessions: Iterable[int] = DEFAULT_WINDOW_SESSIONS,
+    window_days: Iterable[int] = DEFAULT_WINDOW_DAYS,
 ) -> dict:
     return MarketReactionCalculator(market_prices).compute(
         asset_symbol,
         benchmark_symbol,
         event_date,
         window_sessions,
+        window_days,
     )
 
 
@@ -252,6 +386,7 @@ def compute_pre_post_windows(
     benchmark_symbol: str,
     event_date: str | date,
     window_sessions: Iterable[int] = DEFAULT_WINDOW_SESSIONS,
+    window_days: Iterable[int] = DEFAULT_WINDOW_DAYS,
 ) -> dict:
     return compute_market_reaction(
         market_prices,
@@ -259,4 +394,31 @@ def compute_pre_post_windows(
         benchmark_symbol,
         event_date,
         window_sessions,
+        window_days,
     )
+
+
+def market_reaction_coverage_diagnostics(reactions: Iterable[dict]) -> dict:
+    rows = list(reactions)
+    status_counts: dict[str, int] = {}
+    reason_counts: dict[str, int] = {}
+    missing_provenance_count = 0
+    calendar_complete_count = 0
+    for row in rows:
+        status = str(row.get("status") or "unknown")
+        reason = str(row.get("coverage_reason") or "unknown")
+        status_counts[status] = status_counts.get(status, 0) + 1
+        reason_counts[reason] = reason_counts.get(reason, 0) + 1
+        provenance = row.get("provider_provenance") or {}
+        if not provenance.get("asset_providers") or not provenance.get("benchmark_providers"):
+            missing_provenance_count += 1
+        if (row.get("calendar_coverage") or {}).get("complete"):
+            calendar_complete_count += 1
+    return {
+        "row_count": len(rows),
+        "status_counts": dict(sorted(status_counts.items())),
+        "coverage_reason_counts": dict(sorted(reason_counts.items())),
+        "missing_provider_provenance_count": missing_provenance_count,
+        "complete_calendar_window_count": calendar_complete_count,
+        "incomplete_calendar_window_count": len(rows) - calendar_complete_count,
+    }

@@ -7,6 +7,7 @@ on:
       - "pages-site/**"
       - "scripts/build_pages_dataset.py"
       - "scripts/check_public_release_dataset.py"
+      - "scripts/check_release_*.py"
       - "scripts/build_public_officials_dataset.py"
       - "scripts/build_fred_context_dataset.py"
       - "scripts/build_market_price_dataset.py"
@@ -23,6 +24,11 @@ on:
       - "scripts/build_historical_news_context.py"
       - "scripts/build_sec_filing_events.py"
       - "scripts/build_official_event_involvement.py"
+      - "scripts/build_executive_disclosure_manifest.py"
+      - "scripts/build_judicial_disclosure_manifest.py"
+      - "scripts/build_entity_reference_dataset.py"
+      - "scripts/build_source_snapshot_index.py"
+      - "scripts/build_release_checksum_inventory.py"
       - "scripts/archive_disclosure_documents.py"
       - "scripts/build_disclosure_ingestion_queue.py"
       - "scripts/build_disclosure_retrieval_batches.py"
@@ -47,6 +53,10 @@ on:
       - "backend/app/services/sec_edgar.py"
       - "backend/app/services/senate_disclosures.py"
       - "backend/app/services/official_event_involvement.py"
+      - "backend/app/services/executive_disclosures.py"
+      - "backend/app/services/judicial_disclosures.py"
+      - "backend/app/services/entity_reference.py"
+      - "backend/app/services/source_snapshots.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -73,6 +83,10 @@ jobs:
         env:
           PYTHONPATH: backend
         run: |
+          python scripts/build_executive_disclosure_manifest.py
+          python scripts/build_judicial_disclosure_manifest.py
+          python scripts/build_entity_reference_dataset.py
+          python scripts/build_source_snapshot_index.py
           python scripts/build_disclosure_ingestion_queue.py
           python scripts/build_reviewed_disclosure_promotions.py
           python scripts/build_disclosure_retrieval_batches.py
@@ -88,6 +102,20 @@ jobs:
         run: python scripts/build_pages_dataset.py
       - name: Validate public release contract
         run: python scripts/check_public_release_dataset.py
+      - name: Validate static accessibility and responsive contracts
+        run: python scripts/check_release_accessibility.py
+      - name: Validate static interaction and URL-state contracts
+        run: python scripts/check_release_static_contract.py
+      - name: Enforce Pages performance budgets
+        run: python scripts/check_release_performance.py
+      - name: Prove deterministic Pages rebuild
+        env:
+          PYTHONPATH: backend
+        run: python scripts/check_release_determinism.py --rebuild
+      - name: Validate static links and official provenance hosts
+        run: python scripts/check_release_links.py
+      - name: Build release checksum inventory
+        run: python scripts/build_release_checksum_inventory.py
       - uses: actions/configure-pages@v6
         with:
           enablement: true

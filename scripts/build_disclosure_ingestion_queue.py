@@ -12,6 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
 PRESIDENTIAL_OGE_STATUS = ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json"
+EXECUTIVE_OGE_MANIFEST = ROOT / "data" / "disclosures" / "executive_oge_disclosure_manifest.json"
+JUDICIAL_DISCLOSURE_MANIFEST = ROOT / "data" / "disclosures" / "judicial_disclosure_manifest.json"
 OUTPUT = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
 
 
@@ -71,11 +73,23 @@ def priority_for_role(role: dict) -> str:
 def build_queue() -> dict:
     officials = json.loads(PUBLIC_OFFICIALS.read_text())
     presidential_oge = json.loads(PRESIDENTIAL_OGE_STATUS.read_text())
+    executive_manifest = json.loads(EXECUTIVE_OGE_MANIFEST.read_text()) if EXECUTIVE_OGE_MANIFEST.exists() else {"officials": []}
+    judicial_manifest = (
+        json.loads(JUDICIAL_DISCLOSURE_MANIFEST.read_text())
+        if JUDICIAL_DISCLOSURE_MANIFEST.exists()
+        else {"officials": []}
+    )
+    executive_by_id = {row["official_id"]: row for row in executive_manifest.get("officials", [])}
+    judicial_by_id = {row["official_id"]: row for row in judicial_manifest.get("officials", [])}
     entries = []
     seen = set()
+    presidential_terms = set()
 
     for status in presidential_oge.get("officials", []):
         key = ("presidential-oge", status["official_id"], status["presidential_term"])
+        executive_status = executive_by_id.get(status["official_id"], {}).get(
+            "document_status", {}
+        )
         entries.append(
             {
                 "queue_id": f"oge:{status['presidential_term']}:{status['official_id']}",
@@ -86,6 +100,8 @@ def build_queue() -> dict:
                 "presidential_term": status["presidential_term"],
                 "source_id": "oge-individual-disclosures",
                 "source_status": status["source_status"],
+                "indexed_document_count": executive_status.get("indexed_document_count", 0),
+                "absence_inference_allowed": False,
                 "expected_forms": status["expected_forms"],
                 "retrieval_mode": "official_oge_collection_search",
                 "review_required": True,
@@ -95,6 +111,7 @@ def build_queue() -> dict:
             }
         )
         seen.add(key)
+        presidential_terms.add((status["official_id"], status["presidential_term"]))
 
     for role in officials.get("roles", []):
         branch = role.get("branch")
@@ -104,6 +121,10 @@ def build_queue() -> dict:
         if branch == "Executive" and category not in {"cabinet", "cabinet_level", "elected_executive"}:
             continue
         if branch == "Judicial" and category not in {"article_iii_judge", "supreme_court"}:
+            continue
+        if branch == "Executive" and category == "elected_executive" and (
+            role["external_person_id"], role.get("presidential_term")
+        ) in presidential_terms:
             continue
 
         metadata = role.get("source_metadata", {})
@@ -121,6 +142,18 @@ def build_queue() -> dict:
         if key in seen:
             continue
         seen.add(key)
+        source_status = "source_search_required"
+        indexed_document_count = 0
+        if branch == "Executive":
+            manifest_row = executive_by_id.get(role["external_person_id"], {})
+            document_status = manifest_row.get("document_status", {})
+            source_status = document_status.get("state", source_status)
+            indexed_document_count = document_status.get("indexed_document_count", 0)
+        elif branch == "Judicial":
+            manifest_row = judicial_by_id.get(role["external_person_id"], {})
+            document_status = manifest_row.get("document_status", {})
+            source_status = document_status.get("state", "metadata_only_requester_governed")
+            indexed_document_count = document_status.get("indexed_document_count", 0)
         entries.append(
             {
                 "queue_id": ":".join(str(part) for part in key if part),
@@ -138,7 +171,9 @@ def build_queue() -> dict:
                 "state": metadata.get("state"),
                 "district": metadata.get("district"),
                 "source_id": source_id,
-                "source_status": "source_search_required",
+                "source_status": source_status,
+                "indexed_document_count": indexed_document_count,
+                "absence_inference_allowed": False,
                 "expected_forms": expected_forms_for_role(role),
                 "retrieval_mode": retrieval_mode_for_role(role),
                 "review_required": True,
@@ -156,7 +191,7 @@ def build_queue() -> dict:
     current_entries = [row for row in entries if row["priority"] in {"high_current_official", "high_current_term"}]
     return {
         "generated_at": date.today().isoformat(),
-        "schema_version": "disclosure-ingestion-queue-v1",
+        "schema_version": "disclosure-ingestion-queue-v2",
         "context_label": (
             "Branch-aware queue for raw disclosure retrieval and review. Queue rows are not trade records; "
             "public trade rows require raw document archive, parser output, and reviewer promotion."
@@ -169,6 +204,10 @@ def build_queue() -> dict:
             "counts_by_term": dict(sorted(counts_by_term.items())),
             "counts_by_congress": dict(sorted(counts_by_congress.items())),
             "counts_by_priority": dict(sorted(counts_by_priority.items())),
+            "unique_official_count": len({row["official_id"] for row in entries}),
+            "indexed_document_reference_count": sum(
+                row.get("indexed_document_count", 0) for row in entries
+            ),
         },
         "entries": sorted(
             entries,

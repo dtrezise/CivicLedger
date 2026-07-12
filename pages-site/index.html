@@ -15,6 +15,7 @@
     <script defer src="./app.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#explorerControls">Skip to comparison controls</a>
     <header class="site-header">
       <a class="brand" href="#explorer" aria-label="CivicLedger trade explorer home">
         <span class="brand-mark" aria-hidden="true">CL</span>
@@ -50,34 +51,78 @@
 
         <div class="data-notice" id="dataNotice" role="status"></div>
 
-        <div class="selection-row">
+        <div class="selection-row" id="explorerControls">
           <div class="official-picker">
             <label for="officialSearch">Officials</label>
             <div class="search-wrap">
               <input
                 id="officialSearch"
                 type="search"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
                 autocomplete="off"
                 placeholder="Search name, branch, state, agency, court..."
                 aria-controls="officialResults"
                 aria-expanded="false"
               />
-              <div class="search-results" id="officialResults" role="listbox" hidden></div>
+              <div class="search-results" id="officialResults" role="listbox" aria-label="Matching officials" hidden></div>
             </div>
           </div>
-          <label>
-            <span>Branch</span>
-            <select id="branchFilter">
-              <option value="">All branches</option>
-              <option value="Legislative">Legislative</option>
-              <option value="Executive">Executive</option>
-              <option value="Judicial">Judicial</option>
-            </select>
-          </label>
           <button class="secondary-command" id="presidentBaselineButton" type="button">Presidents</button>
         </div>
 
-        <div class="selected-officials" id="selectedOfficials" aria-label="Selected officials"></div>
+        <details class="roster-filters" id="rosterFilters">
+          <summary>
+            <span>Official filters</span>
+            <span class="filter-summary" id="filterSummary">All branches and service periods</span>
+          </summary>
+          <div class="filter-grid">
+            <label>
+              <span>Branch</span>
+              <select id="branchFilter">
+                <option value="">All branches</option>
+                <option value="Legislative">Legislative</option>
+                <option value="Executive">Executive</option>
+                <option value="Judicial">Judicial</option>
+              </select>
+            </label>
+            <label>
+              <span>Chamber</span>
+              <select id="chamberFilter"><option value="">All chambers</option></select>
+            </label>
+            <label>
+              <span>State</span>
+              <select id="stateFilter"><option value="">All states</option></select>
+            </label>
+            <label>
+              <span>District</span>
+              <select id="districtFilter"><option value="">All districts</option></select>
+            </label>
+            <label>
+              <span>Party</span>
+              <select id="partyFilter"><option value="">All parties</option></select>
+            </label>
+            <label>
+              <span>Service period</span>
+              <select id="servicePeriodFilter">
+                <option value="">Any service period</option>
+                <option value="active">Currently serving</option>
+                <option value="historical">Former officials</option>
+              </select>
+            </label>
+            <label class="office-filter">
+              <span>Office, agency, or court</span>
+              <input id="officeFilter" type="search" autocomplete="off" placeholder="Filter office text" />
+            </label>
+            <div class="filter-actions">
+              <span id="officialResultCount" role="status" aria-live="polite">Enter a name or choose filters</span>
+              <button class="secondary-command" id="clearOfficialFiltersButton" type="button">Clear filters</button>
+            </div>
+          </div>
+        </details>
+
+        <div class="selected-officials" id="selectedOfficials" aria-label="Selected officials" aria-live="polite"></div>
 
         <div class="toolbar" aria-label="Comparison controls">
           <div class="segmented" role="group" aria-label="Timeline mode">
@@ -97,12 +142,15 @@
               <input
                 id="eventSearch"
                 type="search"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
                 placeholder="Search laws, orders, decisions"
                 autocomplete="off"
                 aria-expanded="false"
                 aria-controls="eventResults"
               >
-              <div class="search-results" id="eventResults" role="listbox" hidden></div>
+              <div class="search-results" id="eventResults" role="listbox" aria-label="Matching events" hidden></div>
             </div>
           </div>
           <label>
@@ -141,7 +189,7 @@
               <span><i class="key-line"></i>Service</span>
             </div>
           </div>
-          <div class="trade-chart" id="tradeChart" role="img" aria-label="Selected officials trade comparison chart"></div>
+          <div class="trade-chart" id="tradeChart" role="img" tabindex="0" aria-describedby="chartDescription chartAlternative" aria-label="Selected officials trade comparison chart"></div>
           <div class="chart-alternative" id="chartAlternative" aria-live="polite"></div>
         </div>
 
@@ -157,14 +205,14 @@
         </div>
 
         <div class="detail-layout">
-          <section class="event-detail" id="eventDetail" aria-live="polite">
+          <section class="event-detail" id="eventDetail" aria-live="polite" aria-labelledby="eventDetailTitle">
             <p class="eyebrow">Event evidence</p>
-            <h2>Select an event marker</h2>
+            <h2 id="eventDetailTitle">Select an event marker</h2>
             <p>Event evidence and transactions inside the chosen time window will appear here.</p>
           </section>
-          <section class="record-detail" id="recordDetail" aria-live="polite">
+          <section class="record-detail" id="recordDetail" aria-live="polite" aria-labelledby="recordDetailTitle">
             <p class="eyebrow">Transaction evidence</p>
-            <h2>Select a transaction marker or row</h2>
+            <h2 id="recordDetailTitle">Select a transaction marker or row</h2>
             <p>Source document, filing lag, record state, and parser evidence will appear here.</p>
           </section>
         </div>
@@ -175,24 +223,27 @@
               <p class="eyebrow">Synchronized records</p>
               <h2>Transactions in view</h2>
             </div>
-            <span id="transactionCount">0 records</span>
+            <span id="transactionCount" role="status" aria-live="polite">0 records</span>
           </div>
           <div class="table-scroll">
             <table class="transactions-table">
               <thead>
                 <tr>
-                  <th>Official</th>
-                  <th>Trade date</th>
-                  <th>Reported</th>
-                  <th>Action</th>
-                  <th>Asset</th>
-                  <th>Disclosed range</th>
-                  <th>Lag</th>
-                  <th>Record state</th>
+                  <th scope="col">Official</th>
+                  <th scope="col">Trade date</th>
+                  <th scope="col">Reported</th>
+                  <th scope="col">Action</th>
+                  <th scope="col">Asset</th>
+                  <th scope="col">Disclosed range</th>
+                  <th scope="col">Lag</th>
+                  <th scope="col">Record state</th>
                 </tr>
               </thead>
               <tbody id="transactionRows"></tbody>
             </table>
+          </div>
+          <div class="table-actions" id="transactionActions" hidden>
+            <button class="secondary-command" id="showMoreTransactionsButton" type="button">Show more records</button>
           </div>
         </section>
       </section>

@@ -113,6 +113,7 @@ class ParsedSenateReport:
     transactions: list[dict]
     media_urls: list[str]
     rejected_rows: list[dict]
+    layout_metadata: dict
 
 
 def utc_now() -> str:
@@ -168,6 +169,56 @@ def normalize_action(value: str) -> str:
     if "exchange" in lowered:
         return "EXCHANGE"
     return "OTHER"
+
+
+def senate_transaction_signature(row: dict) -> str:
+    identity = "|".join(
+        clean_text(str(row.get(key) or "")).casefold()
+        for key in (
+            "official_id",
+            "trade_date",
+            "action",
+            "owner",
+            "asset_display_name",
+            "ticker",
+            "value_range_label",
+        )
+    )
+    return hashlib.sha256(identity.encode("utf-8")).hexdigest()
+
+
+def senate_document_family_key(document: dict) -> str:
+    title = normalize_name(document.get("portal_report_title") or document.get("report_type"))
+    title = re.sub(r"\b(amended|amendment|corrected|correction)\b", "", title).strip()
+    identity = document.get("official_id") or normalize_name(document.get("filer_name"))
+    value = "|".join([str(identity), title, str(document.get("filing_date") or "")])
+    return f"senate-family-{hashlib.sha256(value.encode('utf-8')).hexdigest()[:20]}"
+
+
+def reconcile_senate_amendments(documents: list[dict]) -> list[dict]:
+    """Describe possible amendment chains while retaining every official filing."""
+    grouped: dict[str, list[dict]] = {}
+    for source in documents:
+        document = dict(source)
+        document["document_family_id"] = senate_document_family_key(document)
+        grouped.setdefault(document["document_family_id"], []).append(document)
+
+    output = []
+    for family in grouped.values():
+        ordered = sorted(family, key=lambda row: (row["filing_date"], row["document_id"]))
+        prior = None
+        for document in ordered:
+            if document.get("is_amendment"):
+                document["amendment_status"] = (
+                    "candidate_predecessor_identified" if prior else "predecessor_not_identified"
+                )
+                document["candidate_supersedes_document_id"] = prior["document_id"] if prior else None
+            else:
+                document["amendment_status"] = "original_or_standalone_filing"
+                document["candidate_supersedes_document_id"] = None
+            output.append(document)
+            prior = document
+    return sorted(output, key=lambda row: (row["filing_date"], row["senate_report_uuid"]))
 
 
 def asset_class(asset_name: str, asset_type: str, ticker: str | None) -> str:
@@ -769,10 +820,30 @@ def match_senator(report: dict, roles: list[dict]) -> dict:
         }
 
     ranked = sorted(candidates.items(), key=lambda item: (-item[1]["score"], item[0]))
+    candidate_summary = [
+        {
+            "official_id": official_id,
+            "official_name": candidate["role"].get("full_name"),
+            "score": candidate["score"],
+            "reasons": candidate["reasons"],
+            "congress_numbers": candidate["congress_numbers"],
+        }
+        for official_id, candidate in ranked[:5]
+    ]
     if not ranked:
-        return {"match_status": "unmatched", "match_score": 0}
+        return {
+            "match_status": "unmatched",
+            "match_score": 0,
+            "identity_resolution": "manual_review_required",
+            "identity_candidates": [],
+        }
     if len(ranked) > 1 and ranked[0][1]["score"] == ranked[1][1]["score"]:
-        return {"match_status": "ambiguous", "match_score": ranked[0][1]["score"]}
+        return {
+            "match_status": "ambiguous",
+            "match_score": ranked[0][1]["score"],
+            "identity_resolution": "ambiguous_manual_review_required",
+            "identity_candidates": candidate_summary,
+        }
 
     official_id, match = ranked[0]
     role = match["role"]
@@ -781,6 +852,8 @@ def match_senator(report: dict, roles: list[dict]) -> dict:
         "match_status": "matched",
         "match_score": match["score"],
         "match_reasons": match["reasons"],
+        "identity_resolution": "deterministic_match",
+        "identity_candidates": candidate_summary,
         "official_id": official_id,
         "official_name": role["full_name"],
         "bioguide_id": metadata.get("bioguide_id"),
@@ -828,9 +901,7 @@ def build_senate_ptr_index(
             continue
         documents_by_id[document["document_id"]] = document
 
-    documents = sorted(
-        documents_by_id.values(), key=lambda row: (row["filing_date"], row["senate_report_uuid"])
-    )
+    documents = reconcile_senate_amendments(list(documents_by_id.values()))
     match_counts = Counter(document["match_status"] for document in documents)
     format_counts = Counter(document["report_format"] for document in documents)
     validation_documents = [
@@ -919,14 +990,33 @@ def parse_senate_report_html(content: bytes, *, source_url: str) -> ParsedSenate
 
     transactions: list[dict] = []
     rejected_rows: list[dict] = []
+    matched_table_headers: list[str] = []
+    header_aliases = {
+        "transaction date": {"transaction date", "date", "date of transaction"},
+        "owner": {"owner", "ownership"},
+        "ticker": {"ticker", "symbol"},
+        "asset name": {"asset name", "asset", "security", "description"},
+        "asset type": {"asset type", "type of asset"},
+        "type": {"type", "transaction type", "action"},
+        "amount": {"amount", "value", "amount of transaction"},
+        "comment": {"comment", "comments", "notes"},
+        "#": {"#", "row", "item"},
+    }
     required_headers = {"transaction date", "owner", "asset name", "type", "amount"}
     for table in parser.tables:
         if not table:
             continue
-        header = [clean_text(value).lower() for value in table[0]]
-        if not required_headers <= set(header):
+        raw_header = [clean_text(value) for value in table[0]]
+        canonical_header = []
+        for value in raw_header:
+            lowered = value.lower()
+            canonical_header.append(
+                next((name for name, aliases in header_aliases.items() if lowered in aliases), lowered)
+            )
+        if not required_headers <= set(canonical_header):
             continue
-        positions = {name: index for index, name in enumerate(header)}
+        matched_table_headers = raw_header
+        positions = {name: index for index, name in enumerate(canonical_header)}
         for fallback_row_number, row in enumerate(table[1:], start=1):
             values = {
                 name: clean_text(row[index]) if index < len(row) else ""
@@ -989,6 +1079,11 @@ def parse_senate_report_html(content: bytes, *, source_url: str) -> ParsedSenate
         transactions=transactions,
         media_urls=media_urls,
         rejected_rows=rejected_rows,
+        layout_metadata={
+            "table_headers": matched_table_headers,
+            "table_layout_detected": bool(matched_table_headers),
+            "paper_media_reference_count": len(media_urls),
+        },
     )
 
 
@@ -1016,6 +1111,16 @@ def build_senate_ptr_transactions(
             warnings.append(
                 f"{len(parsed.rejected_rows)} structured row(s) were withheld because required fields were invalid."
             )
+        expected_name_tokens = meaningful_name_tokens(document.get("filer_name"))
+        parsed_name_tokens = meaningful_name_tokens(parsed.filer_name)
+        page_identity_consistent = bool(
+            expected_name_tokens
+            and parsed_name_tokens
+            and expected_name_tokens[0] in parsed_name_tokens
+            and expected_name_tokens[-1] in parsed_name_tokens
+        )
+        if parsed.transactions and not page_identity_consistent:
+            quality_flags.append("portal_page_filer_identity_mismatch")
 
         if parsed.transactions:
             parser_status = "parser_preview"
@@ -1033,8 +1138,21 @@ def build_senate_ptr_transactions(
                 "No structured transactions or official paper-image references were detected; human review is required."
             )
 
+        identity_resolved = (
+            document.get("match_status") == "matched"
+            and bool(document.get("official_id"))
+            and bool(document.get("official_name"))
+            and page_identity_consistent
+        )
+        if parsed.transactions and not identity_resolved:
+            parser_status = "identity_review_required"
+            warnings.append(
+                "Structured rows were detected but withheld because the filer identity is unresolved or ambiguous."
+            )
+            withheld_rows += len(parsed.transactions)
+
         normalized_count = 0
-        for row in parsed.transactions:
+        for row in parsed.transactions if identity_resolved else []:
             minimum, maximum, amount_label = value_range(row["amount"])
             if minimum is None:
                 withheld_rows += 1
@@ -1071,8 +1189,7 @@ def build_senate_ptr_transactions(
                 ]
             )
             row_digest = hashlib.sha256(row_identity.encode("utf-8")).hexdigest()[:10]
-            transaction_rows.append(
-                {
+            transaction = {
                     "id": (
                         f"{document['document_id']}-row-{row['row_number']:04d}-{row_digest}"
                     ),
@@ -1117,7 +1234,8 @@ def build_senate_ptr_transactions(
                     "public_production_trade": False,
                     "data_quality_flags": row_flags,
                 }
-            )
+            transaction["transaction_signature_sha256"] = senate_transaction_signature(transaction)
+            transaction_rows.append(transaction)
             normalized_count += 1
 
         document_rows.append(
@@ -1129,12 +1247,17 @@ def build_senate_ptr_transactions(
                 "source_page_retrieved_at": page.retrieved_at,
                 "source_media_urls": parsed.media_urls,
                 "source_media_page_count": len(parsed.media_urls),
+                "parsed_report_title": parsed.report_title,
+                "parsed_filer_name": parsed.filer_name,
+                "parsed_filing_date": parsed.filing_date,
+                "page_identity_consistent": page_identity_consistent,
                 "parser_status": parser_status,
                 "parser_version": "senate-efd-html-v1",
                 "extraction_method": extraction_method,
                 "parser_transaction_count": normalized_count,
                 "parser_rejected_transaction_count": len(parsed.rejected_rows),
                 "parser_warnings": warnings,
+                "source_layout_metadata": parsed.layout_metadata,
                 "data_quality_flags": quality_flags,
                 "record_status": "official_senate_parser_preview_not_promoted",
                 "review_required_before_public_trade": True,
@@ -1144,17 +1267,7 @@ def build_senate_ptr_transactions(
 
     duplicate_groups: dict[str, list[dict]] = {}
     for row in transaction_rows:
-        signature = "|".join(
-            str(value or "").lower()
-            for value in [
-                row.get("official_id"),
-                row.get("trade_date"),
-                row.get("action"),
-                row.get("owner"),
-                row.get("asset_display_name"),
-                row.get("value_range_label"),
-            ]
-        )
+        signature = row["transaction_signature_sha256"]
         duplicate_groups.setdefault(signature, []).append(row)
     duplicate_candidate_count = 0
     duplicate_group_count = 0

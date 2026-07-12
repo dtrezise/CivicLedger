@@ -64,7 +64,11 @@ def normalize_district(value: str | int | None) -> str | None:
 
 
 def parse_house_index(content: bytes) -> list[dict]:
-    reader = csv.DictReader(io.StringIO(content.decode("utf-8-sig")), delimiter="\t")
+    try:
+        decoded = content.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        decoded = content.decode("cp1252")
+    reader = csv.DictReader(io.StringIO(decoded), delimiter="\t")
     required = {"Prefix", "Last", "First", "Suffix", "FilingType", "StateDst", "Year", "FilingDate", "DocID"}
     if not reader.fieldnames or not required <= set(reader.fieldnames):
         raise ValueError("House disclosure index fields do not match the expected Clerk format")
@@ -104,6 +108,45 @@ def parse_filing_date(value: str) -> date:
 def document_url(row: dict) -> str:
     template = HOUSE_PTR_DOCUMENT_URL if row.get("FilingType") == "P" else HOUSE_FINANCIAL_DOCUMENT_URL
     return template.format(year=row["Year"], document_id=row["DocID"])
+
+
+def source_row_sha256(row: dict) -> str:
+    canonical = "\n".join(f"{key}={str(row.get(key) or '').strip()}" for key in sorted(row))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def house_document_family_key(document: dict) -> str:
+    """Group only explicitly related filings; never infer that same-year PTRs are amendments."""
+    title = normalize_name(document.get("report_title") or document.get("report_type"))
+    title = re.sub(r"\b(amended|amendment|corrected|correction)\b", "", title).strip()
+    explicit_reference = str(
+        document.get("amends_document_id")
+        or document.get("original_document_id")
+        or document.get("document_id")
+    )
+    identity = document.get("official_id") or normalize_name(document.get("filer_name"))
+    value = "|".join([str(identity), title, explicit_reference])
+    return f"house-family-{hashlib.sha256(value.encode('utf-8')).hexdigest()[:20]}"
+
+
+def reconcile_house_amendments(documents: list[dict]) -> list[dict]:
+    """Annotate explicit amendment chains without suppressing or merging source records."""
+    by_id = {document["document_id"]: document for document in documents}
+    output = []
+    for source in documents:
+        document = dict(source)
+        document["document_family_id"] = house_document_family_key(document)
+        referenced_id = document.get("amends_document_id") or document.get("original_document_id")
+        if referenced_id:
+            document["amendment_status"] = (
+                "explicit_reference_resolved" if referenced_id in by_id else "explicit_reference_unresolved"
+            )
+            document["supersedes_document_id"] = referenced_id
+        else:
+            document["amendment_status"] = "no_explicit_amendment_reference"
+            document["supersedes_document_id"] = None
+        output.append(document)
+    return output
 
 
 def house_roles(public_officials: dict) -> list[dict]:
@@ -156,7 +199,11 @@ def match_house_member(row: dict, roles: list[dict]) -> dict:
         role_start = datetime.fromisoformat(role["service_start"]).date()
         service_end = role.get("service_end")
         role_end = datetime.fromisoformat(service_end).date() if service_end else date.max
-        grace_end = role_end + timedelta(days=180) if service_end else role_end
+        grace_end = (
+            role_end + timedelta(days=180)
+            if service_end and role_end <= date.max - timedelta(days=180)
+            else role_end
+        )
         if not role_start <= filed_date <= grace_end:
             continue
         score, reasons = score_role_match(row, role, filed_date)
@@ -166,10 +213,29 @@ def match_house_member(row: dict, roles: list[dict]) -> dict:
             candidates[official_id] = {"score": score, "reasons": reasons, "role": role}
 
     ranked = sorted(candidates.items(), key=lambda item: (-item[1]["score"], item[0]))
+    candidate_summary = [
+        {
+            "official_id": official_id,
+            "score": candidate["score"],
+            "reasons": candidate["reasons"],
+            "official_name": candidate["role"].get("full_name"),
+        }
+        for official_id, candidate in ranked[:5]
+    ]
     if not ranked or ranked[0][1]["score"] < 8:
-        return {"match_status": "unmatched", "match_score": ranked[0][1]["score"] if ranked else 0}
+        return {
+            "match_status": "unmatched",
+            "match_score": ranked[0][1]["score"] if ranked else 0,
+            "identity_resolution": "manual_review_required",
+            "identity_candidates": candidate_summary,
+        }
     if len(ranked) > 1 and ranked[0][1]["score"] == ranked[1][1]["score"]:
-        return {"match_status": "ambiguous", "match_score": ranked[0][1]["score"]}
+        return {
+            "match_status": "ambiguous",
+            "match_score": ranked[0][1]["score"],
+            "identity_resolution": "ambiguous_manual_review_required",
+            "identity_candidates": candidate_summary,
+        }
 
     official_id, match = ranked[0]
     role = match["role"]
@@ -177,6 +243,8 @@ def match_house_member(row: dict, roles: list[dict]) -> dict:
         "match_status": "matched",
         "match_score": match["score"],
         "match_reasons": match["reasons"],
+        "identity_resolution": "deterministic_match",
+        "identity_candidates": candidate_summary,
         "official_id": official_id,
         "official_name": role["full_name"],
         "bioguide_id": role.get("source_metadata", {}).get("bioguide_id"),
@@ -230,11 +298,14 @@ def build_house_ptr_index(public_officials: dict, start_year: int, end_year: int
                     "state": state,
                     "district": district,
                     "record_status": "official_house_index",
+                    "source_row_sha256": source_row_sha256(row),
+                    "source_row_metadata": dict(sorted(row.items())),
                     "review_required_before_public_trade": True,
                     **match,
                 }
             )
 
+    documents = reconcile_house_amendments(documents)
     match_counts = Counter(document["match_status"] for document in documents)
     return {
         "schema_version": "house-disclosure-index-v1",

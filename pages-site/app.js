@@ -45,6 +45,7 @@ const state = {
   timelineIndex: null,
   eventCatalog: [],
   eventMap: new Map(),
+  eventPartitionCache: new Map(),
   timelineCache: new Map(),
   marketCache: new Map(),
   selectedIds: [],
@@ -57,6 +58,18 @@ const state = {
   activeEventContext: null,
   selectedTradeId: "",
   zoomPercent: null,
+  rosterFilters: {
+    branch: "",
+    chamber: "",
+    state: "",
+    district: "",
+    party: "",
+    service: "",
+    office: "",
+  },
+  activeOfficialResultIndex: -1,
+  activeEventResultIndex: -1,
+  transactionRenderLimit: 100,
   chartExtent: null,
   tradeChart: null,
   marketChart: null,
@@ -147,6 +160,12 @@ function selectedEvent() {
   return state.eventMap.get(state.activeEventId) || null;
 }
 
+function parseZoom(value) {
+  const [start, end] = String(value || "").split("-").map(Number);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end > 100 || end - start < 1) return null;
+  return { start, end };
+}
+
 function parseUrlState() {
   const params = new URLSearchParams(window.location.search);
   const requestedIds = (params.get("officials") || "")
@@ -167,6 +186,19 @@ function parseUrlState() {
     : "focused";
   const windowDays = Number(params.get("window"));
   state.eventWindowDays = [30, 90, 180, 365].includes(windowDays) ? windowDays : 180;
+  state.zoomPercent = parseZoom(params.get("zoom"));
+  state.activeEventContext = null;
+  state.selectedTradeId = "";
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
+  state.rosterFilters = {
+    branch: params.get("branch") || "",
+    chamber: params.get("chamber") || "",
+    state: params.get("state") || "",
+    district: params.get("district") || "",
+    party: params.get("party") || "",
+    service: params.get("service") || "",
+    office: params.get("office") || "",
+  };
 }
 
 function syncUrl() {
@@ -177,6 +209,12 @@ function syncUrl() {
   if (state.activeEventId) params.set("event", state.activeEventId);
   if (state.eventTierFilter !== "focused") params.set("context", state.eventTierFilter);
   if (state.eventWindowDays !== 180) params.set("window", String(state.eventWindowDays));
+  if (state.zoomPercent) {
+    params.set("zoom", `${state.zoomPercent.start.toFixed(2)}-${state.zoomPercent.end.toFixed(2)}`);
+  }
+  Object.entries(state.rosterFilters).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+  });
   const query = params.toString();
   history.replaceState(null, "", `${location.pathname}${query ? `?${query}` : ""}${location.hash || ""}`);
 }
@@ -200,10 +238,15 @@ async function loadData() {
     state.eventMap = new Map(state.eventCatalog.map((event) => [event.id, event]));
     state.timelineIndex = timelineIndex;
     parseUrlState();
+    populateOfficialFilterOptions();
     initializeControls();
     renderDatasetStatus();
     initializeCharts();
     await loadSelectedTimelines();
+    if (state.activeEventId) {
+      state.activeEventContext = await loadEventDetail(state.activeEventId);
+      renderWorkbench();
+    }
     setHeaderStatus(`Dataset ${state.overview.dataset_version} - ${state.overview.generated_at}`, true);
   } catch (error) {
     console.error(error);
@@ -217,6 +260,7 @@ function initializeControls() {
   $("eventSearch").value = selectedEvent()?.label || "";
   $("eventTierFilter").value = state.eventTierFilter;
   $("eventWindowFilter").value = String(state.eventWindowDays);
+  setRosterFilterControls();
   bindControls();
   updateModeControls();
 }
@@ -228,17 +272,189 @@ function initializeCharts() {
   state.tradeChart.on("datazoom", handleDataZoom);
 }
 
+function uniqueOfficialValues(field) {
+  return [...new Set(state.officials.flatMap((official) => official[field] || []).filter(Boolean))];
+}
+
+function replaceSelectOptions(id, defaultLabel, values, labelFormatter = (value) => value) {
+  $(id).innerHTML = [
+    `<option value="">${escapeHtml(defaultLabel)}</option>`,
+    ...values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(labelFormatter(value))}</option>`),
+  ].join("");
+}
+
+function servicePeriodLabel(value) {
+  const known = {
+    "obama-44": "Obama administration",
+    "trump-45": "First Trump administration",
+    "biden-46": "Biden administration",
+    "trump-47": "Second Trump administration",
+  };
+  return known[value] || titleCase(value);
+}
+
+function populateOfficialFilterOptions() {
+  replaceSelectOptions("chamberFilter", "All chambers", uniqueOfficialValues("chambers").sort());
+  replaceSelectOptions("stateFilter", "All states", uniqueOfficialValues("states").sort());
+  replaceSelectOptions(
+    "districtFilter",
+    "All districts",
+    uniqueOfficialValues("districts").sort((a, b) => Number(a) - Number(b) || String(a).localeCompare(String(b))),
+    (value) => `District ${value}`
+  );
+  replaceSelectOptions("partyFilter", "All parties", uniqueOfficialValues("parties").sort());
+  const terms = uniqueOfficialValues("terms").sort();
+  $("servicePeriodFilter").insertAdjacentHTML(
+    "beforeend",
+    terms.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(servicePeriodLabel(value))}</option>`).join("")
+  );
+}
+
+function selectSupportsValue(id, value) {
+  return [...$(id).options].some((option) => option.value === value);
+}
+
+function setRosterFilterControls() {
+  const selectMap = {
+    branch: "branchFilter",
+    chamber: "chamberFilter",
+    state: "stateFilter",
+    district: "districtFilter",
+    party: "partyFilter",
+    service: "servicePeriodFilter",
+  };
+  Object.entries(selectMap).forEach(([key, id]) => {
+    if (!selectSupportsValue(id, state.rosterFilters[key])) state.rosterFilters[key] = "";
+    $(id).value = state.rosterFilters[key];
+  });
+  $("officeFilter").value = state.rosterFilters.office;
+  $("rosterFilters").open = Object.values(state.rosterFilters).some(Boolean);
+  updateFilterSummary();
+}
+
+function readRosterFilterControls() {
+  state.rosterFilters = {
+    branch: $("branchFilter").value,
+    chamber: $("chamberFilter").value,
+    state: $("stateFilter").value,
+    district: $("districtFilter").value,
+    party: $("partyFilter").value,
+    service: $("servicePeriodFilter").value,
+    office: $("officeFilter").value.trim(),
+  };
+  updateFilterSummary();
+  syncUrl();
+}
+
+function updateFilterSummary() {
+  const labels = [];
+  const filters = state.rosterFilters;
+  if (filters.branch) labels.push(filters.branch);
+  if (filters.chamber) labels.push(filters.chamber);
+  if (filters.state) labels.push(filters.state);
+  if (filters.district) labels.push(`District ${filters.district}`);
+  if (filters.party) labels.push(filters.party);
+  if (filters.service) labels.push(servicePeriodLabel(filters.service));
+  if (filters.office) labels.push(`Office: ${filters.office}`);
+  $("filterSummary").textContent = labels.length ? labels.join(" / ") : "All branches and service periods";
+}
+
+function resetResultNavigation(kind) {
+  const isOfficial = kind === "official";
+  state[isOfficial ? "activeOfficialResultIndex" : "activeEventResultIndex"] = -1;
+  $(isOfficial ? "officialSearch" : "eventSearch").removeAttribute("aria-activedescendant");
+}
+
+function handleComboboxKeydown(event, config) {
+  const { inputId, resultsId, optionSelector, indexKey, render, select, hide } = config;
+  if (!["ArrowDown", "ArrowUp", "Home", "End", "Enter", "Escape", "Tab"].includes(event.key)) return;
+  if (event.key === "Escape" || event.key === "Tab") {
+    hide();
+    return;
+  }
+  if ($(resultsId).hidden) render();
+  if ($(resultsId).hidden) return;
+  const options = [...$(resultsId).querySelectorAll(optionSelector)];
+  if (!options.length) return;
+  if (event.key === "Enter") {
+    const active = options[state[indexKey]];
+    if (!active) return;
+    event.preventDefault();
+    select(active);
+    return;
+  }
+  event.preventDefault();
+  if (event.key === "Home") state[indexKey] = 0;
+  else if (event.key === "End") state[indexKey] = options.length - 1;
+  else if (event.key === "ArrowDown") state[indexKey] = (state[indexKey] + 1 + options.length) % options.length;
+  else state[indexKey] = (state[indexKey] - 1 + options.length) % options.length;
+  options.forEach((option, index) => option.classList.toggle("active", index === state[indexKey]));
+  const active = options[state[indexKey]];
+  $(inputId).setAttribute("aria-activedescendant", active.id);
+  active.scrollIntoView({ block: "nearest" });
+}
+
 function bindControls() {
-  $("officialSearch").addEventListener("input", renderOfficialResults);
+  $("officialSearch").addEventListener("input", () => {
+    resetResultNavigation("official");
+    renderOfficialResults();
+  });
   $("officialSearch").addEventListener("focus", renderOfficialResults);
-  $("branchFilter").addEventListener("change", renderOfficialResults);
+  $("officialSearch").addEventListener("keydown", (event) =>
+    handleComboboxKeydown(event, {
+      inputId: "officialSearch",
+      resultsId: "officialResults",
+      optionSelector: "[data-official-id]",
+      indexKey: "activeOfficialResultIndex",
+      render: renderOfficialResults,
+      select: (option) => addOfficial(option.dataset.officialId),
+      hide: hideOfficialResults,
+    })
+  );
+  ["branchFilter", "chamberFilter", "stateFilter", "districtFilter", "partyFilter", "servicePeriodFilter"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      readRosterFilterControls();
+      resetResultNavigation("official");
+      renderOfficialResults();
+    });
+  });
+  let officeFilterTimer = null;
+  $("officeFilter").addEventListener("input", () => {
+    window.clearTimeout(officeFilterTimer);
+    officeFilterTimer = window.setTimeout(() => {
+      readRosterFilterControls();
+      resetResultNavigation("official");
+      renderOfficialResults();
+    }, 100);
+  });
+  $("clearOfficialFiltersButton").addEventListener("click", () => {
+    state.rosterFilters = { branch: "", chamber: "", state: "", district: "", party: "", service: "", office: "" };
+    setRosterFilterControls();
+    renderOfficialResults();
+    $("officialSearch").focus();
+    syncUrl();
+  });
   $("officialResults").addEventListener("click", (event) => {
     const button = event.target.closest("[data-official-id]");
     if (!button) return;
     addOfficial(button.dataset.officialId);
   });
-  $("eventSearch").addEventListener("input", renderEventResults);
+  $("eventSearch").addEventListener("input", () => {
+    resetResultNavigation("event");
+    renderEventResults();
+  });
   $("eventSearch").addEventListener("focus", renderEventResults);
+  $("eventSearch").addEventListener("keydown", (event) =>
+    handleComboboxKeydown(event, {
+      inputId: "eventSearch",
+      resultsId: "eventResults",
+      optionSelector: "[data-event-id]",
+      indexKey: "activeEventResultIndex",
+      render: renderEventResults,
+      select: (option) => selectEvent(option.dataset.eventId),
+      hide: hideEventResults,
+    })
+  );
   $("eventResults").addEventListener("click", (event) => {
     const button = event.target.closest("[data-event-id]");
     if (!button) return;
@@ -260,11 +476,13 @@ function bindControls() {
     state.selectedIds = [...state.timelineIndex.default_official_ids].slice(0, 4);
     state.selectedTradeId = "";
     state.zoomPercent = null;
+    state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     loadSelectedTimelines();
   });
   $("assetFilter").addEventListener("change", () => {
     state.assetFilter = $("assetFilter").value;
     state.zoomPercent = null;
+    state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     renderWorkbench();
   });
   $("eventTierFilter").addEventListener("change", () => {
@@ -274,6 +492,7 @@ function bindControls() {
   $("eventWindowFilter").addEventListener("change", () => {
     state.eventWindowDays = Number($("eventWindowFilter").value);
     state.zoomPercent = null;
+    state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     renderWorkbench();
   });
   $("resetViewButton").addEventListener("click", () => {
@@ -285,6 +504,7 @@ function bindControls() {
     state.activeEventContext = null;
     state.selectedTradeId = "";
     state.zoomPercent = null;
+    state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     $("eventSearch").value = "";
     $("eventTierFilter").value = "focused";
     $("eventWindowFilter").value = "180";
@@ -309,6 +529,39 @@ function bindControls() {
     if (!button) return;
     selectTrade(button.dataset.windowTrade);
   });
+  $("tradeChart").addEventListener("keydown", (event) => {
+    if (!["+", "=", "-", "0"].includes(event.key)) return;
+    event.preventDefault();
+    if (event.key === "0") {
+      state.zoomPercent = null;
+    } else {
+      const current = state.zoomPercent || { start: 0, end: 100 };
+      const center = (current.start + current.end) / 2;
+      const span = clamp((current.end - current.start) * (["+", "="].includes(event.key) ? 0.7 : 1.4), 2, 100);
+      let start = center - span / 2;
+      let end = center + span / 2;
+      if (start < 0) [start, end] = [0, span];
+      if (end > 100) [start, end] = [100 - span, 100];
+      state.zoomPercent = { start, end };
+    }
+    state.transactionRenderLimit = state.compactLayout ? 50 : 100;
+    renderTradeChart();
+    renderTransactions();
+    syncUrl();
+  });
+  $("showMoreTransactionsButton").addEventListener("click", () => {
+    state.transactionRenderLimit += state.compactLayout ? 50 : 100;
+    renderTransactions();
+  });
+  window.addEventListener("popstate", async () => {
+    parseUrlState();
+    setRosterFilterControls();
+    $("eventSearch").value = selectedEvent()?.label || "";
+    $("eventTierFilter").value = state.eventTierFilter;
+    $("eventWindowFilter").value = String(state.eventWindowDays);
+    updateModeControls();
+    await loadSelectedTimelines();
+  });
 
   let resizeTimer = null;
   window.addEventListener("resize", () => {
@@ -319,7 +572,9 @@ function bindControls() {
       state.marketChart?.resize();
       if (compact !== state.compactLayout) {
         state.compactLayout = compact;
+        state.transactionRenderLimit = compact ? 50 : 100;
         renderTradeChart();
+        renderTransactions();
       }
     }, 120);
   });
@@ -330,13 +585,13 @@ function officialSearchText(official) {
   return [
     official.full_name,
     official.branch,
-    ...official.terms,
-    ...official.role_categories,
-    ...official.chambers,
-    ...official.congresses,
-    ...official.parties,
-    ...official.states,
-    ...official.districts,
+    ...(official.terms || []),
+    ...(official.role_categories || []),
+    ...(official.chambers || []),
+    ...(official.congresses || []),
+    ...(official.parties || []),
+    ...(official.states || []),
+    ...(official.districts || []),
     role.role_title,
     role.office,
     role.agency,
@@ -345,6 +600,28 @@ function officialSearchText(official) {
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
+}
+
+function officialOfficeText(official) {
+  const role = official.primary_role || {};
+  return [role.role_title, role.office, role.agency, role.court, ...(official.role_categories || [])]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function officialMatchesRosterFilters(official) {
+  const filters = state.rosterFilters;
+  if (filters.branch && official.branch !== filters.branch) return false;
+  if (filters.chamber && !(official.chambers || []).includes(filters.chamber)) return false;
+  if (filters.state && !(official.states || []).includes(filters.state)) return false;
+  if (filters.district && !(official.districts || []).includes(filters.district)) return false;
+  if (filters.party && !(official.parties || []).includes(filters.party)) return false;
+  if (filters.office && !officialOfficeText(official).includes(filters.office.toLowerCase())) return false;
+  if (filters.service === "active" && !(official.service_periods || []).some((period) => period.active === true)) return false;
+  if (filters.service === "historical" && (official.service_periods || []).some((period) => period.active === true)) return false;
+  if (filters.service && !["active", "historical"].includes(filters.service) && !(official.terms || []).includes(filters.service)) return false;
+  return true;
 }
 
 function officialAffiliation(official) {
@@ -364,22 +641,26 @@ function officialAffiliation(official) {
 
 function renderOfficialResults() {
   const query = $("officialSearch").value.trim().toLowerCase();
-  const branch = $("branchFilter").value;
-  if (query.length < 2 && !branch) {
+  const hasFilters = Object.values(state.rosterFilters).some(Boolean);
+  if (query.length < 2 && !hasFilters) {
+    $("officialResultCount").textContent = query ? "Enter at least two characters" : "Enter a name or choose filters";
     hideOfficialResults();
     return;
   }
-  const matches = state.officials
-    .filter((official) => (!branch || official.branch === branch) && (!query || officialSearchText(official).includes(query)))
-    .slice(0, 24);
+  const allMatches = state.officials
+    .filter((official) => officialMatchesRosterFilters(official) && (!query || officialSearchText(official).includes(query)))
+    .sort((a, b) => Number(state.selectedIds.includes(b.id)) - Number(state.selectedIds.includes(a.id)) || a.full_name.localeCompare(b.full_name));
+  const matches = allMatches.slice(0, 40);
+  $("officialResultCount").textContent = `${numberFormat.format(allMatches.length)} matching official${allMatches.length === 1 ? "" : "s"}`;
+  state.activeOfficialResultIndex = Math.min(state.activeOfficialResultIndex, matches.length - 1);
   $("officialResults").innerHTML = matches.length
     ? matches
-        .map((official) => {
+        .map((official, index) => {
           const selected = state.selectedIds.includes(official.id);
           const timeline = timelineSummary(official.id);
           const stateLabel = selected ? "Selected" : timeline?.trade_count ? `${timeline.trade_count} records` : "No trade rows";
           return `
-            <button class="search-result" type="button" role="option" data-official-id="${escapeHtml(official.id)}" aria-selected="${selected}">
+            <button class="search-result${index === state.activeOfficialResultIndex ? " active" : ""}" id="official-option-${index}" type="button" role="option" data-official-id="${escapeHtml(official.id)}" aria-selected="${selected}">
               <span>
                 <strong>${escapeHtml(official.full_name)}</strong>
                 <small>${escapeHtml(officialAffiliation(official))}</small>
@@ -396,6 +677,8 @@ function renderOfficialResults() {
 function hideOfficialResults() {
   $("officialResults").hidden = true;
   $("officialSearch").setAttribute("aria-expanded", "false");
+  $("officialSearch").removeAttribute("aria-activedescendant");
+  state.activeOfficialResultIndex = -1;
 }
 
 function eventSearchText(event) {
@@ -408,6 +691,8 @@ function eventSearchText(event) {
     ...(event.market_topic_ids || []),
     ...(event.sector_scope || []),
     ...(event.jurisdiction_scope || []),
+    ...(event.ticker_scope || []),
+    ...(event.entity_scope || []),
   ]
     .filter(Boolean)
     .join(" ")
@@ -423,11 +708,12 @@ function renderEventResults() {
       return curatedDifference || b.date.localeCompare(a.date) || a.label.localeCompare(b.label);
     })
     .slice(0, 40);
+  state.activeEventResultIndex = Math.min(state.activeEventResultIndex, matches.length - 1);
   $("eventResults").innerHTML = matches.length
     ? matches
         .map(
-          (event) => `
-            <button class="search-result" type="button" role="option" data-event-id="${escapeHtml(event.id)}" aria-selected="${event.id === state.activeEventId}">
+          (event, index) => `
+            <button class="search-result${index === state.activeEventResultIndex ? " active" : ""}" id="event-option-${index}" type="button" role="option" data-event-id="${escapeHtml(event.id)}" aria-selected="${event.id === state.activeEventId}">
               <span><strong>${escapeHtml(event.label)}</strong><small>${escapeHtml(`${formatDate(event.date)} / ${titleCase(event.event_type)} / ${event.source}`)}</small></span>
               <span class="result-state">${escapeHtml(event.editor_status === "curated" ? "Curated anchor" : "Official source")}</span>
             </button>`
@@ -441,16 +727,48 @@ function renderEventResults() {
 function hideEventResults() {
   $("eventResults").hidden = true;
   $("eventSearch").setAttribute("aria-expanded", "false");
+  $("eventSearch").removeAttribute("aria-activedescendant");
+  state.activeEventResultIndex = -1;
 }
 
-function selectEvent(id) {
+async function loadEventDetail(id) {
+  const indexed = state.eventMap.get(id);
+  if (!indexed?.date) return indexed || null;
+  const year = String(indexed.date).slice(0, 4);
+  const record = state.manifest?.partitions?.events?.[year];
+  if (!record) return indexed;
+  if (!state.eventPartitionCache.has(year)) {
+    state.eventPartitionCache.set(year, fetchJson(record));
+  }
+  const payload = await state.eventPartitionCache.get(year);
+  const detail = (payload.events || []).find((event) => event.id === id);
+  if (!detail) return indexed;
+  const merged = { ...indexed, ...detail };
+  state.eventMap.set(id, merged);
+  return merged;
+}
+
+async function selectEvent(id) {
   state.activeEventId = id;
   state.activeEventContext = null;
   state.zoomPercent = null;
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   $("eventSearch").value = state.eventMap.get(id)?.label || "";
   hideEventResults();
   updateModeControls();
   renderWorkbench();
+  try {
+    const detail = await loadEventDetail(id);
+    if (state.activeEventId !== id) return;
+    state.activeEventContext = detail;
+    renderWorkbench();
+  } catch (error) {
+    console.error(error);
+    if (state.activeEventId === id) {
+      state.activeEventContext = state.eventMap.get(id) || null;
+      renderWorkbench();
+    }
+  }
 }
 
 function addOfficial(id) {
@@ -465,6 +783,7 @@ function addOfficial(id) {
   state.selectedIds.push(id);
   state.selectedTradeId = "";
   state.zoomPercent = null;
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   $("officialSearch").value = "";
   hideOfficialResults();
   loadSelectedTimelines();
@@ -474,6 +793,7 @@ function removeOfficial(id) {
   state.selectedIds = state.selectedIds.filter((selectedId) => selectedId !== id);
   state.selectedTradeId = "";
   state.zoomPercent = null;
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   renderDatasetStatus();
   loadSelectedTimelines();
 }
@@ -606,6 +926,7 @@ function setMode(mode) {
   if (mode === "event" && !selectedEvent()) return;
   state.mode = mode;
   state.zoomPercent = null;
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   updateModeControls();
   renderWorkbench();
 }
@@ -613,6 +934,7 @@ function setMode(mode) {
 function updateModeControls() {
   document.querySelectorAll("[data-mode]").forEach((button) => {
     button.classList.toggle("active", button.dataset.mode === state.mode);
+    button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode));
   });
   $("eventModeButton").disabled = !selectedEvent();
   $("eventModeButton").title = selectedEvent() ? "Center comparison on the selected event" : "Select an event first";
@@ -693,8 +1015,14 @@ function calculateExtent() {
 }
 
 function aggregateTradePoints(official, laneIndex) {
-  const trades = filteredTrades(official).filter((trade) => Number.isFinite(xValueForTrade(trade)));
-  const binSize = state.mode === "calendar" ? 30 * 86400000 : state.mode === "career" ? 14 : 7;
+  const visible = zoomedXRange() || state.chartExtent;
+  const trades = filteredTrades(official).filter((trade) => {
+    const x = xValueForTrade(trade);
+    return Number.isFinite(x) && (!visible || (x >= visible.min && x <= visible.max));
+  });
+  const unit = state.mode === "calendar" ? 86400000 : 1;
+  const targetBins = state.compactLayout ? 42 : 80;
+  const binSize = Math.max(unit, (visible.max - visible.min) / targetBins);
   const groups = new Map();
   for (const trade of trades) {
     const x = xValueForTrade(trade);
@@ -843,6 +1171,8 @@ function buildChartSeries() {
       if (!eventVisible(event) || !eventInModeWindow(event)) continue;
       const x = xValueForEvent(event);
       if (!Number.isFinite(x)) continue;
+      const visible = zoomedXRange() || state.chartExtent;
+      if (visible && (x < visible.min || x > visible.max)) continue;
       eventPoints.push({
         value: [x, laneIndex - 0.24, event.relationship_tier_rank || 0],
         kind: "event",
@@ -992,6 +1322,10 @@ function renderTradeChart() {
   const names = state.selectedTimelines.map((official) => official.full_name);
   const chartHeight = Math.max(state.compactLayout ? 430 : 440, 210 + names.length * (state.compactLayout ? 78 : 86));
   $("tradeChart").style.height = `${chartHeight}px`;
+  $("tradeChart").setAttribute(
+    "aria-label",
+    `${titleCase(state.mode)} comparison for ${names.join(", ")}. Use plus and minus to change zoom; press 0 to reset zoom.`
+  );
   state.tradeChart.resize();
   const xAxis = {
     type: state.mode === "calendar" ? "time" : "value",
@@ -1004,7 +1338,7 @@ function renderTradeChart() {
   const zoom = state.zoomPercent || { start: 0, end: 100 };
   state.tradeChart.setOption(
     {
-      animationDuration: 250,
+      animationDuration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 250,
       grid: {
         left: state.compactLayout ? 108 : 178,
         right: state.compactLayout ? 18 : 32,
@@ -1048,7 +1382,7 @@ function renderTradeChart() {
           start: zoom.start,
           end: zoom.end,
           bottom: 24,
-          height: 24,
+          height: state.compactLayout ? 32 : 24,
           borderColor: "#c5d1cc",
           fillerColor: "rgba(11,107,120,0.16)",
           handleStyle: { color: "#0b6b78" },
@@ -1080,7 +1414,9 @@ function handleDataZoom(event) {
   const zoom = event.batch?.[0] || event;
   if (!Number.isFinite(zoom.start) || !Number.isFinite(zoom.end)) return;
   state.zoomPercent = { start: zoom.start, end: zoom.end };
+  state.transactionRenderLimit = state.compactLayout ? 50 : 100;
   renderTransactions();
+  syncUrl();
   window.clearTimeout(state.zoomRenderTimer);
   state.zoomRenderTimer = window.setTimeout(() => renderTradeChart(), 120);
 }
@@ -1109,26 +1445,29 @@ function visibleTransactionRows() {
 
 function renderTransactions() {
   const rows = visibleTransactionRows();
-  $("transactionCount").textContent = `${numberFormat.format(rows.length)} record${rows.length === 1 ? "" : "s"}`;
+  const visibleRows = rows.slice(0, state.transactionRenderLimit);
+  const shownLabel = rows.length > visibleRows.length ? `${numberFormat.format(visibleRows.length)} of ` : "";
+  $("transactionCount").textContent = `${shownLabel}${numberFormat.format(rows.length)} record${rows.length === 1 ? "" : "s"} in view`;
   $("transactionRows").innerHTML = rows.length
-    ? rows
-        .slice(0, 500)
+    ? visibleRows
         .map((trade) => {
           const stateInfo = recordState(trade);
           return `
             <tr data-trade-id="${escapeHtml(trade.id)}" class="${trade.id === state.selectedTradeId ? "selected" : ""}" tabindex="0" aria-selected="${trade.id === state.selectedTradeId}">
-              <td><strong>${escapeHtml(trade.officialName)}</strong><small>${escapeHtml(state.officialMap.get(trade.officialId)?.branch || "")}</small></td>
-              <td>${escapeHtml(formatDate(trade.date))}</td>
-              <td>${escapeHtml(formatDate(trade.reported_date))}</td>
-              <td><strong>${escapeHtml(trade.action)}</strong></td>
-              <td><strong>${escapeHtml(trade.ticker || trade.asset_display_name)}</strong><small>${escapeHtml(trade.asset_display_name)}</small></td>
-              <td>${escapeHtml(trade.value_range_label)}</td>
-              <td>${escapeHtml(lagLabel(trade.disclosure_lag_days))}</td>
-              <td><span class="state-label ${stateInfo.className}">${escapeHtml(stateInfo.label)}</span></td>
+              <td data-label="Official"><strong>${escapeHtml(trade.officialName)}</strong><small>${escapeHtml(state.officialMap.get(trade.officialId)?.branch || "")}</small></td>
+              <td data-label="Trade date">${escapeHtml(formatDate(trade.date))}</td>
+              <td data-label="Reported">${escapeHtml(formatDate(trade.reported_date))}</td>
+              <td data-label="Action"><strong>${escapeHtml(trade.action)}</strong></td>
+              <td data-label="Asset"><strong>${escapeHtml(trade.ticker || trade.asset_display_name)}</strong><small>${escapeHtml(trade.asset_display_name)}</small></td>
+              <td data-label="Disclosed range">${escapeHtml(trade.value_range_label)}</td>
+              <td data-label="Filing lag">${escapeHtml(lagLabel(trade.disclosure_lag_days))}</td>
+              <td data-label="Record state"><span class="state-label ${stateInfo.className}">${escapeHtml(stateInfo.label)}</span></td>
             </tr>`;
         })
         .join("")
     : '<tr><td colspan="8" class="empty-state">No transaction records match this view.</td></tr>';
+  $("transactionActions").hidden = visibleRows.length >= rows.length;
+  $("showMoreTransactionsButton").textContent = `Show ${numberFormat.format(Math.min(state.compactLayout ? 50 : 100, rows.length - visibleRows.length))} more records`;
 }
 
 function findTrade(id) {
@@ -1150,7 +1489,7 @@ function renderRecordDetail() {
   if (!found) {
     $("recordDetail").innerHTML = `
       <p class="eyebrow">Transaction evidence</p>
-      <h2>Select a transaction marker or row</h2>
+      <h2 id="recordDetailTitle">Select a transaction marker or row</h2>
       <p>Source document, filing lag, record state, and parser evidence will appear here.</p>`;
     return;
   }
@@ -1178,7 +1517,7 @@ function renderRecordDetail() {
   const resolvedAsset = trade.asset_resolution || {};
   $("recordDetail").innerHTML = `
     <p class="eyebrow">Transaction evidence</p>
-    <h2>${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker || trade.asset_display_name}`)}</h2>
+    <h2 id="recordDetailTitle">${escapeHtml(`${official.full_name}: ${trade.action} ${trade.ticker || trade.asset_display_name}`)}</h2>
     <p>${escapeHtml(trade.asset_display_name)} / ${escapeHtml(trade.value_range_label)}</p>
     <div class="detail-meta">
       <span>Trade ${escapeHtml(formatDate(trade.date))}</span>
@@ -1215,7 +1554,7 @@ function renderRecordDetail() {
         ? '<p class="evidence-note"><strong>Duplicate review flag:</strong> This row shares a conservative duplicate signature with another disclosure row and remains visible pending amendment/source review.</p>'
         : ""
     }
-    <p>No causation, intent, ethics, legality, or investment conclusion is implied.</p>`;
+    <p class="interpretation-boundary" role="note"><strong>Interpretation boundary:</strong> No causation, intent, ethics, legality, or investment conclusion is implied.</p>`;
 }
 
 function transactionsInsideEventWindow(event) {
@@ -1236,7 +1575,7 @@ function renderEventDetail() {
   if (!event) {
     $("eventDetail").innerHTML = `
       <p class="eyebrow">Event evidence</p>
-      <h2>Select an event marker</h2>
+      <h2 id="eventDetailTitle">Select an event marker</h2>
       <p>Event evidence and transactions inside the chosen time window will appear here.</p>`;
     return;
   }
@@ -1270,7 +1609,7 @@ function renderEventDetail() {
         : "";
   $("eventDetail").innerHTML = `
     <p class="eyebrow">${escapeHtml(titleCase(event.event_type))} / ${escapeHtml(formatDate(event.date))}</p>
-    <h2>${escapeHtml(event.label)}</h2>
+    <h2 id="eventDetailTitle">${escapeHtml(event.label)}</h2>
     <p>${escapeHtml(event.description || "No event summary is available.")}</p>
     <div class="detail-meta">
       <span>${escapeHtml(tierLabels[event.relationship_tier] || "Global context")}</span>
@@ -1304,7 +1643,8 @@ function renderEventDetail() {
               .join("")
           : '<span class="state-label">None in selected lanes</span>'
       }
-    </div>`;
+    </div>
+    <p class="interpretation-boundary" role="note"><strong>Interpretation boundary:</strong> Timing and source-backed relationships identify research candidates; they do not establish knowledge, intent, causation, or market impact.</p>`;
 }
 
 function renderSummary() {

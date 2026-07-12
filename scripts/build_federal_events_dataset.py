@@ -9,7 +9,7 @@ import json
 import os
 import re
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import date, datetime
 from html.parser import HTMLParser
 from pathlib import Path
@@ -28,6 +28,33 @@ FEDERAL_REGISTER_API = "https://www.federalregister.gov/api/v1/documents.json"
 SUPREME_COURT_TERM_URL = "https://www.supremecourt.gov/opinions/slipopinion/{term}"
 USER_AGENT = "CivicLedger federal event research/0.1 (+https://github.com/dtrezise/CivicLedger)"
 CONGRESSES = list(range(111, 120))
+FEDERAL_REGISTER_AGENCY_DOCUMENT_TYPES = {
+    "NOTICE": "Notice",
+    "RULE": "Rule",
+}
+FEDERAL_REGISTER_YEAR_TYPE_LIMITS = {
+    "Notice": 12,
+    "Rule": 24,
+}
+FEDERAL_REGISTER_MAX_PAGES_PER_QUERY = 5
+FEDERAL_REGISTER_FIELDS = [
+    "document_number",
+    "title",
+    "type",
+    "subtype",
+    "publication_date",
+    "effective_on",
+    "html_url",
+    "pdf_url",
+    "abstract",
+    "action",
+    "agencies",
+    "docket_ids",
+    "regulation_id_numbers",
+    "citation",
+    "topics",
+    "significant",
+]
 
 RULES = [
     {
@@ -116,6 +143,311 @@ def classify(title: str) -> dict | None:
         "ticker_scope": sorted({value for rule in matched for value in rule["tickers"]}),
         "asset_scope": sorted({value for rule in matched for value in rule["assets"]}),
     }
+
+
+def _canonical_hash(value: object) -> str:
+    content = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+    return hashlib.sha256(content).hexdigest()
+
+
+def _federal_register_query_id(year: int, document_type: str) -> str:
+    return f"federal-register-significant-{year}-{document_type.lower()}"
+
+
+def _federal_register_classification(row: dict) -> dict | None:
+    evidence = []
+    classifications = []
+    fields = [
+        ("title", row.get("title") or ""),
+        ("topics", " ".join(str(value) for value in row.get("topics") or [])),
+        ("action", row.get("action") or ""),
+        ("abstract", row.get("abstract") or ""),
+    ]
+    for field, text in fields:
+        classification = classify(text)
+        if not classification:
+            continue
+        classifications.append(classification)
+        evidence.append(
+            {
+                "field": field,
+                "market_topic_ids": classification["market_topic_ids"],
+            }
+        )
+    if not classifications:
+        return None
+    return {
+        "market_topic_ids": sorted(
+            {value for classification in classifications for value in classification["market_topic_ids"]}
+        ),
+        "sector_scope": sorted(
+            {value for classification in classifications for value in classification["sector_scope"]}
+        ),
+        "jurisdiction_scope": sorted(
+            {value for classification in classifications for value in classification["jurisdiction_scope"]}
+        ),
+        "ticker_scope": sorted(
+            {value for classification in classifications for value in classification["ticker_scope"]}
+        ),
+        "asset_scope": sorted(
+            {value for classification in classifications for value in classification["asset_scope"]}
+        ),
+        "market_relevance_evidence": evidence,
+    }
+
+
+def _agency_details(row: dict) -> list[dict]:
+    agencies = []
+    for agency in row.get("agencies") or []:
+        if not isinstance(agency, dict):
+            continue
+        name = agency.get("name") or agency.get("raw_name")
+        if not name:
+            continue
+        agencies.append(
+            {
+                key: agency.get(key)
+                for key in ("id", "name", "raw_name", "parent_id", "slug", "url")
+                if agency.get(key) is not None
+            }
+        )
+    return sorted(
+        agencies,
+        key=lambda agency: (
+            agency.get("name") or agency.get("raw_name") or "",
+            agency.get("id") or 0,
+        ),
+    )
+
+
+def federal_register_agency_event(row: dict) -> dict | None:
+    """Convert one significant agency rule or notice into neutral market context."""
+
+    document_number = str(row.get("document_number") or "").strip()
+    publication_date = row.get("publication_date")
+    document_type = row.get("type")
+    title = str(row.get("title") or "").strip()
+    if (
+        not document_number
+        or not publication_date
+        or document_type not in set(FEDERAL_REGISTER_AGENCY_DOCUMENT_TYPES.values())
+        or row.get("significant") is not True
+        or not title
+    ):
+        return None
+    classification = _federal_register_classification(row)
+    if not classification:
+        return None
+    agencies = _agency_details(row)
+    agency_names = sorted(
+        {
+            agency.get("name") or agency.get("raw_name")
+            for agency in agencies
+            if agency.get("name") or agency.get("raw_name")
+        }
+    )
+    sources = sorted({url for url in (row.get("html_url"), row.get("pdf_url")) if url})
+    source_query_ids = sorted(set(row.get("_source_query_ids") or []))
+    source_record_sha256 = row.get("_source_record_sha256") or _canonical_hash(
+        {field: row.get(field) for field in FEDERAL_REGISTER_FIELDS}
+    )
+    effective_date = row.get("effective_on")
+    return {
+        "id": f"federal-register-agency-{document_number.lower()}",
+        "date": publication_date,
+        "announcement_date": publication_date,
+        "effective_date": effective_date,
+        "publication_date": publication_date,
+        "label": title,
+        "event_type": "agency_rule" if document_type == "Rule" else "agency_notice",
+        "description": row.get("abstract") or title,
+        "source": "Federal Register",
+        "sources": sources,
+        "source_tier": "official",
+        "editor_status": "source_ingested",
+        "branch_scope": ["Executive"],
+        "market_relevance": "significant_document_official_text_keyword_match",
+        "significant": True,
+        "federal_register_document_number": document_number,
+        "federal_register_document_type": document_type,
+        "federal_register_document_subtype": row.get("subtype"),
+        "federal_register_citation": row.get("citation"),
+        "agency_names": agency_names,
+        "agency_details": agencies,
+        "docket_ids": sorted(set(row.get("docket_ids") or [])),
+        "regulation_id_numbers": sorted(set(row.get("regulation_id_numbers") or [])),
+        "federal_register_action": row.get("action"),
+        "federal_register_topics": sorted(set(row.get("topics") or [])),
+        "source_record_id": f"federal-register:{document_number}",
+        "source_record_sha256": source_record_sha256,
+        "source_query_ids": source_query_ids,
+        **classification,
+    }
+
+
+def _event_completeness(event: dict) -> tuple:
+    return (
+        sum(bool(event.get(field)) for field in ("effective_date", "federal_register_citation", "description")),
+        len(event.get("agency_names") or []),
+        len(event.get("docket_ids") or []),
+        len(event.get("regulation_id_numbers") or []),
+        len(event.get("market_relevance_evidence") or []),
+        _canonical_hash(event),
+    )
+
+
+def deduplicate_federal_register_events(events: list[dict]) -> list[dict]:
+    """Deduplicate repeated API rows by official source identity, never by title alone."""
+
+    grouped: dict[str, list[dict]] = defaultdict(list)
+    for event in events:
+        source_identity = event.get("source_record_id") or event.get("id")
+        grouped[str(source_identity)].append(event)
+    deduplicated = []
+    for source_identity in sorted(grouped):
+        candidates = grouped[source_identity]
+        selected = dict(max(candidates, key=_event_completeness))
+        for field in (
+            "sources",
+            "agency_names",
+            "docket_ids",
+            "regulation_id_numbers",
+            "source_query_ids",
+            "market_topic_ids",
+            "sector_scope",
+            "jurisdiction_scope",
+            "ticker_scope",
+            "asset_scope",
+        ):
+            selected[field] = sorted({value for candidate in candidates for value in candidate.get(field) or []})
+        selected["source_record_hashes"] = sorted(
+            {candidate.get("source_record_sha256") for candidate in candidates if candidate.get("source_record_sha256")}
+        )
+        evidence = {
+            (item.get("field"), tuple(item.get("market_topic_ids") or [])): item
+            for candidate in candidates
+            for item in candidate.get("market_relevance_evidence") or []
+        }
+        selected["market_relevance_evidence"] = [evidence[key] for key in sorted(evidence)]
+        deduplicated.append(selected)
+    return sorted(deduplicated, key=lambda event: (event["date"], event["id"]))
+
+
+def _selection_priority(event: dict) -> tuple:
+    field_weights = {"title": 4, "topics": 3, "action": 2, "abstract": 1}
+    evidence = event.get("market_relevance_evidence") or []
+    strongest_evidence = max((field_weights.get(item.get("field"), 0) for item in evidence), default=0)
+    return (
+        strongest_evidence,
+        len(evidence),
+        len(event.get("market_topic_ids") or []),
+        bool(event.get("regulation_id_numbers")),
+        bool(event.get("docket_ids")),
+        event["id"],
+    )
+
+
+def select_balanced_federal_register_events(
+    events: list[dict],
+    limits: dict[str, int] | None = None,
+) -> list[dict]:
+    """Apply independent annual quotas so recent publication volume cannot dominate."""
+
+    if limits is None:
+        limits = FEDERAL_REGISTER_YEAR_TYPE_LIMITS
+    grouped: dict[tuple[int, str], list[dict]] = defaultdict(list)
+    for event in deduplicate_federal_register_events(events):
+        year = date.fromisoformat(event["publication_date"]).year
+        grouped[(year, event["federal_register_document_type"])].append(event)
+    selected = []
+    for (year, document_type), candidates in sorted(grouped.items()):
+        limit = max(0, int(limits.get(document_type, 0)))
+        ranked = sorted(candidates, key=_selection_priority, reverse=True)
+        for rank, event in enumerate(ranked[:limit], start=1):
+            selected_event = dict(event)
+            selected_event["selection_bucket"] = f"{year}:{document_type.lower()}"
+            selected_event["selection_rank"] = rank
+            selected_event["selection_bucket_limit"] = limit
+            selected.append(selected_event)
+    return sorted(selected, key=lambda event: (event["date"], event["id"]))
+
+
+def fetch_federal_register_agency_documents(
+    start_date: str,
+    end_date: str,
+) -> tuple[list[dict], list[dict]]:
+    """Fetch significant final rules and notices in deterministic annual slices."""
+
+    start = date.fromisoformat(start_date)
+    end = date.fromisoformat(end_date)
+    if start > end:
+        raise ValueError("start_date must not be after end_date")
+    documents = []
+    query_snapshots = []
+    for year in range(start.year, end.year + 1):
+        query_start = max(start, date(year, 1, 1)).isoformat()
+        query_end = min(end, date(year, 12, 31)).isoformat()
+        for api_type, document_type in sorted(FEDERAL_REGISTER_AGENCY_DOCUMENT_TYPES.items()):
+            query_id = _federal_register_query_id(year, document_type)
+            query_conditions = {
+                "significant": True,
+                "type": api_type,
+                "publication_date_gte": query_start,
+                "publication_date_lte": query_end,
+            }
+            params = [
+                ("conditions[type][]", api_type),
+                ("conditions[significant]", "1"),
+                ("conditions[publication_date][gte]", query_start),
+                ("conditions[publication_date][lte]", query_end),
+            ]
+            params.extend(("fields[]", field) for field in FEDERAL_REGISTER_FIELDS)
+            params.extend([("per_page", "1000"), ("order", "oldest")])
+            next_url = f"{FEDERAL_REGISTER_API}?{urlencode(params)}"
+            page_snapshots = []
+            raw_result_count = 0
+            reported_count = None
+            page_number = 0
+            while next_url and page_number < FEDERAL_REGISTER_MAX_PAGES_PER_QUERY:
+                page_number += 1
+                request = Request(next_url, headers={"User-Agent": USER_AGENT})
+                with urlopen(request, timeout=90) as response:
+                    content = response.read()
+                payload = json.loads(content)
+                rows = payload.get("results") or []
+                reported_count = payload.get("count", reported_count)
+                page_snapshots.append(
+                    {
+                        "page": page_number,
+                        "url": next_url,
+                        "response_sha256": hashlib.sha256(content).hexdigest(),
+                        "result_count": len(rows),
+                    }
+                )
+                for row in rows:
+                    source_row = {field: row.get(field) for field in FEDERAL_REGISTER_FIELDS}
+                    source_record_sha256 = _canonical_hash(source_row)
+                    source_row["_source_query_ids"] = [query_id]
+                    source_row["_source_record_sha256"] = source_record_sha256
+                    documents.append(source_row)
+                raw_result_count += len(rows)
+                next_url = payload.get("next_page_url")
+            query_snapshots.append(
+                {
+                    "id": query_id,
+                    "year": year,
+                    "document_type": document_type,
+                    "query_conditions": query_conditions,
+                    "reported_result_count": reported_count,
+                    "fetched_result_count": raw_result_count,
+                    "truncated": bool(next_url),
+                    "page_snapshots": page_snapshots,
+                    "response_set_sha256": _canonical_hash(
+                        [snapshot["response_sha256"] for snapshot in page_snapshots]
+                    ),
+                }
+            )
+    return documents, query_snapshots
 
 
 def fetch_executive_orders(start_date: str, end_date: str) -> tuple[list[dict], str]:
@@ -336,18 +668,45 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
         laws.extend(event for row in rows if (event := law_event(row)))
     orders, federal_register_hash = fetch_executive_orders(start_date, end_date)
     executive_orders = [event for row in orders if (event := executive_order_event(row))]
+    agency_documents, federal_register_agency_snapshots = fetch_federal_register_agency_documents(
+        start_date,
+        end_date,
+    )
+    classified_agency_events = deduplicate_federal_register_events(
+        [event for row in agency_documents if (event := federal_register_agency_event(row))]
+    )
+    agency_events = select_balanced_federal_register_events(classified_agency_events)
+    classified_by_query = Counter(
+        query_id for event in classified_agency_events for query_id in event.get("source_query_ids") or []
+    )
+    selected_by_query = Counter(
+        query_id for event in agency_events for query_id in event.get("source_query_ids") or []
+    )
+    for snapshot in federal_register_agency_snapshots:
+        snapshot["classified_result_count"] = classified_by_query[snapshot["id"]]
+        snapshot["selected_result_count"] = selected_by_query[snapshot["id"]]
     opinions, supreme_court_snapshots = fetch_supreme_court_opinions(start_date, end_date)
     court_decisions = [event for row in opinions if (event := supreme_court_event(row))]
-    events = {event["id"]: event for event in [*laws, *executive_orders, *court_decisions]}
+    events = {
+        event["id"]: event
+        for event in [*laws, *executive_orders, *agency_events, *court_decisions]
+    }
     sorted_events = sorted(events.values(), key=lambda event: (event["date"], event["id"]))
     return {
-        "schema_version": "federal-market-events-v1",
+        "schema_version": "federal-market-events-v2",
         "generated_at": date.today().isoformat(),
         "scope": {
             "start_date": start_date,
             "end_date": end_date,
             "congresses": CONGRESSES,
-            "selection_method": "Market-relevant title and official-summary keyword taxonomy v1",
+            "selection_method": "Market-relevant official text keyword taxonomy v2",
+            "federal_register_agency_selection": {
+                "source_filter": "Federal Register significant=true; final rules and notices only",
+                "classification_fields": ["title", "topics", "action", "abstract"],
+                "annual_type_limits": FEDERAL_REGISTER_YEAR_TYPE_LIMITS,
+                "balancing_method": "Independent deterministic calendar-year and document-type quotas",
+                "causal_interpretation": "None; inclusion identifies possible market context only",
+            },
             "structured_supreme_court_term_range": (
                 [2017, supreme_court_snapshots[-1]["term_year"]] if supreme_court_snapshots else []
             ),
@@ -366,6 +725,13 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
                 "response_sha256": federal_register_hash,
             },
             {
+                "id": "federal-register-significant-agency-documents",
+                "url": FEDERAL_REGISTER_API,
+                "source_tier": "official",
+                "document_types": sorted(FEDERAL_REGISTER_AGENCY_DOCUMENT_TYPES.values()),
+                "query_snapshots": federal_register_agency_snapshots,
+            },
+            {
                 "id": "supreme-court-slip-opinions",
                 "url": SUPREME_COURT_TERM_URL,
                 "source_tier": "official",
@@ -375,9 +741,18 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
         "summary": {
             "raw_public_law_count": raw_law_count,
             "raw_executive_order_count": len(orders),
+            "raw_federal_register_agency_document_count": len(agency_documents),
             "raw_supreme_court_opinion_count": len(opinions),
             "selected_public_law_count": len(laws),
             "selected_executive_order_count": len(executive_orders),
+            "classified_federal_register_agency_document_count": len(classified_agency_events),
+            "selected_federal_register_agency_document_count": len(agency_events),
+            "selected_federal_register_agency_documents_by_year": dict(
+                sorted(Counter(event["publication_date"][:4] for event in agency_events).items())
+            ),
+            "selected_federal_register_agency_documents_by_type": dict(
+                sorted(Counter(event["federal_register_document_type"] for event in agency_events).items())
+            ),
             "selected_supreme_court_opinion_count": len(court_decisions),
             "event_count": len(sorted_events),
             "counts_by_type": dict(sorted(Counter(event["event_type"] for event in sorted_events).items())),
@@ -387,9 +762,10 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
         },
         "events": sorted_events,
         "context_label": (
-            "Official-source public laws, executive orders, and Supreme Court opinions selected by a disclosed "
-            "market-topic title and official-summary taxonomy. "
-            "Selection indicates possible context, not a relationship to any trade."
+            "Official-source public laws, executive orders, significant agency rules and notices, and Supreme "
+            "Court opinions selected by a disclosed market-topic taxonomy. Federal Register agency records are "
+            "balanced with fixed annual type quotas. Selection indicates possible context, not a causal "
+            "relationship to any trade."
         ),
     }
 

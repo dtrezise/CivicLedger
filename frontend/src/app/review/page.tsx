@@ -5,59 +5,16 @@ import { useEffect, useMemo, useState } from "react";
 
 import { StatusBadge } from "@/components/ProvenanceStatus";
 import { api } from "@/lib/api";
-import type { ParserArtifactItem } from "@/lib/types";
+import type {
+  ParserArtifactItem,
+  RelationshipCandidate,
+  RelationshipCandidateListResponse,
+  RelationshipDecision,
+  RelationshipSort,
+  RelationshipStatus,
+} from "@/lib/types";
 
 type ReviewView = "relationships" | "parser";
-type RelationshipDecision = "accept" | "narrow" | "reject" | "supersede";
-type RelationshipStatus =
-  | "candidate"
-  | "accepted"
-  | "narrowed"
-  | "rejected"
-  | "superseded";
-
-type RelationshipReview = {
-  id: string;
-  candidate_id: string;
-  decision: RelationshipDecision;
-  reviewer: string;
-  evidence_note: string;
-  reviewed_at: string;
-};
-
-type RelationshipCandidate = {
-  id: string;
-  trade_id: string;
-  event_id: string;
-  person_id: string;
-  person_name: string;
-  trade_date: string;
-  reported_date: string;
-  action: string;
-  asset_display_name: string;
-  ticker: string | null;
-  asset_class: string;
-  value_range_label: string;
-  event_date: string;
-  event_label: string;
-  event_type: string;
-  event_description: string | null;
-  days_from_event: number;
-  evidence_tier: string;
-  relationship_reasons: Array<string | Record<string, unknown>>;
-  internal_rank: string | number | null;
-  methodology_version: string;
-  review_status: RelationshipStatus;
-  created_at: string | null;
-  reviews: RelationshipReview[];
-};
-
-type RelationshipCandidateListResponse = {
-  items: RelationshipCandidate[];
-  page: number;
-  page_size: number;
-  total: number;
-};
 
 type ParserFormState = {
   reviewer: string;
@@ -181,8 +138,18 @@ function RelationshipCandidateReview() {
     page: 1,
     page_size: 25,
     total: 0,
+    sort: "priority",
   });
   const [status, setStatus] = useState<RelationshipStatus | "">("candidate");
+  const [evidenceTier, setEvidenceTier] = useState("");
+  const [eventType, setEventType] = useState("");
+  const [maxDays, setMaxDays] = useState("");
+  const [minRank, setMinRank] = useState("");
+  const [reviewHistory, setReviewHistory] = useState("");
+  const [sort, setSort] = useState<RelationshipSort>("priority");
+  const [pageSize, setPageSize] = useState(25);
+  const [queryInput, setQueryInput] = useState("");
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -201,8 +168,18 @@ function RelationshipCandidateReview() {
     async function loadQueue() {
       setLoading(true);
       setLoadError("");
-      const params = new URLSearchParams({ page: String(page), page_size: "25" });
+      const params = new URLSearchParams({
+        page: String(page),
+        page_size: String(pageSize),
+        sort,
+      });
       if (status) params.set("status", status);
+      if (evidenceTier.trim()) params.set("evidence_tier", evidenceTier.trim());
+      if (eventType.trim()) params.set("event_type", eventType.trim());
+      if (maxDays) params.set("max_abs_days", maxDays);
+      if (minRank) params.set("min_internal_rank", minRank);
+      if (reviewHistory) params.set("has_reviews", reviewHistory);
+      if (query.length >= 2) params.set("q", query);
       try {
         const response = await fetchRelationshipAPI<RelationshipCandidateListResponse>(
           `/review/relationship-candidates?${params.toString()}`
@@ -217,7 +194,7 @@ function RelationshipCandidateReview() {
       } catch (error) {
         if (cancelled) return;
         setLoadError(error instanceof Error ? error.message : "Failed to load candidates.");
-        setQueue({ items: [], page, page_size: 25, total: 0 });
+        setQueue({ items: [], page, page_size: pageSize, total: 0, sort });
         setSelectedId("");
       } finally {
         if (!cancelled) setLoading(false);
@@ -228,7 +205,7 @@ function RelationshipCandidateReview() {
     return () => {
       cancelled = true;
     };
-  }, [page, reloadToken, status]);
+  }, [evidenceTier, eventType, maxDays, minRank, page, pageSize, query, reloadToken, reviewHistory, sort, status]);
 
   const selected = useMemo(
     () => queue.items.find((candidate) => candidate.id === selectedId),
@@ -250,6 +227,7 @@ function RelationshipCandidateReview() {
             decision,
             reviewer,
             evidence_note: evidenceNote,
+            expected_status: selected.review_status,
           }),
         }
       );
@@ -270,7 +248,30 @@ function RelationshipCandidateReview() {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <section className="min-w-0">
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-gray-200 pb-4">
+        <form
+          className="mb-4 grid gap-3 border-b border-gray-200 pb-4 sm:grid-cols-2 xl:grid-cols-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            setQuery(queryInput.trim());
+            setPage(1);
+          }}
+        >
+          <label className="block text-sm sm:col-span-2 xl:col-span-4">
+            <span className="text-xs font-medium text-gray-600">Search official, asset, ticker, or event</span>
+            <span className="mt-1 flex gap-2">
+              <input
+                value={queryInput}
+                onChange={(event) => setQueryInput(event.target.value)}
+                minLength={2}
+                maxLength={200}
+                placeholder="Search review queue"
+                className="min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              />
+              <button type="submit" className="rounded-md bg-civic-700 px-4 py-2 text-sm font-medium text-white">
+                Search
+              </button>
+            </span>
+          </label>
           <label className="block text-sm">
             <span className="text-xs font-medium text-gray-600">Status</span>
             <select
@@ -289,10 +290,106 @@ function RelationshipCandidateReview() {
               ))}
             </select>
           </label>
-          <p className="text-sm tabular-nums text-gray-500">
-            {queue.total} {queue.total === 1 ? "candidate" : "candidates"}
-          </p>
-        </div>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Evidence tier</span>
+            <input
+              value={evidenceTier}
+              onChange={(event) => { setEvidenceTier(event.target.value); setPage(1); }}
+              placeholder="All tiers"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Event type</span>
+            <input
+              value={eventType}
+              onChange={(event) => { setEventType(event.target.value); setPage(1); }}
+              placeholder="All event types"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Maximum timing distance</span>
+            <select
+              value={maxDays}
+              onChange={(event) => { setMaxDays(event.target.value); setPage(1); }}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            >
+              <option value="">Any distance</option>
+              <option value="7">7 days</option>
+              <option value="30">30 days</option>
+              <option value="90">90 days</option>
+              <option value="180">180 days</option>
+              <option value="365">365 days</option>
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Minimum internal rank</span>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={minRank}
+              onChange={(event) => { setMinRank(event.target.value); setPage(1); }}
+              placeholder="Any rank"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Review history</span>
+            <select
+              value={reviewHistory}
+              onChange={(event) => { setReviewHistory(event.target.value); setPage(1); }}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            >
+              <option value="">Any</option>
+              <option value="false">Not reviewed</option>
+              <option value="true">Has history</option>
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Sort</span>
+            <select
+              value={sort}
+              onChange={(event) => { setSort(event.target.value as RelationshipSort); setPage(1); }}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            >
+              <option value="priority">Evidence priority</option>
+              <option value="newest">Newest queued</option>
+              <option value="oldest">Oldest queued</option>
+              <option value="event_date">Newest event</option>
+              <option value="trade_date">Newest trade</option>
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="text-xs font-medium text-gray-600">Rows per page</span>
+            <select
+              value={pageSize}
+              onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            >
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+          <div className="flex items-end justify-between gap-3 sm:col-span-2 xl:col-span-4">
+            <p className="text-sm tabular-nums text-gray-500">
+              {queue.total} {queue.total === 1 ? "candidate" : "candidates"}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setStatus("candidate"); setEvidenceTier(""); setEventType(""); setMaxDays("");
+                setMinRank(""); setReviewHistory(""); setSort("priority"); setQueryInput(""); setQuery(""); setPage(1);
+              }}
+              className="text-sm font-medium text-civic-700 hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        </form>
 
         {message ? (
           <p
@@ -350,6 +447,8 @@ function RelationshipCandidateReview() {
                   <span>{formatDate(candidate.trade_date)}</span>
                   <span>{formatDayDistance(candidate.days_from_event)}</span>
                   <span>{formatEnum(candidate.evidence_tier)}</span>
+                  {candidate.internal_rank !== null ? <span>Rank {candidate.internal_rank}</span> : null}
+                  <span>{candidate.reviews.length} review{candidate.reviews.length === 1 ? "" : "s"}</span>
                 </div>
               </button>
             );

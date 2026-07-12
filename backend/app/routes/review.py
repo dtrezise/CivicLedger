@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
+from sqlalchemy import case, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
@@ -16,6 +16,7 @@ from app.schemas import (
     ParserArtifactListResponse,
     PromotePreviewRequest,
     PromotePreviewResponse,
+    RelationshipCandidateSort,
     RelationshipCandidateStatus,
     RelationshipReviewCreateRequest,
     RelationshipReviewDecision,
@@ -160,23 +161,93 @@ async def list_parser_previews(
 )
 def list_relationship_candidates(
     status: RelationshipCandidateStatus | None = None,
+    evidence_tier: str | None = Query(None, min_length=1, max_length=100),
+    event_type: str | None = Query(None, min_length=1, max_length=100),
+    query: str | None = Query(None, min_length=2, max_length=200, alias="q"),
+    max_abs_days: int | None = Query(None, ge=0, le=3650),
+    min_internal_rank: float | None = Query(None, ge=0),
+    has_reviews: bool | None = None,
+    sort: RelationshipCandidateSort = RelationshipCandidateSort.PRIORITY,
     page: int = Query(1, ge=1),
     page_size: int = Query(25, ge=1, le=100),
     db: Session = Depends(get_sync_db),
 ):
-    count_statement = select(func.count(TradeEventCandidate.id))
+    count_statement = (
+        select(func.count(func.distinct(TradeEventCandidate.id)))
+        .select_from(TradeEventCandidate)
+        .join(Trade, Trade.id == TradeEventCandidate.trade_id)
+        .join(Event, Event.id == TradeEventCandidate.event_id)
+        .join(Person, Person.id == Trade.person_id)
+    )
     items_statement = _candidate_select()
+    filters = []
     if status is not None:
-        count_statement = count_statement.where(
-            TradeEventCandidate.review_status == status.value
+        filters.append(TradeEventCandidate.review_status == status.value)
+    if evidence_tier:
+        filters.append(TradeEventCandidate.evidence_tier == evidence_tier.strip())
+    if event_type:
+        filters.append(Event.event_type == event_type.strip())
+    if query:
+        pattern = f"%{query.strip()}%"
+        filters.append(
+            or_(
+                Person.full_name.ilike(pattern),
+                Trade.asset_display_name.ilike(pattern),
+                Trade.ticker.ilike(pattern),
+                Event.label.ilike(pattern),
+            )
         )
-        items_statement = items_statement.where(
-            TradeEventCandidate.review_status == status.value
+    if max_abs_days is not None:
+        filters.append(func.abs(TradeEventCandidate.days_from_event) <= max_abs_days)
+    if min_internal_rank is not None:
+        filters.append(TradeEventCandidate.internal_rank >= min_internal_rank)
+    if has_reviews is not None:
+        review_exists = (
+            select(RelationshipReview.id)
+            .where(RelationshipReview.candidate_id == TradeEventCandidate.id)
+            .exists()
         )
+        filters.append(review_exists if has_reviews else ~review_exists)
+    if filters:
+        count_statement = count_statement.where(*filters)
+        items_statement = items_statement.where(*filters)
+
+    status_priority = case(
+        (TradeEventCandidate.review_status == "candidate", 0),
+        (TradeEventCandidate.review_status == "narrowed", 1),
+        (TradeEventCandidate.review_status == "accepted", 2),
+        (TradeEventCandidate.review_status == "rejected", 3),
+        else_=4,
+    )
+    order_by = {
+        RelationshipCandidateSort.PRIORITY: (
+            status_priority,
+            TradeEventCandidate.internal_rank.desc().nullslast(),
+            func.abs(TradeEventCandidate.days_from_event),
+            TradeEventCandidate.created_at,
+            TradeEventCandidate.id,
+        ),
+        RelationshipCandidateSort.NEWEST: (
+            TradeEventCandidate.created_at.desc(),
+            TradeEventCandidate.id,
+        ),
+        RelationshipCandidateSort.OLDEST: (
+            TradeEventCandidate.created_at,
+            TradeEventCandidate.id,
+        ),
+        RelationshipCandidateSort.EVENT_DATE: (
+            Event.date.desc(),
+            TradeEventCandidate.id,
+        ),
+        RelationshipCandidateSort.TRADE_DATE: (
+            Trade.trade_date.desc(),
+            TradeEventCandidate.id,
+        ),
+    }[sort]
 
     total = db.execute(count_statement).scalar_one()
     rows = db.execute(
-        items_statement.order_by(TradeEventCandidate.created_at, TradeEventCandidate.id)
+        items_statement.order_by(*order_by)
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
@@ -187,6 +258,7 @@ def list_relationship_candidates(
         page=page,
         page_size=page_size,
         total=total,
+        sort=sort,
     )
 
 
@@ -239,6 +311,18 @@ def create_relationship_candidate_decision(
         if candidate is None:
             raise HTTPException(
                 status_code=404, detail="Relationship candidate not found."
+            )
+
+        if (
+            payload.expected_status is not None
+            and candidate.review_status != payload.expected_status.value
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "The candidate status changed after this review view was loaded. "
+                    "Reload the candidate before recording a decision."
+                ),
             )
 
         reviewed_at = datetime.now(timezone.utc)

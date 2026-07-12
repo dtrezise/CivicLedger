@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import io
 import re
 from datetime import datetime
@@ -22,6 +23,22 @@ ACTION_WORDS = {
     "exchanged": "EXCHANGE",
 }
 HOUSE_ACTIONS = {"P": "BUY", "S": "SELL", "E": "EXCHANGE"}
+FIELD_ALIASES = {
+    "owner": {"owner", "ownership", "who"},
+    "asset": {
+        "asset",
+        "asset_name",
+        "description",
+        "security",
+        "name_of_asset",
+        "identification_of_assets",
+    },
+    "ticker": {"ticker", "symbol", "ticker_symbol"},
+    "action": {"action", "transaction_type", "type", "type_of_transaction"},
+    "date": {"date", "transaction_date", "date_of_transaction"},
+    "amount": {"amount", "value", "range", "amount_of_transaction"},
+    "comment": {"comment", "comments", "notes", "description_of_transaction"},
+}
 
 
 def normalize_date(value: str) -> str:
@@ -38,6 +55,12 @@ def normalize_date(value: str) -> str:
 
 def normalize_action(value: str) -> str:
     lowered = value.strip().lower()
+    if lowered in {"p", "purchase (partial)", "purchase (full)"}:
+        return "BUY"
+    if lowered in {"s", "s (partial)", "s (full)", "sale (partial)", "sale (full)"}:
+        return "SELL"
+    if lowered in {"e", "exchange (partial)", "exchange (full)"}:
+        return "EXCHANGE"
     for token, normalized in ACTION_WORDS.items():
         if token in lowered:
             return normalized
@@ -82,63 +105,100 @@ def transaction_confidence(
 
 
 def extract_metadata(text: str) -> dict:
-    metadata = {}
+    metadata: dict = {"source_metadata_fields": {}}
     patterns = {
-        "filer_name": r"(?:filer|name)\s*[:\-]\s*(.+)",
-        "report_type": r"(?:report type|filing type|form)\s*[:\-]\s*(.+)",
-        "filing_date": r"(?:filing date|filed|date filed)\s*[:\-]\s*(.+)",
+        "filer_name": r"^(?:filer|name|name of reporting individual)\s*[:\-]\s*(.+)$",
+        "report_type": r"^(?:report type|filing type|form|type of report)\s*[:\-]\s*(.+)$",
+        "filing_date": r"^(?:filing date|filed|date filed|date of filing)\s*[:\-]\s*(.+)$",
+        "agency": r"^(?:agency|department|office)\s*[:\-]\s*(.+)$",
+        "position": r"^(?:position|title|position title)\s*[:\-]\s*(.+)$",
+        "court": r"^(?:court|judicial station)\s*[:\-]\s*(.+)$",
+        "reporting_period": r"^(?:reporting period|period covered)\s*[:\-]\s*(.+)$",
+        "report_year": r"^(?:report year|calendar year)\s*[:\-]\s*(.+)$",
+        "report_status": r"^(?:report status|status)\s*[:\-]\s*(.+)$",
     }
     for key, pattern in patterns.items():
-        match = re.search(pattern, text, re.IGNORECASE)
+        match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
         if match:
-            value = clean(match.group(1).splitlines()[0])
+            value = clean(match.group(1))
             if key == "filing_date" and value:
                 date_match = DATE_RE.search(value)
                 value = normalize_date(date_match.group(1)) if date_match else value
             metadata[key] = value
+            metadata["source_metadata_fields"][key] = clean(match.group(0))
+    metadata["is_amendment"] = bool(
+        re.search(r"\b(?:amended|amendment)\b", " ".join(
+            str(metadata.get(key) or "") for key in ("report_type", "report_status")
+        ), re.IGNORECASE)
+    )
     return metadata
+
+
+def normalize_field_name(value: str) -> str:
+    return re.sub(r"_+", "_", re.sub(r"[^a-z0-9]+", "_", value.strip().lower())).strip("_")
+
+
+def canonical_field_map(fieldnames: list[str | None]) -> dict[str, str]:
+    canonical = {}
+    for field in fieldnames:
+        if not field:
+            continue
+        normalized = normalize_field_name(field)
+        for target, aliases in FIELD_ALIASES.items():
+            if normalized in aliases:
+                canonical[field] = target
+                break
+    return canonical
+
+
+def deterministic_transaction_signature(transaction: ParsedTransaction | dict) -> str:
+    if isinstance(transaction, ParsedTransaction):
+        values = transaction.to_dict()
+        values["transaction_date"] = transaction.transaction_date
+        values["transaction_type"] = transaction.transaction_type
+        values["amount"] = transaction.amount
+    else:
+        values = transaction
+    identity = "|".join(
+        re.sub(r"\s+", " ", str(values.get(key) or "").strip()).casefold()
+        for key in ("owner", "asset", "ticker", "transaction_type", "transaction_date", "amount")
+    )
+    return hashlib.sha256(identity.encode("utf-8")).hexdigest()
+
+
+def detect_delimited_table(text: str) -> tuple[int, str] | None:
+    aliases = set().union(*FIELD_ALIASES.values())
+    for index, line in enumerate(text.splitlines()):
+        for delimiter in ("\t", ",", "|"):
+            if delimiter not in line:
+                continue
+            fields = [normalize_field_name(value) for value in next(csv.reader([line], delimiter=delimiter))]
+            recognized = sum(field in aliases for field in fields)
+            if recognized >= 3 and any(field in FIELD_ALIASES["asset"] for field in fields):
+                return index, delimiter
+    return None
 
 
 def extract_table_transactions(text: str) -> list[ParsedTransaction]:
     transactions = []
     lines = text.splitlines()
-    header_index = 0
-    for index, line in enumerate(lines):
-        normalized = line.lower()
-        if "," in line and any(token in normalized for token in ["asset", "security", "description"]):
-            header_index = index
-            break
-
-    reader = csv.DictReader(io.StringIO("\n".join(lines[header_index:])))
+    table = detect_delimited_table(text)
+    if table is None:
+        return transactions
+    header_index, delimiter = table
+    reader = csv.DictReader(io.StringIO("\n".join(lines[header_index:])), delimiter=delimiter)
     if not reader.fieldnames:
         return transactions
-
-    normalized_fields = {
-        field: field.strip().lower().replace(" ", "_").replace("-", "_")
-        for field in reader.fieldnames
-        if field
-    }
-    desired = set(normalized_fields.values())
-    if not desired.intersection({"asset", "asset_name", "security", "description"}):
+    normalized_fields = canonical_field_map(reader.fieldnames)
+    if "asset" not in normalized_fields.values():
         return transactions
 
     for row_number, row in enumerate(reader, start=1):
-        by_key = {normalized_fields.get(k, k): v for k, v in row.items()}
-        asset = clean(
-            by_key.get("asset")
-            or by_key.get("asset_name")
-            or by_key.get("security")
-            or by_key.get("description")
-        )
-        date = clean(
-            by_key.get("transaction_date")
-            or by_key.get("date")
-            or by_key.get("date_of_transaction")
-        )
-        amount = clean(by_key.get("amount") or by_key.get("value") or by_key.get("range"))
-        action = clean(
-            by_key.get("transaction_type") or by_key.get("type") or by_key.get("action")
-        )
+        by_key = {normalized_fields.get(key, normalize_field_name(key or "")): value for key, value in row.items()}
+        asset = clean(by_key.get("asset"))
+        date = clean(by_key.get("date"))
+        amount = clean(by_key.get("amount"))
+        action = clean(by_key.get("action"))
         if not asset or not date or not amount or not action:
             continue
         normalized_action = normalize_action(action)
@@ -147,17 +207,17 @@ def extract_table_transactions(text: str) -> list[ParsedTransaction]:
             date=date,
             amount=amount,
             action=normalized_action,
-            ticker=clean(by_key.get("ticker") or by_key.get("symbol")),
+            ticker=clean(by_key.get("ticker")),
         )
         transactions.append(
             ParsedTransaction(
                 owner=clean(by_key.get("owner")),
                 asset=asset,
-                ticker=clean(by_key.get("ticker") or by_key.get("symbol")),
+                ticker=clean(by_key.get("ticker")),
                 transaction_type=normalized_action,
                 transaction_date=normalize_date(date),
                 amount=amount,
-                comment=clean(by_key.get("comment") or by_key.get("notes")),
+                comment=clean(by_key.get("comment")),
                 row_number=row_number,
                 confidence=confidence,
                 field_confidence=field_confidence,
@@ -221,6 +281,8 @@ class SourceSpecificTransactionParser(DisclosureParser):
         text, warnings = extract_text(content, content_type=content_type)
         metadata = extract_metadata(text)
         transactions = extract_table_transactions(text) or extract_line_transactions(text)
+        table = detect_delimited_table(text)
+        layout = "delimited_table" if table else "line_or_text_layout"
 
         warnings.extend([
             "Parser preview only: normalized records require explicit review before promotion.",
@@ -248,9 +310,47 @@ class SourceSpecificTransactionParser(DisclosureParser):
                 "review_required_before_promotion": True,
                 "text_sample": text[:1000].strip(),
                 "metadata": metadata,
+                "source_layout": {
+                    "layout": layout,
+                    "delimiter": table[1] if table else None,
+                    "header_line": table[0] + 1 if table else None,
+                },
+                "transaction_signatures": [
+                    deterministic_transaction_signature(transaction) for transaction in transactions
+                ],
                 "transactions": [transaction.to_dict() for transaction in transactions],
             },
         )
+
+
+class OGEFinancialDisclosureParser(SourceSpecificTransactionParser):
+    def preview(self, content: bytes, *, filename: str, content_type: str) -> ParserPreview:
+        preview = super().preview(content, filename=filename, content_type=content_type)
+        metadata = preview.output["metadata"]
+        metadata["form_family"] = (
+            "OGE Form 278-T" if "278-t" in (metadata.get("report_type") or "").lower()
+            else "OGE Form 278e" if "278" in (metadata.get("report_type") or "").lower()
+            else "unresolved_oge_form"
+        )
+        preview.output["source_layout"]["source_layout_family"] = "oge_public_financial_disclosure"
+        return preview
+
+
+class SenateFinancialDisclosureParser(SourceSpecificTransactionParser):
+    def preview(self, content: bytes, *, filename: str, content_type: str) -> ParserPreview:
+        preview = super().preview(content, filename=filename, content_type=content_type)
+        preview.output["source_layout"]["source_layout_family"] = "senate_public_financial_disclosure"
+        return preview
+
+
+class JudicialFinancialDisclosureParser(SourceSpecificTransactionParser):
+    def preview(self, content: bytes, *, filename: str, content_type: str) -> ParserPreview:
+        preview = super().preview(content, filename=filename, content_type=content_type)
+        metadata = preview.output["metadata"]
+        report_type = (metadata.get("report_type") or "").lower()
+        metadata["form_family"] = "AO 10T" if "10t" in report_type else "AO 10" if "ao 10" in report_type else "unresolved_judicial_form"
+        preview.output["source_layout"]["source_layout_family"] = "judiciary_financial_disclosure"
+        return preview
 
 
 def clean_pdf_word(value: str) -> str:
@@ -490,6 +590,14 @@ class HouseFinancialDisclosureParser(SourceSpecificTransactionParser):
                 "review_required_before_promotion": True,
                 "extraction_method": "pdfplumber_position_aware_house_ptr_v1",
                 "metadata": metadata,
+                "source_layout": {
+                    "layout": "position_aware_pdf_table",
+                    "source_layout_family": "house_clerk_periodic_transaction_report",
+                    "page_count": metadata.get("page_count"),
+                },
+                "transaction_signatures": [
+                    deterministic_transaction_signature(transaction) for transaction in transactions
+                ],
                 "transactions": [transaction.to_dict() for transaction in transactions],
             },
         )
@@ -499,13 +607,13 @@ PARSERS = {
     "house-financial-disclosure": HouseFinancialDisclosureParser(
         "house-financial-disclosure", "legislative_financial_disclosure", "Legislative"
     ),
-    "senate-public-financial-disclosure": SourceSpecificTransactionParser(
+    "senate-public-financial-disclosure": SenateFinancialDisclosureParser(
         "senate-public-financial-disclosure", "legislative_financial_disclosure", "Legislative"
     ),
-    "oge-individual-disclosures": SourceSpecificTransactionParser(
+    "oge-individual-disclosures": OGEFinancialDisclosureParser(
         "oge-individual-disclosures", "executive_financial_disclosure", "Executive"
     ),
-    "judicial-financial-disclosure": SourceSpecificTransactionParser(
+    "judicial-financial-disclosure": JudicialFinancialDisclosureParser(
         "judicial-financial-disclosure", "judicial_financial_disclosure", "Judicial"
     ),
 }

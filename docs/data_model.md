@@ -1,105 +1,142 @@
-# Data Model
+# CivicLedger Data Model
 
-## Existing MVP Tables
+The PostgreSQL schema separates source evidence, canonical entities, disclosed transactions, and analytical relationships. A normalized row must remain traceable to a source document, and a candidate relationship must never be mistaken for a finding of misconduct.
 
-- `people`: public officials and service metadata across legislative, executive, and judicial branches.
-- `public_official_roles`: source-backed role records across presidential terms and federal branches.
-- `congressional_service_terms`: Bioguide-keyed congressional service terms by Congress number.
-- `ingestion_runs`: ingestion job metadata, parser version, dataset version, and status.
-- `raw_documents`: source-first archival metadata for raw filing documents.
-- `filings`: filing metadata, source URL, retrieval timestamp, file hash, retrieval source.
-- `trades`: normalized reported transactions.
-- `parser_artifacts`: parser evidence, preview output, row/page references, and confidence metadata.
-- `events`: contextual civic or market events.
-- `event_sources`: source links for events.
-- `market_series`: benchmark time series.
-- `sharecards`: generated share-card metadata.
+## Model Boundaries
 
-## Provenance Tables
+| Boundary | Authoritative tables | Purpose |
+| --- | --- | --- |
+| Public officials | `people`, `public_official_roles`, `congressional_service_terms`, `service_periods` | Identity and dated federal service |
+| Source provenance | `ingestion_runs`, `raw_documents`, `parser_artifacts` | Acquisition, file identity, parser evidence, and review inputs |
+| Disclosures | `filings`, `trades` | Filing-level metadata and normalized reported transactions |
+| Canonical entities | `organizations`, `issuers`, `organization_aliases`, `organization_identifiers` | Stable organization identity and issuer-specific attributes |
+| Entity history | `organization_relationships`, `sectors`, `organization_sectors`, `assets`, `ticker_histories` | Dated ownership, classification, and security identifiers |
+| Events and institutions | `events`, `event_sources`, `event_source_snapshots`, `jurisdictions`, `institutions`, `event_institution_links` | Context events, immutable evidence captures, and institutional responsibility |
+| Analysis and review | `event_relationships`, `trade_event_candidates`, `relationship_reviews`, `data_quality_issues` | Explainable candidates, reviewer history, and quality exceptions |
 
-### ingestion_runs
+## Canonical Organizations
 
-Tracks each ingestion job:
+`organizations` is the canonical identity grain for companies, funds, government bodies, nonprofits, partnerships, trusts, and other organizations. Every row has a stable, unique `canonical_key`; names are labels and must not be used as identifiers. `normalized_name` supports candidate matching but is deliberately not unique because unrelated organizations can share a name.
 
-- `id`
-- `source_name`
-- `source_url`
-- `started_at`
-- `completed_at`
-- `status`
-- `dataset_version`
-- `parser_version`
-- `notes`
+`issuers` remains the securities-issuer profile used by existing asset code. Migration `0005_entity_history_model` creates one organization for every existing issuer, backfills `issuers.organization_id`, and then enforces a required one-to-one relationship. Existing `canonical_name`, `cik`, and `lei` columns remain on `issuers` as compatibility fields. New integrations should resolve the organization first and treat `organization_identifiers` as the canonical identifier registry.
 
-### raw_documents
+### Names and identifiers
 
-Stores source-first archival metadata:
+- `organization_aliases` records alternate, former, trade, and disclosure names. `normalized_alias` is the lookup form; the original `alias` remains the display and evidence value.
+- `organization_identifiers` stores globally scoped `(scheme, value)` pairs such as CIK and LEI. Identifier validity can be dated and supported by a source snapshot.
+- Alias matching proposes an organization candidate. It does not establish identity without source evidence or review.
+- `source_snapshot_id` is nullable so legacy and manually curated records can be migrated incrementally. Source-backed ingestion should populate it whenever a capture exists.
 
-- `id`
-- `ingestion_run_id`
-- `source_url`
-- `retrieved_at`
-- `retrieval_source`
-- `content_type`
-- `file_hash`
-- `storage_uri`
-- `rights_status`
-- `parser_version`
-- `provenance_complete`
-- `source_metadata`
+### Parent history
 
-### parser_artifacts
+`organization_relationships` is directed from `parent_organization_id` to `child_organization_id`. The row records relationship type, directness, optional ownership percentage, and a half-open-style business interval represented by inclusive `valid_from` and `valid_to` dates. Self-links, inverted date ranges, and ownership outside 0–100 are rejected.
 
-Stores parser evidence without promoting unreviewed data into public-facing tables:
+The same parent and child can have multiple historical relationships, but the combination of parent, child, relationship type, and start date is unique with PostgreSQL `NULLS NOT DISTINCT`. Unknown start dates therefore cannot create duplicate undated relationships.
 
-- `id`
-- `source_id`
-- `raw_document_id`
-- `filing_id`
-- `trade_id`
-- `artifact_type`
-- `page_number`
-- `row_number`
-- `text_span`
-- `parser_output`
-- `confidence`
+## Sector History
 
-## Release Relationship Model
+`sectors` supports multiple named taxonomies such as GICS, NAICS, or a CivicLedger-specific taxonomy. `(taxonomy, code)` is canonical, and `parent_sector_id` supports hierarchical categories.
 
-Migration `0004_release_relationship_model` adds the release-grade temporal and relationship layer:
+`organization_sectors` dates an organization’s assignment to a sector and records confidence and evidence. An organization may have several concurrent secondary sectors, but a partial unique index permits only one current primary sector. Historical primary assignments remain available after `valid_to` is set.
 
-- `service_periods`: explicit dated service segments, including nonconsecutive terms.
-- `issuers`: canonical organizations behind disclosed assets.
-- `assets`: normalized assets with raw labels, class, symbol, and mapping confidence.
-- `event_relationships`: typed event links with evidence reasons and methodology versions.
-- `trade_event_candidates`: explainable temporal/entity/jurisdiction candidate evidence.
-- `relationship_reviews`: accept, narrow, reject, and supersede decisions.
-- `data_quality_issues`: identity, parser, duplicate, page, and asset-mapping issues.
+Sector classification is descriptive context. It is not evidence that an event affected every organization in the sector.
 
-Trades retain disclosed minimum and maximum values; no midpoint is presented as an exact amount. Events can preserve announcement, effective, publication, and retrieval dates separately.
+## Assets and Ticker History
 
-## Role Fields
+`assets` identifies the disclosed security or other asset. It links to the compatibility issuer profile where known. `ticker_histories` records symbols separately because symbols, exchanges, and primary listings change over time.
 
-### people branch fields
+Each ticker-history row includes:
 
-The root `people` table now treats `branch` as the primary branch discriminator. `chamber` is nullable and should only be used for legislative records. Executive records should use `office` and `agency`; judicial records should use `court` and, later, judge-type metadata.
+- `asset_id` and canonical `organization_id`;
+- symbol, exchange, optional ISO 10383 MIC, and currency;
+- inclusive validity dates;
+- primary-listing status;
+- an optional immutable source snapshot.
 
-### congressional service terms
+The database prevents duplicate history rows when dates or MIC values are null and permits only one current primary ticker per asset. A ticker must be resolved as of the transaction date; the present-day symbol is not automatically valid for a historical trade.
 
-Congressional records use `bioguide_id` as the canonical legislative person key. The durable service grain is one person in one Congress/chamber/state/district combination. Public Pages data mirrors these fields into `public_official_roles.source_metadata` so the static explorer can filter by chamber, Congress, party, state, and district without requiring the FastAPI backend.
+## Disclosure Metadata
 
-### Event-to-official boundary
+### Filings
 
-An event links to a person only for source-backed participation or institutional responsibility. Date proximity alone is labeled as a transaction within a selected window. Asset, jurisdiction, institutional, sector, macro, and general context remain distinct relationship tiers.
+`filings` now distinguishes the local UUID from the source identity:
 
-### Parser artifact coordinates
+- `source_system` and `source_filing_id` identify a report in House, Senate, OGE, or another source system.
+- `reporting_period_start` and `reporting_period_end` preserve the period covered by annual, termination, and periodic reports.
+- `received_date`, `certified_date`, `filed_date`, and `retrieved_at` remain separate dates with separate meanings.
+- `amendment_number` and `amends_filing_id` model amendment chains without overwriting the earlier filing.
+- `filing_status`, `review_status`, `is_late`, and `late_days` preserve workflow and timeliness metadata.
+- `source_metadata` retains source-specific fields that have not earned canonical columns.
 
-Parser artifacts preserve page and row references. The House electronic-PTR adapter additionally uses PDF table coordinates to keep owner, asset, action, dates, and amount columns aligned. Image-only reports remain `ocr_required` instead of being treated as no-activity filings.
+The source identity is unique when a source filing ID is available. Reporting periods cannot run backward, amendment numbers and late-day counts cannot be negative, and a filing cannot amend itself.
 
-## Derived Data Rules
+### Trades
 
-- Raw source records should be stored before normalized rows.
-- Normalized trades must retain links to source filing and raw document metadata.
-- Parser confidence should be exposed as parser confidence, not factual certainty.
-- Parser previews must be promoted only after explicit human review.
-- Data-quality scores must remain separate from conduct or ethics judgments.
+`trades` retains the disclosure’s value range rather than presenting a midpoint as an exact amount. It additionally records:
+
+- `source_transaction_id`, unique within a filing when present;
+- disclosed owner (`self`, `spouse`, `dependent_child`, `joint`, `trust`, `other`, or `unknown`);
+- source-reported asset type and description;
+- source page and row coordinates;
+- the reported capital-gains-over-$200 flag;
+- review status and source-specific metadata.
+
+Page and row coordinates are one-based. Parser confidence and asset-match confidence describe extraction and resolution quality, not factual certainty or intent.
+
+## Immutable Event Sources
+
+`event_sources` describes a source citation attached to an event: URL, source type, title, publisher, and source publication time. `event_source_snapshots` records individual retrievals with the retrieval time, content hash, hash algorithm, media type, HTTP status, final URL, storage location, length, and response metadata.
+
+Snapshots are append-only:
+
+1. `(event_source_id, hash_algorithm, content_hash)` identifies captured content.
+2. SQLAlchemy rejects ORM update and delete operations.
+3. PostgreSQL trigger `trg_event_source_snapshots_immutable` rejects direct updates and deletes.
+4. A changed page must produce a new snapshot row; it must never mutate an earlier capture.
+
+The snapshot stores identity and retrieval metadata. Large response bodies belong in immutable object storage referenced by `storage_uri`.
+
+## Institutions and Jurisdictions
+
+`jurisdictions` is a hierarchy of federal, state, territorial, circuit, district, subject-matter, and other jurisdictions. Identity is `(jurisdiction_type, country_code, code)` rather than display name.
+
+`institutions` specializes a canonical organization as an agency, committee, subcommittee, court, office, legislature, or other public institution. It can record branch, chamber, parent institution, active dates, source-specific external ID, and jurisdiction.
+
+`event_institution_links` connects an event to an institution with a typed relationship. Court and administrative proceedings can retain `docket_number` and `proceeding_id`; the link may also specify the applicable jurisdiction and immutable evidence snapshot. This models institutional involvement, not the personal involvement of every official serving in that institution.
+
+Examples:
+
+- an agency `issued` a rule;
+- a committee `reported` a bill;
+- a court `decided` a docketed case;
+- an office `signed` an executive order.
+
+## Event and Review Semantics
+
+`events` preserves event date plus announcement, publication, and effective dates. `event_relationships` stores source-backed links to people, assets, or named organizations. `trade_event_candidates` stores versioned analytical candidates based on explicit reasons such as entity overlap, institutional involvement, market movement, and temporal proximity.
+
+Date proximity alone is contextual. It does not establish knowledge, causation, benefit, or wrongdoing. Reviewer decisions are append-only in `relationship_reviews`; narrowing or rejecting a candidate does not delete the original calculation.
+
+## Temporal Conventions
+
+- Dates are inclusive unless a source defines a more precise interval.
+- A null `valid_from` means the start is unknown, not that the relationship began at organization creation.
+- A null `valid_to` means no end is known; for partial indexes it represents the current row.
+- Historical resolution uses the event or transaction date and must not silently substitute current ownership, sector, institution, or ticker data.
+- Corrections add a superseding or amended row where history matters. Source snapshots are never corrected in place.
+
+## Ingestion Order
+
+1. Record the ingestion run and raw document.
+2. Create or reuse the event source and append its immutable snapshot.
+3. Resolve canonical organizations, identifiers, and aliases.
+4. Resolve issuer profiles, assets, and date-appropriate ticker rows.
+5. Create the filing and parser artifacts.
+6. Create candidate trades with page/row provenance.
+7. Link events to institutions and jurisdictions from source evidence.
+8. Generate versioned trade-event candidates.
+9. Promote records only through the review workflow.
+
+## Migration Compatibility
+
+Migration `0005_entity_history_model` is additive after `0004_release_relationship_model`. Existing issuer rows are backfilled before the required organization foreign key is enforced. New disclosure columns have conservative defaults or are nullable, so current parser and promotion constructors remain valid. The downgrade removes the new entity/history layer and metadata columns but intentionally cannot preserve data written only to those structures.

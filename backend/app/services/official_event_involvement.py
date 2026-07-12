@@ -27,6 +27,14 @@ DATASET_SCHEMA_VERSION = "official-event-involvement-v1"
 METHODOLOGY_VERSION = "official-event-involvement-methodology-v1"
 ALLOWED_ROLL_CALL_HOSTS = {"clerk.house.gov", "senate.gov", "www.senate.gov"}
 DIRECT_RELATIONSHIP_TYPES = {"sponsor", "cosponsor", "recorded_vote"}
+_TRACKING_QUERY_KEYS = {
+    "email_source",
+    "email_token",
+    "gclid",
+    "mc_cid",
+    "mc_eid",
+    "ref",
+}
 
 
 AGENCY_CATALOG = {
@@ -165,6 +173,79 @@ def canonical_request_url(url: str, params: dict | None = None) -> str:
             pairs.append((key, str(value)))
     query = urlencode(sorted(pairs), doseq=True)
     return urlunsplit((parts.scheme, parts.netloc, parts.path, query, ""))
+
+
+def canonical_event_source_url(url: str) -> str:
+    """Canonicalize evidence URLs while retaining source-significant query keys."""
+
+    parts = urlsplit(str(url).strip())
+    scheme = parts.scheme.lower() or "https"
+    host = parts.netloc.lower()
+    path = re.sub(r"/{2,}", "/", parts.path or "/")
+    if path != "/":
+        path = path.rstrip("/")
+    pairs = [
+        (key, value)
+        for key, value in parse_qsl(parts.query, keep_blank_values=True)
+        if key.lower() not in _TRACKING_QUERY_KEYS and not key.lower().startswith("utm_")
+    ]
+    return urlunsplit((scheme, host, path, urlencode(sorted(pairs), doseq=True), ""))
+
+
+def deduplicate_event_source_urls(urls: Iterable[str]) -> tuple[list[str], dict]:
+    """Return canonical evidence URLs plus deterministic duplicate diagnostics."""
+
+    raw_urls = [str(url).strip() for url in urls if str(url).strip()]
+    canonical = [canonical_event_source_url(url) for url in raw_urls]
+    unique = sorted(set(canonical))
+    return unique, {
+        "input_source_count": len(raw_urls),
+        "canonical_source_count": len(unique),
+        "duplicate_source_count": len(raw_urls) - len(unique),
+    }
+
+
+def event_source_fingerprint(event: dict) -> str:
+    sources, _ = deduplicate_event_source_urls(event.get("sources") or [])
+    identity = {
+        "event_type": event.get("event_type"),
+        "date": event.get("date"),
+        "sources": sources,
+    }
+    return hashlib.sha256(json.dumps(identity, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def normalize_event_sources(event: dict) -> tuple[dict, dict]:
+    sources, diagnostics = deduplicate_event_source_urls(event.get("sources") or [])
+    return {**event, "sources": sources}, diagnostics
+
+
+def event_source_dedup_diagnostics(events: Iterable[dict]) -> dict:
+    rows = list(events)
+    duplicate_count = 0
+    missing_source_event_ids = []
+    source_events: dict[str, set[str]] = defaultdict(set)
+    for event in rows:
+        sources, diagnostics = deduplicate_event_source_urls(event.get("sources") or [])
+        duplicate_count += diagnostics["duplicate_source_count"]
+        event_id = str(event.get("id") or "")
+        if not sources:
+            missing_source_event_ids.append(event_id)
+        for source in sources:
+            source_events[source].add(event_id)
+    shared_sources = {
+        source: sorted(event_ids)
+        for source, event_ids in source_events.items()
+        if len(event_ids) > 1
+    }
+    return {
+        "event_count": len(rows),
+        "duplicate_source_url_count": duplicate_count,
+        "missing_source_event_count": len(missing_source_event_ids),
+        "missing_source_event_ids": sorted(missing_source_event_ids),
+        "shared_canonical_source_count": len(shared_sources),
+        "shared_canonical_sources": dict(sorted(shared_sources.items())),
+    }
 
 
 class CachedRateLimitedHttpClient:
@@ -1047,6 +1128,103 @@ def _legislative_relationship(
     return relationship
 
 
+def relationship_review_priority_fields(
+    relationship: dict,
+    *,
+    actor: dict | None = None,
+) -> dict:
+    """Compute deterministic triage metadata without making an evidentiary judgment."""
+
+    relationship_type = str(relationship.get("relationship_type") or "")
+    base_scores = {
+        "sponsor": 95,
+        "cosponsor": 85,
+        "recorded_vote": 80,
+        "presidential_executive_order_context": 55,
+        "presidential_enactment_context": 50,
+        "court_docket_institutional_link": 40,
+        "agency_jurisdiction_context": 25,
+    }
+    score = base_scores.get(relationship_type, 20)
+    reasons = [f"relationship_type:{relationship_type or 'unknown'}"]
+    source_count = len(set(relationship.get("source_snapshot_ids") or []))
+    if source_count >= 2:
+        score = min(100, score + 3)
+        reasons.append("multiple_source_snapshots")
+    elif source_count == 0:
+        score = max(0, score - 10)
+        reasons.append("missing_source_snapshot")
+    if relationship_type in DIRECT_RELATIONSHIP_TYPES:
+        reasons.append("direct_official_record")
+        if not actor or actor.get("resolution_status") != "matched_public_official_role":
+            score = min(100, score + 5)
+            reasons.append("actor_resolution_review_needed")
+    if relationship_type == "recorded_vote" and relationship.get("participation_status") == "not_voting":
+        score = max(0, score - 10)
+        reasons.append("no_recorded_position")
+    if score >= 80:
+        band = "high"
+    elif score >= 50:
+        band = "medium"
+    else:
+        band = "low"
+    return {
+        "review_priority_score": score,
+        "review_priority_band": band,
+        "review_priority_reasons": reasons,
+        "review_status": "unreviewed",
+        "review_required": True,
+        "evidence_source_count": source_count,
+    }
+
+
+def relationship_coverage_diagnostics(
+    relationships: Iterable[dict],
+    *,
+    source_ids: Iterable[str] = (),
+    actor_ids: Iterable[str] = (),
+    roll_call_source_ids: dict[str, Iterable[str]] | None = None,
+) -> dict:
+    rows = list(relationships)
+    known_sources = set(source_ids)
+    known_actors = set(actor_ids)
+    roll_call_source_ids = roll_call_source_ids or {}
+
+    def evidence_sources(row: dict) -> set[str]:
+        return {
+            *(row.get("source_snapshot_ids") or []),
+            *(roll_call_source_ids.get(str(row.get("roll_call_id"))) or []),
+        }
+
+    missing_source_rows = [row for row in rows if not evidence_sources(row)]
+    unknown_source_ids = sorted(
+        {
+            source_id
+            for row in rows
+            for source_id in evidence_sources(row)
+            if known_sources and source_id not in known_sources
+        }
+    )
+    unknown_actor_ids = sorted(
+        {
+            str(row.get("actor_id"))
+            for row in rows
+            if row.get("actor_id") and known_actors and row.get("actor_id") not in known_actors
+        }
+    )
+    priority_counts = Counter(str(row.get("review_priority_band") or "unset") for row in rows)
+    return {
+        "relationship_count": len(rows),
+        "missing_source_snapshot_count": len(missing_source_rows),
+        "missing_source_relationship_ids": sorted(str(row.get("id")) for row in missing_source_rows),
+        "unknown_source_id_count": len(unknown_source_ids),
+        "unknown_source_ids": unknown_source_ids,
+        "unknown_actor_id_count": len(unknown_actor_ids),
+        "unknown_actor_ids": unknown_actor_ids,
+        "review_priority_counts": dict(sorted(priority_counts.items())),
+    }
+
+
 def build_official_event_involvement(
     federal_events: dict,
     public_official_roles: dict,
@@ -1055,7 +1233,9 @@ def build_official_event_involvement(
     input_provenance: dict[str, dict] | None = None,
     progress: Callable[[str], None] | None = None,
 ) -> dict:
-    events = [event for event in federal_events.get("events", []) if isinstance(event, dict)]
+    raw_events = [event for event in federal_events.get("events", []) if isinstance(event, dict)]
+    event_source_diagnostics = event_source_dedup_diagnostics(raw_events)
+    events = [normalize_event_sources(event)[0] for event in raw_events]
     role_index = build_role_index(public_official_roles)
     registry = _SourceRegistry()
     input_provenance = input_provenance or {}
@@ -1293,6 +1473,18 @@ def build_official_event_involvement(
             }
         )
 
+    for relationship in relationships:
+        actor = actor_registry.records.get(relationship.get("actor_id"))
+        priority_input = relationship
+        if relationship.get("roll_call_id") in roll_calls:
+            priority_input = {
+                **relationship,
+                "source_snapshot_ids": roll_calls[relationship["roll_call_id"]].get(
+                    "source_snapshot_ids", []
+                ),
+            }
+        relationship.update(relationship_review_priority_fields(priority_input, actor=actor))
+
     relationship_ids = [relationship["id"] for relationship in relationships]
     if len(relationship_ids) != len(set(relationship_ids)):
         duplicates = [item for item, count in Counter(relationship_ids).items() if count > 1]
@@ -1307,6 +1499,15 @@ def build_official_event_involvement(
     )
     source_records = sorted(registry.records.values(), key=lambda row: row["id"])
     actor_records = sorted(actor_registry.records.values(), key=lambda row: row["id"])
+    relationship_diagnostics = relationship_coverage_diagnostics(
+        relationships,
+        source_ids=registry.records,
+        actor_ids=actor_registry.records,
+        roll_call_source_ids={
+            roll_call_id: row.get("source_snapshot_ids", [])
+            for roll_call_id, row in roll_calls.items()
+        },
+    )
     source_dates = [
         str(record.get("retrieved_at") or record.get("generated_at") or "")[:10]
         for record in source_records
@@ -1388,6 +1589,14 @@ def build_official_event_involvement(
                 jurisdiction: sorted(agency_ids)
                 for jurisdiction, agency_ids in sorted(JURISDICTION_AGENCY_CROSSWALK.items())
             },
+            "review_priority": (
+                "Deterministic triage only. Priority is based on relationship type, source-snapshot coverage, "
+                "actor resolution, and recorded-position availability; it is not a finding of relevance or misconduct."
+            ),
+            "event_source_deduplication": (
+                "Event source URLs are canonicalized, tracking parameters are removed, and duplicates within an "
+                "event are collapsed without merging distinct event records."
+            ),
         },
         "summary": {
             "event_count": len(event_records),
@@ -1401,6 +1610,9 @@ def build_official_event_involvement(
             "actor_resolution_counts": dict(sorted(actor_resolution_counts.items())),
             "vote_cast_counts": dict(sorted(vote_cast_counts.items())),
             "source_snapshot_count": len(source_records),
+            "review_priority_counts": relationship_diagnostics["review_priority_counts"],
+            "event_source_diagnostics": event_source_diagnostics,
+            "relationship_coverage_diagnostics": relationship_diagnostics,
         },
         "sources": source_records,
         "actors": actor_records,

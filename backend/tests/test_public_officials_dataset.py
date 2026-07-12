@@ -187,6 +187,19 @@ def test_federal_event_context_spans_all_branches_with_official_sources():
 def test_pages_career_trade_timeline_defaults_to_presidents():
     data = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
     timeline = data["career_trade_timeline"]
+    manifest = json.loads((ROOT / "pages-site" / "data" / "manifest.json").read_text())
+    timeline_index = json.loads(
+        (ROOT / "pages-site" / "data" / manifest["files"]["timeline_index"]["path"]).read_text()
+    )
+    timeline["summary"] = timeline_index["summary"]
+    president_rows = []
+    for official_id in timeline_index["default_official_ids"]:
+        record = manifest["partitions"]["timelines"][official_id]
+        official = json.loads((ROOT / "pages-site" / "data" / record["path"]).read_text())["official"]
+        defaults = official.get("trade_record_defaults", {})
+        official["trades"] = [{**defaults, **trade} for trade in official.get("trades", [])]
+        president_rows.append(official)
+    timeline["officials"] = president_rows
 
     assert timeline["schema_version"] == "career-trade-timeline-v3"
     assert timeline["event_relationship_methodology_version"] == "event-relevance-v4"
@@ -211,11 +224,6 @@ def test_pages_career_trade_timeline_defaults_to_presidents():
     assert "crypto" in timeline["asset_classes"]
     assert "fixed_income" in timeline["asset_classes"]
     assert "event_window" in timeline["axis_modes"]
-    president_rows = [
-        official
-        for official in timeline["officials"]
-        if official["id"] in timeline["default_official_ids"]
-    ]
     assert president_rows
     assert all(official["timeline_group"] == "presidential_baseline" for official in president_rows)
     trump = next(official for official in president_rows if official["id"] == "exec:donald-j-trump")
@@ -332,7 +340,7 @@ def test_disclosure_ingestion_queue_covers_all_branches_and_congress_scope():
     data = json.loads(DISCLOSURE_QUEUE.read_text())
     summary = data["summary"]
 
-    assert data["schema_version"] == "disclosure-ingestion-queue-v1"
+    assert data["schema_version"] == "disclosure-ingestion-queue-v2"
     assert summary["queue_item_count"] >= 5800
     assert summary["counts_by_source"]["house-financial-disclosure"] >= 3900
     assert summary["counts_by_source"]["senate-public-financial-disclosure"] >= 900
@@ -341,6 +349,15 @@ def test_disclosure_ingestion_queue_covers_all_branches_and_congress_scope():
     assert set(summary["counts_by_congress"]) == {"111", "112", "113", "114", "115", "116", "117", "118", "119"}
     assert all(row["review_required"] is True for row in data["entries"][:250])
     assert all(row["promotion_status"] == "raw_document_required" for row in data["entries"][:250])
+    assert summary["unique_official_count"] == 2159
+    assert all(row.get("absence_inference_allowed") is False for row in data["entries"])
+    president_terms = [
+        (row["official_id"], row.get("presidential_term"))
+        for row in data["entries"]
+        if row.get("role_category") == "elected_executive"
+        and row["official_id"] in {"exec:barack-obama", "exec:donald-j-trump", "exec:joseph-r-biden"}
+    ]
+    assert len(president_terms) == len(set(president_terms))
 
 
 def test_raw_archive_and_reviewed_promotion_keep_fixture_boundary_clear():
@@ -370,6 +387,8 @@ def test_context_maps_and_pages_completeness_are_available():
     branch_map = json.loads(BRANCH_JURISDICTION_MAP.read_text())
     completeness = json.loads(DISCLOSURE_COMPLETENESS.read_text())
     pages = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
+    overview = json.loads((ROOT / "pages-site" / "data" / "partitions" / "overview.json").read_text())
+    public_events = json.loads((ROOT / "pages-site" / "data" / "partitions" / "events.json").read_text())
 
     assert event_map["schema_version"] == "event-entity-map-v1"
     assert any("BTCUSD" in mapping["ticker_scope"] for mapping in event_map["event_maps"])
@@ -384,8 +403,14 @@ def test_context_maps_and_pages_completeness_are_available():
     assert completeness["schema_version"] == "disclosure-completeness-dashboard-v1"
     assert completeness["summary"]["branch_count"] == 3
     assert completeness["summary"]["reviewed_public_trade_count"] == 0
-    assert pages["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
-    assert pages["career_trade_timeline"]["events"][0]["ticker_scope"] is not None
+    branch_map = {row["branch"]: row for row in completeness["branches"]}
+    assert branch_map["Legislative"]["official_count"] == 1265
+    assert branch_map["Legislative"]["parser_preview_transaction_count"] >= 64_000
+    assert branch_map["Executive"]["indexed_document_count"] == 19
+    assert branch_map["Judicial"]["official_count"] == 822
+    assert branch_map["Judicial"]["readiness_status"] == "roster_manifest_ready"
+    assert overview["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
+    assert public_events["events"][0]["ticker_scope"] is not None
     assert pages["career_trade_timeline"]["event_entity_map"]["company_entity_count"] >= 8
 
 
