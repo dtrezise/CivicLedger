@@ -8,6 +8,8 @@ import gzip
 import json
 from pathlib import Path
 
+from public_corpus_metrics import deployable_files
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "pages-site"
@@ -103,7 +105,7 @@ def validate_performance() -> dict[str, int]:
     legacy_snapshot = DATA / "civicledger-static.json"
     require(legacy_snapshot.is_file(), "Compatibility snapshot is missing")
     require(legacy_snapshot.stat().st_size <= LEGACY_SNAPSHOT_BUDGET, "Compatibility snapshot exceeds its non-runtime budget")
-    deployment_bytes = sum(path.stat().st_size for path in SITE.rglob("*") if path.is_file())
+    deployment_bytes = sum(path.stat().st_size for path in deployable_files(SITE))
     require(deployment_bytes <= DEPLOYMENT_BUDGET, f"Pages artifact exceeds {DEPLOYMENT_BUDGET:,} bytes")
 
     return {

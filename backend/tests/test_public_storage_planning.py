@@ -43,11 +43,13 @@ def _build_fixture(site: Path, large_payload: str) -> Path:
 def test_weekly_growth_history_is_deterministic_and_recomputes_deltas(tmp_path):
     site = tmp_path / "site"
     manifest_path = _build_fixture(site, '"large-payload"\n')
+    (site / ".DS_Store").write_bytes(b"local-only metadata")
     first = build_snapshot(site, manifest_path, "2026-07-05")
     history = update_history(None, first)
 
     assert first["iso_week"] == "2026-W27"
     assert first["public_artifacts"]["query_partition_count"] == 2
+    assert first["static_assets"]["asset_count"] == 5
     assert update_history(history, first) == history
 
     manifest_path = _build_fixture(site, '"large-payload-with-growth"\n')

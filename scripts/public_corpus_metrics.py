@@ -12,6 +12,18 @@ class CorpusMetricsError(RuntimeError):
     """Raised when the public corpus does not match its manifest contract."""
 
 
+IGNORED_WORKSPACE_FILES = frozenset({".DS_Store", "Thumbs.db"})
+
+
+def deployable_files(site: Path) -> list[Path]:
+    """Return files that belong to the static artifact, excluding OS metadata."""
+    return sorted(
+        path
+        for path in site.rglob("*")
+        if path.is_file() and path.name not in IGNORED_WORKSPACE_FILES
+    )
+
+
 def read_manifest(manifest_path: Path) -> dict:
     try:
         manifest = json.loads(manifest_path.read_text())
@@ -125,7 +137,7 @@ def static_asset_summary(site: Path) -> dict:
         relative = symlinks[0].relative_to(site).as_posix()
         raise CorpusMetricsError(f"Static asset directory contains symlink: {relative}")
 
-    assets = sorted(path for path in site.rglob("*") if path.is_file())
+    assets = deployable_files(site)
     sizes = [(path.relative_to(site).as_posix(), path.stat().st_size) for path in assets]
     largest_path, largest_bytes = max(sizes, key=lambda item: (item[1], item[0]), default=(None, 0))
     return {

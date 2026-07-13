@@ -2,7 +2,7 @@
   "activation_assessment": {
     "gates": {
       "asset_count": {
-        "current": 431,
+        "current": 430,
         "rationale": "Provides an early review point below the Workers Static Assets asset-count hard limit.",
         "threshold": 15000,
         "triggered_now": false
@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 140463176,
+        "current": 140457028,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -66,12 +66,12 @@
     }
   ],
   "current_static_footprint": {
-    "asset_count": 431,
+    "asset_count": 430,
     "largest_asset": {
       "bytes": 4537241,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 140463176
+    "total_bytes": 140457028
   },
   "group_summary": {
     "events": {
@@ -119,10 +119,10 @@
     }
   },
   "projected_static_footprint_if_candidates_moved": {
-    "asset_count": 426,
+    "asset_count": 425,
     "bytes_removed": 15433577,
     "candidate_count": 5,
-    "remaining_total_bytes": 125029599
+    "remaining_total_bytes": 125023451
   },
   "safety": {
     "activates_r2": false,

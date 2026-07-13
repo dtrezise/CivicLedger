@@ -9,6 +9,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+from public_corpus_metrics import deployable_files
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SITE = ROOT / "pages-site"
@@ -29,7 +31,7 @@ def validate_assets(site: Path) -> dict[str, int | list[dict[str, int | str]] | 
         names = ", ".join(path.relative_to(site).as_posix() for path in symlinks[:5])
         raise CheckError(f"Static asset directory contains symlinks: {names}")
 
-    assets = sorted(path for path in site.rglob("*") if path.is_file())
+    assets = deployable_files(site)
     if len(assets) > MAX_ASSETS:
         raise CheckError(f"Asset count {len(assets):,} exceeds the Workers limit of {MAX_ASSETS:,}")
 
