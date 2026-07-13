@@ -16,7 +16,7 @@ The shared public data contract is `pages-site/data/manifest.json` plus its hash
 - Backend: FastAPI, SQLAlchemy, Pydantic.
 - Database: PostgreSQL managed through Alembic migrations.
 - Local orchestration: Docker Compose.
-- Scheduled generation: GitHub Actions plus source-specific Python builders.
+- Scheduled generation: GitHub Actions plus source-specific Python builders. Routine refreshes update current sources; the rate-limited historical Congress/Senate sweep runs Sundays or through the manual `deep_sources` option.
 
 ## Data Flow
 

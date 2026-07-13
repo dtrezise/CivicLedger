@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "23 10 * * *"
   workflow_dispatch:
+    inputs:
+      deep_sources:
+        description: Refresh all Congress.gov involvement and indexed Senate report pages
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -61,15 +67,16 @@ jobs:
           PYTHONPATH: backend
           CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
         run: python scripts/build_federal_events_dataset.py --start 2009-01-20
-      - name: Refresh official event involvement weekly
+      - name: Refresh official event involvement deep sweep
         env:
           PYTHONPATH: backend
           CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
+          DEEP_SOURCES: ${{ inputs.deep_sources || false }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "7" ]; then
+          if [ "$DEEP_SOURCES" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "7" ]; }; then
             python scripts/build_official_event_involvement.py
           else
-            echo "Skipping weekly official-involvement refresh."
+            echo "Skipping deep official-involvement refresh."
           fi
       - name: Rebuild presidential OGE source index
         env:
@@ -82,12 +89,13 @@ jobs:
       - name: Refresh Senate disclosure index and weekly report pages
         env:
           PYTHONPATH: backend
+          DEEP_SOURCES: ${{ inputs.deep_sources || false }}
         run: |
           python scripts/build_senate_disclosure_index.py --all-senators --acknowledge-senate-terms
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "7" ]; then
+          if [ "$DEEP_SOURCES" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "7" ]; }; then
             python scripts/build_senate_ptr_transactions.py --all-indexed --acknowledge-senate-terms
           else
-            echo "Skipping weekly Senate report-page refresh."
+            echo "Skipping deep Senate report-page refresh."
           fi
       - name: Rebuild disclosure source pipeline artifacts
         env:
