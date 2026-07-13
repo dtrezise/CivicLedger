@@ -23,10 +23,11 @@ The shared public data contract is `pages-site/data/manifest.json` plus its hash
 1. Official roster and source indexes are retrieved with source metadata.
 2. Raw documents or source snapshots are hashed before parser output is promoted.
 3. Parsers emit review-gated preview records with row/page evidence and confidence.
-4. Normalizers resolve people, dated roles, assets, service periods, and event context.
-5. Validators enforce service-time, provenance, record-state, coverage, and partition-hash contracts.
-6. The Pages builder writes a small manifest and query-oriented partitions.
-7. The browser loads overview data first, then selected officials and market symbols on demand.
+4. Image disclosures produce hash-linked OCR evidence shards with page quality and layout metrics; OCR never creates production transactions.
+5. Normalizers resolve people, dated roles, assets, service periods, and event context.
+6. Validators enforce service-time, provenance, record-state, coverage, and partition-hash contracts.
+7. The Pages builder writes a small manifest and query-oriented partitions.
+8. The browser loads overview data first, then selected officials and market symbols on demand.
 
 ## Public Partition Contract
 
@@ -58,11 +59,13 @@ Every manifest entry carries byte size and SHA-256. The release validator reject
 - Alembic upgrades an empty PostgreSQL database through the current revision.
 - Backend tests and parser fixtures pass.
 - Frontend production build passes.
+- Playwright interaction checks pass in desktop and mobile Chromium projects.
 - Public data and market validators pass.
 - Docker Compose smoke test passes.
 - No fixture row appears in a public transaction timeline.
 - No preview record is labeled as reviewed or production.
 - Every public partition matches its manifest hash and size.
+- Routine deploys verify committed canonical hashes; opt-in deep runs rebuild the complete corpus and compare every output.
 - Coverage cannot silently drop below committed baselines.
 - The curated trade-event ranking regression benchmark must retain its minimum
   precision and recall thresholds; those metrics are software-quality checks,

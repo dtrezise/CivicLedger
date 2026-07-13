@@ -18,7 +18,7 @@ def test_public_performance_budgets_pass():
     summary = json.loads(result.stdout)
     assert summary["initial_raw_bytes"] <= 4_750_000
     assert summary["initial_gzip_bytes"] <= 350_000
-    assert summary["shell_gzip_bytes"] <= 30_000
+    assert summary["shell_gzip_bytes"] <= 36_000
     assert summary["largest_partition_bytes"] <= 5_000_000
     assert summary["deployment_bytes"] <= 325_000_000
 

@@ -195,6 +195,70 @@ def senate_document_family_key(document: dict) -> str:
     return f"senate-family-{hashlib.sha256(value.encode('utf-8')).hexdigest()[:20]}"
 
 
+def senate_report_date(document: dict) -> date | None:
+    title = clean_text(document.get("portal_report_title"))
+    match = re.search(r"\bfor\s+(\d{2}/\d{2}/\d{4})\b", title, re.IGNORECASE)
+    if not match:
+        return None
+    try:
+        return datetime.strptime(match.group(1), "%m/%d/%Y").date()
+    except ValueError:
+        return None
+
+
+def senate_amendment_identity(document: dict) -> str:
+    return str(document.get("official_id") or normalize_name(document.get("filer_name")))
+
+
+def _senate_candidate_evidence(amendment: dict, predecessor: dict) -> dict:
+    amendment_filing = date.fromisoformat(amendment["filing_date"])
+    predecessor_filing = date.fromisoformat(predecessor["filing_date"])
+    day_gap = (amendment_filing - predecessor_filing).days
+    amendment_report_date = senate_report_date(amendment)
+    predecessor_report_date = senate_report_date(predecessor)
+    exact_report_date = bool(
+        amendment_report_date
+        and predecessor_report_date
+        and amendment_report_date == predecessor_report_date
+    )
+    amendment_signatures = set(amendment.get("transaction_signatures") or [])
+    predecessor_signatures = set(predecessor.get("transaction_signatures") or [])
+    overlap = amendment_signatures & predecessor_signatures
+    union = amendment_signatures | predecessor_signatures
+    similarity = len(overlap) / len(union) if union else None
+
+    score = 0.0
+    reasons = []
+    if 0 <= day_gap <= 45:
+        score += 20 * (1 - day_gap / 46)
+        reasons.append("predecessor_within_45_days")
+    if day_gap == 0:
+        score += 25
+        reasons.append("same_filing_date")
+    if exact_report_date:
+        score += 60
+        reasons.append("same_report_date_from_official_title")
+    if similarity is not None:
+        score += 40 * similarity
+        if overlap:
+            reasons.append("exact_transaction_signature_overlap")
+    return {
+        "document_id": predecessor["document_id"],
+        "score": round(score, 4),
+        "reasons": reasons,
+        "amendment_filing_date": amendment["filing_date"],
+        "predecessor_filing_date": predecessor["filing_date"],
+        "filing_date_day_gap": day_gap,
+        "amendment_report_date": amendment_report_date.isoformat() if amendment_report_date else None,
+        "predecessor_report_date": predecessor_report_date.isoformat() if predecessor_report_date else None,
+        "exact_report_date_match": exact_report_date,
+        "amendment_signature_count": len(amendment_signatures),
+        "predecessor_signature_count": len(predecessor_signatures),
+        "exact_transaction_signature_overlap_count": len(overlap),
+        "transaction_signature_jaccard_similarity": round(similarity, 4) if similarity is not None else None,
+    }
+
+
 def senate_ocr_priority_record(document: dict, *, as_of: date) -> dict | None:
     """Build a metadata-only OCR work item for an official Senate paper filing."""
     if document.get("parser_status") != "paper_images_review_required":
@@ -262,53 +326,89 @@ def senate_ocr_priority_record(document: dict, *, as_of: date) -> dict | None:
 
 def reconcile_senate_amendments(documents: list[dict]) -> list[dict]:
     """Describe possible amendment chains while retaining every official filing."""
-    grouped: dict[str, list[dict]] = {}
+    copied = []
+    originals_by_identity: dict[str, list[dict]] = {}
     for source in documents:
         document = dict(source)
         document["document_family_id"] = senate_document_family_key(document)
-        grouped.setdefault(document["document_family_id"], []).append(document)
+        copied.append(document)
+        if not document.get("is_amendment"):
+            originals_by_identity.setdefault(senate_amendment_identity(document), []).append(document)
 
     output = []
-    for family in grouped.values():
-        ordered = sorted(family, key=lambda row: (row["filing_date"], row["document_id"]))
-        originals = [document for document in ordered if not document.get("is_amendment")]
-        for document in ordered:
-            if document.get("is_amendment"):
-                predecessor = originals[0] if len(originals) == 1 else None
-                document["amendment_status"] = (
-                    "candidate_predecessor_identified"
-                    if predecessor
-                    else "ambiguous_predecessor_candidates"
-                    if len(originals) > 1
-                    else "predecessor_not_identified"
+    for document in sorted(copied, key=lambda row: (row["filing_date"], row["document_id"])):
+        if document.get("is_amendment"):
+            identity_candidates = originals_by_identity.get(senate_amendment_identity(document), [])
+            candidate_evidence = []
+            for predecessor in identity_candidates:
+                if predecessor.get("report_type") != document.get("report_type"):
+                    continue
+                evidence = _senate_candidate_evidence(document, predecessor)
+                if 0 <= evidence["filing_date_day_gap"] <= 45:
+                    candidate_evidence.append(evidence)
+            candidate_evidence.sort(key=lambda row: (-row["score"], row["document_id"]))
+            best = candidate_evidence[0] if candidate_evidence else None
+            runner_up = candidate_evidence[1] if len(candidate_evidence) > 1 else None
+            evidence_specific = bool(
+                best
+                and (
+                    best["exact_report_date_match"]
+                    or (best["transaction_signature_jaccard_similarity"] or 0) >= 0.5
                 )
-                document["candidate_supersedes_document_id"] = (
-                    predecessor["document_id"] if predecessor else None
-                )
-                document["amendment_linkage_confidence"] = (
-                    "candidate_exact_official_metadata" if predecessor else "none"
-                )
-                document["amendment_reconciliation_evidence"] = [
-                    {
-                        "evidence_type": "official_title_marker",
-                        "field": "portal_report_title",
-                        "value": document.get("portal_report_title"),
-                        "source_document_id": document["document_id"],
-                    },
-                    {
-                        "evidence_type": "exact_family_metadata",
-                        "fields": ["official_id_or_filer_name", "report_title_without_marker", "filing_date"],
-                        "candidate_document_ids": [row["document_id"] for row in originals],
-                    },
-                ]
-            else:
-                document["amendment_status"] = "original_or_standalone_filing"
-                document["candidate_supersedes_document_id"] = None
-                document["amendment_linkage_confidence"] = "not_applicable"
-                document["amendment_reconciliation_evidence"] = []
-            document["amendment_reconciliation_action"] = "annotate_only"
-            document["source_record_preserved"] = True
-            output.append(document)
+            )
+            score_margin = best["score"] - runner_up["score"] if best and runner_up else None
+            predecessor_identified = bool(
+                best
+                and best["score"] >= 80
+                and evidence_specific
+                and (runner_up is None or score_margin >= 15)
+            )
+            document["amendment_status"] = (
+                "candidate_predecessor_identified"
+                if predecessor_identified
+                else "ambiguous_predecessor_candidates"
+                if candidate_evidence
+                else "predecessor_not_identified"
+            )
+            document["candidate_supersedes_document_id"] = (
+                best["document_id"] if predecessor_identified else None
+            )
+            document["amendment_linkage_confidence"] = (
+                "candidate_date_and_signature_evidence"
+                if predecessor_identified and best["exact_transaction_signature_overlap_count"]
+                else "candidate_exact_report_date"
+                if predecessor_identified
+                else "ambiguous_scored_candidates"
+                if candidate_evidence
+                else "none"
+            )
+            document["amendment_reconciliation_evidence"] = [
+                {
+                    "evidence_type": "official_title_marker",
+                    "field": "portal_report_title",
+                    "value": document.get("portal_report_title"),
+                    "source_document_id": document["document_id"],
+                },
+                {
+                    "evidence_type": "scored_predecessor_candidates",
+                    "candidate_count": len(candidate_evidence),
+                    "selection_threshold": 80,
+                    "minimum_score_margin": 15,
+                    "score_margin": round(score_margin, 4) if score_margin is not None else None,
+                    "candidate_evidence": candidate_evidence[:5],
+                    "transaction_signature_algorithm": (
+                        "normalized-official-date-action-owner-asset-ticker-amount-sha256"
+                    ),
+                },
+            ]
+        else:
+            document["amendment_status"] = "original_or_standalone_filing"
+            document["candidate_supersedes_document_id"] = None
+            document["amendment_linkage_confidence"] = "not_applicable"
+            document["amendment_reconciliation_evidence"] = []
+        document["amendment_reconciliation_action"] = "annotate_only"
+        document["source_record_preserved"] = True
+        output.append(document)
     return sorted(output, key=lambda row: (row["filing_date"], row["senate_report_uuid"]))
 
 

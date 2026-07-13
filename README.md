@@ -15,14 +15,17 @@ Federal public financial disclosure tracker. View reporting timelines, disclosur
 - 111th-119th Congress coverage with Bioguide-keyed House and Senate service records.
 - 7,501 matched House periodic transaction reports from 2015-present.
 - 53,673 House parser-preview transactions for 295 officials; 1,983 image-only reports remain in the OCR queue.
+- 15,056 official House legacy index rows for 2009-2014, including 3,131 PTR documents from 2012-2013; their transaction tables remain unparsed and the official 2014 bulk index is explicitly incomplete.
 - 2,103 Senate PTRs indexed from 2012-present; 1,820 matched reports were acquired for 65 senators, yielding 10,882 structured parser-preview transactions while 551 paper-image reports remain review work.
 - 19 presidential OGE documents and 7,182 source rows: 15 in-service Obama rows, 13 Biden rows, and 7,151 Trump rows across both terms. Six Obama reports and four Biden reports explicitly state no reportable transactions.
-- 1,505 official federal events, including legislation, executive orders, court decisions, funding actions, and significant Federal Register rules and notices; enriched with 748 official roll calls and 222,782 sourced official-event relationships.
-- 634 official SEC filing-context events for 24 frequently disclosed issuers, backed by 3,974 ticker and issuer aliases; inclusion does not assert relevance to a transaction.
-- 1,874 bounded official primary-source context records across agencies, Congress, courts, and issuer filings, with all known scope gaps declared in the artifact.
-- 4,126 immutable official-source snapshots and 222,782 sourced official-event relationships support reproducible evidence review.
+- 1,709 official federal events, including legislation, executive orders, 344 selected court decisions, funding actions, and significant Federal Register rules and notices; enriched with 745 official roll calls and 222,030 sourced official-event relationships.
+- 648 official GovInfo United States Reports decisions for 2009-2016 with citations, decision dates, dockets, source hashes, and Supreme Court bound-volume links.
+- 2,699 official SEC filing-context events from 60 dynamically selected issuer requests, backed by 6,380 accepted ticker and issuer aliases; unavailable requests remain declared gaps and inclusion does not assert transaction relevance.
+- 4,143 bounded official primary-source context records across agencies, Congress, courts, and issuer filings, with all known scope gaps declared in the artifact.
+- 10,730 immutable official-source snapshots and 222,030 sourced official-event relationships support reproducible evidence review.
 - 902 conservatively resolved fund/ETF/529 transaction identities and 4,264 neutral pre/post market-reaction contexts with 7-, 30-, and 90-day windows, stored in 185 hash-verified symbol-year shards.
-- Deterministic OCR priorities cover 2,534 image disclosures without generating unsupported text or transactions; 169 Senate amendments are reconciled non-destructively, with nine evidence-supported candidate links.
+- OCR evidence now covers the first 100 prioritized House and Senate documents: 611 pages, 148,047 words, page-level layout and quality scores, 100 human-review requirements, and zero generated transactions.
+- 169 Senate amendments are reconciled non-destructively: 22 evidence-supported candidate predecessors, 103 ambiguous records, 44 without an identified predecessor, and zero suppressed source filings.
 - A versioned trade-event ranking regression benchmark enforces minimum precision and recall while explicitly disclaiming causation or investigative accuracy.
 - 91,092 equity/ETF market points, 14,215 crypto points, and 9,955 FRED observations backfilled to 2009 or provider inception.
 - Zero reviewed public-production trades. Every visible transaction remains a source-linked, review-gated parser preview.
@@ -86,6 +89,7 @@ On first startup the backend automatically seeds the database with:
 | `docs/release_readiness_120_steps.md` | 120-step release execution program |
 | `docs/autonomous_release_sprint_120.md` | Completed 120-outcome autonomous release sprint ledger |
 | `docs/follow_on_release_sprint_12.md` | Completed twelve-part evidence, review, and visualization sprint |
+| `docs/autonomous_release_sprint_12_round2.md` | Completed OCR, historical backfill, reviewer, visualization, and release sprint |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
 
 ## Public GitHub Pages Demo
@@ -96,7 +100,8 @@ Pages loads a small versioned manifest, official and event indexes, and
 official/market partitions on demand. The workbench supports career, calendar,
 and event-window comparison modes, branch-aware official search, transaction
 inspection, source evidence, optional market overlays, adjustable event density,
-per-official event-category controls, and pointer-based visible-range selection.
+per-official event-category controls, pointer-based visible-range selection,
+structured event evidence, and selected-transaction market comparisons.
 
 ```bash
 # Rebuild the static Pages dataset locally
@@ -133,6 +138,9 @@ python3 -m http.server 4173 --directory pages-site
 | GET | `/review/relationship-candidates/{id}/history` | Append-only reviewer decision history |
 | GET | `/review/relationship-audit-history/export` | Deterministic, content-addressed review audit export |
 | GET | `/review/telemetry` | Reviewer throughput, queue, and source-refresh telemetry |
+| GET/POST | `/review/assignments` | Read or append attributed relationship-queue assignment events |
+| GET/POST | `/review/saved-filters` | Load or save strictly validated reviewer queue filters |
+| GET/POST | `/review/sessions` | Start, list, and summarize attributed review sessions |
 | POST | `/review/relationship-candidates/{id}/decisions` | Record a sourced relationship decision and evidence note |
 | POST | `/review/relationship-candidates/bulk-decisions` | Atomically record revision-checked bulk decisions |
 | POST | `/review/parser-previews/{id}/promote` | Promote reviewed preview into filing/trade records |

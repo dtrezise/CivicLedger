@@ -903,6 +903,46 @@ select,
   height: 280px;
 }
 
+.market-comparison-summary {
+  padding: 0 18px 18px;
+}
+
+.market-comparison-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-bottom: 10px;
+}
+
+.market-comparison-heading span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.market-comparison-scroll {
+  overflow-x: auto;
+}
+
+.market-comparison-summary table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.market-comparison-summary th,
+.market-comparison-summary td {
+  padding: 7px 9px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+
+.market-comparison-summary th:first-child {
+  text-align: left;
+}
+
 .chart-alternative {
   position: absolute;
   width: 1px;
@@ -987,6 +1027,63 @@ select,
   border-left: 3px solid #aebdb6;
   font-size: 12px;
   line-height: 1.45;
+}
+
+.evidence-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 12px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.evidence-facts div {
+  min-width: 0;
+  padding: 9px 10px;
+  background: #fff;
+}
+
+.evidence-facts dt {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.evidence-facts dd {
+  margin: 3px 0 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.evidence-source-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 7px;
+  max-height: 164px;
+  margin-top: 12px;
+  overflow-y: auto;
+}
+
+.evidence-source-card {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 9px;
+  color: var(--ink);
+  border: 1px solid #cedbd5;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.evidence-source-card span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .interpretation-boundary {
@@ -1456,6 +1553,10 @@ footer {
   .detail-layout,
   .branch-status,
   .methodology-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-facts {
     grid-template-columns: 1fr;
   }
 

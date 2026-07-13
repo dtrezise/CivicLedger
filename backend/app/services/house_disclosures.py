@@ -117,6 +117,57 @@ def source_row_sha256(row: dict) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+def house_transaction_signature(row: dict) -> str:
+    identity = "|".join(
+        normalize_name(str(row.get(key) or ""))
+        for key in (
+            "official_id",
+            "trade_date",
+            "action",
+            "owner",
+            "asset_display_name",
+            "ticker",
+            "value_range_label",
+        )
+    )
+    return hashlib.sha256(identity.encode("utf-8")).hexdigest()
+
+
+def _signature_evidence(document: dict, predecessor: dict) -> dict:
+    amendment_signatures = set(document.get("transaction_signatures") or [])
+    predecessor_signatures = set(predecessor.get("transaction_signatures") or [])
+    overlap = amendment_signatures & predecessor_signatures
+    union = amendment_signatures | predecessor_signatures
+    return {
+        "evidence_type": "transaction_signature_comparison",
+        "amendment_signature_count": len(amendment_signatures),
+        "predecessor_signature_count": len(predecessor_signatures),
+        "exact_overlap_count": len(overlap),
+        "jaccard_similarity": round(len(overlap) / len(union), 4) if union else None,
+        "signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256",
+    }
+
+
+def _filing_date_evidence(document: dict, predecessor: dict) -> dict:
+    amendment_date = document.get("filing_date")
+    predecessor_date = predecessor.get("filing_date")
+    day_gap = None
+    chronological = None
+    if amendment_date and predecessor_date:
+        try:
+            day_gap = (date.fromisoformat(amendment_date) - date.fromisoformat(predecessor_date)).days
+            chronological = day_gap >= 0
+        except ValueError:
+            pass
+    return {
+        "evidence_type": "filing_date_relationship",
+        "amendment_filing_date": amendment_date,
+        "predecessor_filing_date": predecessor_date,
+        "day_gap": day_gap,
+        "chronologically_consistent": chronological,
+    }
+
+
 def house_ocr_priority_record(document: dict, *, as_of: date) -> dict | None:
     """Build a metadata-only OCR work item for an image-only House PTR."""
     if document.get("parser_status") != "ocr_required":
@@ -215,6 +266,14 @@ def reconcile_house_amendments(documents: list[dict]) -> list[dict]:
                     "source_document_id": document["document_id"],
                 }
             ]
+            if referenced_id in by_id:
+                predecessor = by_id[referenced_id]
+                document["amendment_reconciliation_evidence"].extend(
+                    [
+                        _filing_date_evidence(document, predecessor),
+                        _signature_evidence(document, predecessor),
+                    ]
+                )
             document["amendment_linkage_confidence"] = (
                 "explicit_resolved" if referenced_id in by_id else "explicit_unresolved"
             )

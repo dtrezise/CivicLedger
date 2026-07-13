@@ -62,6 +62,7 @@ DEFAULT_SEED_ISSUERS = (
     ("microsoft", "0000789019"),
     ("nvidia", "0001045810"),
 )
+DEFAULT_MAX_ALIAS_ISSUERS = 54
 
 
 def _coverage_status(retrieval_status: str) -> str:
@@ -341,7 +342,7 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=True,
     )
-    parser.add_argument("--max-alias-issuers", type=int, default=18)
+    parser.add_argument("--max-alias-issuers", type=int, default=DEFAULT_MAX_ALIAS_ISSUERS)
     args = parser.parse_args()
 
     forms = tuple(form.strip().upper() for form in args.forms.split(",") if form.strip())
@@ -385,7 +386,7 @@ def main() -> None:
         requests,
         artifact_date=args.artifact_date or args.end,
         selection_policy={
-            "method": "six_seed_issuers_plus_ranked_supported_alias_issuers",
+            "method": "six_seed_issuers_plus_dynamic_ranked_supported_alias_issuers",
             "alias_evidence_path": args.issuer_aliases.relative_to(ROOT).as_posix()
             if args.issuer_aliases.is_relative_to(ROOT)
             else str(args.issuer_aliases),

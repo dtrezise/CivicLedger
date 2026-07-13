@@ -7,14 +7,23 @@ from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
-from sqlalchemy import case, func, or_, select
+from sqlalchemy import case, delete, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app import crud
 from app.database import get_db, get_sync_db
-from app.models import Event, Person, RelationshipReview, Trade, TradeEventCandidate
+from app.models import (
+    Event,
+    Person,
+    RelationshipReview,
+    ReviewAssignmentEvent,
+    ReviewSavedFilter,
+    ReviewSession,
+    Trade,
+    TradeEventCandidate,
+)
 from app.schemas import (
     FilingDetail,
     ParserArtifactListResponse,
@@ -29,6 +38,14 @@ from app.schemas import (
     RelationshipReviewCreateRequest,
     RelationshipReviewDecision,
     RelationshipReviewHistoryItem,
+    ReviewAssignmentAction,
+    ReviewAssignmentCreateRequest,
+    ReviewAssignmentItem,
+    ReviewSavedFilterCreateRequest,
+    ReviewSavedFilterItem,
+    ReviewSessionCloseRequest,
+    ReviewSessionCreateRequest,
+    ReviewSessionItem,
     ReviewerTelemetryResponse,
     RollbackFilingRequest,
     RollbackFilingResponse,
@@ -162,6 +179,46 @@ def _load_candidate(
     return _candidate_item(row, history)
 
 
+def _validated_session(
+    db: Session, session_id: UUID | None, reviewer: str
+) -> ReviewSession | None:
+    if session_id is None:
+        return None
+    session = db.execute(
+        select(ReviewSession).where(ReviewSession.id == session_id)
+    ).scalar_one_or_none()
+    if session is None:
+        raise HTTPException(status_code=404, detail="Review session not found.")
+    if session.status != "active":
+        raise HTTPException(status_code=409, detail="Review session is already completed.")
+    if session.reviewer.casefold() != reviewer.strip().casefold():
+        raise HTTPException(
+            status_code=409,
+            detail="The decision reviewer must match the active review session.",
+        )
+    return session
+
+
+def _session_item(db: Session, session: ReviewSession) -> ReviewSessionItem:
+    counts = dict(
+        db.execute(
+            select(RelationshipReview.decision, func.count(RelationshipReview.id))
+            .where(RelationshipReview.review_session_id == session.id)
+            .group_by(RelationshipReview.decision)
+        ).all()
+    )
+    return ReviewSessionItem(
+        id=session.id,
+        reviewer=session.reviewer,
+        status=session.status,
+        filter_snapshot=session.filter_snapshot or {},
+        started_at=session.started_at,
+        completed_at=session.completed_at,
+        decision_count=sum(counts.values()),
+        decision_counts={str(key): int(value) for key, value in sorted(counts.items())},
+    )
+
+
 @router.get("/telemetry", response_model=ReviewerTelemetryResponse)
 def get_reviewer_telemetry():
     if not REVIEWER_TELEMETRY.exists():
@@ -176,6 +233,197 @@ def get_reviewer_telemetry():
             status_code=503,
             detail="Reviewer telemetry artifact is invalid.",
         ) from exc
+
+
+@router.get("/assignments", response_model=list[ReviewAssignmentItem])
+def list_assignment_events(
+    candidate_id: UUID | None = None,
+    assignee: str | None = Query(None, min_length=1, max_length=200),
+    limit: int = Query(100, ge=1, le=500),
+    db: Session = Depends(get_sync_db),
+):
+    statement = select(ReviewAssignmentEvent)
+    if candidate_id is not None:
+        statement = statement.where(ReviewAssignmentEvent.candidate_id == candidate_id)
+    if assignee:
+        statement = statement.where(ReviewAssignmentEvent.assignee == assignee.strip())
+    rows = db.execute(
+        statement.order_by(
+            ReviewAssignmentEvent.occurred_at.desc(), ReviewAssignmentEvent.id.desc()
+        ).limit(limit)
+    ).scalars().all()
+    return [
+        ReviewAssignmentItem(
+            id=row.id,
+            candidate_id=row.candidate_id,
+            action=row.action,
+            assignee=row.assignee,
+            actor=row.actor,
+            note=row.note,
+            occurred_at=row.occurred_at,
+        )
+        for row in rows
+    ]
+
+
+@router.post("/assignments", response_model=ReviewAssignmentItem, status_code=201)
+def create_assignment_event(
+    payload: ReviewAssignmentCreateRequest,
+    db: Session = Depends(get_sync_db),
+):
+    if payload.action == ReviewAssignmentAction.ASSIGN and not payload.assignee:
+        raise HTTPException(status_code=422, detail="Assign actions require an assignee.")
+    exists = db.execute(
+        select(TradeEventCandidate.id).where(
+            TradeEventCandidate.id == payload.candidate_id
+        )
+    ).scalar_one_or_none()
+    if exists is None:
+        raise HTTPException(status_code=404, detail="Relationship candidate not found.")
+    row = ReviewAssignmentEvent(
+        id=uuid4(),
+        candidate_id=payload.candidate_id,
+        action=payload.action.value,
+        assignee=payload.assignee,
+        actor=payload.actor,
+        note=payload.note,
+        occurred_at=datetime.now(timezone.utc),
+    )
+    db.add(row)
+    db.commit()
+    return ReviewAssignmentItem(
+        id=row.id,
+        candidate_id=row.candidate_id,
+        action=row.action,
+        assignee=row.assignee,
+        actor=row.actor,
+        note=row.note,
+        occurred_at=row.occurred_at,
+    )
+
+
+@router.get("/saved-filters", response_model=list[ReviewSavedFilterItem])
+def list_saved_filters(
+    owner: str = Query(..., min_length=1, max_length=200),
+    db: Session = Depends(get_sync_db),
+):
+    rows = db.execute(
+        select(ReviewSavedFilter)
+        .where(ReviewSavedFilter.owner == owner.strip())
+        .order_by(ReviewSavedFilter.name, ReviewSavedFilter.id)
+    ).scalars().all()
+    return [
+        ReviewSavedFilterItem(
+            id=row.id,
+            owner=row.owner,
+            name=row.name,
+            criteria=row.criteria,
+            created_at=row.created_at,
+        )
+        for row in rows
+    ]
+
+
+@router.post("/saved-filters", response_model=ReviewSavedFilterItem, status_code=201)
+def create_saved_filter(
+    payload: ReviewSavedFilterCreateRequest,
+    db: Session = Depends(get_sync_db),
+):
+    duplicate = db.execute(
+        select(ReviewSavedFilter.id).where(
+            ReviewSavedFilter.owner == payload.owner,
+            ReviewSavedFilter.name == payload.name,
+        )
+    ).scalar_one_or_none()
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="A saved filter with this name already exists.")
+    row = ReviewSavedFilter(
+        id=uuid4(),
+        owner=payload.owner,
+        name=payload.name,
+        criteria=payload.criteria.model_dump(mode="json", exclude_none=True),
+        created_at=datetime.now(timezone.utc),
+    )
+    db.add(row)
+    db.commit()
+    return ReviewSavedFilterItem(
+        id=row.id,
+        owner=row.owner,
+        name=row.name,
+        criteria=row.criteria,
+        created_at=row.created_at,
+    )
+
+
+@router.delete("/saved-filters/{filter_id}", status_code=204)
+def delete_saved_filter(
+    filter_id: UUID,
+    owner: str = Query(..., min_length=1, max_length=200),
+    db: Session = Depends(get_sync_db),
+):
+    result = db.execute(
+        delete(ReviewSavedFilter).where(
+            ReviewSavedFilter.id == filter_id,
+            ReviewSavedFilter.owner == owner.strip(),
+        )
+    )
+    if not result.rowcount:
+        db.rollback()
+        raise HTTPException(status_code=404, detail="Saved filter not found.")
+    db.commit()
+    return Response(status_code=204)
+
+
+@router.get("/sessions", response_model=list[ReviewSessionItem])
+def list_review_sessions(
+    reviewer: str = Query(..., min_length=1, max_length=200),
+    limit: int = Query(25, ge=1, le=100),
+    db: Session = Depends(get_sync_db),
+):
+    rows = db.execute(
+        select(ReviewSession)
+        .where(ReviewSession.reviewer == reviewer.strip())
+        .order_by(ReviewSession.started_at.desc(), ReviewSession.id.desc())
+        .limit(limit)
+    ).scalars().all()
+    return [_session_item(db, row) for row in rows]
+
+
+@router.post("/sessions", response_model=ReviewSessionItem, status_code=201)
+def start_review_session(
+    payload: ReviewSessionCreateRequest,
+    db: Session = Depends(get_sync_db),
+):
+    row = ReviewSession(
+        id=uuid4(),
+        reviewer=payload.reviewer,
+        status="active",
+        filter_snapshot=payload.filter_snapshot.model_dump(mode="json", exclude_none=True),
+        started_at=datetime.now(timezone.utc),
+    )
+    db.add(row)
+    db.commit()
+    return _session_item(db, row)
+
+
+@router.post("/sessions/{session_id}/complete", response_model=ReviewSessionItem)
+def complete_review_session(
+    session_id: UUID,
+    payload: ReviewSessionCloseRequest,
+    db: Session = Depends(get_sync_db),
+):
+    row = db.execute(
+        select(ReviewSession).where(ReviewSession.id == session_id).with_for_update()
+    ).scalar_one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Review session not found.")
+    if row.reviewer.casefold() != payload.reviewer.casefold():
+        raise HTTPException(status_code=409, detail="Only the session reviewer can complete it.")
+    if row.status != "completed":
+        row.status = "completed"
+        row.completed_at = datetime.now(timezone.utc)
+        db.commit()
+    return _session_item(db, row)
 
 
 @router.get("/parser-previews", response_model=ParserArtifactListResponse)
@@ -360,6 +608,7 @@ def export_relationship_audit_history(
             reviewer=review.reviewer,
             evidence_note=review.reason,
             reviewed_at=review.reviewed_at,
+            review_session_id=getattr(review, "review_session_id", None),
         )
         for review, candidate in rows
     ]
@@ -444,6 +693,7 @@ def create_relationship_candidate_decision(
                     ),
                 )
 
+        _validated_session(db, payload.review_session_id, payload.reviewer)
         reviewed_at = datetime.now(timezone.utc)
         review = RelationshipReview(
             id=uuid4(),
@@ -452,6 +702,7 @@ def create_relationship_candidate_decision(
             reviewer=payload.reviewer,
             reason=payload.evidence_note,
             reviewed_at=reviewed_at,
+            review_session_id=payload.review_session_id,
         )
         candidate.review_status = DECISION_STATUS[payload.decision].value
         db.add(review)
@@ -487,6 +738,7 @@ def create_bulk_relationship_candidate_decisions(
     )
     target_by_id = {target.candidate_id: target for target in payload.targets}
     try:
+        _validated_session(db, payload.review_session_id, payload.reviewer)
         candidates = (
             db.execute(
                 select(TradeEventCandidate)
@@ -538,6 +790,7 @@ def create_bulk_relationship_candidate_decisions(
                     reviewer=payload.reviewer,
                     reason=payload.evidence_note,
                     reviewed_at=reviewed_at,
+                    review_session_id=payload.review_session_id,
                 )
             )
             candidate.review_status = DECISION_STATUS[payload.decision].value

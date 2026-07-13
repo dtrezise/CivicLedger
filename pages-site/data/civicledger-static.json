@@ -195,7 +195,7 @@
     "summary": {
       "crypto_trade_count": 122,
       "default_official_count": 3,
-      "event_count": 3820,
+      "event_count": 6089,
       "house_ptr_document_count": 7501,
       "house_ptr_out_of_service_trade_count": 13,
       "house_ptr_parser_preview_transaction_count": 53673,
@@ -210,7 +210,7 @@
       "senate_ptr_parser_preview_transaction_count": 10882,
       "senate_ptr_timeline_transaction_count": 10881,
       "trade_cluster_count": 3341,
-      "trade_context_candidate_count": 20412,
+      "trade_context_candidate_count": 22071,
       "trade_count": 71720
     },
     "trade_context_methodology": {
@@ -250,30 +250,49 @@
   "disclaimer": "This public research preview combines source-backed official rosters, official House Clerk, Senate, and OGE parser previews, and market context. Development fixtures are excluded from public timelines. Parser previews require review and are not reviewed public-production trades.",
   "disclosure_pipeline": {
     "amendment_reconciliation": {
-      "context_label": "Document-level amendment reconciliation retains every official filing. Links are annotations supported by explicit source fields or exact official metadata; no source record is overwritten.",
+      "context_label": "Document-level amendment reconciliation retains every official filing. Links are annotations supported by explicit source fields, official report dates, and transaction signatures when available; no source record is overwritten.",
       "generated_at": "2026-07-12",
       "reconciliation_policy": {
         "automatic_trade_suppression_allowed": false,
         "destructive_merge_allowed": false,
         "house_link_rule": "explicit amends_document_id or original_document_id only",
-        "senate_link_rule": "official amendment title plus exactly one non-amendment filing in the same exact filer, normalized-title, and filing-date family",
+        "senate_link_rule": "same exact filer and report type, predecessor filed no more than 45 days earlier, then unique score of at least 80 with a margin of 15 based on official report dates and exact normalized transaction-signature overlap",
+        "transaction_signature_fields": [
+          "official_id",
+          "trade_date",
+          "action",
+          "owner",
+          "asset_display_name",
+          "ticker",
+          "value_range_label"
+        ],
         "unresolved_amendments_remain_reviewable": true
       },
-      "schema_version": "disclosure-amendment-reconciliation-v1",
+      "schema_version": "disclosure-amendment-reconciliation-v2",
       "summary": {
         "amendment_document_count": 169,
+        "amendment_with_transaction_signature_count": 126,
         "chamber_counts": {
           "Senate": 169
         },
         "destructive_change_count": 0,
-        "linked_candidate_count": 9,
+        "linkage_confidence_counts": {
+          "ambiguous_scored_candidates": 103,
+          "candidate_date_and_signature_evidence": 13,
+          "candidate_exact_report_date": 9,
+          "none": 44
+        },
+        "linked_candidate_count": 22,
+        "report_date_evidence_link_count": 9,
         "source_document_count": 9606,
         "source_record_preserved_count": 169,
         "status_counts": {
-          "candidate_predecessor_identified": 9,
-          "predecessor_not_identified": 160
+          "ambiguous_predecessor_candidates": 103,
+          "candidate_predecessor_identified": 22,
+          "predecessor_not_identified": 44
         },
-        "unlinked_or_ambiguous_count": 160
+        "transaction_signature_evidence_link_count": 13,
+        "unlinked_or_ambiguous_count": 147
       }
     },
     "completeness_dashboard": {
@@ -340,6 +359,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 19,
           "source_metadata_official_count": 72,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": true,
           "source_processed_document_count": 19
@@ -363,6 +384,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 19,
           "source_metadata_official_count": 72,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": true,
           "source_processed_document_count": 19
@@ -386,6 +409,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 19,
           "source_metadata_official_count": 72,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": true,
           "source_processed_document_count": 19
@@ -409,6 +434,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 19,
           "source_metadata_official_count": 72,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": true,
           "source_processed_document_count": 19
@@ -432,6 +459,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 0,
           "source_metadata_official_count": 822,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": false,
           "source_processed_document_count": 0
@@ -455,6 +484,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 0,
           "source_metadata_official_count": 822,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": false,
           "source_processed_document_count": 0
@@ -478,6 +509,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 0,
           "source_metadata_official_count": 822,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": false,
           "source_processed_document_count": 0
@@ -501,6 +534,8 @@
           "source_image_or_ocr_backlog_count": 0,
           "source_indexed_document_count": 0,
           "source_metadata_official_count": 822,
+          "source_ocr_evidence_document_count": 0,
+          "source_ocr_evidence_page_count": 0,
           "source_parser_preview_transaction_count": 0,
           "source_pipeline_started": false,
           "source_processed_document_count": 0
@@ -524,6 +559,8 @@
           "source_image_or_ocr_backlog_count": 1983,
           "source_indexed_document_count": 7503,
           "source_metadata_official_count": 295,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 459,
           "source_parser_preview_transaction_count": 53673,
           "source_pipeline_started": false,
           "source_processed_document_count": 7501
@@ -547,6 +584,8 @@
           "source_image_or_ocr_backlog_count": 551,
           "source_indexed_document_count": 2103,
           "source_metadata_official_count": 65,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 152,
           "source_parser_preview_transaction_count": 10882,
           "source_pipeline_started": false,
           "source_processed_document_count": 1820
@@ -570,6 +609,8 @@
           "source_image_or_ocr_backlog_count": 1983,
           "source_indexed_document_count": 7503,
           "source_metadata_official_count": 295,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 459,
           "source_parser_preview_transaction_count": 53673,
           "source_pipeline_started": false,
           "source_processed_document_count": 7501
@@ -593,6 +634,8 @@
           "source_image_or_ocr_backlog_count": 551,
           "source_indexed_document_count": 2103,
           "source_metadata_official_count": 65,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 152,
           "source_parser_preview_transaction_count": 10882,
           "source_pipeline_started": false,
           "source_processed_document_count": 1820
@@ -616,6 +659,8 @@
           "source_image_or_ocr_backlog_count": 1983,
           "source_indexed_document_count": 7503,
           "source_metadata_official_count": 295,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 459,
           "source_parser_preview_transaction_count": 53673,
           "source_pipeline_started": false,
           "source_processed_document_count": 7501
@@ -639,6 +684,8 @@
           "source_image_or_ocr_backlog_count": 551,
           "source_indexed_document_count": 2103,
           "source_metadata_official_count": 65,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 152,
           "source_parser_preview_transaction_count": 10882,
           "source_pipeline_started": false,
           "source_processed_document_count": 1820
@@ -662,6 +709,8 @@
           "source_image_or_ocr_backlog_count": 1983,
           "source_indexed_document_count": 7503,
           "source_metadata_official_count": 295,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 459,
           "source_parser_preview_transaction_count": 53673,
           "source_pipeline_started": false,
           "source_processed_document_count": 7501
@@ -685,6 +734,8 @@
           "source_image_or_ocr_backlog_count": 551,
           "source_indexed_document_count": 2103,
           "source_metadata_official_count": 65,
+          "source_ocr_evidence_document_count": 50,
+          "source_ocr_evidence_page_count": 152,
           "source_parser_preview_transaction_count": 10882,
           "source_pipeline_started": false,
           "source_processed_document_count": 1820
@@ -697,6 +748,8 @@
         "completeness_row_count": 16,
         "evidence_review_batch_count": 100,
         "evidence_review_candidate_count": 43327,
+        "ocr_evidence_document_count": 100,
+        "ocr_evidence_page_count": 611,
         "open_warning_count": 4,
         "parser_preview_evaluated_record_count": 64555,
         "queue_item_count": 5893,
@@ -710,6 +763,8 @@
             "image_or_ocr_backlog_count": 1983,
             "indexed_document_count": 7503,
             "metadata_official_count": 295,
+            "ocr_evidence_document_count": 50,
+            "ocr_evidence_page_count": 459,
             "parser_preview_transaction_count": 53673,
             "processed_document_count": 7501
           },
@@ -731,6 +786,8 @@
             "image_or_ocr_backlog_count": 551,
             "indexed_document_count": 2103,
             "metadata_official_count": 65,
+            "ocr_evidence_document_count": 50,
+            "ocr_evidence_page_count": 152,
             "parser_preview_transaction_count": 10882,
             "processed_document_count": 1820
           }
@@ -813,6 +870,47 @@
         "selected_document_count": 100,
         "selected_source_byte_count": 13305111,
         "selected_source_page_count": 611,
+        "transaction_rows_created": 0
+      }
+    },
+    "ocr_results": {
+      "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
+      "generated_at": "2026-07-12",
+      "ocr_engine": "tesseract 5.5.2",
+      "schema_version": "disclosure-ocr-results-manifest-v2",
+      "summary": {
+        "attempted_document_count": 100,
+        "completed_chamber_counts": {
+          "House": 50,
+          "Senate": 50
+        },
+        "completed_document_count": 100,
+        "failed_chamber_counts": {
+          "House": 0,
+          "Senate": 0
+        },
+        "failed_document_count": 0,
+        "human_review_required_document_count": 100,
+        "ocr_character_count": 1179775,
+        "ocr_word_count": 148047,
+        "page_review_status_counts": {
+          "high_quality_ocr_review_required": 20,
+          "low_quality_ocr_review_required": 433,
+          "usable_ocr_review_required": 158
+        },
+        "processed_page_count": 611,
+        "processing_status_counts": {
+          "ocr_complete_review_required": 47,
+          "ocr_low_quality_review_required": 22,
+          "ocr_partial_review_required": 31
+        },
+        "quality_dimensions": [
+          "page_ocr_confidence",
+          "page_layout_confidence",
+          "field_label_confidence",
+          "document_review_quality_score"
+        ],
+        "readable_page_count": 178,
         "transaction_rows_created": 0
       }
     },
@@ -5988,8 +6086,8 @@
       "Executive": 3,
       "Legislative": 355
     },
-    "canonical_asset_count": 411,
-    "canonical_organization_count": 376,
+    "canonical_asset_count": 1193,
+    "canonical_organization_count": 1154,
     "career_timeline_crypto_trade_count": 122,
     "career_timeline_default_official_count": 3,
     "career_timeline_official_count": 358,
@@ -5997,8 +6095,8 @@
     "career_timeline_trade_count": 71720,
     "crypto_price_point_count": 14215,
     "disclosure_queue_item_count": 5893,
-    "entity_quality_issue_count": 9440,
-    "event_count": 2148,
+    "entity_quality_issue_count": 7043,
+    "event_count": 4417,
     "executive_oge_indexed_document_count": 19,
     "executive_oge_manifest_official_count": 72,
     "executive_oge_manifest_role_count": 77,
@@ -6010,6 +6108,9 @@
     },
     "fixture_demo_official_count": 7,
     "historical_news_candidate_count": 0,
+    "historical_supreme_court_decision_count": 648,
+    "house_historical_ptr_document_count": 3131,
+    "house_historical_transaction_row_count": 0,
     "house_ptr_indexed_document_count": 7503,
     "house_ptr_machine_readable_document_count": 5518,
     "house_ptr_ocr_required_document_count": 1983,
@@ -6025,15 +6126,17 @@
     "macro_series_count": 6,
     "market_price_point_count": 91092,
     "market_price_provider": "Tiingo",
-    "normalized_source_snapshot_count": 4126,
+    "normalized_source_snapshot_count": 10730,
+    "ocr_completed_document_count": 100,
+    "ocr_processed_page_count": 611,
     "official_count": 358,
-    "official_event_relationship_count": 222782,
-    "official_event_roll_call_count": 748,
+    "official_event_relationship_count": 222030,
+    "official_event_roll_call_count": 745,
     "presidential_oge_document_count": 19,
     "presidential_oge_parser_preview_transaction_count": 7182,
     "presidential_oge_public_production_trade_count": 0,
     "presidential_oge_source_status_count": 4,
-    "primary_source_context_record_count": 1874,
+    "primary_source_context_record_count": 4143,
     "public_official_role_count": 5914,
     "public_official_role_counts_by_branch": {
       "Executive": 77,
@@ -6060,14 +6163,14 @@
     "raw_document_count": 31,
     "reviewed_fixture_promotion_count": 0,
     "reviewed_public_trade_count": 0,
-    "sec_filing_event_count": 634,
-    "sec_supported_issuer_alias_count": 3974,
+    "sec_filing_event_count": 2699,
+    "sec_supported_issuer_alias_count": 6380,
     "senate_ptr_indexed_document_count": 2103,
     "senate_ptr_matched_document_count": 1820,
     "senate_ptr_parser_preview_transaction_count": 10882,
     "senate_ptr_processed_document_count": 1820,
     "senate_ptr_timeline_official_count": 65,
-    "source_ingested_federal_event_count": 1505,
+    "source_ingested_federal_event_count": 1709,
     "tracked_public_official_count": 2159,
     "trade_count": 134
   }

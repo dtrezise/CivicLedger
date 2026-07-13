@@ -962,10 +962,72 @@ class RelationshipReview(Base):
     reviewer = Column(Text, nullable=False)
     reason = Column(Text, nullable=False)
     reviewed_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    review_session_id = Column(
+        UUID(as_uuid=True), ForeignKey("review_sessions.id"), nullable=True
+    )
 
     candidate = relationship("TradeEventCandidate", back_populates="reviews")
 
-    __table_args__ = (Index("idx_relationship_reviews_candidate", "candidate_id"),)
+    __table_args__ = (
+        Index("idx_relationship_reviews_candidate", "candidate_id"),
+        Index("idx_relationship_reviews_session", "review_session_id"),
+    )
+
+
+class ReviewAssignmentEvent(Base):
+    __tablename__ = "review_assignment_events"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    candidate_id = Column(
+        UUID(as_uuid=True), ForeignKey("trade_event_candidates.id"), nullable=False
+    )
+    action = Column(Text, nullable=False)
+    assignee = Column(Text, nullable=True)
+    actor = Column(Text, nullable=False)
+    note = Column(Text, nullable=True)
+    occurred_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+    __table_args__ = (
+        CheckConstraint(
+            "action IN ('assign', 'release', 'complete')",
+            name="ck_review_assignment_events_action",
+        ),
+        Index("idx_review_assignment_events_candidate", "candidate_id", "occurred_at"),
+        Index("idx_review_assignment_events_assignee", "assignee", "occurred_at"),
+    )
+
+
+class ReviewSavedFilter(Base):
+    __tablename__ = "review_saved_filters"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    owner = Column(Text, nullable=False)
+    name = Column(Text, nullable=False)
+    criteria = Column(JSONB, nullable=False, default=dict)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("owner", "name", name="uq_review_saved_filters_owner_name"),
+        Index("idx_review_saved_filters_owner", "owner", "name"),
+    )
+
+
+class ReviewSession(Base):
+    __tablename__ = "review_sessions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    reviewer = Column(Text, nullable=False)
+    status = Column(Text, nullable=False, default="active")
+    filter_snapshot = Column(JSONB, nullable=False, default=dict)
+    started_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('active', 'completed')", name="ck_review_sessions_status"
+        ),
+        Index("idx_review_sessions_reviewer", "reviewer", "started_at"),
+    )
 
 
 def _reject_relationship_review_mutation(*_args, **_kwargs):
@@ -977,6 +1039,12 @@ sqlalchemy_event.listen(
 )
 sqlalchemy_event.listen(
     RelationshipReview, "before_delete", _reject_relationship_review_mutation, propagate=True
+)
+sqlalchemy_event.listen(
+    ReviewAssignmentEvent, "before_update", _reject_relationship_review_mutation, propagate=True
+)
+sqlalchemy_event.listen(
+    ReviewAssignmentEvent, "before_delete", _reject_relationship_review_mutation, propagate=True
 )
 
 

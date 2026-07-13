@@ -21,9 +21,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
 from app.services.congress_sources import CongressGovClient  # noqa: E402
+from app.services.supreme_court_historical import historical_decisions_for_range  # noqa: E402
 
 
 OUTPUT = ROOT / "data" / "context" / "federal_events.json"
+SUPREME_COURT_HISTORICAL = ROOT / "data" / "context" / "supreme_court_historical_decisions.json"
 FEDERAL_REGISTER_API = "https://www.federalregister.gov/api/v1/documents.json"
 SUPREME_COURT_TERM_URL = "https://www.supremecourt.gov/opinions/slipopinion/{term}"
 USER_AGENT = "CivicLedger federal event research/0.1 (+https://github.com/dtrezise/CivicLedger)"
@@ -631,11 +633,13 @@ def executive_order_event(row: dict) -> dict | None:
 
 
 def supreme_court_event(row: dict) -> dict | None:
-    classification = classify(f"{row['case_name']} {row.get('synopsis') or ''}")
+    subject_terms = " ".join(row.get("subject_terms") or [])
+    classification = classify(f"{row['case_name']} {row.get('synopsis') or ''} {subject_terms}")
     if not classification:
         return None
-    stable_docket = re.sub(r"[^a-z0-9]+", "-", row["docket_number"].lower()).strip("-")
-    return {
+    identifier = row.get("docket_number") or row["release_number"]
+    stable_docket = re.sub(r"[^a-z0-9]+", "-", identifier.lower()).strip("-")
+    event = {
         "id": f"scotus-{row['term_year']}-{row['release_number']}-{stable_docket}",
         "date": row["decision_date"],
         "announcement_date": row["decision_date"],
@@ -656,6 +660,9 @@ def supreme_court_event(row: dict) -> dict | None:
         "citation": row.get("citation"),
         **classification,
     }
+    if row.get("historical_provenance"):
+        event["historical_provenance"] = row["historical_provenance"]
+    return event
 
 
 def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
@@ -685,7 +692,13 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
     for snapshot in federal_register_agency_snapshots:
         snapshot["classified_result_count"] = classified_by_query[snapshot["id"]]
         snapshot["selected_result_count"] = selected_by_query[snapshot["id"]]
-    opinions, supreme_court_snapshots = fetch_supreme_court_opinions(start_date, end_date)
+    historical_opinions, historical_snapshot = historical_decisions_for_range(
+        SUPREME_COURT_HISTORICAL,
+        start_date,
+        end_date,
+    )
+    slip_opinions, supreme_court_snapshots = fetch_supreme_court_opinions(start_date, end_date)
+    opinions = [*historical_opinions, *slip_opinions]
     court_decisions = [event for row in opinions if (event := supreme_court_event(row))]
     events = {
         event["id"]: event
@@ -708,9 +721,14 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
                 "causal_interpretation": "None; inclusion identifies possible market context only",
             },
             "structured_supreme_court_term_range": (
-                [2017, supreme_court_snapshots[-1]["term_year"]] if supreme_court_snapshots else []
+                [
+                    min(opinion["term_year"] for opinion in opinions),
+                    max(opinion["term_year"] for opinion in opinions),
+                ]
+                if opinions
+                else []
             ),
-            "supreme_court_pre_2017_status": "official_bound_volume_backfill_pending",
+            "supreme_court_pre_2017_status": historical_snapshot["status"],
         },
         "sources": [
             {
@@ -732,6 +750,12 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
                 "query_snapshots": federal_register_agency_snapshots,
             },
             {
+                "id": "supreme-court-us-reports-historical",
+                "url": "https://www.supremecourt.gov/opinions/USReports.aspx",
+                "source_tier": "official",
+                "artifact_snapshot": historical_snapshot,
+            },
+            {
                 "id": "supreme-court-slip-opinions",
                 "url": SUPREME_COURT_TERM_URL,
                 "source_tier": "official",
@@ -743,6 +767,8 @@ def build_dataset(api_key: str, start_date: str, end_date: str) -> dict:
             "raw_executive_order_count": len(orders),
             "raw_federal_register_agency_document_count": len(agency_documents),
             "raw_supreme_court_opinion_count": len(opinions),
+            "raw_historical_supreme_court_decision_count": len(historical_opinions),
+            "raw_supreme_court_slip_opinion_count": len(slip_opinions),
             "selected_public_law_count": len(laws),
             "selected_executive_order_count": len(executive_orders),
             "classified_federal_register_agency_document_count": len(classified_agency_events),

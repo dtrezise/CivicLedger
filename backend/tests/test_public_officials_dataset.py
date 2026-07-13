@@ -178,8 +178,8 @@ def test_federal_event_context_spans_all_branches_with_official_sources():
     assert summary["counts_by_type"]["executive_order"] >= 250
     assert summary["counts_by_type"]["court_decision"] >= 100
     assert data["scope"]["start_date"] == "2009-01-20"
-    assert data["scope"]["structured_supreme_court_term_range"][0] == 2017
-    assert data["scope"]["supreme_court_pre_2017_status"] == "official_bound_volume_backfill_pending"
+    assert data["scope"]["structured_supreme_court_term_range"][0] == 2008
+    assert data["scope"]["supreme_court_pre_2017_status"] == "official_us_reports_calendar_2009_2016_backfilled"
     assert all(event["source_tier"] == "official" for event in data["events"])
     assert all(event["sources"] and event["sources"][0].startswith("https://") for event in data["events"])
 
@@ -415,7 +415,8 @@ def test_context_maps_and_pages_completeness_are_available():
     assert branch_map["Judicial"]["official_count"] == 822
     assert branch_map["Judicial"]["readiness_status"] == "roster_manifest_ready"
     assert overview["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
-    assert public_events["events"][0]["ticker_scope"] is not None
+    assert public_events["events"][0]["search_terms"]
+    assert "ticker_scope" not in public_events["events"][0]
     assert pages["career_trade_timeline"]["event_entity_map"]["company_entity_count"] >= 8
 
 

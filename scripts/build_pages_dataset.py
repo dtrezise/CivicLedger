@@ -36,6 +36,7 @@ MARKET_PRICES = ROOT / "data" / "context" / "market_prices.json"
 CRYPTO_PRICES = ROOT / "data" / "context" / "crypto_prices.json"
 CURATED_TIMELINE_EVENTS = ROOT / "data" / "context" / "timeline_events.json"
 FEDERAL_EVENTS = ROOT / "data" / "context" / "federal_events.json"
+SUPREME_COURT_HISTORICAL = ROOT / "data" / "context" / "supreme_court_historical_decisions.json"
 EVENT_ENTITY_MAP = ROOT / "data" / "context" / "event_entity_map.json"
 CONGRESS_JURISDICTION_MAP = ROOT / "data" / "context" / "congress_jurisdiction_map.json"
 BRANCH_JURISDICTION_MAP = ROOT / "data" / "context" / "branch_jurisdiction_map.json"
@@ -55,6 +56,7 @@ PRESIDENTIAL_OGE_DOCUMENTS = ROOT / "data" / "disclosures" / "presidential_oge_d
 PRESIDENTIAL_OGE_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
 EXECUTIVE_OGE_MANIFEST = ROOT / "data" / "disclosures" / "executive_oge_disclosure_manifest.json"
 HOUSE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
+HOUSE_HISTORICAL_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_historical_transaction_index.json"
 HOUSE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 SENATE_DISCLOSURE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
 SENATE_PTR_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
@@ -67,6 +69,7 @@ RETRIEVAL_BATCHES = ROOT / "data" / "disclosures" / "disclosure_retrieval_batche
 SOURCE_STALENESS_ALERTS = ROOT / "data" / "disclosures" / "source_staleness_alerts.json"
 DISCLOSURE_COMPLETENESS = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 DISCLOSURE_OCR_PRIORITIES = ROOT / "data" / "disclosures" / "disclosure_ocr_priority_batches.json"
+DISCLOSURE_OCR_RESULTS = ROOT / "data" / "disclosures" / "disclosure_ocr_results.json"
 DISCLOSURE_AMENDMENTS = ROOT / "data" / "disclosures" / "disclosure_amendment_reconciliation.json"
 MARKET_SYMBOLS = ["SPY", "QQQ", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI"]
 
@@ -517,6 +520,10 @@ def load_disclosure_artifacts() -> dict:
             DISCLOSURE_OCR_PRIORITIES,
             {"schema_version": "disclosure-ocr-priority-batches-v1", "summary": {}, "batches": []},
         ),
+        "ocr_results": load_json_file(
+            DISCLOSURE_OCR_RESULTS,
+            {"schema_version": "disclosure-ocr-results-manifest-v1", "summary": {}, "records": []},
+        ),
         "amendment_reconciliation": load_json_file(
             DISCLOSURE_AMENDMENTS,
             {"schema_version": "disclosure-amendment-reconciliation-v1", "summary": {}, "reconciliations": []},
@@ -559,6 +566,13 @@ def public_disclosure_artifacts(artifacts: dict) -> dict:
             "context_label": artifacts["ocr_priority_batches"].get("context_label"),
             "priority_policy": artifacts["ocr_priority_batches"].get("priority_policy", {}),
             "summary": artifacts["ocr_priority_batches"].get("summary", {}),
+        },
+        "ocr_results": {
+            "schema_version": artifacts["ocr_results"].get("schema_version"),
+            "generated_at": artifacts["ocr_results"].get("generated_at"),
+            "context_label": artifacts["ocr_results"].get("context_label"),
+            "ocr_engine": artifacts["ocr_results"].get("ocr_engine"),
+            "summary": artifacts["ocr_results"].get("summary", {}),
         },
         "amendment_reconciliation": {
             "schema_version": artifacts["amendment_reconciliation"].get("schema_version"),
@@ -2230,6 +2244,7 @@ def build_dataset() -> dict:
     fred_context = load_fred_context()
     civic_events = load_events()
     federal_event_context = load_json_file(FEDERAL_EVENTS, {"summary": {}, "sources": []})
+    supreme_court_historical = load_json_file(SUPREME_COURT_HISTORICAL, {"summary": {}, "decisions": []})
     historical_news_context = load_json_file(
         HISTORICAL_NEWS_CONTEXT,
         {"summary": {}, "coverage_report": {}},
@@ -2286,6 +2301,7 @@ def build_dataset() -> dict:
         {"metrics": {}, "scope_note": "Ranking benchmark has not been generated."},
     )
     house_disclosure_index = load_json_file(HOUSE_DISCLOSURE_INDEX, {"summary": {}})
+    house_historical_transactions = load_json_file(HOUSE_HISTORICAL_TRANSACTIONS, {"summary": {}, "coverage": {}})
     senate_disclosure_index = load_json_file(SENATE_DISCLOSURE_INDEX, {"summary": {}})
     people = create_people()
     all_people = []
@@ -2493,6 +2509,15 @@ def build_dataset() -> dict:
             "source_ingested_federal_event_count": federal_event_context.get("summary", {}).get(
                 "event_count", 0
             ),
+            "historical_supreme_court_decision_count": supreme_court_historical.get("summary", {}).get(
+                "decision_count", 0
+            ),
+            "house_historical_ptr_document_count": house_historical_transactions.get("summary", {}).get(
+                "indexed_ptr_document_count", 0
+            ),
+            "house_historical_transaction_row_count": house_historical_transactions.get("summary", {}).get(
+                "transaction_row_count", 0
+            ),
             "official_event_relationship_count": official_event_involvement.get(
                 "summary", {}
             ).get("relationship_count", 0),
@@ -2523,6 +2548,12 @@ def build_dataset() -> dict:
             "primary_source_context_record_count": primary_source_context.get("summary", {}).get(
                 "record_count", 0
             ),
+            "ocr_completed_document_count": disclosure_artifacts.get("ocr_results", {}).get(
+                "summary", {}
+            ).get("completed_document_count", 0),
+            "ocr_processed_page_count": disclosure_artifacts.get("ocr_results", {}).get(
+                "summary", {}
+            ).get("processed_page_count", 0),
             "macro_series_count": fred_context["summary"].get("series_count", 0),
             "macro_release_event_count": fred_context["summary"].get("release_event_count", 0),
             "market_price_provider": market_metadata["summary"].get("active_market_price_provider", market_metadata["provider"]),
@@ -2625,6 +2656,20 @@ def build_dataset() -> dict:
             "sources": federal_event_context.get("sources", []),
             "summary": federal_event_context.get("summary", {}),
             "context_label": federal_event_context.get("context_label"),
+        },
+        "house_historical_transactions": {
+            "schema_version": house_historical_transactions.get("schema_version"),
+            "generated_at": house_historical_transactions.get("generated_at"),
+            "summary": house_historical_transactions.get("summary", {}),
+            "coverage": house_historical_transactions.get("coverage", {}),
+            "context_label": house_historical_transactions.get("context_label"),
+        },
+        "supreme_court_historical": {
+            "schema_version": supreme_court_historical.get("schema_version"),
+            "generated_at": supreme_court_historical.get("generated_at"),
+            "summary": supreme_court_historical.get("summary", {}),
+            "scope": supreme_court_historical.get("scope", {}),
+            "context_label": supreme_court_historical.get("context_label"),
         },
         "market": market_snapshot(market_series, market_metadata),
         "crypto_market": {
@@ -2919,8 +2964,9 @@ def coverage_payload(dataset: dict) -> dict:
                 f"Executive roster coverage includes {dataset['summary'].get('executive_oge_manifest_official_count', 0):,} officials, "
                 "but non-presidential OGE document acquisition remains incomplete."
             ),
-            "The House Clerk's structured periodic-transaction index in this dataset begins in 2015; earlier Obama-era House transaction backfill remains incomplete.",
-            "Structured Supreme Court slip-opinion ingestion begins with October Term 2017; official bound-volume backfill for 2009-2016 remains pending.",
+            (
+                f"The House Clerk legacy archive now indexes {dataset['summary'].get('house_historical_ptr_document_count', 0):,} PTR documents from 2012-2013, but those PDF transaction tables remain unparsed and the official 2014 bulk index is incomplete."
+            ),
         ],
     }
 
@@ -2982,17 +3028,28 @@ def compact_event_index_row(event: dict) -> dict:
         "date",
         "label",
         "event_type",
-        "source",
-        "source_tier",
         "editor_status",
-        "branch_scope",
-        "market_topic_ids",
-        "sector_scope",
-        "jurisdiction_scope",
-        "ticker_scope",
-        "entity_scope",
     ]
-    return {key: event.get(key) for key in keys if event.get(key) not in (None, "", [], {})}
+    row = {key: event.get(key) for key in keys if event.get(key) not in (None, "", [], {})}
+    search_terms = sorted(
+        {
+            str(value).strip()
+            for field in (
+                "branch_scope",
+                "market_topic_ids",
+                "sector_scope",
+                "jurisdiction_scope",
+                "ticker_scope",
+                "entity_scope",
+            )
+            for value in (event.get(field) or [])
+            if str(value).strip()
+        },
+        key=lambda value: (value.casefold(), value),
+    )
+    if search_terms:
+        row["search_terms"] = " ".join(search_terms)
+    return row
 
 
 def compact_timeline_official(official: dict) -> dict:
@@ -3035,7 +3092,7 @@ def compact_timeline_official(official: dict) -> dict:
 
 
 def compact_public_entity_reference(entity_reference: dict) -> dict:
-    def representative_aliases(aliases: list, limit: int = 12) -> list:
+    def representative_aliases(aliases: list, limit: int = 1) -> list:
         ordered = sorted(
             aliases,
             key=lambda row: (
@@ -3074,10 +3131,8 @@ def compact_public_entity_reference(entity_reference: dict) -> dict:
                     "status",
                     "country_code",
                     "issuer",
-                    "identifiers",
                     "sector_assignments",
                     "source_ids",
-                    "record_hash",
                 )
                 if row.get(key) is not None
             }
@@ -3102,11 +3157,10 @@ def compact_public_entity_reference(entity_reference: dict) -> dict:
                     "asset_class",
                     "organization_id",
                     "primary_symbol",
-                    "record_hash",
                 )
                 if row.get(key) is not None
             }
-            | {"alias_count": len(aliases), "representative_aliases": aliases[:12]}
+            | {"alias_count": len(aliases), "representative_aliases": aliases[:1]}
         )
 
     return {
@@ -3193,6 +3247,8 @@ def write_public_partitions(dataset: dict) -> None:
             "sec_issuer_aliases": dataset.get("sec_issuer_aliases", {}),
             "primary_source_context": dataset.get("primary_source_context", {}),
             "federal_event_context": dataset.get("federal_event_context", {}),
+            "house_historical_transactions": dataset.get("house_historical_transactions", {}),
+            "supreme_court_historical": dataset.get("supreme_court_historical", {}),
         },
     )
     files["officials_index"] = write_partition(

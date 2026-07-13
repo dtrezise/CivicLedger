@@ -13,6 +13,10 @@ import type {
   RelationshipDecision,
   RelationshipSort,
   RelationshipStatus,
+  ReviewAssignment,
+  ReviewFilterCriteria,
+  ReviewSavedFilter,
+  ReviewSessionSummary,
   ReviewerTelemetry,
 } from "@/lib/types";
 
@@ -268,6 +272,11 @@ function RelationshipCandidateReview() {
   const [bulkSelection, setBulkSelection] = useState<Record<string, BulkReviewTarget>>({});
   const [message, setMessage] = useState("");
   const [messageIsError, setMessageIsError] = useState(false);
+  const [savedFilters, setSavedFilters] = useState<ReviewSavedFilter[]>([]);
+  const [filterName, setFilterName] = useState("");
+  const [sessions, setSessions] = useState<ReviewSessionSummary[]>([]);
+  const [activeSession, setActiveSession] = useState<ReviewSessionSummary | null>(null);
+  const [assignment, setAssignment] = useState<ReviewAssignment | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -341,6 +350,120 @@ function RelationshipCandidateReview() {
     queue.items.length && queue.items.every((candidate) => bulkSelection[candidate.id])
   );
 
+  function currentCriteria(): ReviewFilterCriteria {
+    return {
+      status: status || null,
+      evidence_tier: evidenceTier.trim() || null,
+      event_type: eventType.trim() || null,
+      query: query || null,
+      max_abs_days: maxDays ? Number(maxDays) : null,
+      min_internal_rank: minRank ? Number(minRank) : null,
+      has_reviews: reviewHistory ? reviewHistory === "true" : null,
+      sort,
+      page_size: pageSize,
+    };
+  }
+
+  function applyCriteria(criteria: ReviewFilterCriteria) {
+    setStatus(criteria.status || "");
+    setEvidenceTier(criteria.evidence_tier || "");
+    setEventType(criteria.event_type || "");
+    setQueryInput(criteria.query || "");
+    setQuery(criteria.query || "");
+    setMaxDays(criteria.max_abs_days == null ? "" : String(criteria.max_abs_days));
+    setMinRank(criteria.min_internal_rank == null ? "" : String(criteria.min_internal_rank));
+    setReviewHistory(criteria.has_reviews == null ? "" : String(criteria.has_reviews));
+    setSort(criteria.sort || "priority");
+    setPageSize(criteria.page_size || 25);
+    setPage(1);
+  }
+
+  async function loadWorkspace() {
+    if (!reviewer.trim()) return;
+    try {
+      const owner = encodeURIComponent(reviewer.trim());
+      const [filters, history] = await Promise.all([
+        fetchRelationshipAPI<ReviewSavedFilter[]>(`/review/saved-filters?owner=${owner}`),
+        fetchRelationshipAPI<ReviewSessionSummary[]>(`/review/sessions?reviewer=${owner}`),
+      ]);
+      setSavedFilters(filters);
+      setSessions(history);
+      setActiveSession(history.find((session) => session.status === "active") || null);
+      setMessageIsError(false);
+      setMessage(`Loaded ${filters.length} saved filter${filters.length === 1 ? "" : "s"} and ${history.length} review session${history.length === 1 ? "" : "s"}.`);
+    } catch (error) {
+      setMessageIsError(true);
+      setMessage(error instanceof Error ? error.message : "Reviewer workspace failed to load.");
+    }
+  }
+
+  async function saveCurrentFilter() {
+    if (!reviewer.trim() || !filterName.trim()) return;
+    try {
+      const saved = await fetchRelationshipAPI<ReviewSavedFilter>("/review/saved-filters", {
+        method: "POST",
+        body: JSON.stringify({ owner: reviewer, name: filterName, criteria: currentCriteria() }),
+      });
+      setSavedFilters((current) => [...current, saved].sort((a, b) => a.name.localeCompare(b.name)));
+      setFilterName("");
+      setMessageIsError(false);
+      setMessage(`Saved filter ${saved.name}.`);
+    } catch (error) {
+      setMessageIsError(true);
+      setMessage(error instanceof Error ? error.message : "Saved filter failed.");
+    }
+  }
+
+  async function startSession() {
+    if (!reviewer.trim()) return;
+    try {
+      const session = await fetchRelationshipAPI<ReviewSessionSummary>("/review/sessions", {
+        method: "POST",
+        body: JSON.stringify({ reviewer, filter_snapshot: currentCriteria() }),
+      });
+      setActiveSession(session);
+      setSessions((current) => [session, ...current]);
+      setMessageIsError(false);
+      setMessage("Review session started; subsequent decisions will be included in its summary.");
+    } catch (error) {
+      setMessageIsError(true);
+      setMessage(error instanceof Error ? error.message : "Review session failed to start.");
+    }
+  }
+
+  async function completeSession() {
+    if (!activeSession || !reviewer.trim()) return;
+    try {
+      const session = await fetchRelationshipAPI<ReviewSessionSummary>(`/review/sessions/${activeSession.id}/complete`, {
+        method: "POST",
+        body: JSON.stringify({ reviewer }),
+      });
+      setSessions((current) => current.map((row) => row.id === session.id ? session : row));
+      setActiveSession(null);
+      setMessageIsError(false);
+      setMessage(`Session completed with ${session.decision_count} attributed decision${session.decision_count === 1 ? "" : "s"}.`);
+    } catch (error) {
+      setMessageIsError(true);
+      setMessage(error instanceof Error ? error.message : "Review session failed to complete.");
+    }
+  }
+
+  async function assignSelected() {
+    if (!selected || !reviewer.trim()) return;
+    try {
+      const row = await fetchRelationshipAPI<ReviewAssignment>("/review/assignments", {
+        method: "POST",
+        body: JSON.stringify({ candidate_id: selected.id, action: "assign", assignee: reviewer, actor: reviewer, note: "Assigned from reviewer workspace" }),
+      });
+      setAssignment(row);
+      setMessageIsError(false);
+      setMessage(`Assigned the selected candidate to ${row.assignee}.`);
+    } catch (error) {
+      setMessageIsError(true);
+      setMessage(error instanceof Error ? error.message : "Assignment failed.");
+    }
+  }
+
   async function submitDecision() {
     if (!selected || !canSubmit) return;
     setSaving(true);
@@ -356,6 +479,7 @@ function RelationshipCandidateReview() {
             evidence_note: evidenceNote,
             expected_status: selected.review_status,
             expected_revision: selected.review_revision,
+            review_session_id: activeSession?.id || null,
           }),
         }
       );
@@ -387,6 +511,7 @@ function RelationshipCandidateReview() {
             reviewer,
             evidence_note: evidenceNote,
             targets: bulkTargets,
+            review_session_id: activeSession?.id || null,
           }),
         }
       );
@@ -407,6 +532,40 @@ function RelationshipCandidateReview() {
   return (
     <>
       <ReviewerTelemetryStrip />
+      <section className="mb-6 border-y border-gray-200 py-4" aria-label="Reviewer workspace">
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="min-w-52 flex-1 text-sm">
+            <span className="text-xs font-medium text-gray-600">Reviewer identity</span>
+            <input value={reviewer} onChange={(event) => setReviewer(event.target.value)} maxLength={200} placeholder="Reviewer name" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm" />
+          </label>
+          <button type="button" onClick={() => void loadWorkspace()} disabled={!reviewer.trim()} className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 disabled:text-gray-400">Load workspace</button>
+          {activeSession ? (
+            <button type="button" onClick={() => void completeSession()} className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white">Complete session</button>
+          ) : (
+            <button type="button" onClick={() => void startSession()} disabled={!reviewer.trim()} className="rounded-md bg-civic-700 px-3 py-2 text-sm font-medium text-white disabled:bg-gray-300">Start session</button>
+          )}
+          <button type="button" onClick={() => void assignSelected()} disabled={!selected || !reviewer.trim()} className="rounded-md border border-civic-300 px-3 py-2 text-sm font-medium text-civic-700 disabled:border-gray-200 disabled:text-gray-400">Assign selected</button>
+        </div>
+        <div className="mt-3 flex flex-wrap items-end gap-3">
+          <label className="min-w-48 flex-1 text-sm">
+            <span className="text-xs font-medium text-gray-600">Save current queue filters</span>
+            <input value={filterName} onChange={(event) => setFilterName(event.target.value)} maxLength={120} placeholder="Filter name" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm" />
+          </label>
+          <button type="button" onClick={() => void saveCurrentFilter()} disabled={!reviewer.trim() || !filterName.trim()} className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 disabled:text-gray-400">Save filter</button>
+          <label className="min-w-52 text-sm">
+            <span className="text-xs font-medium text-gray-600">Saved filters</span>
+            <select defaultValue="" onChange={(event) => { const saved = savedFilters.find((row) => row.id === event.target.value); if (saved) applyCriteria(saved.criteria); }} className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
+              <option value="">Choose saved filter</option>
+              {savedFilters.map((saved) => <option key={saved.id} value={saved.id}>{saved.name}</option>)}
+            </select>
+          </label>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
+          <span>{activeSession ? `Active session started ${formatTimestamp(activeSession.started_at)}` : "No active review session"}</span>
+          <span>{sessions.length ? `${sessions.length} recorded session${sessions.length === 1 ? "" : "s"}` : "No session history loaded"}</span>
+          {assignment ? <span>Selected assignment: {formatEnum(assignment.action)} to {assignment.assignee}</span> : null}
+        </div>
+      </section>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <section className="min-w-0">
         <form

@@ -949,6 +949,7 @@ function eventSearchText(event) {
     event.date,
     event.event_type,
     event.source,
+    event.search_terms,
     ...(event.market_topic_ids || []),
     ...(event.sector_scope || []),
     ...(event.jurisdiction_scope || []),
@@ -975,7 +976,7 @@ function renderEventResults() {
         .map(
           (event, index) => `
             <button class="search-result${index === state.activeEventResultIndex ? " active" : ""}" id="event-option-${index}" type="button" role="option" data-event-id="${escapeHtml(event.id)}" aria-selected="${event.id === state.activeEventId}">
-              <span><strong>${escapeHtml(event.label)}</strong><small>${escapeHtml(`${formatDate(event.date)} / ${titleCase(event.event_type)} / ${event.source}`)}</small></span>
+              <span><strong>${escapeHtml(event.label)}</strong><small>${escapeHtml(`${formatDate(event.date)} / ${titleCase(event.event_type)} / ${event.source || "Official source"}`)}</small></span>
               <span class="result-state">${escapeHtml(event.editor_status === "curated" ? "Curated anchor" : "Official source")}</span>
             </button>`
         )
@@ -1791,6 +1792,7 @@ function selectTrade(id) {
   state.selectedTradeId = id;
   renderRecordDetail();
   renderTransactions();
+  renderMarketChart();
 }
 
 function renderRecordDetail() {
@@ -1916,6 +1918,25 @@ function renderEventDetail() {
       : event.executive_order_number
         ? `Executive Order ${event.executive_order_number}`
         : "";
+  const institutions = [
+    ...(event.institutions || []),
+    ...(event.agencies || []),
+    event.court,
+    event.committee,
+    event.jurisdiction,
+  ].filter(Boolean);
+  const uniqueInstitutions = [...new Set(institutions.map((value) => String(value)))];
+  const sourceCards = (event.source_urls || [])
+    .map((url, index) => {
+      let host = "Official source";
+      try {
+        host = new URL(url).hostname.replace(/^www\./, "");
+      } catch (_error) {
+        host = "Official source";
+      }
+      return `<a class="evidence-source-card" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"><strong>Source ${index + 1}</strong><span>${escapeHtml(host)}</span></a>`;
+    })
+    .join("");
   $("eventDetail").innerHTML = `
     <p class="eyebrow">${escapeHtml(titleCase(event.event_type))} / ${escapeHtml(formatDate(event.date))}</p>
     <h2 id="eventDetailTitle">${escapeHtml(event.label)}</h2>
@@ -1929,6 +1950,12 @@ function renderEventDetail() {
       ${event.review_status ? `<span class="state-label preview">${escapeHtml(titleCase(event.review_status))}</span>` : ""}
     </div>
     ${reasons.length ? `<p>${escapeHtml(reasons.join("; "))}</p>` : ""}
+    <dl class="evidence-facts">
+      <div><dt>Relationship tier</dt><dd>${escapeHtml(tierLabels[event.relationship_tier] || "Global context")}</dd></div>
+      <div><dt>Evidence status</dt><dd>${escapeHtml(titleCase(event.review_status || event.editor_status || "source status"))}</dd></div>
+      <div><dt>Institutions</dt><dd>${escapeHtml(uniqueInstitutions.join(", ") || "No institution metadata recorded")}</dd></div>
+      <div><dt>Nearest trade</dt><dd>${escapeHtml(candidateTiming || "No ranked transaction proximity recorded")}</dd></div>
+    </dl>
     ${
       involvementSummary
         ? `<p class="evidence-note"><strong>Official involvement record:</strong> ${escapeHtml(involvementSummary)}. The cited record's specific scope controls; procedural votes are not treated as positions on final legislation.</p>`
@@ -1939,7 +1966,7 @@ function renderEventDetail() {
         ? `<p class="evidence-note"><strong>${escapeHtml(candidateTiming)}.</strong> ${candidateScore ? `${escapeHtml(candidateScore)}. ` : ""}This marker is selected from attributed public events by source specificity, timing, institutional or asset relevance, and descriptive market context. It does not establish knowledge, intent, causation, or market impact.</p>`
         : ""
     }
-    <div class="evidence-links">${sources || '<span class="state-label">No source link recorded</span>'}</div>
+    <div class="evidence-source-list">${sourceCards || sources || '<span class="state-label">No source link recorded</span>'}</div>
     <div class="window-transactions">
       <strong>Transactions within ${numberFormat.format(state.eventWindowDays)} days:</strong>
       ${
@@ -2036,12 +2063,15 @@ function marketPointValue(point) {
 
 async function renderMarketChart() {
   const token = ++state.marketToken;
-  const [kind, symbol] = state.assetFilter.split(":");
-  if (kind !== "ticker" || !symbol || state.mode === "career") {
+  const found = findTrade(state.selectedTradeId);
+  const [kind, filterSymbol] = state.assetFilter.split(":");
+  const symbol = found?.trade?.ticker || (kind === "ticker" ? filterSymbol : "");
+  if (!symbol) {
     $("marketShell").hidden = true;
+    $("marketComparisonSummary").innerHTML = "";
     return;
   }
-  const matchingTrade = state.selectedTimelines
+  const matchingTrade = found?.trade || state.selectedTimelines
     .flatMap((official) => official.trades || [])
     .find((trade) => trade.ticker === symbol);
   const benchmark = matchingTrade?.benchmark_symbol || "SPY";
@@ -2051,9 +2081,18 @@ async function renderMarketChart() {
   if (!state.marketChart) state.marketChart = window.echarts.init($("marketChart"), null, { renderer: "canvas" });
   state.marketChart.resize();
   const event = selectedEvent();
-  const extent = state.mode === "event"
+  const tradeAnchor = found?.trade?.date ? dateMs(found.trade.date) : null;
+  const extent = tradeAnchor
+    ? { min: tradeAnchor - 35 * 86400000, max: tradeAnchor + 35 * 86400000 }
+    : state.mode === "event"
     ? { min: dateMs(event.date) - state.eventWindowDays * 86400000, max: dateMs(event.date) + state.eventWindowDays * 86400000 }
     : state.chartExtent;
+
+  if (!extent || !Number.isFinite(extent.min) || !Number.isFinite(extent.max)) {
+    $("marketShell").hidden = true;
+    $("marketComparisonSummary").innerHTML = "";
+    return;
+  }
 
   function normalizedSeries(payload, name) {
     const points = (payload?.points || [])
@@ -2066,7 +2105,21 @@ async function renderMarketChart() {
 
   const assetSeries = normalizedSeries(assetData, symbol);
   const benchmarkSeries = normalizedSeries(benchmarkData, benchmark);
-  $("marketTitle").textContent = `${symbol} and ${benchmark} normalized price context`;
+  $("marketTitle").textContent = found
+    ? `${found.official.full_name}: ${symbol} and ${benchmark} around ${formatDate(found.trade.date)}`
+    : `${symbol} and ${benchmark} normalized price context`;
+  const reaction = found?.trade?.market_reaction;
+  const reactionRows = reaction
+    ? [...(reaction.pre_windows || []), ...(reaction.post_windows || [])]
+        .sort((a, b) => a.session_count - b.session_count || a.direction.localeCompare(b.direction))
+        .map(
+          (window) => `<tr><th scope="row">${escapeHtml(titleCase(window.direction))} ${numberFormat.format(window.session_count)} session${window.session_count === 1 ? "" : "s"}</th><td>${Number(window.asset_return_pct).toFixed(2)}%</td><td>${Number(window.benchmark_return_pct).toFixed(2)}%</td><td>${Number(window.benchmark_adjusted_return_pct).toFixed(2)}%</td></tr>`
+        )
+        .join("")
+    : "";
+  $("marketComparisonSummary").innerHTML = reactionRows
+    ? `<div class="market-comparison-heading"><strong>Normalized movement around the disclosed transaction</strong><span>Common trading sessions; unsigned with respect to BUY or SELL</span></div><div class="market-comparison-scroll"><table><thead><tr><th scope="col">Window</th><th scope="col">${escapeHtml(symbol)}</th><th scope="col">${escapeHtml(benchmark)}</th><th scope="col">Difference</th></tr></thead><tbody>${reactionRows}</tbody></table></div><p class="interpretation-boundary"><strong>Interpretation boundary:</strong> These are descriptive price changes around a reported date, not portfolio returns or evidence of knowledge, intent, causation, legality, ethics, or market impact.</p>`
+    : `<p class="evidence-note">No verified pre/post market-reaction window is available for this transaction.</p>`;
   state.marketChart.setOption(
     {
       animationDuration: 200,
@@ -2076,7 +2129,7 @@ async function renderMarketChart() {
       xAxis: { type: "time", min: extent.min, max: extent.max, axisLabel: { color: "#6d7a84", hideOverlap: true } },
       yAxis: { type: "value", name: "Indexed", axisLabel: { color: "#6d7a84" }, splitLine: { lineStyle: { color: "#e3e9e6" } } },
       series: [
-        { type: "line", name: assetSeries.name, data: assetSeries.data, showSymbol: false, lineStyle: { width: 2.5, color: "#0b6b78" }, itemStyle: { color: "#0b6b78" } },
+        { type: "line", name: assetSeries.name, data: assetSeries.data, showSymbol: false, lineStyle: { width: 2.5, color: "#0b6b78" }, itemStyle: { color: "#0b6b78" }, markLine: tradeAnchor ? { silent: true, symbol: ["none", "none"], label: { formatter: "Reported trade date", color: "#4f5d68" }, lineStyle: { color: "#7154a6", type: "dashed", width: 1.5 }, data: [{ xAxis: tradeAnchor }] } : undefined },
         { type: "line", name: benchmarkSeries.name, data: benchmarkSeries.data, showSymbol: false, lineStyle: { width: 2, color: "#a96f12" }, itemStyle: { color: "#a96f12" } },
       ],
       graphic:
@@ -2108,6 +2161,7 @@ function renderDatasetStatus() {
     [summary.house_ptr_machine_readable_document_count, "Machine-readable PTRs"],
     [summary.house_ptr_parser_preview_transaction_count, "House preview rows"],
     [summary.house_ptr_ocr_required_document_count, "OCR backlog"],
+    [summary.ocr_processed_page_count, "OCR evidence pages"],
     [summary.senate_ptr_matched_document_count, "Senate matched PTRs"],
     [summary.senate_ptr_parser_preview_transaction_count, "Senate preview rows"],
     [summary.market_price_point_count + summary.crypto_price_point_count, "Market price points"],

@@ -23,6 +23,7 @@ SENATE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
 SENATE_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
 EXECUTIVE_MANIFEST = ROOT / "data" / "disclosures" / "executive_oge_disclosure_manifest.json"
 JUDICIAL_MANIFEST = ROOT / "data" / "disclosures" / "judicial_disclosure_manifest.json"
+OCR_RESULTS = ROOT / "data" / "disclosures" / "disclosure_ocr_results.json"
 OUTPUT = ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json"
 
 
@@ -70,6 +71,11 @@ def build_dataset() -> dict:
     senate_transactions = read_json(SENATE_TRANSACTIONS, {"summary": {}})
     executive_manifest = read_json(EXECUTIVE_MANIFEST, {"summary": {}})
     judicial_manifest = read_json(JUDICIAL_MANIFEST, {"summary": {}})
+    ocr_results = read_json(OCR_RESULTS, {"records": [], "summary": {}})
+    ocr_by_chamber = Counter(row.get("chamber") for row in ocr_results.get("records", []))
+    ocr_pages_by_chamber = Counter()
+    for row in ocr_results.get("records", []):
+        ocr_pages_by_chamber[row.get("chamber")] += int(row.get("page_count") or 0)
 
     source_coverage = {
         "house-financial-disclosure": {
@@ -78,6 +84,8 @@ def build_dataset() -> dict:
             "processed_document_count": house_transactions.get("summary", {}).get("processed_document_count", 0),
             "parser_preview_transaction_count": house_transactions.get("summary", {}).get("parser_preview_transaction_count", 0),
             "image_or_ocr_backlog_count": house_transactions.get("summary", {}).get("document_status_counts", {}).get("ocr_required", 0),
+            "ocr_evidence_document_count": ocr_by_chamber["House"],
+            "ocr_evidence_page_count": ocr_pages_by_chamber["House"],
         },
         "senate-public-financial-disclosure": {
             "metadata_official_count": senate_transactions.get("summary", {}).get("processed_official_count", 0),
@@ -85,6 +93,8 @@ def build_dataset() -> dict:
             "processed_document_count": senate_transactions.get("summary", {}).get("processed_document_count", 0),
             "parser_preview_transaction_count": senate_transactions.get("summary", {}).get("parser_preview_transaction_count", 0),
             "image_or_ocr_backlog_count": senate_transactions.get("summary", {}).get("document_status_counts", {}).get("paper_images_review_required", 0),
+            "ocr_evidence_document_count": ocr_by_chamber["Senate"],
+            "ocr_evidence_page_count": ocr_pages_by_chamber["Senate"],
         },
         "oge-individual-disclosures": {
             "metadata_official_count": executive_manifest.get("summary", {}).get("official_count", 0),
@@ -156,6 +166,8 @@ def build_dataset() -> dict:
                 "source_processed_document_count": coverage.get("processed_document_count", 0),
                 "source_parser_preview_transaction_count": coverage.get("parser_preview_transaction_count", 0),
                 "source_image_or_ocr_backlog_count": coverage.get("image_or_ocr_backlog_count", 0),
+                "source_ocr_evidence_document_count": coverage.get("ocr_evidence_document_count", 0),
+                "source_ocr_evidence_page_count": coverage.get("ocr_evidence_page_count", 0),
                 "reviewed_public_trade_count": 0,
                 "readiness_status": readiness,
                 "source_pipeline_started": source_pipeline_started,
@@ -235,6 +247,8 @@ def build_dataset() -> dict:
             "retrieval_batch_count": retrieval_batches.get("summary", {}).get("batch_count", 0),
             "retrieval_candidate_count": retrieval_batches.get("summary", {}).get("candidate_count", 0),
             "open_warning_count": stale_alerts.get("summary", {}).get("open_warning_count", 0),
+            "ocr_evidence_document_count": ocr_results.get("summary", {}).get("completed_document_count", 0),
+            "ocr_evidence_page_count": ocr_results.get("summary", {}).get("processed_page_count", 0),
             "review_required_before_public_trade": True,
             "source_coverage": source_coverage,
         },

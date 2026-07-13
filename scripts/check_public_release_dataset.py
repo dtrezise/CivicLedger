@@ -20,6 +20,7 @@ HOUSE_INDEX = ROOT / "data" / "disclosures" / "house_disclosure_index.json"
 HOUSE_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 SENATE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
 SENATE_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
+OCR_RESULTS = ROOT / "data" / "disclosures" / "disclosure_ocr_results.json"
 
 INITIAL_PAYLOAD_LIMITS = {
     "overview": 500_000,
@@ -215,6 +216,9 @@ def validate_event_partitions(
             require(event_id in event_index, f"Event partition contains unknown event: {event_id}")
             require(event_id not in seen, f"Event appears in multiple year partitions: {event_id}")
             require(str(event.get("date", ""))[:4] == year, f"Event stored in wrong year: {event_id}")
+            require(event.get("source"), f"Event source is missing: {event_id}")
+            if event.get("editor_status") in {"curated", "source_ingested"}:
+                require(event.get("source_tier"), f"Official event source tier is missing: {event_id}")
             require(event.get("source_urls"), f"Event source URLs are missing: {event_id}")
             for source_url in event.get("source_urls", []):
                 require_https_url(source_url, f"Event source for {event_id}")
@@ -516,19 +520,48 @@ def validate() -> dict[str, int | float]:
     require(ranking_metrics.get("recall", 0) >= 0.9, "Trade-event ranking recall regressed")
     disclosure_pipeline = overview.get("disclosure_pipeline", {})
     ocr_summary = disclosure_pipeline.get("ocr_priority_batches", {}).get("summary", {})
+    ocr_result_summary = disclosure_pipeline.get("ocr_results", {}).get("summary", {})
     amendment_summary = disclosure_pipeline.get("amendment_reconciliation", {}).get("summary", {})
     require(ocr_summary.get("backlog_document_count", 0) >= 2_500, "OCR backlog priorities are missing")
     require(ocr_summary.get("ocr_content_record_count") == 0, "Metadata-only OCR batching generated content")
     require(ocr_summary.get("transaction_rows_created") == 0, "OCR batching created unsupported trades")
+    require(ocr_result_summary.get("completed_document_count", 0) >= 100, "Prioritized OCR results are incomplete")
+    require(ocr_result_summary.get("processed_page_count", 0) >= 600, "Prioritized OCR page coverage is incomplete")
+    require(ocr_result_summary.get("transaction_rows_created") == 0, "OCR evidence created unsupported trades")
+    require(
+        ocr_result_summary.get("human_review_required_document_count")
+        == ocr_result_summary.get("completed_document_count"),
+        "OCR evidence bypassed human review",
+    )
+    ocr_manifest = read_json(OCR_RESULTS)
+    require(len(ocr_manifest.get("records", [])) == 100, "OCR result manifest record count is wrong")
+    for record in ocr_manifest["records"]:
+        result_path = (ROOT / record["result_path"]).resolve()
+        require(
+            result_path.is_relative_to((ROOT / "data" / "disclosures" / "ocr_results").resolve()),
+            "OCR result path escapes its evidence directory",
+        )
+        require(result_path.exists(), f"OCR result is missing: {record['result_path']}")
+        require(
+            hashlib.sha256(result_path.read_bytes()).hexdigest() == record["result_sha256"],
+            f"OCR result hash mismatch: {record['document_id']}",
+        )
+        result = read_json(result_path)
+        require(result.get("document_id") == record["document_id"], "OCR result identity mismatch")
+        require(
+            result.get("quality", {}).get("transaction_rows_created") == 0,
+            "OCR result created unsupported transaction rows",
+        )
     require(
         amendment_summary.get("destructive_change_count") == 0,
         "Amendment reconciliation performed a destructive change",
     )
     require(
         overview.get("sec_issuer_aliases", {}).get("summary", {}).get("supported_ticker_count", 0)
-        >= 300,
+        >= 1_000,
         "SEC-backed issuer alias coverage regressed",
     )
+    require(overview.get("summary", {}).get("entity_quality_issue_count", 99_999) <= 7_500, "Entity quality backlog regressed")
     require(
         overview.get("sec_filing_context", {}).get("summary", {}).get("event_count", 0) >= 600,
         "SEC filing context coverage regressed",
@@ -537,6 +570,23 @@ def validate() -> dict[str, int | float]:
         overview.get("primary_source_context", {}).get("summary", {}).get("record_count", 0)
         >= 1_800,
         "Official primary-source context coverage regressed",
+    )
+    require(
+        overview.get("house_historical_transactions", {}).get("summary", {}).get("indexed_ptr_document_count", 0)
+        >= 3_100,
+        "Legacy House PTR source index coverage regressed",
+    )
+    require(
+        overview.get("house_historical_transactions", {}).get("summary", {}).get("transaction_row_count") == 0,
+        "Legacy House source index created unsupported transaction rows",
+    )
+    require(
+        overview.get("supreme_court_historical", {}).get("summary", {}).get("decision_count", 0) >= 640,
+        "Historical Supreme Court decision coverage regressed",
+    )
+    require(
+        overview.get("supreme_court_historical", {}).get("summary", {}).get("docket_number_missing_count") == 0,
+        "Historical Supreme Court docket provenance regressed",
     )
     source_count = validate_source_catalog(overview, coverage)
     role_count = validate_role_partitions(manifest, validated_paths, official_ids)
@@ -556,9 +606,6 @@ def validate() -> dict[str, int | float]:
     for event in event_catalog.values():
         require_iso_date(event.get("date"), f"Event date for {event.get('id', 'unknown')}")
         require(event.get("label") and event.get("event_type"), f"Event metadata is incomplete: {event.get('id')}")
-        require(event.get("source"), f"Event source is missing: {event.get('id')}")
-        if event.get("editor_status") in {"curated", "source_ingested"}:
-            require(event.get("source_tier"), f"Official event source tier is missing: {event.get('id')}")
     event_count = validate_event_partitions(manifest, validated_paths, event_catalog)
     for official_id, record in timeline_records.items():
         path = validated_paths[("timelines", official_id)]

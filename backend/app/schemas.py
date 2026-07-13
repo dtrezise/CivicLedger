@@ -441,6 +441,7 @@ class RelationshipReviewCreateRequest(BaseModel):
     )
     expected_status: RelationshipCandidateStatus | None = None
     expected_revision: str | None = Field(default=None, min_length=64, max_length=64)
+    review_session_id: UUID | None = None
 
     @field_validator("reviewer", "evidence_note")
     @classmethod
@@ -475,6 +476,7 @@ class RelationshipBulkReviewCreateRequest(BaseModel):
     reviewer: str = Field(min_length=1, max_length=200)
     evidence_note: str = Field(min_length=1, max_length=5000)
     targets: list[RelationshipBulkReviewTarget] = Field(min_length=1, max_length=100)
+    review_session_id: UUID | None = None
 
     @field_validator("reviewer", "evidence_note")
     @classmethod
@@ -546,6 +548,116 @@ class RelationshipAuditExportRecord(BaseModel):
     reviewer: str
     evidence_note: str
     reviewed_at: datetime
+    review_session_id: UUID | None = None
+
+
+class ReviewAssignmentAction(str, Enum):
+    ASSIGN = "assign"
+    RELEASE = "release"
+    COMPLETE = "complete"
+
+
+class ReviewAssignmentCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    candidate_id: UUID
+    action: ReviewAssignmentAction
+    assignee: str | None = Field(default=None, max_length=200)
+    actor: str = Field(min_length=1, max_length=200)
+    note: str | None = Field(default=None, max_length=2000)
+
+    @field_validator("assignee", "actor", "note")
+    @classmethod
+    def strip_assignment_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        stripped = value.strip()
+        return stripped or None
+
+
+class ReviewAssignmentItem(BaseModel):
+    id: UUID
+    candidate_id: UUID
+    action: ReviewAssignmentAction
+    assignee: str | None
+    actor: str
+    note: str | None
+    occurred_at: datetime
+
+
+class ReviewFilterCriteria(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: RelationshipCandidateStatus | None = None
+    evidence_tier: str | None = Field(default=None, max_length=100)
+    event_type: str | None = Field(default=None, max_length=100)
+    query: str | None = Field(default=None, max_length=200)
+    max_abs_days: int | None = Field(default=None, ge=0, le=3650)
+    min_internal_rank: float | None = Field(default=None, ge=0)
+    has_reviews: bool | None = None
+    sort: RelationshipCandidateSort = RelationshipCandidateSort.PRIORITY
+    page_size: int = Field(default=25, ge=1, le=100)
+
+
+class ReviewSavedFilterCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    owner: str = Field(min_length=1, max_length=200)
+    name: str = Field(min_length=1, max_length=120)
+    criteria: ReviewFilterCriteria
+
+    @field_validator("owner", "name")
+    @classmethod
+    def strip_filter_text(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("must not be blank")
+        return value
+
+
+class ReviewSavedFilterItem(BaseModel):
+    id: UUID
+    owner: str
+    name: str
+    criteria: ReviewFilterCriteria
+    created_at: datetime
+
+
+class ReviewSessionCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reviewer: str = Field(min_length=1, max_length=200)
+    filter_snapshot: ReviewFilterCriteria = Field(default_factory=ReviewFilterCriteria)
+
+    @field_validator("reviewer")
+    @classmethod
+    def strip_session_reviewer(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("must not be blank")
+        return value
+
+
+class ReviewSessionCloseRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reviewer: str = Field(min_length=1, max_length=200)
+
+    @field_validator("reviewer")
+    @classmethod
+    def strip_close_reviewer(cls, value: str) -> str:
+        return value.strip()
+
+
+class ReviewSessionItem(BaseModel):
+    id: UUID
+    reviewer: str
+    status: str
+    filter_snapshot: ReviewFilterCriteria
+    started_at: datetime
+    completed_at: datetime | None
+    decision_count: int
+    decision_counts: dict[str, int]
 
 
 class RelationshipAuditExportResponse(BaseModel):

@@ -104,6 +104,16 @@ jobs:
           python scripts/build_production_trade_promotions.py
           python scripts/build_disclosure_completeness_dashboard.py
           python scripts/build_source_staleness_alerts.py
+      - name: Install disclosure OCR runtime when missing
+        run: |
+          if ! command -v tesseract >/dev/null || ! command -v pdftoppm >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y poppler-utils tesseract-ocr
+          fi
+      - name: Process prioritized disclosure OCR evidence
+        env:
+          PYTHONPATH: backend
+        run: python scripts/build_disclosure_ocr_results.py --acknowledge-senate-terms
       - name: Refresh FRED trade context
         env:
           PYTHONPATH: backend
@@ -142,15 +152,6 @@ jobs:
         run: |
           python scripts/build_entity_reference_dataset.py
           python scripts/build_source_snapshot_index.py
-      - name: Record successful refresh telemetry
-        env:
-          PYTHONPATH: backend
-        run: >-
-          python scripts/build_source_refresh_telemetry.py
-          --record-run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          --started-at "$REFRESH_STARTED_AT"
-          --completed-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          --status success
       - name: Check source freshness
         run: python scripts/check_source_freshness.py
       - name: Rebuild Pages data
@@ -168,6 +169,15 @@ jobs:
           python scripts/check_release_determinism.py
           python scripts/build_release_checksum_inventory.py
           python scripts/build_release_checksum_inventory.py --check
+      - name: Record successful full-refresh telemetry
+        env:
+          PYTHONPATH: backend
+        run: >-
+          python scripts/build_source_refresh_telemetry.py
+          --record-run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          --started-at "$REFRESH_STARTED_AT"
+          --completed-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          --status success
       - name: Commit refreshed generated data
         run: |
           if git diff --quiet -- data pages-site/data pages-site/release-checksums.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
@@ -179,6 +189,25 @@ jobs:
             git commit -m "Refresh live context data"
             git push
           fi
+      - name: Record failed refresh telemetry
+        if: ${{ failure() }}
+        env:
+          PYTHONPATH: backend
+        run: >-
+          python scripts/build_source_refresh_telemetry.py
+          --record-run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          --started-at "$REFRESH_STARTED_AT"
+          --completed-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          --status failed
+          --failure-count 1
+      - name: Persist failed refresh telemetry
+        if: ${{ failure() }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/operations/source_refresh_runs.json data/operations/source_refresh_telemetry.json
+          git commit -m "Record failed live context refresh" || true
+          git push
       - uses: actions/configure-pages@v6
         with:
           enablement: true

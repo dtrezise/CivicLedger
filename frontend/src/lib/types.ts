@@ -210,6 +210,47 @@ export interface RelationshipReview {
   reviewed_at: string;
 }
 
+export interface ReviewFilterCriteria {
+  status?: RelationshipStatus | null;
+  evidence_tier?: string | null;
+  event_type?: string | null;
+  query?: string | null;
+  max_abs_days?: number | null;
+  min_internal_rank?: number | null;
+  has_reviews?: boolean | null;
+  sort: RelationshipSort;
+  page_size: number;
+}
+
+export interface ReviewSavedFilter {
+  id: string;
+  owner: string;
+  name: string;
+  criteria: ReviewFilterCriteria;
+  created_at: string;
+}
+
+export interface ReviewAssignment {
+  id: string;
+  candidate_id: string;
+  action: "assign" | "release" | "complete";
+  assignee: string | null;
+  actor: string;
+  note: string | null;
+  occurred_at: string;
+}
+
+export interface ReviewSessionSummary {
+  id: string;
+  reviewer: string;
+  status: "active" | "completed";
+  filter_snapshot: ReviewFilterCriteria;
+  started_at: string;
+  completed_at: string | null;
+  decision_count: number;
+  decision_counts: Record<string, number>;
+}
+
 export interface RelationshipCandidate {
   id: string;
   trade_id: string;

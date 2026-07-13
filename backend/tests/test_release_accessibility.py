@@ -47,3 +47,6 @@ def test_timeline_tools_have_keyboard_and_dynamic_group_labels():
     assert '<legend class="visually-hidden">${escapeHtml(official.full_name)} event categories</legend>' in javascript
     assert 'type="checkbox" data-lane-event-category=' in javascript
     assert '$("laneEventControls").addEventListener("change"' in javascript
+    assert 'id="marketComparisonSummary" aria-live="polite"' in html
+    assert '<dl class="evidence-facts">' in javascript
+    assert '<th scope="col">Window</th>' in javascript

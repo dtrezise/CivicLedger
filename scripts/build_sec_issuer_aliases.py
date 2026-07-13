@@ -28,7 +28,7 @@ from app.services.sec_edgar import (  # noqa: E402
 )
 OUTPUT = ROOT / "data" / "context" / "sec_issuer_aliases.json"
 CACHE = ROOT / ".cache" / "sec-edgar"
-DEFAULT_MIN_OCCURRENCES = 20
+DEFAULT_MIN_OCCURRENCES = 3
 HOUSE_INDEX = ROOT / "data" / "disclosures" / "house_ptr_transactions.json"
 PRESIDENTIAL_TRANSACTIONS = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
 SENATE_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"

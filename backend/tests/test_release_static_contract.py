@@ -52,3 +52,18 @@ def test_timeline_density_brush_and_lane_event_contracts():
     assert "toolbox: { show: false }" in javascript
     assert 'data-lane-event-category="${escapeHtml(category)}"' in javascript
     assert "eventVisibleForLane(event, official.id)" in javascript
+
+
+def test_event_evidence_and_selected_trade_market_comparison_contracts():
+    html = (ROOT / "pages-site" / "index.html").read_text()
+    javascript = (ROOT / "pages-site" / "app.js").read_text()
+    styles = (ROOT / "pages-site" / "styles.css").read_text()
+
+    assert 'id="marketComparisonSummary" aria-live="polite"' in html
+    assert 'class="evidence-facts"' in javascript
+    assert 'class="evidence-source-card"' in javascript
+    assert "Normalized movement around the disclosed transaction" in javascript
+    assert "reviewed transaction date" not in javascript.lower()
+    assert "renderMarketChart();" in javascript
+    assert ".market-comparison-summary table" in styles
+    assert ".evidence-source-list" in styles

@@ -117,6 +117,14 @@ Examples:
 
 Date proximity alone is contextual. It does not establish knowledge, causation, benefit, or wrongdoing. Reviewer decisions are append-only in `relationship_reviews`; narrowing or rejecting a candidate does not delete the original calculation.
 
+Reviewer operations use three additional structures:
+
+- `review_assignment_events` is an append-only sequence of attributed assign, release, and complete events for a candidate queue item;
+- `review_saved_filters` stores owner-scoped, strictly validated queue criteria;
+- `review_sessions` captures the reviewer, filter snapshot, active/completed state, and exact decisions linked through `relationship_reviews.review_session_id`.
+
+Assignments and decisions retain immutable audit histories. Session completion updates only the operational session envelope; it never rewrites a decision or assignment event.
+
 Neutral market-reaction context is stored outside the relational review state as
 a compact manifest plus symbol-year partitions. Each partition records its byte
 length, SHA-256, symbol, year, and reaction count. Loading fails closed on hash,
@@ -145,4 +153,4 @@ respect to BUY or SELL and are not promotion evidence by themselves.
 
 ## Migration Compatibility
 
-Migration `0005_entity_history_model` is additive after `0004_release_relationship_model`. Existing issuer rows are backfilled before the required organization foreign key is enforced. New disclosure columns have conservative defaults or are nullable, so current parser and promotion constructors remain valid. The downgrade removes the new entity/history layer and metadata columns but intentionally cannot preserve data written only to those structures.
+Migration `0005_entity_history_model` is additive after `0004_release_relationship_model`. Migration `0006_review_immutability` enforces append-only relationship decisions in PostgreSQL. Migration `0007_reviewer_workspaces` adds reviewer assignments, filters, sessions, and the nullable session link on decisions; it also extends the database immutability trigger to assignment events. New disclosure and reviewer columns have conservative defaults or are nullable, so current parser and promotion constructors remain valid.

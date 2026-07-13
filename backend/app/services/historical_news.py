@@ -339,7 +339,11 @@ def build_primary_source_context(
     court_status = (federal_events.get("scope") or {}).get(
         "supreme_court_pre_2017_status"
     )
-    if court_status and court_status != "complete":
+    court_backfill_complete = court_status in {
+        "complete",
+        "official_us_reports_calendar_2009_2016_backfilled",
+    }
+    if court_status and not court_backfill_complete:
         gaps.append(
             {
                 "id": "primary-source-gap:courts-pre-2017",
