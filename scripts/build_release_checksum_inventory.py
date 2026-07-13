@@ -8,6 +8,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from public_corpus_metrics import deployable_files
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "pages-site"
@@ -18,8 +20,8 @@ DYNAMIC_RELEASE_METADATA = SITE / "release.json"
 def inventory() -> dict:
     manifest = json.loads((SITE / "data" / "manifest.json").read_text())
     files = []
-    for path in sorted(SITE.rglob("*")):
-        if not path.is_file() or path in {OUTPUT, DYNAMIC_RELEASE_METADATA}:
+    for path in deployable_files(SITE):
+        if path in {OUTPUT, DYNAMIC_RELEASE_METADATA}:
             continue
         payload = path.read_bytes()
         files.append(
