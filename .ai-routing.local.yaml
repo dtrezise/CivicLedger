@@ -1,0 +1,17 @@
+schema_version: 1
+governance:
+  strategy: sibling_pointer
+  local_path: ../ai-model-routing-governance
+  remote_url: https://github.com/dtrezise/ai-model-routing-governance
+  version: null
+  required_schema_version: 1
+
+project:
+  name: CivicLedger
+  default_task_profile: general_assistance
+
+overrides:
+  force_frontier_for: []
+  allow_economy_for: []
+  default_mode: balanced
+  no_split: false
