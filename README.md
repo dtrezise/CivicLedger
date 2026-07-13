@@ -54,6 +54,7 @@ This will:
 | API Docs (Swagger) | http://localhost:8000/docs    |
 | API Docs (ReDoc) | http://localhost:8000/redoc     |
 | Public GitHub Pages demo | https://dtrezise.github.io/CivicLedger/ |
+| Public Cloudflare pilot | https://civic-ledger.dan-a2c.workers.dev/ |
 
 ## Seed Data
 

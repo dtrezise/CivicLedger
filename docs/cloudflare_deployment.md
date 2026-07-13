@@ -16,23 +16,32 @@ validated static release artifact; it does not become the system of record.
 - Development: local Docker services and `python3 -m http.server` for the static workbench.
 - Continuous validation: `.github/workflows/ci.yml` on every push and pull request.
 - Current public fallback: GitHub Pages from `.github/workflows/pages.yml`.
-- Cloudflare pilot: manual `.github/workflows/cloudflare-pilot.yml` deployment to `civic-ledger.<account-subdomain>.workers.dev`.
+- Cloudflare pilot: manual `.github/workflows/cloudflare-pilot.yml` deployment to `https://civic-ledger.dan-a2c.workers.dev/`.
 - Production cutover: enable only after a sustained parity period and public smoke checks.
+
+## Pilot Status
+
+The first pilot deployment completed successfully on 2026-07-13 from commit
+`e7f0f80` in GitHub Actions run `29249340674`. The release uploaded 422 static
+assets and passed the public-data, provenance, ranking, release-contract, and
+Cloudflare asset-limit gates before deployment. GitHub Pages remains active as
+the public fallback.
 
 ## Cloudflare Bootstrap
 
 1. Enable the account `workers.dev` subdomain.
-2. Create an API token from Cloudflare's `Edit Cloudflare Workers` template,
-   constrained to the CivicLedger account. Do not add zone or R2 permissions to
-   the static-deployment token.
+2. Create an API token constrained to the CivicLedger account with only
+   `Workers Scripts:Edit`. Do not add zone, Pages, KV, R2, or unrelated
+   permissions to the static-deployment token.
 3. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as GitHub repository
    secrets.
 4. Run the `Deploy Cloudflare Pilot` workflow manually.
 5. Verify the emitted deployment URL before changing any production routing.
 
-The API token value belongs only in Cloudflare, GitHub Actions secrets, and the
-ignored local secret inventory. It must never appear in committed files, command
-output, release artifacts, or workflow summaries.
+The API token value belongs only in Cloudflare and GitHub Actions secrets. The
+ignored local inventory records metadata and storage locations, never raw
+values. Credentials must never appear in committed files, command output,
+release artifacts, or workflow summaries.
 
 ## Local Validation
 
