@@ -45,6 +45,25 @@ def collect_ids(value: object) -> list[str]:
     return found
 
 
+def collect_active_version_ids(value: object) -> list[str]:
+    found: list[str] = []
+    if isinstance(value, dict):
+        for key in ("version_id", "versionId"):
+            candidate = value.get(key)
+            if isinstance(candidate, str) and VERSION_ID.match(candidate) and candidate not in found:
+                found.append(candidate)
+        for child in value.values():
+            for item in collect_active_version_ids(child):
+                if item not in found:
+                    found.append(item)
+    elif isinstance(value, list):
+        for child in value:
+            for item in collect_active_version_ids(child):
+                if item not in found:
+                    found.append(item)
+    return found
+
+
 def load_json(path: Path) -> object:
     text = path.read_text().strip()
     start_candidates = [index for index in (text.find("["), text.find("{")) if index >= 0]
@@ -63,17 +82,18 @@ def main() -> None:
         versions_payload = load_json(args.versions)
         status_payload = load_json(args.status)
         versions = collect_ids(versions_payload)
-        active = collect_ids(status_payload)
+        active = collect_active_version_ids(status_payload)
         if not active:
             raise RollbackError("The active deployment did not expose a version identifier")
         prior = [value for value in versions if value not in active]
         if not prior:
             raise RollbackError("No prior Worker version is available for rollback")
+        rollback_target = prior[-1]
         report = {
             "active_version_ids": active,
             "available_version_count": len(versions),
-            "rollback_command": f"wrangler rollback {prior[0]} --message <reason> --config wrangler.jsonc",
-            "rollback_target_version_id": prior[0],
+            "rollback_command": f"wrangler rollback {rollback_target} --message <reason> --config wrangler.jsonc --yes",
+            "rollback_target_version_id": rollback_target,
             "schema_version": "civicledger-rollback-readiness-v1",
             "status": "ready",
         }
@@ -84,7 +104,7 @@ def main() -> None:
         args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(
         f"Cloudflare rollback verification passed: active={active[0]}, "
-        f"target={prior[0]}, versions={len(versions)}"
+        f"target={rollback_target}, versions={len(versions)}"
     )
 
 
