@@ -91,8 +91,19 @@ jobs:
           PYTHONPATH: backend
           DEEP_SOURCES: ${{ inputs.deep_sources || false }}
         run: |
-          python scripts/build_senate_disclosure_index.py --all-senators --acknowledge-senate-terms
+          deep_refresh=false
           if [ "$DEEP_SOURCES" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "7" ]; }; then
+            deep_refresh=true
+          fi
+          if ! python scripts/build_senate_disclosure_index.py --all-senators --acknowledge-senate-terms; then
+            if [ "$deep_refresh" = "true" ]; then
+              exit 1
+            fi
+            echo "::warning::Senate portal refresh failed; retaining the committed hash-backed index and transaction snapshot."
+            test -s data/disclosures/senate_disclosure_index.json
+            test -s data/disclosures/senate_ptr_transactions.json
+          fi
+          if [ "$deep_refresh" = "true" ]; then
             python scripts/build_senate_ptr_transactions.py --all-indexed --acknowledge-senate-terms
           else
             echo "Skipping deep Senate report-page refresh."
