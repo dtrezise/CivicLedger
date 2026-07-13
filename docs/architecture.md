@@ -11,7 +11,7 @@ The shared public data contract is `pages-site/data/manifest.json` plus its hash
 
 ## Runtime Stack
 
-- Public workbench: static HTML/CSS/JavaScript, ECharts 5.6, GitHub Pages.
+- Public workbench: static HTML/CSS/JavaScript and ECharts 5.6, with GitHub Pages as the current public fallback and Workers Static Assets as the parallel delivery pilot.
 - Review frontend: Next.js 14, TypeScript, TailwindCSS, Recharts.
 - Backend: FastAPI, SQLAlchemy, Pydantic.
 - Database: PostgreSQL managed through Alembic migrations.
@@ -71,3 +71,4 @@ Every manifest entry carries byte size and SHA-256. The release validator reject
   precision and recall thresholds; those metrics are software-quality checks,
   not evidence of causation or investigative accuracy.
 - GitHub Pages deploys and serves the manifest and a representative official partition.
+- Workers Static Assets compatibility checks enforce the provider's asset-count and per-file limits before a Cloudflare pilot deploy.

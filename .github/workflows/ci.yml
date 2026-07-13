@@ -28,6 +28,8 @@ jobs:
         run: python scripts/check_release_links.py
       - name: Enforce Pages performance budgets
         run: python scripts/check_release_performance.py
+      - name: Validate Workers Static Assets limits
+        run: python scripts/check_cloudflare_assets.py
       - name: Validate deterministic generated JSON
         run: python scripts/check_release_determinism.py
       - name: Verify release checksum inventory

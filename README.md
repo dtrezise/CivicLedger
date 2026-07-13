@@ -82,6 +82,7 @@ On first startup the backend automatically seeds the database with:
 |------|---------|
 | `docs/product_brief.md` | Product boundaries and MVP definition |
 | `docs/architecture.md` | System layers and release gates |
+| `docs/cloudflare_deployment.md` | Parallel Cloudflare pilot, credentials, validation, and rollback workflow |
 | `docs/data_model.md` | Current and next data model |
 | `docs/provenance_policy.md` | Source, fixture, correction, and share-card rules |
 | `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
@@ -95,7 +96,10 @@ On first startup the backend automatically seeds the database with:
 ## Public GitHub Pages Demo
 
 The repository publishes the public research workbench from `pages-site/` using
-GitHub Pages. It is intentionally separate from the Docker/FastAPI review app:
+GitHub Pages and pilots the same validated artifact on Cloudflare Workers Static
+Assets. GitHub remains the source and release-audit system, and GitHub Pages stays
+available as an independent fallback during the Cloudflare pilot. The public
+workbench is intentionally separate from the Docker/FastAPI review app:
 Pages loads a small versioned manifest, official and event indexes, and
 official/market partitions on demand. The workbench supports career, calendar,
 and event-window comparison modes, branch-aware official search, transaction
