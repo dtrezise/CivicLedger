@@ -94,6 +94,7 @@ jobs:
         with:
           name: cloudflare-release-${{ steps.release.outputs.short_sha }}
           path: .release-artifacts/
+          include-hidden-files: true
           retention-days: 90
       - name: Publish production release summary
         run: |

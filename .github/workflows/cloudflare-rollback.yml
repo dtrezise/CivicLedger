@@ -35,6 +35,9 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
       - name: Validate rollback request
         env:
           CONFIRMATION: ${{ inputs.confirmation }}
@@ -44,19 +47,18 @@ jobs:
           python -c 'import os, re; value=os.environ["VERSION_ID"]; assert re.fullmatch(r"[0-9a-fA-F-]{36}", value), "Invalid version ID"'
           mkdir -p .release-artifacts
       - name: Restore selected Worker version
-        id: rollback
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4.110.0"
-          command: >-
-            rollback ${{ inputs.version_id }}
-            --message "GitHub Actions rollback run ${{ github.run_id }}"
-            --config wrangler.jsonc
-          postCommands: |
-            wrangler versions list --json --config wrangler.jsonc > .release-artifacts/cloudflare-versions.json
-            wrangler deployments status --json --config wrangler.jsonc > .release-artifacts/cloudflare-deployment-status.json
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npx --yes wrangler@4.110.0 rollback "${{ inputs.version_id }}" \
+            --message "GitHub Actions rollback run ${{ github.run_id }}" \
+            --config wrangler.jsonc \
+            --yes
+          npx --yes wrangler@4.110.0 versions list --json --config wrangler.jsonc \
+            > .release-artifacts/cloudflare-versions.json
+          npx --yes wrangler@4.110.0 deployments status --json --config wrangler.jsonc \
+            > .release-artifacts/cloudflare-deployment-status.json
       - name: Verify restored production release
         run: >-
           python scripts/smoke_cloudflare_release.py
@@ -69,10 +71,12 @@ jobs:
           --status .release-artifacts/cloudflare-deployment-status.json
           --output .release-artifacts/cloudflare-rollback-readiness.json
       - name: Upload rollback evidence
+        if: ${{ always() }}
         uses: actions/upload-artifact@v7
         with:
           name: cloudflare-rollback-${{ github.run_id }}
           path: .release-artifacts/
+          include-hidden-files: true
           retention-days: 90
       - name: Publish rollback summary
         env:

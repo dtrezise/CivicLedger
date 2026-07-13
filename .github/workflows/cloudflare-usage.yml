@@ -15,9 +15,6 @@ concurrency:
 jobs:
   usage:
     runs-on: ubuntu-latest
-    environment:
-      name: cloudflare-production
-      deployment: false
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -42,4 +39,5 @@ jobs:
         with:
           name: cloudflare-usage-${{ github.run_id }}
           path: .release-artifacts/
+          include-hidden-files: true
           retention-days: 90
