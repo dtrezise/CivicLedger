@@ -1,32 +1,93 @@
 {
-  "context_label": "Raw disclosure artifacts are archived with hashes before parser output or public trade rows. Pending rows require official-source retrieval and review.",
+  "context_label": "Raw disclosure artifacts use content-addressed storage and remain review-gated. Restricted rows record policy decisions without attempting retrieval.",
   "documents": [
     {
+      "access_decision": {
+        "access_attempted": false,
+        "access_mode": "direct_public_document_or_acknowledged_portal",
+        "access_status": "allowed",
+        "acknowledgement_required": false,
+        "allowed_hosts": [
+          "oge.gov",
+          "www.oge.gov",
+          "extapps2.oge.gov"
+        ],
+        "automated_retrieval_allowed": true,
+        "requester_identity_required": false,
+        "restriction_code": "statutory_use_restrictions",
+        "restriction_reasons": [],
+        "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
+        "source_id": "oge-individual-disclosures"
+      },
+      "archive_object_status": "new",
       "archive_status": "archived",
       "byte_count": 3994653,
+      "content_addressed": true,
+      "content_hashes": {
+        "sha256": "90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6",
+        "sha512": "f9c2188730c3c1fbe1b5667b02f6c86df459715b878a7e503bd713b5c04f839a7c142905ca561bd2c09ab24bf4af4e772cb41543ae681475e9cb59a87d076c84"
+      },
       "content_type": "application/pdf",
       "document_id": "oge-public-278e-sample",
       "document_type": "OGE Form 278e",
       "expected_official_id": null,
       "expected_official_name": "OGE public sample",
       "file_hash": "90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6",
+      "final_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
       "hash_algorithm": "sha256",
+      "http_status_code": 200,
+      "identity_status": "expected_identity_unverified",
       "notes": "Official OGE sample form used for parser regression and raw-document archive plumbing; not a production official filing.",
+      "object_reused": false,
+      "response_metadata": {
+        "content_length": "3994653",
+        "etag": "W/\"MTAtMDAwMi0wLTg1MjU4QjlEMDA1Q0ZCNDEtRkU5MDRGQURCMTYzQjQ1QTg1MjU4NUI2MDA1QTIzRTg=\"",
+        "last_modified": "Thu, 19 Sep 2024 16:55:37 GMT"
+      },
+      "retrieval_attempted": true,
+      "retrieval_attempts": [
+        {
+          "attempt": 1,
+          "status": "success",
+          "status_code": 200
+        }
+      ],
       "retrieval_mode": "direct_public_sample",
-      "retrieved_at": "2026-07-12T11:39:05+00:00",
+      "retrieved_at": "2026-07-13T03:10:29+00:00",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
       "source_status": "downloadable_public_sample",
       "source_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
-      "storage_path": "data/raw_documents/oge-individual-disclosures/90dd3da72f4913a4-oge-public-278e-sample.pdf"
+      "storage_path": "data/raw_documents/oge-individual-disclosures/90/90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6.pdf"
     },
     {
-      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "access_decision": {
+        "access_attempted": false,
+        "access_mode": "direct_public_document_or_acknowledged_portal",
+        "access_status": "restricted",
+        "acknowledgement_required": false,
+        "allowed_hosts": [
+          "oge.gov",
+          "www.oge.gov",
+          "extapps2.oge.gov"
+        ],
+        "automated_retrieval_allowed": true,
+        "requester_identity_required": false,
+        "restriction_code": "statutory_use_restrictions",
+        "restriction_reasons": [
+          "manifest_requires_manual_or_acknowledged_retrieval"
+        ],
+        "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
+        "source_id": "oge-individual-disclosures"
+      },
+      "archive_status": "source_restriction_review_required",
       "document_id": "president-obama-oge-index",
       "document_type": "OGE Form 278e or 278-T",
       "expected_official_id": "exec:barack-obama",
       "expected_official_name": "Barack Obama",
+      "identity_status": "expected_identity_unverified",
       "notes": "Historical presidential disclosures may require OGE collection search, archive review, or request workflow before raw documents can be promoted into parser review.",
+      "retrieval_attempted": false,
       "retrieval_mode": "official_collection_search_or_archive_request",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
@@ -34,12 +95,33 @@
       "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
     },
     {
-      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "access_decision": {
+        "access_attempted": false,
+        "access_mode": "direct_public_document_or_acknowledged_portal",
+        "access_status": "restricted",
+        "acknowledgement_required": false,
+        "allowed_hosts": [
+          "oge.gov",
+          "www.oge.gov",
+          "extapps2.oge.gov"
+        ],
+        "automated_retrieval_allowed": true,
+        "requester_identity_required": false,
+        "restriction_code": "statutory_use_restrictions",
+        "restriction_reasons": [
+          "manifest_requires_manual_or_acknowledged_retrieval"
+        ],
+        "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
+        "source_id": "oge-individual-disclosures"
+      },
+      "archive_status": "source_restriction_review_required",
       "document_id": "president-trump-45-oge-index",
       "document_type": "OGE Form 278e or 278-T",
       "expected_official_id": "exec:donald-j-trump",
       "expected_official_name": "Donald J. Trump",
+      "identity_status": "expected_identity_unverified",
       "notes": "Search and archive official OGE collection results before normalized presidential rows are reviewed.",
+      "retrieval_attempted": false,
       "retrieval_mode": "official_collection_search",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
@@ -47,12 +129,33 @@
       "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
     },
     {
-      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "access_decision": {
+        "access_attempted": false,
+        "access_mode": "direct_public_document_or_acknowledged_portal",
+        "access_status": "restricted",
+        "acknowledgement_required": false,
+        "allowed_hosts": [
+          "oge.gov",
+          "www.oge.gov",
+          "extapps2.oge.gov"
+        ],
+        "automated_retrieval_allowed": true,
+        "requester_identity_required": false,
+        "restriction_code": "statutory_use_restrictions",
+        "restriction_reasons": [
+          "manifest_requires_manual_or_acknowledged_retrieval"
+        ],
+        "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
+        "source_id": "oge-individual-disclosures"
+      },
+      "archive_status": "source_restriction_review_required",
       "document_id": "president-biden-46-oge-index",
       "document_type": "OGE Form 278e or 278-T",
       "expected_official_id": "exec:joseph-r-biden",
       "expected_official_name": "Joseph R. Biden",
+      "identity_status": "expected_identity_unverified",
       "notes": "Search and archive official OGE collection results before normalized presidential rows are reviewed.",
+      "retrieval_attempted": false,
       "retrieval_mode": "official_collection_search",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
@@ -60,12 +163,33 @@
       "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
     },
     {
-      "archive_status": "pending_manual_or_acknowledged_retrieval",
+      "access_decision": {
+        "access_attempted": false,
+        "access_mode": "direct_public_document_or_acknowledged_portal",
+        "access_status": "restricted",
+        "acknowledgement_required": false,
+        "allowed_hosts": [
+          "oge.gov",
+          "www.oge.gov",
+          "extapps2.oge.gov"
+        ],
+        "automated_retrieval_allowed": true,
+        "requester_identity_required": false,
+        "restriction_code": "statutory_use_restrictions",
+        "restriction_reasons": [
+          "manifest_requires_manual_or_acknowledged_retrieval"
+        ],
+        "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
+        "source_id": "oge-individual-disclosures"
+      },
+      "archive_status": "source_restriction_review_required",
       "document_id": "president-trump-47-oge-live-index",
       "document_type": "OGE Form 278e or 278-T",
       "expected_official_id": "exec:donald-j-trump",
       "expected_official_name": "Donald J. Trump",
+      "identity_status": "expected_identity_unverified",
       "notes": "Current-term disclosures require scheduled OGE collection review and reviewer promotion before becoming production trade rows.",
+      "retrieval_attempted": false,
       "retrieval_mode": "scheduled_official_collection_search",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
@@ -73,7 +197,7 @@
       "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
     }
   ],
-  "generated_at": "2026-07-12T11:39:06+00:00",
+  "generated_at": "2026-07-13T03:10:30+00:00",
   "schema_version": "raw-document-archive-index-v1",
   "source": {
     "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
@@ -86,6 +210,8 @@
     "archived_document_count": 1,
     "document_count": 5,
     "pending_document_count": 4,
+    "restricted_document_count": 4,
+    "reused_archive_object_count": 0,
     "review_required_before_public_trade": true
   }
 }

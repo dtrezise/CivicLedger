@@ -53,9 +53,9 @@
       "baseline_schema_version": "senate-disclosure-index-v1",
       "baseline_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
       "count_metric": "document_count",
-      "current_record_count": 2124,
+      "current_record_count": 2123,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "f3a337be13f78e59a67f853c2b064683fba497a6a89f39594b49ef4c33c5d593",
+      "current_summary_sha256": "efe8e19e25be5de5a76da864a8d0e4856ed45226479a6bf7a38a8d6721d25cf0",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
       "status": "changed"
@@ -124,6 +124,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-07-13T02:44:48Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-07-13T03:17:27Z",
+        "duration_seconds": 691.0,
+        "failure_count": 0,
+        "run_id": "29220877672-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-07-13T03:05:56Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -165,8 +174,8 @@
   "summary": {
     "data_drift_count": 1,
     "failed_refresh_count": 5,
-    "measured_refresh_count": 5,
-    "refresh_run_count": 5,
+    "measured_refresh_count": 6,
+    "refresh_run_count": 6,
     "source_failure_count": 5
   }
 }
