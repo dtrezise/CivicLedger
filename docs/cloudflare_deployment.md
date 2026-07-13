@@ -5,7 +5,9 @@
 CivicLedger uses GitHub as the source, review, CI, scheduled-data, and audit
 system. Cloudflare Workers Static Assets is the primary public delivery target
 for the generated `pages-site/` workbench. GitHub Pages remains active during
-the production stabilization period as an independent fallback.
+the production stabilization period as an independent fallback. Both hosts
+publish the same committed and validated `pages-site/` artifact; deployment
+workflows do not regenerate disclosure or public data independently.
 
 Heavy source retrieval, OCR, parsing, validation, and dataset generation remain
 in GitHub Actions or the local Docker environment. Cloudflare receives only the

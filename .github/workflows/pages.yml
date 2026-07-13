@@ -100,33 +100,10 @@ jobs:
           python-version: "3.12"
       - name: Install backend model dependencies
         run: python -m pip install -e ./backend
-      - name: Build disclosure source pipeline artifacts
-        env:
-          PYTHONPATH: backend
-        run: |
-          python scripts/build_executive_disclosure_manifest.py
-          python scripts/build_judicial_disclosure_manifest.py
-          python scripts/build_entity_reference_dataset.py
-          python scripts/build_primary_source_context.py
-          python scripts/build_source_snapshot_index.py
-          python scripts/build_disclosure_ingestion_queue.py
-          python scripts/build_disclosure_ocr_priority_batches.py
-          python scripts/build_disclosure_amendment_reconciliation.py
-          python scripts/build_reviewed_disclosure_promotions.py
-          python scripts/build_disclosure_retrieval_batches.py
-          python scripts/build_production_trade_promotions.py
-          python scripts/build_disclosure_completeness_dashboard.py
-          python scripts/build_source_staleness_alerts.py
-          python scripts/build_source_refresh_telemetry.py
-          python scripts/evaluate_event_ranking.py
       - name: Check source freshness
         run: python scripts/check_source_freshness.py
-      - name: Build static Pages dataset
-        env:
-          PYTHONPATH: backend
-        run: python scripts/build_pages_dataset.py
-      - name: Build content-hashed browser assets
-        run: python scripts/build_static_assets.py
+      - name: Verify committed content-hashed browser assets
+        run: python scripts/build_static_assets.py --check
       - name: Validate public release contract
         run: python scripts/check_public_release_dataset.py
       - name: Validate static accessibility and responsive contracts
@@ -146,8 +123,8 @@ jobs:
         run: python scripts/check_release_determinism.py --rebuild
       - name: Validate static links and official provenance hosts
         run: python scripts/check_release_links.py
-      - name: Build release checksum inventory
-        run: python scripts/build_release_checksum_inventory.py
+      - name: Verify committed release checksum inventory
+        run: python scripts/build_release_checksum_inventory.py --check
       - name: Write deployed release metadata
         run: >-
           python scripts/write_release_metadata.py

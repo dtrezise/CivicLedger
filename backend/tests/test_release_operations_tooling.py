@@ -23,11 +23,13 @@ def test_parity_checks_identity_inventory_and_all_files(monkeypatch):
     common = {
         "release.json": {"dataset_version": "d1", "methodology_version": "m1", "commit": "abc"},
         "data/manifest.json": {"dataset_version": "d1", "methodology_version": "m1"},
-        "release-checksums.json": {"files": [{"path": "index.html", "sha256": "unused"}]},
+        "release-checksums.json": {
+            "files": [{"path": "index.html", "bytes": 16, "sha256": "0" * 64}]
+        },
         "index.html": {"html": "same"},
     }
     monkeypatch.setattr(module, "fetch", lambda base, path, timeout=30: json.dumps(common[path], sort_keys=True).encode())
-    report = module.validate("https://pages.example", "https://cloudflare.example")
+    report = module.validate("https://pages.example", "https://cloudflare.example", include_files=False)
     assert report["status"] == "passed"
     assert report["file_count"] == 1
 

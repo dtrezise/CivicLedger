@@ -42,16 +42,25 @@ def json_body(payload: bytes, path: str) -> dict:
     return value
 
 
-def checksum_paths(payload: dict) -> list[str]:
+def checksum_records(payload: dict) -> dict[str, dict[str, object]]:
     rows = payload.get("files")
     if not isinstance(rows, list):
         raise ParityError("release-checksums.json has no files array")
-    paths = [row.get("path") for row in rows if isinstance(row, dict)]
-    if any(not isinstance(path, str) or not path or Path(path).is_absolute() or ".." in Path(path).parts for path in paths):
-        raise ParityError("release-checksums.json contains an unsafe path")
-    if paths != sorted(paths) or len(paths) != len(set(paths)):
-        raise ParityError("release-checksums.json paths must be sorted and unique")
-    return paths
+    records: dict[str, dict[str, object]] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ParityError("release-checksums.json contains a non-object record")
+        path = row.get("path")
+        size = row.get("bytes")
+        sha256 = row.get("sha256")
+        if not isinstance(path, str) or not path or Path(path).is_absolute() or ".." in Path(path).parts:
+            raise ParityError("release-checksums.json contains an unsafe path")
+        if path in records:
+            raise ParityError(f"release-checksums.json declares {path} more than once")
+        if not isinstance(size, int) or size < 0 or not isinstance(sha256, str) or len(sha256) != 64:
+            raise ParityError(f"release-checksums.json has invalid metadata for {path}")
+        records[path] = {"bytes": size, "sha256": sha256}
+    return records
 
 
 def digest(payload: bytes) -> str:
@@ -78,16 +87,21 @@ def validate(pages_url: str, cloudflare_url: str, *, include_files: bool = True)
     if identity_mismatches:
         raise ParityError("Release identity mismatch: " + ", ".join(identity_mismatches))
 
-    pages_paths = checksum_paths(pages_checksums)
-    cloudflare_paths = checksum_paths(cloudflare_checksums)
-    if pages_paths != cloudflare_paths:
-        raise ParityError("Release file inventories differ")
+    pages_records = checksum_records(pages_checksums)
+    cloudflare_records = checksum_records(cloudflare_checksums)
+    if pages_records != cloudflare_records:
+        raise ParityError("Release file inventories or declared checksums differ")
+    paths = sorted(pages_records)
 
     mismatches: list[str] = []
     if include_files:
-        for path in pages_paths:
+        for path in paths:
             pages_body = fetch(pages_url, path)
             cloudflare_body = fetch(cloudflare_url, path)
+            if digest(pages_body) != pages_records[path]["sha256"]:
+                raise ParityError(f"GitHub Pages does not match its declared checksum: {path}")
+            if digest(cloudflare_body) != cloudflare_records[path]["sha256"]:
+                raise ParityError(f"Cloudflare does not match its declared checksum: {path}")
             if digest(pages_body) != digest(cloudflare_body):
                 mismatches.append(path)
         if mismatches:
@@ -96,7 +110,7 @@ def validate(pages_url: str, cloudflare_url: str, *, include_files: bool = True)
     return {
         "cloudflare_url": cloudflare_url,
         "dataset_version": pages_manifest.get("dataset_version"),
-        "file_count": len(pages_paths),
+        "file_count": len(paths),
         "pages_url": pages_url,
         "schema_version": "civicledger-pages-cloudflare-parity-v1",
         "status": "passed",
