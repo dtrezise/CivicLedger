@@ -161,9 +161,22 @@ jobs:
         env:
           PYTHONPATH: backend
           SEC_EDGAR_USER_AGENT: CivicLedger github-actions[bot]@users.noreply.github.com
+          DEEP_SOURCES: ${{ inputs.deep_sources || false }}
         run: |
-          python scripts/build_sec_issuer_aliases.py --refresh
-          python scripts/build_sec_filing_events.py --refresh
+          sec_refresh_failed=false
+          if ! python scripts/build_sec_issuer_aliases.py --refresh; then
+            sec_refresh_failed=true
+          elif ! python scripts/build_sec_filing_events.py --refresh; then
+            sec_refresh_failed=true
+          fi
+          if [ "$sec_refresh_failed" = "true" ]; then
+            if [ "$DEEP_SOURCES" = "true" ]; then
+              exit 1
+            fi
+            echo "::warning::SEC EDGAR refresh failed; retaining the committed hash-backed issuer and filing context."
+            test -s data/context/sec_issuer_aliases.json
+            test -s data/context/sec_filing_events.json
+          fi
           python scripts/build_primary_source_context.py
       - name: Rebuild canonical entities and source snapshots
         env:
