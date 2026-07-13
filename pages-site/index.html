@@ -10,14 +10,15 @@
       content="Compare source-linked federal financial disclosure activity with market and government event context."
     />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link data-static-asset="styles" rel="stylesheet" href="./assets/styles.2d7f9bced4b9.css" integrity="sha384-2CGsX1q+qlrRvZ+Yi38LPKWxtV75yjDUCy+i07LwtfG4o3G3pA7KFmXVO6X6ns/w">
     <script
+      data-static-asset="echarts"
       defer
-      src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"
+      src="./assets/echarts-5.6.0.bf4a223524e4.min.js"
       integrity="sha384-pPi0zxBAoDu6+JXW/C68UZLvBUUtU+7zonhif43rqj7pxsGyqyqzcian2Rj37Rss"
       crossorigin="anonymous"
     ></script>
-    <script defer src="./app.js"></script>
+    <script data-static-asset="app" defer src="./assets/app.713a68748581.js" integrity="sha384-v/fGW4OVYw0zEW31U++h90sD2kaKg8Jm/vd9wwfKYMm88npOSMHQuLY8o7eRmxxj"></script>
   </head>
   <body>
     <a class="skip-link" href="#explorerControls">Skip to comparison controls</a>
@@ -55,6 +56,20 @@
         </div>
 
         <div class="data-notice" id="dataNotice" role="status"></div>
+        <div class="freshness-status" id="datasetFreshness" role="status" aria-live="polite" hidden></div>
+        <section class="load-failure" id="loadFailure" role="alert" aria-labelledby="loadFailureTitle" hidden>
+          <p class="eyebrow">Data connection</p>
+          <h2 id="loadFailureTitle">The public dataset could not be loaded</h2>
+          <p id="loadFailureMessage">The explorer shell is available, but one or more required records did not arrive.</p>
+          <dl>
+            <div><dt>Error</dt><dd id="loadFailureCode">DATA_UNAVAILABLE</dd></div>
+            <div><dt>Resource</dt><dd id="loadFailureResource">Unknown resource</dd></div>
+          </dl>
+          <div class="load-failure-actions">
+            <button class="secondary-command" id="retryDataButton" type="button">Retry loading</button>
+            <a href="https://dtrezise.github.io/CivicLedger/">Open GitHub Pages fallback</a>
+          </div>
+        </section>
 
         <div class="selection-row" id="explorerControls">
           <div class="official-picker">

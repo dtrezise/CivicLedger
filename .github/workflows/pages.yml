@@ -34,6 +34,7 @@ on:
       - "scripts/build_entity_reference_dataset.py"
       - "scripts/build_source_snapshot_index.py"
       - "scripts/build_release_checksum_inventory.py"
+      - "scripts/build_static_assets.py"
       - "scripts/archive_disclosure_documents.py"
       - "scripts/build_disclosure_ingestion_queue.py"
       - "scripts/build_disclosure_ocr_priority_batches.py"
@@ -124,6 +125,8 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_pages_dataset.py
+      - name: Build content-hashed browser assets
+        run: python scripts/build_static_assets.py
       - name: Validate public release contract
         run: python scripts/check_public_release_dataset.py
       - name: Validate static accessibility and responsive contracts

@@ -49,7 +49,12 @@ def validate_static_contract() -> dict[str, int]:
     local_assets = [value for value in parser.scripts + parser.stylesheets if value.startswith("./")]
     for asset in local_assets:
         require((SITE / asset.removeprefix("./")).is_file(), f"Missing local static asset: {asset}")
-    require(any("echarts@5.6.0" in script for script in parser.scripts), "Chart dependency must be version-pinned")
+    require(
+        any(script.startswith("./assets/echarts-5.6.0.") and script.endswith(".min.js") for script in parser.scripts),
+        "The self-hosted chart dependency must be version-pinned and content-hashed",
+    )
+    require(all(not script.startswith(("http://", "https://")) for script in parser.scripts), "Runtime scripts must be self-hosted")
+    require('data-static-asset="app"' in html and 'data-static-asset="styles"' in html, "Generated shell assets need build markers")
     require("./data/manifest.json" in javascript, "The app must bootstrap through the public manifest")
     require("civicledger-static.json" not in javascript, "The legacy monolith must not enter the runtime path")
 
@@ -112,6 +117,8 @@ def validate_static_contract() -> dict[str, int]:
     require('state.tradeChart.on("click"' in javascript and 'state.tradeChart.on("datazoom"' in javascript, "Chart click and zoom interactions are required")
     require("try {" in javascript and "catch (error)" in javascript, "Dataset bootstrap needs a visible failure path")
     require("fetch(path, { cache: \"no-store\" })" in javascript, "Generated data fetches must avoid stale browser caches")
+    require("renderFreshnessStatus" in javascript and "Stale dataset warning" in javascript, "Dataset freshness warning is missing")
+    require("renderLoadFailure" in javascript and "DataLoadError" in javascript, "Structured loading failure state is missing")
 
     return {
         "dom_hooks": len(referenced_ids),

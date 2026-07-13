@@ -1,0 +1,140 @@
+{
+  "activation_assessment": {
+    "gates": {
+      "asset_count": {
+        "current": 431,
+        "rationale": "Provides an early review point below the Workers Static Assets asset-count hard limit.",
+        "threshold": 15000,
+        "triggered_now": false
+      },
+      "individual_asset_bytes": {
+        "current": 4537241,
+        "rationale": "Provides an early review point below the Workers Static Assets per-file hard limit.",
+        "threshold": 20971520,
+        "triggered_now": false
+      },
+      "total_static_bytes": {
+        "current": 140463176,
+        "rationale": "Marks the documented point where deploy and checkout weight require review.",
+        "threshold": 524288000,
+        "triggered_now": false
+      }
+    },
+    "recommendation": "keep_workers_static_assets",
+    "triggered_gates": []
+  },
+  "candidate_partitions": [
+    {
+      "bytes": 4537241,
+      "group": "timelines",
+      "key": "exec:donald-j-trump",
+      "path": "data/partitions/timelines/exec-donald-j-trump.json",
+      "rationale": "Query partition meets the migration-candidate byte threshold.",
+      "tier": "candidate"
+    },
+    {
+      "bytes": 3113065,
+      "group": "timelines",
+      "key": "congress:G000583",
+      "path": "data/partitions/timelines/congress-g000583.json",
+      "rationale": "Query partition meets the migration-candidate byte threshold.",
+      "tier": "candidate"
+    },
+    {
+      "bytes": 2900122,
+      "group": "timelines",
+      "key": "congress:M001193",
+      "path": "data/partitions/timelines/congress-m001193.json",
+      "rationale": "Query partition meets the migration-candidate byte threshold.",
+      "tier": "candidate"
+    },
+    {
+      "bytes": 2666591,
+      "group": "roles",
+      "key": "Legislative",
+      "path": "data/partitions/roles/legislative.json",
+      "rationale": "Query partition meets the migration-candidate byte threshold.",
+      "tier": "candidate"
+    },
+    {
+      "bytes": 2216558,
+      "group": "timelines",
+      "key": "congress:P000612",
+      "path": "data/partitions/timelines/congress-p000612.json",
+      "rationale": "Query partition meets the migration-candidate byte threshold.",
+      "tier": "candidate"
+    }
+  ],
+  "current_static_footprint": {
+    "asset_count": 431,
+    "largest_asset": {
+      "bytes": 4537241,
+      "path": "data/partitions/timelines/exec-donald-j-trump.json"
+    },
+    "total_bytes": 140463176
+  },
+  "group_summary": {
+    "events": {
+      "candidate_bytes": 0,
+      "candidate_count": 0,
+      "partition_count": 18,
+      "total_bytes": 6013305
+    },
+    "market": {
+      "candidate_bytes": 0,
+      "candidate_count": 0,
+      "partition_count": 28,
+      "total_bytes": 29649921
+    },
+    "roles": {
+      "candidate_bytes": 2666591,
+      "candidate_count": 1,
+      "partition_count": 3,
+      "total_bytes": 3358155
+    },
+    "timelines": {
+      "candidate_bytes": 12766986,
+      "candidate_count": 4,
+      "partition_count": 358,
+      "total_bytes": 92922137
+    }
+  },
+  "large_bootstrap_artifacts_kept_static": [
+    {
+      "bytes": 2390534,
+      "path": "data/partitions/officials-index.json",
+      "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
+    }
+  ],
+  "migration_thresholds": {
+    "activation_asset_count": 15000,
+    "activation_individual_asset_bytes": 20971520,
+    "activation_total_static_bytes": 524288000,
+    "candidate_partition_bytes": 2097152,
+    "priority_partition_bytes": 10485760,
+    "rationale": {
+      "activation": "R2 review requires a sustained documented architecture gate, not merely an eligible partition.",
+      "candidate": "The 2097152-byte threshold is 10.0% of the individual-asset activation warning and identifies deploy-heavy lazy payloads early.",
+      "priority": "The 10485760-byte threshold is 50.0% of the individual-asset activation warning."
+    }
+  },
+  "projected_static_footprint_if_candidates_moved": {
+    "asset_count": 426,
+    "bytes_removed": 15433577,
+    "candidate_count": 5,
+    "remaining_total_bytes": 125029599
+  },
+  "safety": {
+    "activates_r2": false,
+    "cloud_api_calls": false,
+    "creates_resources": false,
+    "estimated_cost_usd": null,
+    "mode": "offline_read_only_simulation"
+  },
+  "schema_version": "civicledger-r2-migration-simulation-v1",
+  "source": {
+    "dataset_version": "seed-v1",
+    "evaluated_query_partition_count": 407,
+    "manifest_sha256": "5ec1c87367c6279ec61641b5feb5fe4a64f0932e76e7658dceb9b288e4befbb2"
+  }
+}

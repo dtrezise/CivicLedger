@@ -20,6 +20,8 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/evaluate_event_ranking.py --output /tmp/event-ranking-benchmark.json
+      - name: Validate deterministic static browser assets
+        run: python scripts/build_static_assets.py --check
       - name: Validate static accessibility and responsive contracts
         run: python scripts/check_release_accessibility.py
       - name: Validate static interaction and URL-state contracts
@@ -30,6 +32,12 @@ jobs:
         run: python scripts/check_release_performance.py
       - name: Validate Workers Static Assets limits
         run: python scripts/check_cloudflare_assets.py
+      - name: Validate corpus growth and R2 migration reports
+        run: |
+          python scripts/report_public_corpus_growth.py --output /tmp/public-corpus-growth.json
+          cmp /tmp/public-corpus-growth.json docs/metrics/public_corpus_growth_history.json
+          python scripts/simulate_r2_public_partition_migration.py --output /tmp/r2-simulation.json
+          cmp /tmp/r2-simulation.json docs/metrics/r2_public_partition_migration_simulation.json
       - name: Validate deterministic generated JSON
         run: python scripts/check_release_determinism.py
       - name: Verify release checksum inventory

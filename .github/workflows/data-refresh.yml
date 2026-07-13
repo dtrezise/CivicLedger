@@ -245,6 +245,11 @@ jobs:
           python scripts/check_release_determinism.py
           python scripts/build_release_checksum_inventory.py
           python scripts/build_release_checksum_inventory.py --check
+      - name: Record weekly public-corpus growth and R2 simulation
+        if: ${{ github.event_name == 'workflow_dispatch' || env.DEEP_REFRESH == 'true' }}
+        run: |
+          python scripts/report_public_corpus_growth.py
+          python scripts/simulate_r2_public_partition_migration.py
       - name: Record successful full-refresh telemetry
         env:
           PYTHONPATH: backend
@@ -256,14 +261,41 @@ jobs:
           --status success
       - name: Commit refreshed generated data
         run: |
-          if git diff --quiet -- data pages-site/data pages-site/release-checksums.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
+          if git diff --quiet -- data pages-site/data pages-site/release-checksums.json docs/metrics/public_corpus_growth_history.json docs/metrics/r2_public_partition_migration_simulation.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
             echo "No generated data changes to commit."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data pages-site/data pages-site/release-checksums.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json
+            git add data pages-site/data pages-site/release-checksums.json docs/metrics/public_corpus_growth_history.json docs/metrics/r2_public_partition_migration_simulation.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json
+            generated_base=$(git rev-parse HEAD)
             git commit -m "Refresh live context data"
-            git push
+            target_branch="${GITHUB_REF_NAME:-main}"
+            max_attempts=3
+            published=false
+            for attempt in $(seq 1 "$max_attempts"); do
+              echo "Synchronizing generated-data commit with origin/$target_branch (attempt $attempt/$max_attempts)."
+              if ! git fetch --prune origin "$target_branch"; then
+                echo "::warning::Could not fetch origin/$target_branch for generated-data publish attempt $attempt."
+              elif ! git rebase "origin/$target_branch"; then
+                git rebase --abort 2>/dev/null || true
+                git reset --mixed "$generated_base"
+                echo "::error::Generated-data commit conflicts with origin/$target_branch; refusing to publish unresolved generated data."
+                exit 1
+              elif git push origin "HEAD:$target_branch"; then
+                published=true
+                break
+              else
+                echo "::warning::Origin changed during generated-data publish attempt $attempt."
+              fi
+              if [ "$attempt" -lt "$max_attempts" ]; then
+                sleep $((attempt * 2))
+              fi
+            done
+            if [ "$published" != "true" ]; then
+              git reset --mixed "$generated_base"
+              echo "::error::Generated-data publish failed after $max_attempts bounded synchronization attempts; no generated data was published."
+              exit 1
+            fi
           fi
       - name: Record failed refresh telemetry
         if: ${{ failure() }}
@@ -282,8 +314,34 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/operations/source_refresh_runs.json data/operations/source_refresh_telemetry.json
-          git commit -m "Record failed live context refresh" || true
-          git push
+          if git commit -m "Record failed live context refresh"; then
+            target_branch="${GITHUB_REF_NAME:-main}"
+            published=false
+            for attempt in $(seq 1 3); do
+              echo "Synchronizing failed-refresh telemetry with origin/$target_branch (attempt $attempt/3)."
+              if ! git fetch --prune origin "$target_branch"; then
+                echo "::warning::Could not fetch origin/$target_branch for telemetry publish attempt $attempt."
+              elif ! git rebase --autostash "origin/$target_branch"; then
+                git rebase --abort 2>/dev/null || true
+                echo "::error::Failed-refresh telemetry conflicts with origin/$target_branch."
+                exit 1
+              elif git push origin "HEAD:$target_branch"; then
+                published=true
+                break
+              else
+                echo "::warning::Origin changed during telemetry publish attempt $attempt."
+              fi
+              if [ "$attempt" -lt 3 ]; then
+                sleep $((attempt * 2))
+              fi
+            done
+            if [ "$published" != "true" ]; then
+              echo "::error::Failed-refresh telemetry publish exhausted three bounded attempts."
+              exit 1
+            fi
+          else
+            echo "No failed-refresh telemetry changes to commit."
+          fi
       - uses: actions/configure-pages@v6
         with:
           enablement: true

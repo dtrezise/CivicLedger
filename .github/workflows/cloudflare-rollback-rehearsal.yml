@@ -1,0 +1,121 @@
+name: Rehearse Cloudflare Rollback
+
+on:
+  schedule:
+    - cron: "47 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-rollback-rehearsal
+  cancel-in-progress: false
+
+jobs:
+  isolated-rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Prepare isolated versioned sites
+        id: prepare
+        run: |
+          worker_name="civic-ledger-rehearsal-${GITHUB_RUN_ID}"
+          mkdir -p .rehearsal/v1 .rehearsal/v2 .release-artifacts
+          printf '<!doctype html><title>CivicLedger rollback rehearsal</title><p>REHEARSAL_VERSION=1</p>\n' > .rehearsal/v1/index.html
+          printf '<!doctype html><title>CivicLedger rollback rehearsal</title><p>REHEARSAL_VERSION=2</p>\n' > .rehearsal/v2/index.html
+          printf '<!doctype html><title>Rehearsal page not found</title><p>404</p>\n' > .rehearsal/v1/404.html
+          cp .rehearsal/v1/404.html .rehearsal/v2/404.html
+          cat > .rehearsal/wrangler.jsonc <<JSON
+          {
+            "name": "${worker_name}",
+            "compatibility_date": "2026-07-13",
+            "workers_dev": true,
+            "assets": {
+              "directory": "./v1",
+              "not_found_handling": "404-page"
+            }
+          }
+          JSON
+          echo "worker_name=$worker_name" >> "$GITHUB_OUTPUT"
+          echo "url=https://${worker_name}.dan-a2c.workers.dev/" >> "$GITHUB_OUTPUT"
+      - name: Deploy rehearsal version 1
+        id: deploy_v1
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npx --yes wrangler@4.110.0 deploy --config .rehearsal/wrangler.jsonc --message "rollback rehearsal v1"
+          npx --yes wrangler@4.110.0 versions list --json --config .rehearsal/wrangler.jsonc \
+            > .release-artifacts/rehearsal-v1-versions.json
+          version_id=$(python - <<'PY'
+          import json
+          from pathlib import Path
+
+          versions = json.loads(Path(".release-artifacts/rehearsal-v1-versions.json").read_text())
+          if not versions:
+              raise SystemExit("No rehearsal v1 version was created")
+          print(versions[-1]["id"])
+          PY
+          )
+          echo "version_id=$version_id" >> "$GITHUB_OUTPUT"
+      - name: Deploy rehearsal version 2
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path(".rehearsal/wrangler.jsonc")
+          config = json.loads(path.read_text())
+          config["assets"]["directory"] = "./v2"
+          path.write_text(json.dumps(config, indent=2) + "\n")
+          PY
+          npx --yes wrangler@4.110.0 deploy --config .rehearsal/wrangler.jsonc --message "rollback rehearsal v2"
+          npx --yes wrangler@4.110.0 versions list --json --config .rehearsal/wrangler.jsonc \
+            > .release-artifacts/rehearsal-v2-versions.json
+      - name: Roll isolated worker back to version 1
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npx --yes wrangler@4.110.0 rollback "${{ steps.deploy_v1.outputs.version_id }}" \
+            --config .rehearsal/wrangler.jsonc --message "automated isolated rollback rehearsal" --yes
+          npx --yes wrangler@4.110.0 deployments status --json --config .rehearsal/wrangler.jsonc \
+            > .release-artifacts/rehearsal-rollback-status.json
+      - name: Verify rollback at the edge
+        env:
+          REHEARSAL_URL: ${{ steps.prepare.outputs.url }}
+        run: |
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --show-error "$REHEARSAL_URL" > .release-artifacts/rehearsal-response.html \
+              && grep -q 'REHEARSAL_VERSION=1' .release-artifacts/rehearsal-response.html; then
+              printf '{"status":"passed","url":"%s","restored_version":"%s"}\n' \
+                "$REHEARSAL_URL" "${{ steps.deploy_v1.outputs.version_id }}" \
+                > .release-artifacts/rehearsal-result.json
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Isolated worker did not return version 1 after rollback." >&2
+          exit 1
+      - name: Upload rehearsal evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: cloudflare-rollback-rehearsal-${{ github.run_id }}
+          path: .release-artifacts/
+          include-hidden-files: true
+          retention-days: 90
+      - name: Remove isolated worker
+        if: ${{ always() && steps.prepare.outcome == 'success' }}
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: >-
+          npx --yes wrangler@4.110.0 delete "${{ steps.prepare.outputs.worker_name }}"
+          --config .rehearsal/wrangler.jsonc --force

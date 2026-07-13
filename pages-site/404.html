@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#17212b" />
+    <title>Page not found | CivicLedger</title>
+    <meta name="description" content="The requested CivicLedger page could not be found." />
+    <style>
+      * { box-sizing: border-box; }
+      body { display: grid; min-height: 100vh; grid-template-rows: auto 1fr auto; margin: 0; color: #17212b; background: #f7f8f6; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      header { padding: 14px clamp(18px, 4vw, 54px); color: #fff; background: #17212b; border-bottom: 3px solid #d2a440; }
+      .brand { display: inline-flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
+      .brand-mark { display: grid; width: 38px; height: 38px; place-items: center; color: #17212b; background: #f7f8f6; font-weight: 900; }
+      .brand strong, .brand small { display: block; }
+      .brand small { margin-top: 2px; color: #cad1d4; font-size: 11px; }
+      main { width: min(820px, calc(100% - 36px)); align-self: center; margin: 0 auto; padding: 64px 0; }
+      .eyebrow { margin: 0 0 10px; color: #376f6b; font-size: 12px; font-weight: 900; text-transform: uppercase; }
+      h1 { max-width: 680px; margin: 0; font-size: clamp(32px, 6vw, 48px); line-height: 1.08; }
+      main > p:not(.eyebrow) { max-width: 620px; margin: 16px 0 24px; color: #526069; font-size: 17px; line-height: 1.55; }
+      .primary-link { display: inline-flex; min-height: 44px; align-items: center; padding: 10px 15px; color: #fff; background: #235b5a; border-radius: 5px; font-weight: 800; text-decoration: none; }
+      .primary-link:focus-visible { outline: 3px solid #d2a440; outline-offset: 3px; }
+      footer { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 18px clamp(18px, 4vw, 54px); color: #d8dde0; background: #17212b; font-size: 12px; }
+    </style>
+  </head>
+  <body class="not-found-page">
+    <header class="site-header">
+      <a class="brand" href="https://civic-ledger.dan-a2c.workers.dev/" aria-label="CivicLedger trade explorer home">
+        <span class="brand-mark" aria-hidden="true">CL</span>
+        <span><strong>CivicLedger</strong><small>Federal Trade Explorer</small></span>
+      </a>
+    </header>
+    <main class="not-found-main">
+      <p class="eyebrow">404 / Page not found</p>
+      <h1>This record is not at this address</h1>
+      <p>The public explorer and its source-linked records remain available from the main workspace.</p>
+      <a class="primary-link" href="https://civic-ledger.dan-a2c.workers.dev/">Return to the explorer</a>
+    </main>
+    <footer>
+      <strong>CivicLedger</strong>
+      <span>Federal financial disclosure research</span>
+      <span>No legal, ethics, causation, intent, or investment conclusion is made.</span>
+    </footer>
+  </body>
+</html>

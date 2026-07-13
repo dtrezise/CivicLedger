@@ -20,10 +20,16 @@ SHELL_BUDGETS = {
     "app.js": 100_000,
     "favicon.svg": 10_000,
 }
+RUNTIME_ASSET_BUDGETS = {
+    "styles": 40_000,
+    "app": 110_000,
+    "echarts": 1_100_000,
+}
 INITIAL_NAMES = ("overview", "officials_index", "coverage", "events", "timeline_index", "market_index")
 INITIAL_RAW_BUDGET = 4_750_000
 INITIAL_GZIP_BUDGET = 350_000
 SHELL_GZIP_BUDGET = 36_000
+RUNTIME_GZIP_BUDGET = 425_000
 DEPLOYMENT_BUDGET = 325_000_000
 LEGACY_SNAPSHOT_BUDGET = 5_000_000
 GROUP_BUDGETS = {
@@ -49,6 +55,7 @@ def compressed_size(path: Path) -> int:
 
 def validate_performance() -> dict[str, int]:
     manifest = json.loads(MANIFEST.read_text())
+    asset_manifest = json.loads((SITE / "assets" / "manifest.json").read_text())
     shell_raw = 0
     shell_gzip = 0
     for name, limit in SHELL_BUDGETS.items():
@@ -59,6 +66,19 @@ def validate_performance() -> dict[str, int]:
         shell_raw += size
         shell_gzip += compressed_size(path)
     require(shell_gzip <= SHELL_GZIP_BUDGET, f"Compressed shell exceeds {SHELL_GZIP_BUDGET:,} bytes")
+
+    runtime_raw = 0
+    runtime_gzip = 0
+    records = asset_manifest.get("assets", {})
+    require(set(RUNTIME_ASSET_BUDGETS) <= set(records), "Runtime static asset manifest is incomplete")
+    for name, limit in RUNTIME_ASSET_BUDGETS.items():
+        path = SITE / records[name]["path"]
+        require(path.is_file(), f"Missing hashed runtime asset: {name}")
+        size = path.stat().st_size
+        require(size <= limit, f"Runtime asset {name} exceeds {limit:,} bytes")
+        runtime_raw += size
+        runtime_gzip += compressed_size(path)
+    require(runtime_gzip <= RUNTIME_GZIP_BUDGET, f"Compressed runtime assets exceed {RUNTIME_GZIP_BUDGET:,} bytes")
 
     initial_records = manifest.get("files", {})
     require(set(INITIAL_NAMES) <= set(initial_records), "Initial manifest entries are incomplete")
@@ -92,6 +112,8 @@ def validate_performance() -> dict[str, int]:
         "initial_raw_bytes": initial_raw,
         "largest_partition_bytes": largest_partition,
         "partition_count": partition_count,
+        "runtime_gzip_bytes": runtime_gzip,
+        "runtime_raw_bytes": runtime_raw,
         "shell_gzip_bytes": shell_gzip,
         "shell_raw_bytes": shell_raw,
     }

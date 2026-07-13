@@ -1,0 +1,61 @@
+{
+  "methodology": {
+    "clock_independent": true,
+    "partition_scope": "All unique bootstrap artifacts and query partitions declared by pages-site/data/manifest.json.",
+    "static_scope": "All regular files beneath pages-site; symlinks are rejected.",
+    "week_rule": "ISO week containing observed_on; reruns replace that week and recompute deltas."
+  },
+  "schema_version": "civicledger-public-corpus-growth-v1",
+  "snapshots": [
+    {
+      "delta_from_previous_week": null,
+      "iso_week": "2026-W29",
+      "observed_on": "2026-07-13",
+      "public_artifacts": {
+        "declared_artifact_count": 414,
+        "groups": {
+          "bootstrap": {
+            "artifact_count": 7,
+            "total_bytes": 5732503
+          },
+          "events": {
+            "artifact_count": 18,
+            "total_bytes": 6013305
+          },
+          "market": {
+            "artifact_count": 28,
+            "total_bytes": 29649921
+          },
+          "roles": {
+            "artifact_count": 3,
+            "total_bytes": 3358155
+          },
+          "timelines": {
+            "artifact_count": 358,
+            "total_bytes": 92922137
+          }
+        },
+        "largest_artifact": {
+          "bytes": 4537241,
+          "group": "timelines",
+          "path": "partitions/timelines/exec-donald-j-trump.json"
+        },
+        "query_partition_count": 407,
+        "query_partition_total_bytes": 131943518,
+        "total_bytes": 137676021
+      },
+      "source": {
+        "dataset_version": "seed-v1",
+        "manifest_sha256": "5ec1c87367c6279ec61641b5feb5fe4a64f0932e76e7658dceb9b288e4befbb2"
+      },
+      "static_assets": {
+        "asset_count": 431,
+        "largest_asset": {
+          "bytes": 4537241,
+          "path": "data/partitions/timelines/exec-donald-j-trump.json"
+        },
+        "total_bytes": 140463176
+      }
+    }
+  ]
+}

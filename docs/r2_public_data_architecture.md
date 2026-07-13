@@ -92,6 +92,43 @@ Rollback replaces the current pointer with a previously verified pointer, runs
 HTTP smoke checks, and records the target release, operator, reason, and GitHub
 run. Bucket deletion and lifecycle changes are never part of rollback.
 
+## Offline Growth Tracking And Migration Simulation
+
+Two deterministic, standard-library reports keep the storage decision grounded
+in the checked-out public corpus without contacting Cloudflare:
+
+```bash
+python3 scripts/report_public_corpus_growth.py
+python3 scripts/simulate_r2_public_partition_migration.py
+```
+
+The weekly report at
+`docs/metrics/public_corpus_growth_history.json` validates the size and SHA-256
+of every artifact declared by `pages-site/data/manifest.json`, scans all regular
+files below `pages-site/`, and upserts one ISO-week snapshot. It uses the
+manifest's `generated_at` date by default, accepts an explicit `--as-of` date,
+and recomputes deltas after a same-week replacement. It does not read the wall
+clock, so unchanged inputs produce byte-identical output.
+
+The migration report at
+`docs/metrics/r2_public_partition_migration_simulation.json` evaluates only lazy
+query partitions for migration. Bootstrap files and compact indexes remain in
+Workers Static Assets; a bootstrap artifact over the candidate threshold is
+reported as a compaction concern instead of creating an R2 dependency during
+initial load. The simulator makes no network calls, reads no Cloudflare
+credentials, creates no resources, and intentionally reports no cost estimate.
+
+Migration eligibility and R2 activation are separate decisions:
+
+- A query partition at or above 2 MiB is a migration candidate. This is 10% of
+  the 20 MiB individual-file activation warning and surfaces deploy-heavy lazy
+  payloads while there is still room to repartition them.
+- A query partition at or above 10 MiB is a priority candidate because it is
+  already halfway to the individual-file warning.
+- Candidate partitions are only a simulated future object set. They do not
+  justify activation unless an activation gate below is sustained and all
+  prerequisites pass.
+
 ## Activation Gates
 
 Activate R2 only when one or more of these conditions becomes sustained:

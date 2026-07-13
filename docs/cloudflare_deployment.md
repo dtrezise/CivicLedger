@@ -19,6 +19,7 @@ validated static release artifact; it does not become the system of record.
 - Cloudflare production: automatic `.github/workflows/cloudflare-production.yml` deployment after successful `main` CI to `https://civic-ledger.dan-a2c.workers.dev/`.
 - Cloudflare usage: daily `.github/workflows/cloudflare-usage.yml` request and asset-footprint evidence.
 - Emergency rollback: guarded `.github/workflows/cloudflare-rollback.yml` restoration followed by public smoke checks.
+- Rollback rehearsal: monthly and on-demand `.github/workflows/cloudflare-rollback-rehearsal.yml` exercise against a temporary isolated worker that is deleted after verification.
 
 ## Production Status
 
@@ -69,22 +70,28 @@ After `CI` succeeds on `main`, the workflow re-runs the public-data, provenance,
 interaction, link, performance, determinism, checksum, and Cloudflare asset
 gates before deployment. It writes the source commit and dataset version into
 `release.json`, publishes the static artifact, verifies representative HTTP and
-JSON endpoints, checks security and cache headers, and proves that a prior
-Cloudflare version remains available. A failed gate cannot publish a new
-production version.
+JSON endpoints, verifies the custom 404 response, checks security and cache
+headers, runs the workbench in a mobile browser, compares release identity with
+GitHub Pages, and proves that a prior Cloudflare version remains available. A
+failed pre-deployment gate cannot publish a new production version. Any failed
+gate also produces a machine-readable rollback recommendation; rollback remains
+an explicit guarded action.
 
 Each successful release retains a 90-day GitHub artifact containing the asset
-footprint, HTTP smoke report, Cloudflare version inventory, active deployment
-status, and rollback-readiness report.
+footprint, HTTP and mobile smoke reports, Pages parity report, Cloudflare version
+inventory, active deployment status, rollback readiness, preview rehearsal, gate
+outcomes, and rollback recommendation.
 
 ## Security And Caching
 
 `pages-site/_headers` is the committed source of truth for production response
-headers. HTML and release metadata revalidate immediately, unversioned app
-assets use short browser caches, public data partitions use one-hour caches with
-stale-while-revalidate, and the favicon uses a one-day cache. Security headers
-enforce content-source, framing, referrer, browser-feature, MIME, and transport
-policies. The pinned ECharts dependency includes subresource integrity.
+headers. HTML, the custom 404 response, and release metadata revalidate
+immediately. Deterministically content-hashed CSS, application JavaScript, and
+the self-hosted ECharts runtime use one-year immutable caches. Public data
+partitions use one-hour caches with stale-while-revalidate, and the favicon uses
+a one-day cache. Security headers enforce content-source, framing, referrer,
+browser-feature, MIME, and transport policies. Every runtime asset includes
+subresource integrity.
 
 ## Usage Tracking
 
@@ -115,3 +122,8 @@ release proves that a prior version exists. The emergency rollback workflow
 requires an explicit version ID and confirmation, restores that version, then
 re-runs HTTP, dataset, security, cache, and rollback-readiness checks. A
 Cloudflare failure must not mutate generated data or interrupt GitHub Pages.
+
+The isolated rehearsal creates a uniquely named worker, deploys two minimal
+versions, restores the first version with Wrangler rollback, verifies the
+restored response at the edge, retains 90-day evidence, and deletes the worker.
+It never deploys CivicLedger data or mutates the production worker.

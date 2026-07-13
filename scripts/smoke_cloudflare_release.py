@@ -8,6 +8,7 @@ import json
 import time
 import urllib.error
 import urllib.request
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -17,6 +18,18 @@ DEFAULT_URL = "https://civic-ledger.dan-a2c.workers.dev/"
 
 class SmokeError(RuntimeError):
     pass
+
+
+class AssetParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.runtime_assets: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs_list: list[tuple[str, str | None]]) -> None:
+        attrs = {key: value or "" for key, value in attrs_list}
+        value = attrs.get("src") if tag == "script" else attrs.get("href") if tag == "link" else ""
+        if value.startswith("./assets/") and value not in self.runtime_assets:
+            self.runtime_assets.append(value)
 
 
 def require(condition: bool, message: str) -> None:
@@ -32,6 +45,8 @@ def fetch(base_url: str, path: str, attempts: int) -> tuple[bytes, dict[str, str
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 return response.read(), {key.lower(): value for key, value in response.headers.items()}, response.status
+        except urllib.error.HTTPError as exc:
+            return exc.read(), {key.lower(): value for key, value in exc.headers.items()}, exc.code
         except (urllib.error.URLError, TimeoutError) as exc:
             error = exc
             if attempt + 1 < attempts:
@@ -49,7 +64,6 @@ def validate(args: argparse.Namespace) -> dict:
     responses: dict[str, tuple[bytes, dict[str, str], int]] = {}
     for path in (
         "/",
-        "/app.js",
         "/release.json",
         "/data/manifest.json",
         "/data/partitions/officials-index.json",
@@ -65,6 +79,24 @@ def validate(args: argparse.Namespace) -> dict:
 
     html = responses["/"][0].decode("utf-8")
     require("CivicLedger Federal Trade Explorer" in html, "Root HTML does not contain the expected title")
+    asset_parser = AssetParser()
+    asset_parser.feed(html)
+    require(len(asset_parser.runtime_assets) == 3, f"Expected three hashed runtime assets, found {asset_parser.runtime_assets}")
+    require(any("echarts-5.6.0" in path for path in asset_parser.runtime_assets), "Self-hosted ECharts asset is missing")
+    for relative_path in asset_parser.runtime_assets:
+        path = "/" + relative_path.removeprefix("./")
+        body, headers, status = fetch(args.base_url, path, args.attempts)
+        require(status == 200 and body, f"{path} did not return a usable asset")
+        responses[path] = (body, headers, status)
+        checks.append({"path": path, "status": status, "bytes": len(body)})
+
+    missing_path = "/release-smoke-intentional-missing-page"
+    body, headers, status = fetch(args.base_url, missing_path, args.attempts)
+    require(status == 404, f"{missing_path} returned HTTP {status}, expected 404")
+    missing_html = body.decode("utf-8")
+    require("Page not found" in missing_html, "The custom 404 response was not served")
+    responses[missing_path] = (body, headers, status)
+    checks.append({"path": missing_path, "status": status, "bytes": len(body)})
     release = json.loads(responses["/release.json"][0])
     manifest = json.loads(responses["/data/manifest.json"][0])
     require(release.get("dataset_version") == manifest.get("dataset_version"), "Release and manifest dataset versions differ")
@@ -88,9 +120,13 @@ def validate(args: argparse.Namespace) -> dict:
             value = root_headers.get(name, "")
             require(fragment in value, f"Root response header {name} missing {fragment!r}: {value!r}")
         require_cache(root_headers, "max-age=0", "/")
-        require_cache(responses["/app.js"][1], "max-age=300", "/app.js")
+        for relative_path in asset_parser.runtime_assets:
+            path = "/" + relative_path.removeprefix("./")
+            require_cache(responses[path][1], "max-age=31536000", path)
+            require_cache(responses[path][1], "immutable", path)
         require_cache(responses["/release.json"][1], "no-store", "/release.json")
         require_cache(responses["/data/manifest.json"][1], "max-age=3600", "/data/manifest.json")
+        require_cache(responses[missing_path][1], "max-age=0", missing_path)
 
     return {
         "base_url": args.base_url,

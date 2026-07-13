@@ -15,11 +15,14 @@ class IdCollector(HTMLParser):
     def __init__(self):
         super().__init__()
         self.ids = []
+        self.script_sources = []
 
-    def handle_starttag(self, _tag, attrs):
+    def handle_starttag(self, tag, attrs):
         for key, value in attrs:
             if key == "id":
                 self.ids.append(value)
+            if tag == "script" and key == "src":
+                self.script_sources.append(value)
 
 
 def test_public_release_validator_passes():
@@ -75,8 +78,11 @@ def test_static_app_dom_contract_and_keyboard_support():
 def test_static_app_loads_manifest_instead_of_monolith():
     html = (ROOT / "pages-site" / "index.html").read_text()
     javascript = (ROOT / "pages-site" / "app.js").read_text()
+    parser = IdCollector()
+    parser.feed(html)
 
     assert "./data/manifest.json" in javascript
     assert "civicledger-static.json" not in javascript
-    assert "echarts@5.6.0" in html
+    assert any(source.startswith("./assets/echarts-5.6.0.") for source in parser.script_sources)
+    assert all(not source.startswith(("http://", "https://")) for source in parser.script_sources)
     assert "Career" in html and "Calendar" in html and "Event" in html
