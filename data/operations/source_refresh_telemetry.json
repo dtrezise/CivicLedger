@@ -53,12 +53,12 @@
       "baseline_schema_version": "senate-disclosure-index-v1",
       "baseline_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
       "count_metric": "document_count",
-      "current_record_count": 2103,
+      "current_record_count": 2107,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
+      "current_summary_sha256": "3927982496a101572c6a1896ce2ba2ac68a6dbbfa0636ee8ba3df726fdebfb63",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
-      "status": "unchanged"
+      "status": "changed"
     },
     {
       "baseline_record_count": 1820,
@@ -77,7 +77,7 @@
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 277.0,
-    "p50": 277.0,
+    "p50": 252.0,
     "p95": 277.0,
     "runs": [
       {
@@ -87,6 +87,15 @@
         "run_id": "29218364963-1",
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-07-13T01:54:47Z",
+        "status": "failed"
+      },
+      {
+        "completed_at": "2026-07-13T02:09:21Z",
+        "duration_seconds": 252.0,
+        "failure_count": 1,
+        "run_id": "29218720124-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-07-13T02:05:09Z",
         "status": "failed"
       }
     ],
@@ -99,14 +108,20 @@
       "metric": "recorded_run_failure_count",
       "source_artifact": "source_refresh_runs.json",
       "source_id": "scheduled-live-refresh"
+    },
+    {
+      "failure_count": 1,
+      "metric": "recorded_run_failure_count",
+      "source_artifact": "source_refresh_runs.json",
+      "source_id": "scheduled-live-refresh"
     }
   ],
   "status": "attention",
   "summary": {
-    "data_drift_count": 0,
-    "failed_refresh_count": 1,
-    "measured_refresh_count": 1,
-    "refresh_run_count": 1,
-    "source_failure_count": 1
+    "data_drift_count": 1,
+    "failed_refresh_count": 2,
+    "measured_refresh_count": 2,
+    "refresh_run_count": 2,
+    "source_failure_count": 2
   }
 }
