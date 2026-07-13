@@ -39,7 +39,7 @@ CivicLedger can use local API keys through ignored `.env` values. Real keys must
 
 ## Scheduled Refresh
 
-The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, disclosure indexes, OGE documents, FRED context, Tiingo prices, SEC filing context, asset resolution, market reactions, and Pages partitions daily. Heavier Senate report-page acquisition and official-event involvement refresh weekly or on a manual run.
+The `.github/workflows/data-refresh.yml` workflow refreshes the Congress.gov roster, public official roles, disclosure indexes, OGE documents, FRED context, Tiingo prices, SEC filing context, asset resolution, market reactions, and Pages partitions daily. Heavier Senate report-page acquisition and official-event involvement refresh weekly or on a manual run. Routine runs retry transient Tiingo rate limits and retain the last validated market snapshot when Tiingo remains unavailable; weekly or manually requested deep runs fail instead of accepting a stale provider snapshot.
 
 Required repository secrets:
 

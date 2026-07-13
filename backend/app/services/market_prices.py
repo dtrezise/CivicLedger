@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
+from email.utils import parsedate_to_datetime
 import json
 import math
 from pathlib import PurePosixPath
 import re
+import time
 from typing import Iterable, Mapping
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -17,7 +20,42 @@ TIINGO_BASE_URL = "https://api.tiingo.com/tiingo/daily"
 TIINGO_CRYPTO_BASE_URL = "https://api.tiingo.com/tiingo/crypto"
 NASDAQ_BASE_URL = "https://api.nasdaq.com/api/quote"
 USER_AGENT = "CivicLedger data refresh"
+TIINGO_MAX_ATTEMPTS = 4
+TIINGO_MAX_RETRY_DELAY_SECONDS = 30.0
 _MARKET_SYMBOL_RE = re.compile(r"^[A-Z0-9][A-Z0-9.-]{0,14}$")
+
+
+def _tiingo_retry_delay(error: HTTPError, attempt: int) -> float:
+    retry_after = error.headers.get("Retry-After") if error.headers else None
+    if retry_after:
+        try:
+            return min(TIINGO_MAX_RETRY_DELAY_SECONDS, max(0.0, float(retry_after)))
+        except ValueError:
+            try:
+                retry_at = parsedate_to_datetime(retry_after)
+                now = datetime.now(tz=retry_at.tzinfo)
+                return min(
+                    TIINGO_MAX_RETRY_DELAY_SECONDS,
+                    max(0.0, (retry_at - now).total_seconds()),
+                )
+            except (TypeError, ValueError, OverflowError):
+                pass
+    return min(TIINGO_MAX_RETRY_DELAY_SECONDS, float(2**attempt))
+
+
+def _read_tiingo_json(request: Request, *, max_attempts: int = TIINGO_MAX_ATTEMPTS) -> object:
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be at least 1")
+    for attempt in range(max_attempts):
+        try:
+            with urlopen(request, timeout=45) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except HTTPError as error:
+            retryable = error.code == 429 or 500 <= error.code < 600
+            if not retryable or attempt == max_attempts - 1:
+                raise
+            time.sleep(_tiingo_retry_delay(error, attempt))
+    raise RuntimeError("Tiingo request retry loop exhausted unexpectedly")
 
 TICKER_REFERENCE = {
     "AAPL": {
@@ -701,8 +739,7 @@ class TiingoClient:
             f"{self.base_url}/{symbol.lower()}/prices?{query}",
             headers={"User-Agent": USER_AGENT},
         )
-        with urlopen(request, timeout=45) as response:
-            return parse_tiingo_prices(symbol, json.loads(response.read().decode("utf-8")))
+        return parse_tiingo_prices(symbol, _read_tiingo_json(request))
 
 
 class TiingoCryptoClient:
@@ -733,8 +770,7 @@ class TiingoCryptoClient:
             f"{self.base_url}/prices?{urlencode(query)}",
             headers={"User-Agent": USER_AGENT},
         )
-        with urlopen(request, timeout=45) as response:
-            return parse_tiingo_crypto_prices(normalized, json.loads(response.read().decode("utf-8")))
+        return parse_tiingo_crypto_prices(normalized, _read_tiingo_json(request))
 
 
 class NasdaqClient:

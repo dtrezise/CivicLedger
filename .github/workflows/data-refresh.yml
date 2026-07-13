@@ -32,8 +32,16 @@ jobs:
           python-version: "3.12"
       - name: Install backend dependencies
         run: python -m pip install -e ./backend
-      - name: Start refresh telemetry clock
-        run: echo "REFRESH_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+      - name: Start refresh telemetry clock and select refresh depth
+        env:
+          REQUESTED_DEEP_REFRESH: ${{ inputs.deep_sources || false }}
+        run: |
+          echo "REFRESH_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+          deep_refresh=false
+          if [ "$REQUESTED_DEEP_REFRESH" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "7" ]; }; then
+            deep_refresh=true
+          fi
+          echo "DEEP_REFRESH=$deep_refresh" >> "$GITHUB_ENV"
       - name: Verify required secrets are configured
         env:
           CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
@@ -159,12 +167,32 @@ jobs:
         env:
           PYTHONPATH: backend
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-        run: python scripts/build_market_price_dataset.py --start 2009-01-20
+        run: |
+          snapshot="$RUNNER_TEMP/market_prices.json"
+          cp data/context/market_prices.json "$snapshot"
+          if ! python scripts/build_market_price_dataset.py --start 2009-01-20; then
+            cp "$snapshot" data/context/market_prices.json
+            if [ "$DEEP_REFRESH" = "true" ]; then
+              exit 1
+            fi
+            echo "::warning::Tiingo equity refresh failed; restored the committed validated market-price snapshot."
+          fi
+          test -s data/context/market_prices.json
       - name: Refresh Tiingo crypto prices
         env:
           PYTHONPATH: backend
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-        run: python scripts/build_crypto_price_dataset.py --start 2009-01-20
+        run: |
+          snapshot="$RUNNER_TEMP/crypto_prices.json"
+          cp data/context/crypto_prices.json "$snapshot"
+          if ! python scripts/build_crypto_price_dataset.py --start 2009-01-20; then
+            cp "$snapshot" data/context/crypto_prices.json
+            if [ "$DEEP_REFRESH" = "true" ]; then
+              exit 1
+            fi
+            echo "::warning::Tiingo crypto refresh failed; restored the committed validated crypto-price snapshot."
+          fi
+          test -s data/context/crypto_prices.json
       - name: Check market price coverage
         run: python scripts/check_market_price_dataset.py
       - name: Rebuild asset resolution and market reaction context
@@ -178,7 +206,6 @@ jobs:
         env:
           PYTHONPATH: backend
           SEC_EDGAR_USER_AGENT: CivicLedger github-actions[bot]@users.noreply.github.com
-          DEEP_SOURCES: ${{ inputs.deep_sources || false }}
         run: |
           sec_refresh_failed=false
           if ! python scripts/build_sec_issuer_aliases.py --refresh; then
@@ -187,7 +214,7 @@ jobs:
             sec_refresh_failed=true
           fi
           if [ "$sec_refresh_failed" = "true" ]; then
-            if [ "$DEEP_SOURCES" = "true" ]; then
+            if [ "$DEEP_REFRESH" = "true" ]; then
               exit 1
             fi
             echo "::warning::SEC EDGAR refresh failed; retaining the committed hash-backed issuer and filing context."

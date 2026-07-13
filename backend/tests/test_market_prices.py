@@ -1,8 +1,14 @@
 import json
 from pathlib import Path
+from urllib.error import HTTPError
+
+import pytest
+
+import app.services.market_prices as market_prices
 
 from app.services.market_prices import (
     MARKET_PRICE_SYMBOLS,
+    TiingoCryptoClient,
     crypto_reference,
     normalize_asset_symbol,
     parse_nasdaq_prices,
@@ -13,6 +19,20 @@ from app.services.market_prices import (
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "market_prices"
+
+
+class FakeResponse:
+    def __init__(self, payload: object) -> None:
+        self.payload = json.dumps(payload).encode("utf-8")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        return False
+
+    def read(self) -> bytes:
+        return self.payload
 
 
 def test_parse_tiingo_prices_normalizes_adjusted_fields():
@@ -87,6 +107,54 @@ def test_parse_tiingo_crypto_prices_normalizes_pair_metadata():
     assert points[0].base_currency == "btc"
     assert points[0].quote_currency == "usd"
     assert points[0].source == "tiingo_crypto"
+
+
+def test_tiingo_crypto_client_retries_rate_limit_using_retry_after(monkeypatch):
+    calls = []
+    delays = []
+    payload = [
+        {
+            "ticker": "btcusd",
+            "baseCurrency": "btc",
+            "quoteCurrency": "usd",
+            "priceData": [{"date": "2024-01-03T00:00:00+00:00", "close": 45123.0}],
+        }
+    ]
+
+    def fake_urlopen(request, timeout):
+        calls.append((request, timeout))
+        if len(calls) == 1:
+            raise HTTPError(request.full_url, 429, "rate limited", {"Retry-After": "2"}, None)
+        return FakeResponse(payload)
+
+    monkeypatch.setattr(market_prices, "urlopen", fake_urlopen)
+    monkeypatch.setattr(market_prices.time, "sleep", delays.append)
+
+    points = TiingoCryptoClient(api_key="test-token").historical_prices(
+        "BTCUSD", start_date="2024-01-01", end_date="2024-01-03"
+    )
+
+    assert len(calls) == 2
+    assert delays == [2.0]
+    assert points[0].close == 45123.0
+
+
+def test_tiingo_crypto_client_does_not_retry_nontransient_http_errors(monkeypatch):
+    calls = []
+
+    def fake_urlopen(request, timeout):
+        calls.append((request, timeout))
+        raise HTTPError(request.full_url, 401, "unauthorized", {}, None)
+
+    monkeypatch.setattr(market_prices, "urlopen", fake_urlopen)
+    monkeypatch.setattr(market_prices.time, "sleep", lambda _delay: pytest.fail("unexpected retry"))
+
+    with pytest.raises(HTTPError, match="HTTP Error 401"):
+        TiingoCryptoClient(api_key="bad-token").historical_prices(
+            "BTCUSD", start_date="2024-01-01", end_date="2024-01-03"
+        )
+
+    assert len(calls) == 1
 
 
 def test_market_price_symbols_cover_core_overlays():
