@@ -3028,9 +3028,10 @@ def compact_event_index_row(event: dict) -> dict:
         "date",
         "label",
         "event_type",
-        "editor_status",
     ]
     row = {key: event.get(key) for key in keys if event.get(key) not in (None, "", [], {})}
+    if event.get("editor_status") == "curated":
+        row["editor_status"] = "curated"
     search_terms = sorted(
         {
             str(value).strip()
@@ -3281,15 +3282,27 @@ def write_public_partitions(dataset: dict) -> None:
                 "events": events,
             },
         )
+    event_index_rows = [compact_event_index_row(event) for event in public_events]
+    search_term_dictionary = sorted(
+        {row["search_terms"] for row in event_index_rows if row.get("search_terms")}
+    )
+    search_term_indexes = {
+        search_terms: index for index, search_terms in enumerate(search_term_dictionary)
+    }
+    for row in event_index_rows:
+        search_terms = row.pop("search_terms", None)
+        if search_terms:
+            row["search_term_index"] = search_term_indexes[search_terms]
     files["events"] = write_partition(
         "partitions/events.json",
         {
-            "schema_version": "timeline-event-index-v1",
+            "schema_version": "timeline-event-index-v2",
             "methodology_version": dataset["career_trade_timeline"].get(
                 "event_relationship_methodology_version"
             ),
             "partition_years": sorted(events_by_year),
-            "events": [compact_event_index_row(event) for event in public_events],
+            "search_term_dictionary": search_term_dictionary,
+            "events": event_index_rows,
         },
     )
 

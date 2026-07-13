@@ -42,7 +42,7 @@ PARTITION_LIMITS = {
 EXPECTED_FILE_SCHEMAS = {
     "coverage": "civicledger-coverage-v1",
     "entity_reference": "canonical-entity-reference-v1",
-    "events": "timeline-event-index-v1",
+    "events": "timeline-event-index-v2",
     "market_index": "market-partition-index-v1",
     "officials_index": "official-index-v1",
     "timeline_index": "career-trade-timeline-v3",
@@ -601,11 +601,23 @@ def validate() -> dict[str, int | float]:
     trade_count = 0
     production_count = 0
     events_payload = read_json(validated_paths[("files", "events")])
+    event_search_terms = events_payload.get("search_term_dictionary", [])
+    require(event_search_terms, "Event search-term dictionary is empty")
+    require(
+        len(event_search_terms) == len(set(event_search_terms))
+        and all(isinstance(value, str) and value for value in event_search_terms),
+        "Event search-term dictionary is invalid",
+    )
     event_catalog = {event["id"]: event for event in events_payload.get("events", [])}
     require(len(event_catalog) == len(events_payload.get("events", [])), "Event catalog contains duplicate IDs")
     for event in event_catalog.values():
         require_iso_date(event.get("date"), f"Event date for {event.get('id', 'unknown')}")
         require(event.get("label") and event.get("event_type"), f"Event metadata is incomplete: {event.get('id')}")
+        search_term_index = event.get("search_term_index")
+        require(
+            isinstance(search_term_index, int) and 0 <= search_term_index < len(event_search_terms),
+            f"Event search-term reference is invalid: {event.get('id')}",
+        )
     event_count = validate_event_partitions(manifest, validated_paths, event_catalog)
     for official_id, record in timeline_records.items():
         path = validated_paths[("timelines", official_id)]

@@ -415,8 +415,16 @@ def test_context_maps_and_pages_completeness_are_available():
     assert branch_map["Judicial"]["official_count"] == 822
     assert branch_map["Judicial"]["readiness_status"] == "roster_manifest_ready"
     assert overview["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
-    assert public_events["events"][0]["search_terms"]
+    assert public_events["search_term_dictionary"]
+    assert all(
+        0 <= event["search_term_index"] < len(public_events["search_term_dictionary"])
+        for event in public_events["events"]
+    )
     assert "ticker_scope" not in public_events["events"][0]
+    assert all(
+        event.get("editor_status") in {None, "curated"}
+        for event in public_events["events"]
+    )
     assert pages["career_trade_timeline"]["event_entity_map"]["company_entity_count"] >= 8
 
 

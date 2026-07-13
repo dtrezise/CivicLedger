@@ -289,7 +289,14 @@ async function loadData() {
     state.coverage = coverage;
     state.officials = officials.officials || [];
     state.officialMap = new Map(state.officials.map((official) => [official.id, official]));
-    state.eventCatalog = events.events || [];
+    const eventSearchTerms = events.search_term_dictionary || [];
+    state.eventCatalog = (events.events || []).map((event) => ({
+      ...event,
+      search_terms:
+        event.search_terms ||
+        (Number.isInteger(event.search_term_index) ? eventSearchTerms[event.search_term_index] : "") ||
+        "",
+    }));
     state.eventMap = new Map(state.eventCatalog.map((event) => [event.id, event]));
     state.timelineIndex = timelineIndex;
     parseUrlState();
