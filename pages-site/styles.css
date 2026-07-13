@@ -1342,6 +1342,17 @@ footer {
   font-size: 12px;
 }
 
+footer a {
+  color: #f4f7f8;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+footer a:hover,
+footer a:focus-visible {
+  color: #ffffff;
+}
+
 @media (max-width: 1120px) {
   .site-header {
     grid-template-columns: auto 1fr;

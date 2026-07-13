@@ -70,5 +70,8 @@ Every manifest entry carries byte size and SHA-256. The release validator reject
 - The curated trade-event ranking regression benchmark must retain its minimum
   precision and recall thresholds; those metrics are software-quality checks,
   not evidence of causation or investigative accuracy.
-- GitHub Pages deploys and serves the manifest and a representative official partition.
-- Workers Static Assets compatibility checks enforce the provider's asset-count and per-file limits before a Cloudflare pilot deploy.
+- GitHub Pages deploys and serves the manifest and a representative official partition as an independent fallback.
+- A successful `main` CI run automatically starts the protected Cloudflare production deployment.
+- Workers Static Assets compatibility checks enforce the provider's asset-count and per-file limits before deployment.
+- Post-deployment smoke checks verify representative HTML, JavaScript, release metadata, data partitions, security headers, and cache policies.
+- Every Cloudflare production release records its Git commit and dataset version and proves that a prior rollback target remains available.

@@ -1,0 +1,86 @@
+name: Roll Back Cloudflare Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_id:
+        description: Cloudflare Worker version ID to restore
+        required: true
+        type: string
+      reason:
+        description: Incident or reason for the rollback
+        required: true
+        type: string
+      confirmation:
+        description: Type ROLLBACK to confirm
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cloudflare-production
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment:
+      name: cloudflare-production
+      url: https://civic-ledger.dan-a2c.workers.dev/
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate rollback request
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          VERSION_ID: ${{ inputs.version_id }}
+        run: |
+          test "$CONFIRMATION" = "ROLLBACK"
+          python -c 'import os, re; value=os.environ["VERSION_ID"]; assert re.fullmatch(r"[0-9a-fA-F-]{36}", value), "Invalid version ID"'
+          mkdir -p .release-artifacts
+      - name: Restore selected Worker version
+        id: rollback
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.110.0"
+          command: >-
+            rollback ${{ inputs.version_id }}
+            --message "GitHub Actions rollback run ${{ github.run_id }}"
+            --config wrangler.jsonc
+          postCommands: |
+            wrangler versions list --json --config wrangler.jsonc > .release-artifacts/cloudflare-versions.json
+            wrangler deployments status --json --config wrangler.jsonc > .release-artifacts/cloudflare-deployment-status.json
+      - name: Verify restored production release
+        run: >-
+          python scripts/smoke_cloudflare_release.py
+          --base-url https://civic-ledger.dan-a2c.workers.dev/
+          --output .release-artifacts/cloudflare-rollback-smoke.json
+      - name: Verify another rollback target remains
+        run: >-
+          python scripts/verify_cloudflare_rollback.py
+          --versions .release-artifacts/cloudflare-versions.json
+          --status .release-artifacts/cloudflare-deployment-status.json
+          --output .release-artifacts/cloudflare-rollback-readiness.json
+      - name: Upload rollback evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: cloudflare-rollback-${{ github.run_id }}
+          path: .release-artifacts/
+          retention-days: 90
+      - name: Publish rollback summary
+        env:
+          REASON: ${{ inputs.reason }}
+          VERSION_ID: ${{ inputs.version_id }}
+        run: |
+          echo "### Cloudflare production rollback" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Restored version: $VERSION_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Reason: $REASON" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Post-rollback smoke: passed" >> "$GITHUB_STEP_SUMMARY"

@@ -54,7 +54,7 @@ This will:
 | API Docs (Swagger) | http://localhost:8000/docs    |
 | API Docs (ReDoc) | http://localhost:8000/redoc     |
 | Public GitHub Pages demo | https://dtrezise.github.io/CivicLedger/ |
-| Public Cloudflare pilot | https://civic-ledger.dan-a2c.workers.dev/ |
+| Public Cloudflare production | https://civic-ledger.dan-a2c.workers.dev/ |
 
 ## Seed Data
 
@@ -83,7 +83,8 @@ On first startup the backend automatically seeds the database with:
 |------|---------|
 | `docs/product_brief.md` | Product boundaries and MVP definition |
 | `docs/architecture.md` | System layers and release gates |
-| `docs/cloudflare_deployment.md` | Parallel Cloudflare pilot, credentials, validation, and rollback workflow |
+| `docs/cloudflare_deployment.md` | Automatic Cloudflare production, credentials, validation, metrics, and rollback workflow |
+| `docs/r2_public_data_architecture.md` | Prepared large-corpus R2 design and activation gates; no resources active |
 | `docs/data_model.md` | Current and next data model |
 | `docs/provenance_policy.md` | Source, fixture, correction, and share-card rules |
 | `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
@@ -97,9 +98,10 @@ On first startup the backend automatically seeds the database with:
 ## Public GitHub Pages Demo
 
 The repository publishes the public research workbench from `pages-site/` using
-GitHub Pages and pilots the same validated artifact on Cloudflare Workers Static
-Assets. GitHub remains the source and release-audit system, and GitHub Pages stays
-available as an independent fallback during the Cloudflare pilot. The public
+GitHub Pages and automatically deploys the same validated artifact to Cloudflare
+Workers Static Assets after successful `main` CI. GitHub remains the source and
+release-audit system, and GitHub Pages stays available as an independent
+fallback. The public
 workbench is intentionally separate from the Docker/FastAPI review app:
 Pages loads a small versioned manifest, official and event indexes, and
 official/market partitions on demand. The workbench supports career, calendar,

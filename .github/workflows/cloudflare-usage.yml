@@ -1,0 +1,45 @@
+name: Track Cloudflare Usage
+
+on:
+  schedule:
+    - cron: "17 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-usage
+  cancel-in-progress: true
+
+jobs:
+  usage:
+    runs-on: ubuntu-latest
+    environment:
+      name: cloudflare-production
+      deployment: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Capture current asset footprint
+        run: >-
+          python scripts/check_cloudflare_assets.py
+          --baseline docs/metrics/cloudflare_asset_baseline.json
+          --report .release-artifacts/cloudflare-assets.json
+      - name: Capture seven-day Cloudflare usage window
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ANALYTICS_TOKEN: ${{ secrets.CLOUDFLARE_ANALYTICS_TOKEN }}
+        run: >-
+          python scripts/track_cloudflare_usage.py
+          --asset-report .release-artifacts/cloudflare-assets.json
+          --output .release-artifacts/cloudflare-usage.json
+          --markdown >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload usage evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: cloudflare-usage-${{ github.run_id }}
+          path: .release-artifacts/
+          retention-days: 90

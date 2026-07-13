@@ -47,9 +47,10 @@ Required repository secrets:
 - `FRED_API_KEY`
 - `TIINGO_API_KEY`
 
-Cloudflare pilot delivery secrets:
+Cloudflare production delivery secrets:
 
 - `CLOUDFLARE_API_TOKEN`: least-privilege Workers deployment token.
+- `CLOUDFLARE_ANALYTICS_TOKEN`: read-only Account Analytics token for scheduled usage reports.
 - `CLOUDFLARE_ACCOUNT_ID`: target account identifier, stored as a secret to keep deployment configuration centralized.
 
 Manual run:

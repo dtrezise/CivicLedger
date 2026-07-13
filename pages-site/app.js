@@ -51,6 +51,7 @@ const eventCategoryLabels = {
 
 const state = {
   manifest: null,
+  release: null,
   overview: null,
   coverage: null,
   officials: [],
@@ -278,13 +279,15 @@ async function loadData() {
   try {
     setHeaderStatus("Loading dataset");
     state.manifest = await fetchJson("./data/manifest.json");
-    const [overview, officials, coverage, events, timelineIndex] = await Promise.all([
+    const [overview, officials, coverage, events, timelineIndex, release] = await Promise.all([
       fetchJson(state.manifest.files.overview),
       fetchJson(state.manifest.files.officials_index),
       fetchJson(state.manifest.files.coverage),
       fetchJson(state.manifest.files.events),
       fetchJson(state.manifest.files.timeline_index),
+      fetchJson("./release.json").catch(() => null),
     ]);
+    state.release = release;
     state.overview = overview;
     state.coverage = coverage;
     state.officials = officials.officials || [];
@@ -2161,6 +2164,7 @@ function renderDatasetStatus() {
     <strong>Current record boundary</strong>
     <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}. Context coverage: ${numberFormat.format(summary.primary_source_context_record_count || 0)} official primary-source records, including ${numberFormat.format(summary.sec_filing_event_count || 0)} SEC filing events; ${escapeHtml(newsStatus)}.</span>`;
   $("footerDataset").textContent = `Dataset ${state.overview.dataset_version} / generated ${state.overview.generated_at}`;
+  renderReleaseMetadata();
 
   const metrics = [
     [summary.tracked_public_official_count, "Tracked officials"],
@@ -2212,6 +2216,19 @@ function renderDatasetStatus() {
   $("releaseBlockers").innerHTML = `
     <strong>Release blockers</strong>
     <ul>${state.coverage.release_blockers.map((blocker) => `<li>${escapeHtml(blocker)}</li>`).join("")}</ul>`;
+}
+
+function renderReleaseMetadata() {
+  const target = $("footerRelease");
+  const release = state.release;
+  if (!release || !release.commit || release.commit === "development") {
+    target.textContent = "Release development build";
+    return;
+  }
+  const label = `Release ${release.short_commit || String(release.commit).slice(0, 7)}`;
+  target.innerHTML = release.commit_url
+    ? `<a href="${escapeHtml(release.commit_url)}">${escapeHtml(label)}</a>`
+    : escapeHtml(label);
 }
 
 function renderWorkbench() {

@@ -3,9 +3,9 @@
 ## Delivery Model
 
 CivicLedger uses GitHub as the source, review, CI, scheduled-data, and audit
-system. Cloudflare Workers Static Assets is the parallel public delivery target
+system. Cloudflare Workers Static Assets is the primary public delivery target
 for the generated `pages-site/` workbench. GitHub Pages remains active during
-the pilot and rollback period.
+the production stabilization period as an independent fallback.
 
 Heavy source retrieval, OCR, parsing, validation, and dataset generation remain
 in GitHub Actions or the local Docker environment. Cloudflare receives only the
@@ -16,27 +16,31 @@ validated static release artifact; it does not become the system of record.
 - Development: local Docker services and `python3 -m http.server` for the static workbench.
 - Continuous validation: `.github/workflows/ci.yml` on every push and pull request.
 - Current public fallback: GitHub Pages from `.github/workflows/pages.yml`.
-- Cloudflare pilot: manual `.github/workflows/cloudflare-pilot.yml` deployment to `https://civic-ledger.dan-a2c.workers.dev/`.
-- Production cutover: enable only after a sustained parity period and public smoke checks.
+- Cloudflare production: automatic `.github/workflows/cloudflare-production.yml` deployment after successful `main` CI to `https://civic-ledger.dan-a2c.workers.dev/`.
+- Cloudflare usage: daily `.github/workflows/cloudflare-usage.yml` request and asset-footprint evidence.
+- Emergency rollback: guarded `.github/workflows/cloudflare-rollback.yml` restoration followed by public smoke checks.
 
-## Pilot Status
+## Production Status
 
-The first pilot deployment completed successfully on 2026-07-13 from commit
+The first Cloudflare deployment completed successfully on 2026-07-13 from commit
 `e7f0f80` in GitHub Actions run `29249340674`. The release uploaded 422 static
 assets and passed the public-data, provenance, ranking, release-contract, and
-Cloudflare asset-limit gates before deployment. GitHub Pages remains active as
-the public fallback.
+Cloudflare asset-limit gates before deployment. The pilot was accepted for
+automatic production delivery on 2026-07-13. GitHub Pages remains active as the
+public fallback.
 
 ## Cloudflare Bootstrap
 
 1. Enable the account `workers.dev` subdomain.
-2. Create an API token constrained to the CivicLedger account with only
-   `Workers Scripts:Edit`. Do not add zone, Pages, KV, R2, or unrelated
-   permissions to the static-deployment token.
-3. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as GitHub repository
+2. Create an API token constrained to the CivicLedger account with
+   `Workers Scripts:Edit` for static deployment.
+3. Create a separate token with `Account Analytics:Read` for scheduled usage
+   reporting. Do not add zone, Pages, KV, R2, or write permissions to it.
+4. Add `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ANALYTICS_TOKEN`, and
+   `CLOUDFLARE_ACCOUNT_ID` as GitHub repository
    secrets.
-4. Run the `Deploy Cloudflare Pilot` workflow manually.
-5. Verify the emitted deployment URL before changing any production routing.
+5. Protect the `cloudflare-production` GitHub environment with a `main`-only
+   deployment branch policy.
 
 The API token value belongs only in Cloudflare and GitHub Actions secrets. The
 ignored local inventory records metadata and storage locations, never raw
@@ -54,28 +58,60 @@ The compatibility check enforces the Workers Static Assets limits of 20,000
 files per version and 25 MiB per file. CivicLedger's stricter release-performance
 budgets still apply independently.
 
-## Deployment
+## Automatic Deployment
 
 ```bash
-gh workflow run cloudflare-pilot.yml --repo dtrezise/CivicLedger
-gh run watch --repo dtrezise/CivicLedger
+git push origin main
+gh run list --repo dtrezise/CivicLedger --workflow cloudflare-production.yml
 ```
 
-The workflow re-runs the public-data, provenance, ranking, accessibility,
+After `CI` succeeds on `main`, the workflow re-runs the public-data, provenance, ranking, accessibility,
 interaction, link, performance, determinism, checksum, and Cloudflare asset
-gates before deployment. A failed gate cannot publish a new pilot version.
+gates before deployment. It writes the source commit and dataset version into
+`release.json`, publishes the static artifact, verifies representative HTTP and
+JSON endpoints, checks security and cache headers, and proves that a prior
+Cloudflare version remains available. A failed gate cannot publish a new
+production version.
+
+Each successful release retains a 90-day GitHub artifact containing the asset
+footprint, HTTP smoke report, Cloudflare version inventory, active deployment
+status, and rollback-readiness report.
+
+## Security And Caching
+
+`pages-site/_headers` is the committed source of truth for production response
+headers. HTML and release metadata revalidate immediately, unversioned app
+assets use short browser caches, public data partitions use one-hour caches with
+stale-while-revalidate, and the favicon uses a one-day cache. Security headers
+enforce content-source, framing, referrer, browser-feature, MIME, and transport
+policies. The pinned ECharts dependency includes subresource integrity.
+
+## Usage Tracking
+
+The daily usage workflow records seven-day account-level Worker request, error,
+and subrequest metrics plus the current static corpus size and growth from the
+committed baseline. Reports are retained as 90-day GitHub artifacts.
+
+Exact visitor transfer bytes are a zone-analytics metric. The current
+`workers.dev`-only release has no customer zone, so the report records bandwidth
+as `awaiting_custom_zone` rather than inventing an estimate. When a custom domain
+is added, supply its zone scope and extend the tracker with
+`httpRequestsAdaptiveGroups.sum.edgeResponseBytes`. Workers Static Assets
+requests themselves remain free and unlimited.
 
 ## R2 Growth Path
 
 Workers Static Assets should continue serving the interactive shell and compact
-query partitions. If the public evidence corpus outgrows repository or deploy
-budgets, create separate R2 buckets for public release data and restricted raw
-evidence. R2 activation, bucket creation, lifecycle rules, CORS, custom domains,
-and a separate least-privilege upload token are deliberately outside the static
-pilot. The browser must never receive private evidence-bucket credentials.
+query partitions. The prepared object layout, release pointer, retention,
+credentials, CORS, and activation gates are documented in
+`docs/r2_public_data_architecture.md`. No R2 resource is active. The browser must
+never receive private evidence-bucket credentials.
 
 ## Rollback
 
-GitHub Pages remains independently deployable throughout the pilot. Cloudflare
-Workers also retains deployment versions for rollback. A Cloudflare failure must
-not mutate generated data or interrupt the GitHub Pages release.
+GitHub Pages remains independently deployable. Cloudflare Workers retains up to
+the recent deployment versions supported by Wrangler rollback. Every production
+release proves that a prior version exists. The emergency rollback workflow
+requires an explicit version ID and confirmation, restores that version, then
+re-runs HTTP, dataset, security, cache, and rollback-readiness checks. A
+Cloudflare failure must not mutate generated data or interrupt GitHub Pages.
