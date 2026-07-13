@@ -92,14 +92,31 @@ jobs:
           DEEP_SOURCES: ${{ inputs.deep_sources || false }}
         run: |
           deep_refresh=false
+          senate_index_ok=true
+          senate_index_backup="$RUNNER_TEMP/senate_disclosure_index.json"
+          cp data/disclosures/senate_disclosure_index.json "$senate_index_backup"
           if [ "$DEEP_SOURCES" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "7" ]; }; then
             deep_refresh=true
           fi
           if ! python scripts/build_senate_disclosure_index.py --all-senators --acknowledge-senate-terms; then
+            senate_index_ok=false
+          elif ! python - <<'PY'
+          import json
+          from pathlib import Path
+
+          summary = json.loads(Path("data/disclosures/senate_disclosure_index.json").read_text())["summary"]
+          if summary.get("document_count", 0) < 2_100 or summary.get("matched_document_count", 0) < 1_800:
+              raise SystemExit("Refreshed Senate index did not meet the release coverage floor.")
+          PY
+          then
+            senate_index_ok=false
+          fi
+          if [ "$senate_index_ok" = "false" ]; then
+            cp "$senate_index_backup" data/disclosures/senate_disclosure_index.json
             if [ "$deep_refresh" = "true" ]; then
               exit 1
             fi
-            echo "::warning::Senate portal refresh failed; retaining the committed hash-backed index and transaction snapshot."
+            echo "::warning::Senate portal refresh failed or returned incomplete coverage; restored the committed hash-backed index and transaction snapshot."
             test -s data/disclosures/senate_disclosure_index.json
             test -s data/disclosures/senate_ptr_transactions.json
           fi
