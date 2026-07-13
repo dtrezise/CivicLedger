@@ -108,13 +108,23 @@ def main() -> None:
     parser.add_argument("--base-url", default=DEFAULT_URL)
     parser.add_argument("--expected-commit")
     parser.add_argument("--attempts", type=int, default=5)
+    parser.add_argument("--consistency-attempts", type=int, default=6)
+    parser.add_argument("--consistency-delay", type=float, default=5.0)
     parser.add_argument("--skip-header-checks", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    try:
-        report = validate(args)
-    except (SmokeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise SystemExit(f"Cloudflare release smoke failed: {exc}") from exc
+    report = None
+    last_error: Exception | None = None
+    for attempt in range(args.consistency_attempts):
+        try:
+            report = validate(args)
+            break
+        except (SmokeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            last_error = exc
+            if attempt + 1 < args.consistency_attempts:
+                time.sleep(min(args.consistency_delay * (2**attempt), 30))
+    if report is None:
+        raise SystemExit(f"Cloudflare release smoke failed: {last_error}") from last_error
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")

@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: cloudflare-production
-      url: ${{ steps.deployment.outputs.deployment-url }}
+      url: https://civic-ledger.dan-a2c.workers.dev/
     steps:
       - uses: actions/checkout@v7
         with:
@@ -29,6 +29,9 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
       - name: Capture release identity
         id: release
         run: |
@@ -63,18 +66,16 @@ jobs:
             --report .release-artifacts/cloudflare-assets.json \
             --markdown >> "$GITHUB_STEP_SUMMARY"
       - name: Deploy Workers Static Assets production
-        id: deployment
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4.110.0"
-          command: >-
-            deploy --config wrangler.jsonc
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npx --yes wrangler@4.110.0 deploy --config wrangler.jsonc \
             --message "GitHub ${{ steps.release.outputs.short_sha }}"
-          postCommands: |
-            wrangler versions list --json --config wrangler.jsonc > .release-artifacts/cloudflare-versions.json
-            wrangler deployments status --json --config wrangler.jsonc > .release-artifacts/cloudflare-deployment-status.json
+          npx --yes wrangler@4.110.0 versions list --json --config wrangler.jsonc \
+            > .release-artifacts/cloudflare-versions.json
+          npx --yes wrangler@4.110.0 deployments status --json --config wrangler.jsonc \
+            > .release-artifacts/cloudflare-deployment-status.json
       - name: Verify deployed HTTP, data, metadata, security, and caching
         run: >-
           python scripts/smoke_cloudflare_release.py
@@ -88,18 +89,17 @@ jobs:
           --status .release-artifacts/cloudflare-deployment-status.json
           --output .release-artifacts/cloudflare-rollback-readiness.json
       - name: Upload release evidence
+        if: ${{ always() }}
         uses: actions/upload-artifact@v7
         with:
           name: cloudflare-release-${{ steps.release.outputs.short_sha }}
           path: .release-artifacts/
           retention-days: 90
       - name: Publish production release summary
-        env:
-          DEPLOYMENT_URL: ${{ steps.deployment.outputs.deployment-url }}
         run: |
           echo "### Cloudflare production release" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- Commit: ${{ steps.release.outputs.sha }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Production: $DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Production: https://civic-ledger.dan-a2c.workers.dev/" >> "$GITHUB_STEP_SUMMARY"
           echo "- Post-deployment smoke: passed" >> "$GITHUB_STEP_SUMMARY"
           echo "- Rollback readiness: passed" >> "$GITHUB_STEP_SUMMARY"
