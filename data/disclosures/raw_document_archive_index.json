@@ -19,7 +19,7 @@
         "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
         "source_id": "oge-individual-disclosures"
       },
-      "archive_object_status": "new",
+      "archive_object_status": "reused",
       "archive_status": "archived",
       "byte_count": 3994653,
       "content_addressed": true,
@@ -38,7 +38,7 @@
       "http_status_code": 200,
       "identity_status": "expected_identity_unverified",
       "notes": "Official OGE sample form used for parser regression and raw-document archive plumbing; not a production official filing.",
-      "object_reused": false,
+      "object_reused": true,
       "response_metadata": {
         "content_length": "3994653",
         "etag": "W/\"MTAtMDAwMi0wLTg1MjU4QjlEMDA1Q0ZCNDEtRkU5MDRGQURCMTYzQjQ1QTg1MjU4NUI2MDA1QTIzRTg=\"",
@@ -53,7 +53,7 @@
         }
       ],
       "retrieval_mode": "direct_public_sample",
-      "retrieved_at": "2026-07-13T03:10:29+00:00",
+      "retrieved_at": "2026-07-14T11:56:23+00:00",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
       "source_status": "downloadable_public_sample",
@@ -197,7 +197,7 @@
       "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
     }
   ],
-  "generated_at": "2026-07-13T03:10:30+00:00",
+  "generated_at": "2026-07-14T11:56:24+00:00",
   "schema_version": "raw-document-archive-index-v1",
   "source": {
     "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
@@ -211,7 +211,7 @@
     "document_count": 5,
     "pending_document_count": 4,
     "restricted_document_count": 4,
-    "reused_archive_object_count": 0,
+    "reused_archive_object_count": 1,
     "review_required_before_public_trade": true
   }
 }
