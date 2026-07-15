@@ -72,6 +72,7 @@ on:
       - "backend/app/services/judicial_disclosures.py"
       - "backend/app/services/entity_reference.py"
       - "backend/app/services/source_snapshots.py"
+      - ".github/workflows/data-refresh.yml"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
     inputs:
