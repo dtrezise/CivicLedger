@@ -340,6 +340,7 @@ def test_presidential_oge_documents_add_official_disclosures_and_preview_rows():
 
 def test_disclosure_ingestion_queue_covers_all_branches_and_congress_scope():
     data = json.loads(DISCLOSURE_QUEUE.read_text())
+    public_officials = json.loads(DATASET.read_text())
     summary = data["summary"]
 
     assert data["schema_version"] == "disclosure-ingestion-queue-v2"
@@ -351,7 +352,7 @@ def test_disclosure_ingestion_queue_covers_all_branches_and_congress_scope():
     assert set(summary["counts_by_congress"]) == {"111", "112", "113", "114", "115", "116", "117", "118", "119"}
     assert all(row["review_required"] is True for row in data["entries"][:250])
     assert all(row["promotion_status"] == "raw_document_required" for row in data["entries"][:250])
-    assert summary["unique_official_count"] == 2159
+    assert summary["unique_official_count"] == public_officials["summary"]["person_count"]
     assert all(row.get("absence_inference_allowed") is False for row in data["entries"])
     president_terms = [
         (row["official_id"], row.get("presidential_term"))
@@ -393,6 +394,7 @@ def test_context_maps_and_pages_completeness_are_available():
     congress_map = json.loads(CONGRESS_JURISDICTION_MAP.read_text())
     branch_map = json.loads(BRANCH_JURISDICTION_MAP.read_text())
     completeness = json.loads(DISCLOSURE_COMPLETENESS.read_text())
+    public_officials = json.loads(DATASET.read_text())
     pages = json.loads((ROOT / "pages-site" / "data" / "civicledger-static.json").read_text())
     overview = json.loads((ROOT / "pages-site" / "data" / "partitions" / "overview.json").read_text())
     public_events = json.loads((ROOT / "pages-site" / "data" / "partitions" / "events.json").read_text())
@@ -411,7 +413,10 @@ def test_context_maps_and_pages_completeness_are_available():
     assert completeness["summary"]["branch_count"] == 3
     assert completeness["summary"]["reviewed_public_trade_count"] == 0
     branch_map = {row["branch"]: row for row in completeness["branches"]}
-    assert branch_map["Legislative"]["official_count"] == 1265
+    legislative_official_count = sum(
+        person["branch"] == "Legislative" for person in public_officials["people"]
+    )
+    assert branch_map["Legislative"]["official_count"] == legislative_official_count
     assert branch_map["Legislative"]["parser_preview_transaction_count"] >= 64_000
     assert branch_map["Executive"]["indexed_document_count"] == 19
     assert branch_map["Judicial"]["official_count"] == 822
