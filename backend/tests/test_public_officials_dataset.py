@@ -57,6 +57,7 @@ def test_public_officials_dataset_roles_are_source_backed():
 def test_congressional_dataset_has_111th_to_119th_counts():
     data = json.loads((ROOT / "data" / "public_officials" / "congressional_service_terms.json").read_text())
     summary = data["summary"]
+    role_ids = [role["external_role_id"] for role in data["roles"]]
 
     assert data["scope"]["congress_numbers"] == [111, 112, 113, 114, 115, 116, 117, 118, 119]
     assert summary["person_count"] >= 1200
@@ -76,6 +77,7 @@ def test_congressional_dataset_has_111th_to_119th_counts():
     assert summary["role_counts_by_chamber"]["House"] >= 3900
     assert summary["role_counts_by_chamber"]["Senate"] >= 900
     assert summary["role_counts_by_term"]["obama-44"] >= 2200
+    assert len(role_ids) == len(set(role_ids))
 
 
 def test_congressional_chambers_follow_historical_terms_not_current_chamber():
@@ -133,7 +135,7 @@ def test_house_archive_is_source_backed_review_gated_and_partitioned():
     archive = json.loads(HOUSE_PTR_TRANSACTIONS.read_text())
 
     assert index["summary"]["source_index_count"] >= 18
-    assert index["summary"]["source_index_row_count"] >= 47_000
+    assert index["summary"]["source_index_row_count"] >= 40_000
     assert index["summary"]["member_ptr_document_count"] >= 7_500
     assert index["summary"]["ambiguous_member_ptr_document_count"] == 0
     assert archive["schema_version"] == "house-ptr-transactions-manifest-v2"

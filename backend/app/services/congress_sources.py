@@ -270,7 +270,7 @@ class CongressGovClient:
         raise RuntimeError(f"Congress.gov request failed after {retries} attempts: {path}") from last_error
 
     def members_by_congress(self, congress_number: int, limit: int = 250) -> list[dict]:
-        members: list[dict] = []
+        members_by_bioguide: dict[str, dict] = {}
         offset = 0
         while True:
             payload = self._get_json(
@@ -278,11 +278,19 @@ class CongressGovClient:
                 {"format": "json", "limit": limit, "offset": offset},
             )
             batch = payload.get("members", [])
-            members.extend(batch)
+            for member in batch:
+                bioguide_id = member.get("bioguideId")
+                if not bioguide_id:
+                    raise RuntimeError(
+                        f"Congress.gov returned a member without a Bioguide ID for Congress {congress_number}"
+                    )
+                existing = members_by_bioguide.get(bioguide_id)
+                if existing is None or (member.get("updateDate") or "") > (existing.get("updateDate") or ""):
+                    members_by_bioguide[bioguide_id] = member
             if not payload.get("pagination", {}).get("next") or not batch:
                 break
             offset += limit
-        return members
+        return list(members_by_bioguide.values())
 
     def laws_by_congress(self, congress_number: int, limit: int = 250) -> list[dict]:
         laws: list[dict] = []

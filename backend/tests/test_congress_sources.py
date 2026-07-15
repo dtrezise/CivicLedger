@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.services.congress_sources import (
+    CongressGovClient,
     chamber_label,
     display_name_from_congress_gov,
     parse_house_current_members_xml,
@@ -47,3 +48,37 @@ def test_congress_helpers_keep_legislative_labels_stable():
     assert display_name_from_congress_gov("Gallagher, James") == "James Gallagher"
     assert role_category_for_chamber("House", state="PR", district="At Large") == "resident_commissioner"
     assert role_title_for_category("senator") == "U.S. Senator"
+
+
+def test_congress_member_pagination_deduplicates_bioguide_ids(monkeypatch):
+    client = CongressGovClient(api_key="test-key")
+    responses = [
+        {
+            "members": [
+                {"bioguideId": "A000001", "updateDate": "2026-07-14T10:00:00Z"},
+                {"bioguideId": "H001085", "updateDate": "2026-07-14T07:40:27Z"},
+            ],
+            "pagination": {"next": "second-page"},
+        },
+        {
+            "members": [
+                {"bioguideId": "H001085", "updateDate": "2026-07-15T07:40:27Z"},
+                {"bioguideId": "Z000001", "updateDate": "2026-07-14T10:00:00Z"},
+            ],
+            "pagination": {},
+        },
+    ]
+
+    def fake_get_json(path, params):
+        assert path == "/member/congress/119"
+        assert params["offset"] in {0, 2}
+        return responses.pop(0)
+
+    monkeypatch.setattr(client, "_get_json", fake_get_json)
+
+    members = client.members_by_congress(119, limit=2)
+
+    assert [member["bioguideId"] for member in members] == ["A000001", "H001085", "Z000001"]
+    assert next(member for member in members if member["bioguideId"] == "H001085")["updateDate"] == (
+        "2026-07-15T07:40:27Z"
+    )
