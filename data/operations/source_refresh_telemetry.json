@@ -55,7 +55,7 @@
       "count_metric": "document_count",
       "current_record_count": 2116,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "70e736a4d58bb773d6c65b44697d21790d5a526d851bb1d2317be4fda5a1912d",
+      "current_summary_sha256": "7920ca7b6d16f24ebd5f43f382994aec0bbd5b6624c4cf0ff3cc173627a1ba33",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
       "status": "changed"
@@ -76,9 +76,9 @@
   "generated_at": "2026-07-15",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
-    "maximum": 807.0,
-    "p50": 691.0,
-    "p95": 807.0,
+    "maximum": 812.0,
+    "p50": 727.0,
+    "p95": 812.0,
     "runs": [
       {
         "completed_at": "2026-07-13T01:59:24Z",
@@ -151,6 +151,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-07-15T11:54:30Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-07-15T13:53:25Z",
+        "duration_seconds": 812.0,
+        "failure_count": 0,
+        "run_id": "29420072924-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-07-15T13:39:53Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -198,8 +207,8 @@
   "summary": {
     "data_drift_count": 3,
     "failed_refresh_count": 6,
-    "measured_refresh_count": 8,
-    "refresh_run_count": 8,
+    "measured_refresh_count": 9,
+    "refresh_run_count": 9,
     "source_failure_count": 6
   }
 }
