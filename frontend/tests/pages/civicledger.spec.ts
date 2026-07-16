@@ -85,10 +85,7 @@ test("shows structured recovery details when required data cannot load", async (
   await expect(page.locator("#loadFailureCode")).toHaveText("HTTP_503");
   await expect(page.locator("#loadFailureResource")).toHaveText("./data/manifest.json");
   await expect(page.locator("#retryDataButton")).toBeVisible();
-  await expect(page.locator("#loadFailure a")).toHaveAttribute(
-    "href",
-    "https://dtrezise.github.io/CivicLedger/"
-  );
+  await expect(page.locator("#loadFailure a")).toHaveCount(0);
 });
 
 test("keeps the public workbench inside the mobile viewport", async ({ page }, testInfo) => {
