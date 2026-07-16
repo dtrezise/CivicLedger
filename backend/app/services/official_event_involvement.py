@@ -21,7 +21,7 @@ from xml.etree import ElementTree as ET
 
 
 CONGRESS_GOV_BASE_URL = "https://api.congress.gov/v3"
-USER_AGENT = "CivicLedger official-event involvement/1.0 (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger official-event involvement/1.0 (+https://civic-ledger.dan-a2c.workers.dev/)"
 CACHE_SCHEMA_VERSION = "official-event-http-cache-v1"
 DATASET_SCHEMA_VERSION = "official-event-involvement-v1"
 METHODOLOGY_VERSION = "official-event-involvement-methodology-v1"

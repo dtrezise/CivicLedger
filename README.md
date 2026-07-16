@@ -53,7 +53,6 @@ This will:
 | Backend API      | http://localhost:8000           |
 | API Docs (Swagger) | http://localhost:8000/docs    |
 | API Docs (ReDoc) | http://localhost:8000/redoc     |
-| Public GitHub Pages demo | https://dtrezise.github.io/CivicLedger/ |
 | Public Cloudflare production | https://civic-ledger.dan-a2c.workers.dev/ |
 
 ## Seed Data
@@ -95,15 +94,13 @@ On first startup the backend automatically seeds the database with:
 | `docs/autonomous_release_sprint_12_round2.md` | Completed OCR, historical backfill, reviewer, visualization, and release sprint |
 | `docs/agentic_roles.md` | Expert roles and guardrails for project development |
 
-## Public GitHub Pages Demo
+## Public Cloudflare Production
 
-The repository publishes the public research workbench from `pages-site/` using
-GitHub Pages and automatically deploys the same validated artifact to Cloudflare
-Workers Static Assets after successful `main` CI. GitHub remains the source and
-release-audit system, and GitHub Pages stays available as an independent
-fallback. The public
+The repository automatically deploys the validated public research workbench
+from `pages-site/` to Cloudflare Workers Static Assets after successful `main`
+CI. The public
 workbench is intentionally separate from the Docker/FastAPI review app:
-Pages loads a small versioned manifest, official and event indexes, and
+the static site loads a small versioned manifest, official and event indexes, and
 official/market partitions on demand. The workbench supports career, calendar,
 and event-window comparison modes, branch-aware official search, transaction
 inspection, source evidence, optional market overlays, adjustable event density,
@@ -111,7 +108,7 @@ per-official event-category controls, pointer-based visible-range selection,
 structured event evidence, and selected-transaction market comparisons.
 
 ```bash
-# Rebuild the static Pages dataset locally
+# Rebuild the static production dataset locally
 PYTHONPATH=backend .venv/bin/python scripts/build_pages_dataset.py
 
 # Preview the Pages site locally

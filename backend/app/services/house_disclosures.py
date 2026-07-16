@@ -21,7 +21,7 @@ HOUSE_FINANCIAL_DOCUMENT_URL = (
 HOUSE_PTR_DOCUMENT_URL = (
     "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/{year}/{document_id}.pdf"
 )
-USER_AGENT = "CivicLedger research crawler/0.2 (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger research crawler/0.2 (+https://civic-ledger.dan-a2c.workers.dev/)"
 NAME_NOISE = {
     "jr",
     "sr",

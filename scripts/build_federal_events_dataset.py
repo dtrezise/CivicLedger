@@ -28,7 +28,7 @@ OUTPUT = ROOT / "data" / "context" / "federal_events.json"
 SUPREME_COURT_HISTORICAL = ROOT / "data" / "context" / "supreme_court_historical_decisions.json"
 FEDERAL_REGISTER_API = "https://www.federalregister.gov/api/v1/documents.json"
 SUPREME_COURT_TERM_URL = "https://www.supremecourt.gov/opinions/slipopinion/{term}"
-USER_AGENT = "CivicLedger federal event research/0.1 (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger federal event research/0.1 (+https://civic-ledger.dan-a2c.workers.dev/)"
 CONGRESSES = list(range(111, 120))
 FEDERAL_REGISTER_AGENCY_DOCUMENT_TYPES = {
     "NOTICE": "Notice",

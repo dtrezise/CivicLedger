@@ -21,7 +21,7 @@ SUPREME_COURT_US_REPORTS_URL = "https://www.supremecourt.gov/opinions/USReports.
 SUPREME_COURT_BOUND_VOLUME_URL = (
     "https://www.supremecourt.gov/opinions/boundvolumes/{volume}BV.pdf"
 )
-USER_AGENT = "CivicLedger U.S. Reports backfill/0.1 (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger U.S. Reports backfill/0.1 (+https://civic-ledger.dan-a2c.workers.dev/)"
 MODS_NS = {"mods": "http://www.loc.gov/mods/v3"}
 HISTORICAL_VOLUMES = tuple(range(555, 583))
 MONTH_NAMES = (

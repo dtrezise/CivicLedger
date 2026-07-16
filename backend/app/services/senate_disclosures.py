@@ -28,7 +28,7 @@ SENATE_PTR_REPORT_TYPE = 11
 SENATE_MEMBER_FILER_TYPES = (1, 5)
 MIN_REQUEST_INTERVAL_SECONDS = 1.0
 VALIDATION_BIOGUIDE_ID = "F000062"
-USER_AGENT = "CivicLedger research crawler/0.2 (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger research crawler/0.2 (+https://civic-ledger.dan-a2c.workers.dev/)"
 IMPORT_SCHEMA_VERSION = "senate-disclosure-import-v1"
 
 REPORT_PATH_RE = re.compile(

@@ -109,16 +109,6 @@ jobs:
         env:
           PRODUCTION_BASE_URL: https://civic-ledger.dan-a2c.workers.dev/
         run: ./scripts/production_browser_smoke.sh
-      - name: Verify GitHub Pages fallback parity
-        id: parity
-        run: >-
-          python scripts/verify_pages_cloudflare_parity.py
-          --pages-url https://dtrezise.github.io/CivicLedger/
-          --cloudflare-url https://civic-ledger.dan-a2c.workers.dev/
-          --metadata-only
-          --attempts 20
-          --delay 15
-          --output .release-artifacts/pages-cloudflare-parity.json
       - name: Verify rollback readiness
         id: readiness
         if: ${{ always() && steps.deploy.outcome == 'success' }}
@@ -149,7 +139,6 @@ jobs:
           HTTP_SMOKE: ${{ steps.smoke.outcome }}
           MOBILE_RUNTIME: ${{ steps.mobile_runtime.outcome }}
           MOBILE_SMOKE: ${{ steps.mobile_smoke.outcome }}
-          PARITY: ${{ steps.parity.outcome }}
           READINESS: ${{ steps.readiness.outcome }}
           PREVIEW_REHEARSAL: ${{ steps.preview_rehearsal.outcome }}
         run: |
@@ -169,7 +158,6 @@ jobs:
               ("http-smoke", "post_deploy", "HTTP_SMOKE"),
               ("mobile-runtime", "verification", "MOBILE_RUNTIME"),
               ("mobile-smoke", "post_deploy", "MOBILE_SMOKE"),
-              ("fallback-parity", "post_deploy", "PARITY"),
               ("rollback-readiness", "verification", "READINESS"),
               ("preview-rehearsal", "verification", "PREVIEW_REHEARSAL"),
           ]
@@ -206,6 +194,5 @@ jobs:
           echo "- Production: https://civic-ledger.dan-a2c.workers.dev/" >> "$GITHUB_STEP_SUMMARY"
           echo "- Post-deployment smoke: passed" >> "$GITHUB_STEP_SUMMARY"
           echo "- Mobile production smoke: passed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- GitHub Pages parity: passed" >> "$GITHUB_STEP_SUMMARY"
           echo "- Rollback readiness: passed" >> "$GITHUB_STEP_SUMMARY"
           echo "- Preview rollback rehearsal: passed" >> "$GITHUB_STEP_SUMMARY"

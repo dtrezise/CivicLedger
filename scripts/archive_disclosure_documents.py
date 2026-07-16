@@ -27,7 +27,7 @@ MANIFEST = ROOT / "data" / "disclosures" / "oge_retrieval_manifest.json"
 ARCHIVE_ROOT = ROOT / "data" / "raw_documents"
 OUTPUT = ROOT / "data" / "disclosures" / "raw_document_archive_index.json"
 OGE_FIXTURE = ROOT / "backend" / "tests" / "fixtures" / "parsers" / "oge_public_sample_fixture.json"
-USER_AGENT = "CivicLedger research crawler/0.3 (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger research crawler/0.3 (+https://civic-ledger.dan-a2c.workers.dev/)"
 TRANSIENT_HTTP_STATUS_CODES = {408, 425, 429, 500, 502, 503, 504}
 CONTENT_TYPE_EXTENSIONS = {
     "application/pdf": ".pdf",

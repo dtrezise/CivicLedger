@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCUMENT_OUTPUT = ROOT / "data" / "disclosures" / "presidential_oge_documents.json"
 TRANSACTION_OUTPUT = ROOT / "data" / "disclosures" / "presidential_oge_transactions.json"
 
-USER_AGENT = "CivicLedger disclosure research bot contact: https://github.com/dtrezise/CivicLedger"
+USER_AGENT = "CivicLedger disclosure research bot contact: https://civic-ledger.dan-a2c.workers.dev/"
 OGE_COLLECTION_URL = (
     "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
 )

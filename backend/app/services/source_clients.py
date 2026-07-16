@@ -84,7 +84,7 @@ def fetch_to_tempfile(url: str) -> tuple[Path, str | None]:
     request = Request(
         url,
         headers={
-            "User-Agent": "CivicLedger research crawler/0.1 (+https://github.com/dtrezise/CivicLedger)"
+            "User-Agent": "CivicLedger research crawler/0.1 (+https://civic-ledger.dan-a2c.workers.dev/)"
         },
     )
     with urlopen(request, timeout=30) as response:

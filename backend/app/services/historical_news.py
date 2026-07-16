@@ -16,7 +16,7 @@ from urllib.request import Request, urlopen
 GDELT_DOC_API_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 GDELT_MAX_RECORDS = 250
 GDELT_DEFAULT_REQUEST_INTERVAL_SECONDS = 1.0
-USER_AGENT = "CivicLedger historical news context (+https://github.com/dtrezise/CivicLedger)"
+USER_AGENT = "CivicLedger historical news context (+https://civic-ledger.dan-a2c.workers.dev/)"
 PRIMARY_SOURCE_CATEGORY_BY_EVENT_TYPE = {
     "agency_notice": "agencies",
     "agency_rule": "agencies",
