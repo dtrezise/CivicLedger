@@ -1,7 +1,7 @@
 {
   "alerts": [
     {
-      "affected_count": 449,
+      "affected_count": 444,
       "alert_id": "house-financial-disclosure:current-raw-documents-missing",
       "message": "Current official/current-term queue has no archived raw disclosure documents yet.",
       "severity": "warning",
@@ -25,7 +25,7 @@
       "status": "monitoring"
     },
     {
-      "affected_count": 104,
+      "affected_count": 103,
       "alert_id": "senate-public-financial-disclosure:current-raw-documents-missing",
       "message": "Current official/current-term queue has no archived raw disclosure documents yet.",
       "severity": "warning",
@@ -41,7 +41,7 @@
       "status": "open"
     },
     {
-      "affected_count": 2160,
+      "affected_count": 2158,
       "alert_id": "public-official-roster:freshness",
       "message": "Public official roster generated 0 day(s) ago.",
       "severity": "info",
@@ -49,7 +49,7 @@
       "status": "monitoring"
     },
     {
-      "affected_count": 6,
+      "affected_count": 7,
       "alert_id": "source-refresh:failures",
       "message": "Recorded source refresh failures require operational review.",
       "severity": "warning",
@@ -66,16 +66,16 @@
     }
   ],
   "context_label": "Scheduled stale-source alerts for current officials and live source lanes. Warnings identify work queues; they are not allegations or trade findings.",
-  "generated_at": "2026-07-15",
+  "generated_at": "2026-07-17",
   "schema_version": "source-staleness-alerts-v1",
   "summary": {
     "alert_count": 8,
-    "current_queue_item_count": 1349,
+    "current_queue_item_count": 1343,
     "data_drift_count": 3,
     "high_alert_count": 0,
-    "measured_refresh_count": 8,
+    "measured_refresh_count": 10,
     "open_warning_count": 6,
     "reviewed_public_trade_count": 0,
-    "source_failure_count": 6
+    "source_failure_count": 7
   }
 }
