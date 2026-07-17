@@ -301,8 +301,6 @@ jobs:
         run: >-
           python scripts/write_release_metadata.py
           --commit "$(git rev-parse HEAD)"
-          --repository "${{ github.repository }}"
-          --run-id "${{ github.run_id }}"
       - name: Record failed refresh telemetry
         if: ${{ failure() }}
         env:

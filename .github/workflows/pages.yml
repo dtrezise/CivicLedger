@@ -59,8 +59,6 @@ jobs:
         run: >-
           python scripts/write_release_metadata.py
           --commit "${{ github.sha }}"
-          --repository "${{ github.repository }}"
-          --run-id "${{ github.run_id }}"
       - uses: actions/configure-pages@v6
         with:
           enablement: true

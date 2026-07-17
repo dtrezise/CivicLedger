@@ -2306,9 +2306,7 @@ function renderReleaseMetadata() {
     return;
   }
   const label = `Release ${release.short_commit || String(release.commit).slice(0, 7)}`;
-  target.innerHTML = release.commit_url
-    ? `<a href="${escapeHtml(release.commit_url)}">${escapeHtml(label)}</a>`
-    : escapeHtml(label);
+  target.textContent = label;
 }
 
 function renderWorkbench() {

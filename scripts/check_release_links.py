@@ -47,8 +47,20 @@ def manifest_paths(manifest: dict) -> list[str]:
 
 def main() -> None:
     parser = DocumentLinks()
-    parser.feed((SITE / "index.html").read_text())
+    html = (SITE / "index.html").read_text()
+    javascript = (SITE / "app.js").read_text()
+    release = json.loads((SITE / "release.json").read_text())
+    parser.feed(html)
     errors = []
+    public_shell = "\n".join((html, javascript, json.dumps(release, sort_keys=True))).lower()
+    for forbidden in ("github.com/dtrezise", "dtrezise.github.io", "dtrezise/civicledger"):
+        if forbidden in public_shell:
+            errors.append(f"Public release references the source repository: {forbidden}")
+    for field in ("commit_url", "repository", "run_id", "run_url"):
+        if field in release:
+            errors.append(f"Public release metadata exposes source-control field: {field}")
+    if "release.commit_url" in javascript:
+        errors.append("Public footer can render a source-control link")
     for kind, value in parser.links:
         if value.startswith("#"):
             if value[1:] not in parser.ids:

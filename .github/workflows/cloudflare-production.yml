@@ -71,8 +71,6 @@ jobs:
         run: >-
           python scripts/write_release_metadata.py
           --commit "${{ steps.release.outputs.sha }}"
-          --repository "${{ github.repository }}"
-          --run-id "${{ github.run_id }}"
       - name: Validate and report Workers Static Assets footprint
         id: footprint
         run: |
