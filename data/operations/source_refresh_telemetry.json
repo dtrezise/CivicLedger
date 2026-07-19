@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 40820,
+      "current_record_count": 47708,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "e48d6c646248964b569240fef8f6b7a6379321d982df148bb7d26b81c355ac26",
+      "current_summary_sha256": "7ac14c2c5b3b0771edf8efd545d6a30fbea6514cbe69d6fc6a08cbe85a6f8e9c",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -73,12 +73,12 @@
       "status": "unchanged"
     }
   ],
-  "generated_at": "2026-07-18",
+  "generated_at": "2026-07-19",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
-    "maximum": 812.0,
-    "p50": 703.0,
-    "p95": 812.0,
+    "maximum": 1846.0,
+    "p50": 727.0,
+    "p95": 1846.0,
     "runs": [
       {
         "completed_at": "2026-07-13T01:59:24Z",
@@ -187,6 +187,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-07-18T11:27:42Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-07-19T12:05:54Z",
+        "duration_seconds": 1846.0,
+        "failure_count": 1,
+        "run_id": "29685366995-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-07-19T11:35:08Z",
+        "status": "failed"
       }
     ],
     "unit": "seconds"
@@ -246,14 +255,20 @@
       "metric": "recorded_run_failure_count",
       "source_artifact": "source_refresh_runs.json",
       "source_id": "scheduled-live-refresh"
+    },
+    {
+      "failure_count": 1,
+      "metric": "recorded_run_failure_count",
+      "source_artifact": "source_refresh_runs.json",
+      "source_id": "scheduled-live-refresh"
     }
   ],
   "status": "attention",
   "summary": {
     "data_drift_count": 3,
-    "failed_refresh_count": 8,
-    "measured_refresh_count": 12,
-    "refresh_run_count": 12,
-    "source_failure_count": 9
+    "failed_refresh_count": 9,
+    "measured_refresh_count": 13,
+    "refresh_run_count": 13,
+    "source_failure_count": 10
   }
 }
