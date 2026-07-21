@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 47708,
+      "current_record_count": 40839,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "7ac14c2c5b3b0771edf8efd545d6a30fbea6514cbe69d6fc6a08cbe85a6f8e9c",
+      "current_summary_sha256": "8da1aed8aaed1cb324e378ae812ce1d8fe4371ca40cae370e73bb58c11a18471",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -17,9 +17,9 @@
       "baseline_schema_version": "house-ptr-transactions-manifest-v2",
       "baseline_summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba",
       "count_metric": "processed_document_count",
-      "current_record_count": 7519,
+      "current_record_count": 7522,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "2e382250804789fadd5b4dee26b01f0ab3923e3acef7647882710001128486d7",
+      "current_summary_sha256": "8bf8a1a343798b9fce306edecc888c91ab8e78e78f6e810bae8e79b90ba1afe3",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -31,10 +31,10 @@
       "count_metric": "indexed_document_count",
       "current_record_count": 0,
       "current_schema_version": "judicial-disclosure-manifest-v1",
-      "current_summary_sha256": "4f78e39c9a5a2051a67d8b5193d843235df96a108c2fa8b3221e3d68ec008941",
+      "current_summary_sha256": "92e4775b840712b186ec6711db7b182ced9adc44884000564270f213c82cf184",
       "path": "data/disclosures/judicial_disclosure_manifest.json",
       "source_id": "judicial-disclosure-manifest",
-      "status": "unchanged"
+      "status": "changed"
     },
     {
       "baseline_record_count": 19,
@@ -53,9 +53,9 @@
       "baseline_schema_version": "senate-disclosure-index-v1",
       "baseline_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
       "count_metric": "document_count",
-      "current_record_count": 2143,
+      "current_record_count": 2120,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "9c18228435914913a608263eede41c67e89bccb0ab8e60d09af2bf1766c9dc6f",
+      "current_summary_sha256": "620211007596d0c962f2991a56cae28f3ea26280fea8680cec24dfc545a77b7b",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
       "status": "changed"
@@ -73,11 +73,11 @@
       "status": "unchanged"
     }
   ],
-  "generated_at": "2026-07-20",
+  "generated_at": "2026-07-21",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 1846.0,
-    "p50": 727.0,
+    "p50": 739.0,
     "p95": 1846.0,
     "runs": [
       {
@@ -205,6 +205,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-07-20T12:28:42Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-07-21T12:17:44Z",
+        "duration_seconds": 812.0,
+        "failure_count": 1,
+        "run_id": "29828526158-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-07-21T12:04:12Z",
+        "status": "failed"
       }
     ],
     "unit": "seconds"
@@ -213,9 +222,9 @@
   "source_failures": [
     {
       "failure_count": 1,
-      "metric": "latest_batch_error_count",
-      "source_artifact": "data/disclosures/house_ptr_transactions.json",
-      "source_id": "house-ptr-transactions"
+      "metric": "recorded_run_failure_count",
+      "source_artifact": "source_refresh_runs.json",
+      "source_id": "scheduled-live-refresh"
     },
     {
       "failure_count": 1,
@@ -280,10 +289,10 @@
   ],
   "status": "attention",
   "summary": {
-    "data_drift_count": 3,
-    "failed_refresh_count": 10,
-    "measured_refresh_count": 14,
-    "refresh_run_count": 14,
+    "data_drift_count": 4,
+    "failed_refresh_count": 11,
+    "measured_refresh_count": 15,
+    "refresh_run_count": 15,
     "source_failure_count": 11
   }
 }
