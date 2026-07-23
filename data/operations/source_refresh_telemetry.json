@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 47734,
+      "current_record_count": 47736,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "4091e28320d5471582fa2d717392d9e1a5d2cc1af7cf078cb0c2b3b856d7672b",
+      "current_summary_sha256": "a899464abc7a13627bf603765ff9b102fe55514d7bc2cc2a4d94a226ef5aa941",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -31,7 +31,7 @@
       "count_metric": "indexed_document_count",
       "current_record_count": 0,
       "current_schema_version": "judicial-disclosure-manifest-v1",
-      "current_summary_sha256": "92e4775b840712b186ec6711db7b182ced9adc44884000564270f213c82cf184",
+      "current_summary_sha256": "26cbdde4f3631495f02c19166070a36d1b3ae19a87b66578bab0dbed48181602",
       "path": "data/disclosures/judicial_disclosure_manifest.json",
       "source_id": "judicial-disclosure-manifest",
       "status": "changed"
@@ -53,9 +53,9 @@
       "baseline_schema_version": "senate-disclosure-index-v1",
       "baseline_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
       "count_metric": "document_count",
-      "current_record_count": 2114,
+      "current_record_count": 2116,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "caf03b50e2870c48395cd1d7a781d56bd7f6a14aeca67291737bf3c33b8428b8",
+      "current_summary_sha256": "7920ca7b6d16f24ebd5f43f382994aec0bbd5b6624c4cf0ff3cc173627a1ba33",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
       "status": "changed"
@@ -73,11 +73,11 @@
       "status": "unchanged"
     }
   ],
-  "generated_at": "2026-07-22",
+  "generated_at": "2026-07-23",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 1846.0,
-    "p50": 739.0,
+    "p50": 746.0,
     "p95": 1846.0,
     "runs": [
       {
@@ -223,6 +223,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-07-22T12:09:57Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-07-23T12:21:47Z",
+        "duration_seconds": 810.0,
+        "failure_count": 1,
+        "run_id": "30005724927-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-07-23T12:08:17Z",
+        "status": "failed"
       }
     ],
     "unit": "seconds"
@@ -300,14 +309,20 @@
       "metric": "recorded_run_failure_count",
       "source_artifact": "source_refresh_runs.json",
       "source_id": "scheduled-live-refresh"
+    },
+    {
+      "failure_count": 1,
+      "metric": "recorded_run_failure_count",
+      "source_artifact": "source_refresh_runs.json",
+      "source_id": "scheduled-live-refresh"
     }
   ],
   "status": "attention",
   "summary": {
     "data_drift_count": 4,
-    "failed_refresh_count": 12,
-    "measured_refresh_count": 16,
-    "refresh_run_count": 16,
-    "source_failure_count": 12
+    "failed_refresh_count": 13,
+    "measured_refresh_count": 17,
+    "refresh_run_count": 17,
+    "source_failure_count": 13
   }
 }
