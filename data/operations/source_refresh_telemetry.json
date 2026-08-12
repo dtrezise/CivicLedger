@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 40968,
+      "current_record_count": 40992,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "2175f1e92b69496f77c94e9e4ead3f305c6d94b9c41563fd0907443fb3228d17",
+      "current_summary_sha256": "1e13b2092d8ca4211fcfb6da77c3d039f8c1cb5611d00d30899f6c6e5ac6c2c0",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -17,9 +17,9 @@
       "baseline_schema_version": "house-ptr-transactions-manifest-v2",
       "baseline_summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba",
       "count_metric": "processed_document_count",
-      "current_record_count": 7545,
+      "current_record_count": 7548,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "ce94a0692881ff77fb4f583614a54de266a0680c4d58274e0523c01fbcdfb9c1",
+      "current_summary_sha256": "4eacbb24cc5fd5f7fb7f4bbda9841f15c4485cb61e6471d82a36d663cb44df5c",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -73,7 +73,7 @@
       "status": "unchanged"
     }
   ],
-  "generated_at": "2026-08-11",
+  "generated_at": "2026-08-12",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 4263.0,
@@ -403,6 +403,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-08-11T11:10:01Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-08-12T11:21:25Z",
+        "duration_seconds": 434.0,
+        "failure_count": 1,
+        "run_id": "31590871836-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-08-12T11:14:11Z",
+        "status": "failed"
       }
     ],
     "unit": "seconds"
@@ -606,14 +615,20 @@
       "metric": "recorded_run_failure_count",
       "source_artifact": "source_refresh_runs.json",
       "source_id": "scheduled-live-refresh"
+    },
+    {
+      "failure_count": 1,
+      "metric": "recorded_run_failure_count",
+      "source_artifact": "source_refresh_runs.json",
+      "source_id": "scheduled-live-refresh"
     }
   ],
   "status": "attention",
   "summary": {
     "data_drift_count": 5,
-    "failed_refresh_count": 32,
-    "measured_refresh_count": 36,
-    "refresh_run_count": 36,
-    "source_failure_count": 33
+    "failed_refresh_count": 33,
+    "measured_refresh_count": 37,
+    "refresh_run_count": 37,
+    "source_failure_count": 34
   }
 }
