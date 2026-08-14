@@ -8,6 +8,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from scripts.check_public_release_dataset import expected_ocr_batch  # noqa: E402
+
 PUBLIC_DATA = ROOT / "pages-site" / "data"
 
 
@@ -41,6 +45,33 @@ def test_public_release_validator_passes():
     assert summary["house_transactions"] >= 53_000
     assert summary["production_trades"] == 0
     assert summary["market_symbols"] >= 25
+
+
+def test_ocr_release_expectation_reconciles_selected_candidates_and_pages():
+    expected = expected_ocr_batch(
+        {
+            "batches": [
+                {
+                    "chamber": "House",
+                    "candidates": [
+                        {"document_id": "house-1", "source_page_count": 3},
+                        {"document_id": "house-2", "source_page_count": 5},
+                    ],
+                },
+                {
+                    "chamber": "Senate",
+                    "candidates": [{"document_id": "senate-1", "source_page_count": 2}],
+                },
+            ]
+        },
+        limit_per_chamber=1,
+    )
+
+    assert expected == {
+        "document_ids": {"house-1", "senate-1"},
+        "document_count": 2,
+        "page_count": 5,
+    }
 
 
 def test_manifest_hashes_every_public_partition():

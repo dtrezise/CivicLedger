@@ -21,6 +21,7 @@ HOUSE_TRANSACTIONS = ROOT / "data" / "disclosures" / "house_ptr_transactions.jso
 SENATE_INDEX = ROOT / "data" / "disclosures" / "senate_disclosure_index.json"
 SENATE_TRANSACTIONS = ROOT / "data" / "disclosures" / "senate_ptr_transactions.json"
 OCR_RESULTS = ROOT / "data" / "disclosures" / "disclosure_ocr_results.json"
+OCR_PRIORITIES = ROOT / "data" / "disclosures" / "disclosure_ocr_priority_batches.json"
 
 INITIAL_PAYLOAD_LIMITS = {
     "overview": 500_000,
@@ -77,6 +78,19 @@ def require_iso_date(value: Any, context: str) -> None:
         date.fromisoformat(value)
     except ValueError as exc:
         raise ValidationError(f"{context} is not a valid ISO date: {value}") from exc
+
+
+def expected_ocr_batch(priority_manifest: dict[str, Any], limit_per_chamber: int = 50) -> dict[str, Any]:
+    candidates = [
+        candidate
+        for batch in priority_manifest.get("batches", [])
+        for candidate in batch.get("candidates", [])[:limit_per_chamber]
+    ]
+    return {
+        "document_ids": {candidate.get("document_id") for candidate in candidates},
+        "document_count": len(candidates),
+        "page_count": sum(int(candidate.get("source_page_count") or 0) for candidate in candidates),
+    }
 
 
 def require_https_url(value: Any, context: str) -> None:
@@ -525,8 +539,16 @@ def validate() -> dict[str, int | float]:
     require(ocr_summary.get("backlog_document_count", 0) >= 2_500, "OCR backlog priorities are missing")
     require(ocr_summary.get("ocr_content_record_count") == 0, "Metadata-only OCR batching generated content")
     require(ocr_summary.get("transaction_rows_created") == 0, "OCR batching created unsupported trades")
-    require(ocr_result_summary.get("completed_document_count", 0) >= 100, "Prioritized OCR results are incomplete")
-    require(ocr_result_summary.get("processed_page_count", 0) >= 600, "Prioritized OCR page coverage is incomplete")
+    expected_ocr = expected_ocr_batch(read_json(OCR_PRIORITIES))
+    require(
+        ocr_result_summary.get("completed_document_count") == expected_ocr["document_count"],
+        "Prioritized OCR results are incomplete",
+    )
+    require(ocr_result_summary.get("failed_document_count") == 0, "Prioritized OCR results contain failures")
+    require(
+        ocr_result_summary.get("processed_page_count") == expected_ocr["page_count"],
+        "Prioritized OCR page coverage does not reconcile with the priority batch",
+    )
     require(ocr_result_summary.get("transaction_rows_created") == 0, "OCR evidence created unsupported trades")
     require(
         ocr_result_summary.get("human_review_required_document_count")
@@ -534,7 +556,15 @@ def validate() -> dict[str, int | float]:
         "OCR evidence bypassed human review",
     )
     ocr_manifest = read_json(OCR_RESULTS)
-    require(len(ocr_manifest.get("records", [])) == 100, "OCR result manifest record count is wrong")
+    require(
+        len(ocr_manifest.get("records", [])) == expected_ocr["document_count"],
+        "OCR result manifest record count is wrong",
+    )
+    require(
+        {record.get("document_id") for record in ocr_manifest.get("records", [])}
+        == expected_ocr["document_ids"],
+        "OCR result manifest does not match the prioritized document batch",
+    )
     for record in ocr_manifest["records"]:
         result_path = (ROOT / record["result_path"]).resolve()
         require(
