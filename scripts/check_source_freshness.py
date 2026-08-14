@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import json
 import sys
 from datetime import date, datetime
@@ -10,42 +11,71 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = [
-    ROOT / "data" / "public_officials" / "public_official_roles.json",
-    ROOT / "data" / "disclosures" / "presidential_oge_disclosure_status.json",
-    ROOT / "data" / "disclosures" / "presidential_oge_documents.json",
-    ROOT / "data" / "disclosures" / "presidential_oge_transactions.json",
-    ROOT / "data" / "disclosures" / "executive_oge_disclosure_manifest.json",
-    ROOT / "data" / "disclosures" / "judicial_disclosure_manifest.json",
-    ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json",
-    ROOT / "data" / "disclosures" / "disclosure_retrieval_batches.json",
-    ROOT / "data" / "disclosures" / "production_trade_promotions.json",
-    ROOT / "data" / "disclosures" / "source_staleness_alerts.json",
-    ROOT / "data" / "disclosures" / "disclosure_completeness_dashboard.json",
-    ROOT / "data" / "disclosures" / "disclosure_ocr_priority_batches.json",
-    ROOT / "data" / "disclosures" / "disclosure_ocr_results.json",
-    ROOT / "data" / "disclosures" / "disclosure_amendment_reconciliation.json",
-    ROOT / "data" / "disclosures" / "house_disclosure_index.json",
-    ROOT / "data" / "disclosures" / "house_historical_transaction_index.json",
-    ROOT / "data" / "disclosures" / "house_ptr_transactions.json",
-    ROOT / "data" / "disclosures" / "senate_disclosure_index.json",
-    ROOT / "data" / "disclosures" / "senate_ptr_transactions.json",
-    ROOT / "data" / "context" / "federal_events.json",
-    ROOT / "data" / "context" / "supreme_court_historical_decisions.json",
-    ROOT / "data" / "context" / "fred_market_context.json",
-    ROOT / "data" / "context" / "market_prices.json",
-    ROOT / "data" / "context" / "crypto_prices.json",
-    ROOT / "data" / "context" / "asset_resolution.json",
-    ROOT / "data" / "context" / "trade_market_reactions.json",
-    ROOT / "data" / "context" / "official_event_involvement.json",
-    ROOT / "data" / "context" / "source_snapshots.json",
-    ROOT / "data" / "context" / "entity_reference.json",
-    ROOT / "data" / "context" / "sec_issuer_aliases.json",
-    ROOT / "data" / "context" / "sec_filing_events.json",
-    ROOT / "data" / "context" / "primary_source_context.json",
-    ROOT / "data" / "operations" / "source_refresh_telemetry.json",
-    ROOT / "pages-site" / "data" / "civicledger-static.json",
-]
+
+
+@dataclass(frozen=True)
+class ArtifactPolicy:
+    path: str
+    max_age_days: int | None = 14
+    stale_is_error: bool = True
+
+
+ADVISORY_ARTIFACTS = {
+    "data/disclosures/senate_disclosure_index.json",
+    "data/disclosures/senate_ptr_transactions.json",
+    "data/context/official_event_involvement.json",
+    "data/context/sec_issuer_aliases.json",
+    "data/context/sec_filing_events.json",
+    "data/operations/source_refresh_telemetry.json",
+}
+REFERENCE_ARTIFACTS = {
+    "data/disclosures/house_historical_transaction_index.json",
+    "data/context/supreme_court_historical_decisions.json",
+}
+ARTIFACT_PATHS = (
+    "data/public_officials/public_official_roles.json",
+    "data/disclosures/presidential_oge_disclosure_status.json",
+    "data/disclosures/presidential_oge_documents.json",
+    "data/disclosures/presidential_oge_transactions.json",
+    "data/disclosures/executive_oge_disclosure_manifest.json",
+    "data/disclosures/judicial_disclosure_manifest.json",
+    "data/disclosures/disclosure_ingestion_queue.json",
+    "data/disclosures/disclosure_retrieval_batches.json",
+    "data/disclosures/production_trade_promotions.json",
+    "data/disclosures/source_staleness_alerts.json",
+    "data/disclosures/disclosure_completeness_dashboard.json",
+    "data/disclosures/disclosure_ocr_priority_batches.json",
+    "data/disclosures/disclosure_ocr_results.json",
+    "data/disclosures/disclosure_amendment_reconciliation.json",
+    "data/disclosures/house_disclosure_index.json",
+    "data/disclosures/house_historical_transaction_index.json",
+    "data/disclosures/house_ptr_transactions.json",
+    "data/disclosures/senate_disclosure_index.json",
+    "data/disclosures/senate_ptr_transactions.json",
+    "data/context/federal_events.json",
+    "data/context/supreme_court_historical_decisions.json",
+    "data/context/fred_market_context.json",
+    "data/context/market_prices.json",
+    "data/context/crypto_prices.json",
+    "data/context/asset_resolution.json",
+    "data/context/trade_market_reactions.json",
+    "data/context/official_event_involvement.json",
+    "data/context/source_snapshots.json",
+    "data/context/entity_reference.json",
+    "data/context/sec_issuer_aliases.json",
+    "data/context/sec_filing_events.json",
+    "data/context/primary_source_context.json",
+    "data/operations/source_refresh_telemetry.json",
+    "pages-site/data/civicledger-static.json",
+)
+POLICIES = tuple(
+    ArtifactPolicy(
+        path,
+        max_age_days=None if path in REFERENCE_ARTIFACTS else 14,
+        stale_is_error=path not in ADVISORY_ARTIFACTS,
+    )
+    for path in ARTIFACT_PATHS
+)
 
 
 def parse_date(value: str | None) -> date | None:
@@ -54,24 +84,49 @@ def parse_date(value: str | None) -> date | None:
     return datetime.fromisoformat(value.replace("Z", "+00:00")).date()
 
 
-def main() -> None:
-    today = date.today()
+def evaluate_artifacts(
+    root: Path,
+    today: date,
+    policies: tuple[ArtifactPolicy, ...] = POLICIES,
+) -> tuple[list[str], list[str]]:
     failures = []
     warnings = []
-    for path in FILES:
+    for policy in policies:
+        path = root / policy.path
         if not path.exists():
-            failures.append(f"Missing required generated file: {path.relative_to(ROOT)}")
+            failures.append(f"Missing required generated file: {policy.path}")
             continue
-        data = json.loads(path.read_text())
-        generated = parse_date(
-            data.get("generated_at") or data.get("artifact_date") or data.get("captured_at")
-        )
+        try:
+            data = json.loads(path.read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            failures.append(f"Unreadable generated file: {policy.path} ({type(exc).__name__})")
+            continue
+        if not isinstance(data, dict):
+            failures.append(f"Unreadable generated file: {policy.path} (expected a JSON object)")
+            continue
+        try:
+            generated = parse_date(
+                data.get("generated_at") or data.get("artifact_date") or data.get("captured_at")
+            )
+        except (TypeError, ValueError):
+            failures.append(f"{policy.path} has an invalid generated date")
+            continue
         if not generated:
-            warnings.append(f"{path.relative_to(ROOT)} has no generated_at date")
+            warnings.append(f"{policy.path} has no generated_at date")
+            continue
+        if policy.max_age_days is None:
             continue
         age_days = (today - generated).days
-        if age_days > 14:
-            failures.append(f"{path.relative_to(ROOT)} is stale: {age_days} days old")
+        if age_days <= policy.max_age_days:
+            continue
+        message = f"{policy.path} is stale: {age_days} days old"
+        (failures if policy.stale_is_error else warnings).append(message)
+    return failures, warnings
+
+
+def main() -> None:
+    today = date.today()
+    failures, warnings = evaluate_artifacts(ROOT, today)
 
     queue_path = ROOT / "data" / "disclosures" / "disclosure_ingestion_queue.json"
     if queue_path.exists():

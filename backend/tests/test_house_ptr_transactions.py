@@ -5,7 +5,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from scripts.build_house_ptr_transactions import asset_class, build_output, canonical_amount, value_range  # noqa: E402
+from scripts.build_house_ptr_transactions import (  # noqa: E402
+    asset_class,
+    build_output,
+    canonical_amount,
+    merge_successful_refreshes,
+    value_range,
+)
 
 
 def test_house_amount_ranges_are_normalized():
@@ -45,3 +51,26 @@ def test_duplicate_flags_are_rebuilt_without_accumulating_stale_flags():
     assert second["summary"]["duplicate_candidate_group_count"] == 1
     assert all(row["data_quality_flags"].count("possible_duplicate") == 1 for row in second["transactions"])
     assert all(row["duplicate_candidate_group_id"] != "stale-group" for row in second["transactions"])
+
+
+def test_house_refresh_replaces_only_successful_documents():
+    existing_documents = {
+        "house-ptr-old": {"document_id": "house-ptr-old", "parser_status": "parser_preview"},
+        "house-ptr-failed": {"document_id": "house-ptr-failed", "parser_status": "parser_preview"},
+    }
+    existing_transactions = [
+        {"id": "old-row", "document_id": "house-ptr-old"},
+        {"id": "retained-row", "document_id": "house-ptr-failed"},
+    ]
+    documents, transactions = merge_successful_refreshes(
+        existing_documents,
+        existing_transactions,
+        {"house-ptr-old": {"document_id": "house-ptr-old", "parser_status": "no_transactions_detected"}},
+        [],
+    )
+
+    assert {row["document_id"]: row["parser_status"] for row in documents} == {
+        "house-ptr-old": "no_transactions_detected",
+        "house-ptr-failed": "parser_preview",
+    }
+    assert transactions == [{"id": "retained-row", "document_id": "house-ptr-failed"}]

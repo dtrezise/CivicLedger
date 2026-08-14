@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 
@@ -88,9 +88,19 @@ def imported_query_dates(acquisition) -> tuple[date, date]:
         except (AttributeError, TypeError, ValueError) as exc:
             raise ValueError("Imported Senate search request dates are not in a recognized format") from exc
         bounds.add((start_date, end_date))
-    if len(bounds) != 1:
-        raise ValueError("Imported Senate search responses do not share one query date range")
-    return next(iter(bounds))
+    if not bounds:
+        raise ValueError("Imported Senate search responses do not contain query date ranges")
+    return min(start for start, _ in bounds), max(end for _, end in bounds)
+
+
+def yearly_query_ranges(start_date: date, end_date: date) -> list[tuple[date, date]]:
+    ranges = []
+    cursor = start_date
+    while cursor <= end_date:
+        period_end = min(date(cursor.year, 12, 31), end_date)
+        ranges.append((cursor, period_end))
+        cursor = period_end + timedelta(days=1)
+    return ranges
 
 
 def main() -> None:
@@ -168,10 +178,18 @@ def main() -> None:
                 request_interval_seconds=args.request_interval,
             )
             if args.all_senators:
-                acquisition = client.search_ptr_reports(
-                    start_date=args.start_date,
-                    end_date=args.end_date,
-                    page_size=args.page_size,
+                acquisition = combine_search_acquisitions(
+                    [
+                        client.search_ptr_reports(
+                            start_date=period_start,
+                            end_date=period_end,
+                            page_size=args.page_size,
+                        )
+                        for period_start, period_end in yearly_query_ranges(
+                            args.start_date,
+                            args.end_date,
+                        )
+                    ]
                 )
             else:
                 acquisitions = []

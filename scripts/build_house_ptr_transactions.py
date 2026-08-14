@@ -295,7 +295,7 @@ def write_partitioned_output(
     transactions: list[dict],
     *,
     latest_batch_selected_document_count: int,
-    latest_batch_error_count: int,
+    latest_batch_failures: list[dict],
 ) -> None:
     global_output = build_output(documents, transactions)
     documents_by_year = {}
@@ -351,12 +351,33 @@ def write_partitioned_output(
         "summary": {
             **global_output["summary"],
             "latest_batch_selected_document_count": latest_batch_selected_document_count,
-            "latest_batch_error_count": latest_batch_error_count,
+            "latest_batch_error_count": len(latest_batch_failures),
         },
+        "latest_batch_failures": sorted(
+            latest_batch_failures,
+            key=lambda row: (row.get("filing_date", ""), row.get("clerk_document_id", "")),
+        ),
         "year_partitions": year_partitions,
         "context_label": global_output["context_label"],
     }
     OUTPUT.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+
+
+def merge_successful_refreshes(
+    existing_documents: dict[str, dict],
+    existing_transactions: list[dict],
+    successful_documents: dict[str, dict],
+    successful_transactions: list[dict],
+) -> tuple[list[dict], list[dict]]:
+    """Replace only documents that completed successfully in the latest batch."""
+
+    successful_ids = set(successful_documents)
+    merged_documents = {**existing_documents, **successful_documents}
+    merged_transactions = [
+        row for row in existing_transactions if row.get("document_id") not in successful_ids
+    ]
+    merged_transactions.extend(successful_transactions)
+    return list(merged_documents.values()), merged_transactions
 
 
 def main() -> None:
@@ -382,16 +403,8 @@ def main() -> None:
     ]
     if args.limit is not None:
         selected = selected[: args.limit]
-    refreshed_ids = {document["document_id"] for document in selected}
-    transaction_rows = [
-        row for row in existing_transactions if row.get("document_id") not in refreshed_ids
-    ]
-    document_rows = {
-        document_id: document
-        for document_id, document in existing_documents.items()
-        if document_id not in refreshed_ids
-    }
-
+    successful_documents = {}
+    successful_transactions = []
     failures = []
     with ThreadPoolExecutor(max_workers=max(1, args.workers)) as executor:
         futures = {executor.submit(parse_document, document, args.redownload): document for document in selected}
@@ -399,29 +412,35 @@ def main() -> None:
             document = futures[future]
             try:
                 result, rows = future.result()
-                document_rows[result["document_id"]] = result
-                transaction_rows.extend(rows)
+                successful_documents[result["document_id"]] = result
+                successful_transactions.extend(rows)
             except Exception as exc:
                 failure = {
-                    **document,
-                    "parser_status": "error",
+                    "document_id": document["document_id"],
+                    "clerk_document_id": document["clerk_document_id"],
+                    "filing_date": document["filing_date"],
+                    "filing_year": document["filing_year"],
+                    "source_url": document["source_url"],
                     "parser_error": f"{type(exc).__name__}: {exc}",
-                    "record_status": "official_house_document_parse_error",
-                    "review_required_before_public_trade": True,
-                    "public_production_trade": False,
+                    "retained_previous_valid_record": document["document_id"] in existing_documents,
                 }
-                document_rows[document["document_id"]] = failure
                 failures.append(failure)
             if completed % 50 == 0 or completed == len(selected):
                 with PRINT_LOCK:
                     print(f"Processed {completed}/{len(selected)} House PTR documents")
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    document_rows, transaction_rows = merge_successful_refreshes(
+        existing_documents,
+        existing_transactions,
+        successful_documents,
+        successful_transactions,
+    )
     write_partitioned_output(
-        list(document_rows.values()),
+        document_rows,
         transaction_rows,
         latest_batch_selected_document_count=len(selected),
-        latest_batch_error_count=len(failures),
+        latest_batch_failures=failures,
     )
     print(f"Wrote {OUTPUT}")
 

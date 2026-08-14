@@ -2,6 +2,7 @@ import hashlib
 import json
 from datetime import date
 from pathlib import Path
+import sys
 
 import pytest
 
@@ -23,6 +24,10 @@ from app.services.senate_disclosures import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from scripts.build_senate_disclosure_index import yearly_query_ranges  # noqa: E402
+
 PUBLIC_OFFICIALS = ROOT / "data" / "public_officials" / "public_official_roles.json"
 FEINSTEIN_URL = (
     "https://efdsearch.senate.gov/search/view/paper/"
@@ -83,6 +88,28 @@ def test_live_portal_requires_explicit_terms_acknowledgement():
 
     with pytest.raises(SenateTermsAcknowledgementRequired, match="acknowledge-senate-terms"):
         client.ensure_access()
+
+
+def test_portal_pagination_uses_stable_multi_column_ordering():
+    payload = SenateDisclosurePortalClient._datatable_payload(
+        first_name="",
+        last_name="",
+        start_date="01/01/2026 00:00:00",
+        end_date="12/31/2026 23:59:59",
+        start=0,
+        length=100,
+        draw=1,
+    )
+
+    assert [payload[f"order[{index}][column]"] for index in range(4)] == ["1", "0", "4", "3"]
+    assert all(payload[f"order[{index}][dir]"] == "asc" for index in range(4))
+
+
+def test_all_senator_refresh_uses_non_overlapping_yearly_ranges():
+    assert yearly_query_ranges(date(2025, 6, 1), date(2026, 2, 3)) == [
+        (date(2025, 6, 1), date(2025, 12, 31)),
+        (date(2026, 1, 1), date(2026, 2, 3)),
+    ]
 
 
 def test_roster_design_covers_111th_through_119th_congress(public_officials):

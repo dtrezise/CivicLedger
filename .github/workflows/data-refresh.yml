@@ -102,7 +102,9 @@ jobs:
           deep_refresh=false
           senate_index_ok=true
           senate_index_backup="$RUNNER_TEMP/senate_disclosure_index.json"
+          senate_transactions_backup="$RUNNER_TEMP/senate_ptr_transactions.json"
           cp data/disclosures/senate_disclosure_index.json "$senate_index_backup"
+          cp data/disclosures/senate_ptr_transactions.json "$senate_transactions_backup"
           if [ "$DEEP_SOURCES" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%u)" = "7" ]; }; then
             deep_refresh=true
           fi
@@ -121,15 +123,16 @@ jobs:
           fi
           if [ "$senate_index_ok" = "false" ]; then
             cp "$senate_index_backup" data/disclosures/senate_disclosure_index.json
-            if [ "$deep_refresh" = "true" ]; then
-              exit 1
-            fi
             echo "::warning::Senate portal refresh failed or returned incomplete coverage; restored the committed hash-backed index and transaction snapshot."
             test -s data/disclosures/senate_disclosure_index.json
             test -s data/disclosures/senate_ptr_transactions.json
           fi
           if [ "$deep_refresh" = "true" ]; then
-            python scripts/build_senate_ptr_transactions.py --all-indexed --acknowledge-senate-terms
+            if ! python scripts/build_senate_ptr_transactions.py --all-indexed --acknowledge-senate-terms; then
+              cp "$senate_transactions_backup" data/disclosures/senate_ptr_transactions.json
+              echo "::warning::Senate report-page refresh failed; restored the committed hash-backed transaction snapshot."
+            fi
+            test -s data/disclosures/senate_ptr_transactions.json
           else
             echo "Skipping deep Senate report-page refresh."
           fi
@@ -208,15 +211,18 @@ jobs:
           SEC_EDGAR_USER_AGENT: CivicLedger github-actions[bot]@users.noreply.github.com
         run: |
           sec_refresh_failed=false
+          sec_aliases_backup="$RUNNER_TEMP/sec_issuer_aliases.json"
+          sec_events_backup="$RUNNER_TEMP/sec_filing_events.json"
+          cp data/context/sec_issuer_aliases.json "$sec_aliases_backup"
+          cp data/context/sec_filing_events.json "$sec_events_backup"
           if ! python scripts/build_sec_issuer_aliases.py --refresh; then
             sec_refresh_failed=true
           elif ! python scripts/build_sec_filing_events.py --refresh; then
             sec_refresh_failed=true
           fi
           if [ "$sec_refresh_failed" = "true" ]; then
-            if [ "$DEEP_REFRESH" = "true" ]; then
-              exit 1
-            fi
+            cp "$sec_aliases_backup" data/context/sec_issuer_aliases.json
+            cp "$sec_events_backup" data/context/sec_filing_events.json
             echo "::warning::SEC EDGAR refresh failed; retaining the committed hash-backed issuer and filing context."
             test -s data/context/sec_issuer_aliases.json
             test -s data/context/sec_filing_events.json
@@ -228,12 +234,12 @@ jobs:
         run: |
           python scripts/build_entity_reference_dataset.py
           python scripts/build_source_snapshot_index.py
-      - name: Check source freshness
-        run: python scripts/check_source_freshness.py
       - name: Rebuild Pages data
         env:
           PYTHONPATH: backend
         run: python scripts/build_pages_dataset.py
+      - name: Check source freshness
+        run: python scripts/check_source_freshness.py
       - name: Validate public release contract
         run: python scripts/check_public_release_dataset.py
       - name: Validate static release gates
@@ -312,40 +318,15 @@ jobs:
           --completed-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           --status failed
           --failure-count 1
-      - name: Persist failed refresh telemetry
+      - name: Retain failed refresh telemetry artifact
         if: ${{ failure() }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/operations/source_refresh_runs.json data/operations/source_refresh_telemetry.json
-          if git commit -m "Record failed live context refresh"; then
-            target_branch="${GITHUB_REF_NAME:-main}"
-            published=false
-            for attempt in $(seq 1 3); do
-              echo "Synchronizing failed-refresh telemetry with origin/$target_branch (attempt $attempt/3)."
-              if ! git fetch --prune origin "$target_branch"; then
-                echo "::warning::Could not fetch origin/$target_branch for telemetry publish attempt $attempt."
-              elif ! git rebase --autostash "origin/$target_branch"; then
-                git rebase --abort 2>/dev/null || true
-                echo "::error::Failed-refresh telemetry conflicts with origin/$target_branch."
-                exit 1
-              elif git push origin "HEAD:$target_branch"; then
-                published=true
-                break
-              else
-                echo "::warning::Origin changed during telemetry publish attempt $attempt."
-              fi
-              if [ "$attempt" -lt 3 ]; then
-                sleep $((attempt * 2))
-              fi
-            done
-            if [ "$published" != "true" ]; then
-              echo "::error::Failed-refresh telemetry publish exhausted three bounded attempts."
-              exit 1
-            fi
-          else
-            echo "No failed-refresh telemetry changes to commit."
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-refresh-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            data/operations/source_refresh_runs.json
+            data/operations/source_refresh_telemetry.json
+          retention-days: 30
       - uses: actions/configure-pages@v6
         with:
           enablement: true
