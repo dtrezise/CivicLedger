@@ -2,19 +2,19 @@
   "activation_assessment": {
     "gates": {
       "asset_count": {
-        "current": 430,
+        "current": 432,
         "rationale": "Provides an early review point below the Workers Static Assets asset-count hard limit.",
         "threshold": 15000,
         "triggered_now": false
       },
       "individual_asset_bytes": {
-        "current": 4537241,
+        "current": 4412611,
         "rationale": "Provides an early review point below the Workers Static Assets per-file hard limit.",
         "threshold": 20971520,
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 140592128,
+        "current": 141120891,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -25,7 +25,7 @@
   },
   "candidate_partitions": [
     {
-      "bytes": 4537241,
+      "bytes": 4412611,
       "group": "timelines",
       "key": "exec:donald-j-trump",
       "path": "data/partitions/timelines/exec-donald-j-trump.json",
@@ -33,7 +33,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3113065,
+      "bytes": 3129207,
       "group": "timelines",
       "key": "congress:G000583",
       "path": "data/partitions/timelines/congress-g000583.json",
@@ -41,7 +41,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2900122,
+      "bytes": 2900121,
       "group": "timelines",
       "key": "congress:M001193",
       "path": "data/partitions/timelines/congress-m001193.json",
@@ -49,7 +49,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2662877,
+      "bytes": 2667115,
       "group": "roles",
       "key": "Legislative",
       "path": "data/partitions/roles/legislative.json",
@@ -57,7 +57,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2216558,
+      "bytes": 2216552,
       "group": "timelines",
       "key": "congress:P000612",
       "path": "data/partitions/timelines/congress-p000612.json",
@@ -66,42 +66,42 @@
     }
   ],
   "current_static_footprint": {
-    "asset_count": 430,
+    "asset_count": 432,
     "largest_asset": {
-      "bytes": 4537241,
+      "bytes": 4412611,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 140592128
+    "total_bytes": 141120891
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6011903
+      "total_bytes": 6018630
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 29671349
+      "total_bytes": 29783868
     },
     "roles": {
-      "candidate_bytes": 2662877,
+      "candidate_bytes": 2667115,
       "candidate_count": 1,
       "partition_count": 3,
-      "total_bytes": 3354441
+      "total_bytes": 3363134
     },
     "timelines": {
-      "candidate_bytes": 12766986,
+      "candidate_bytes": 12658491,
       "candidate_count": 4,
-      "partition_count": 358,
-      "total_bytes": 93042270
+      "partition_count": 360,
+      "total_bytes": 93442167
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2389884,
+      "bytes": 2397575,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -119,10 +119,10 @@
     }
   },
   "projected_static_footprint_if_candidates_moved": {
-    "asset_count": 425,
-    "bytes_removed": 15429863,
+    "asset_count": 427,
+    "bytes_removed": 15325606,
     "candidate_count": 5,
-    "remaining_total_bytes": 125162265
+    "remaining_total_bytes": 125795285
   },
   "safety": {
     "activates_r2": false,
@@ -134,7 +134,7 @@
   "schema_version": "civicledger-r2-migration-simulation-v1",
   "source": {
     "dataset_version": "seed-v1",
-    "evaluated_query_partition_count": 407,
-    "manifest_sha256": "23b97e8f2eff507c82222f19ffb88c6de42a35d930d6cfdfdb085582c5b3685b"
+    "evaluated_query_partition_count": 409,
+    "manifest_sha256": "5a0ee97c6cd5aaa58fb0eada8e8515878bbf58ab6cd661b915382fdf3df0d9e9"
   }
 }

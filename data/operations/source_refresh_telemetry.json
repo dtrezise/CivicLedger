@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41080,
+      "current_record_count": 41102,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "ccedb57493fb0eeee0cca2600d3a732703e5b70faf2230977b2b18478bbf92af",
+      "current_summary_sha256": "ab310da035bd6be7dd473fb7a33db1c39ba35fb041c74b2d1de7697af33000bc",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -53,9 +53,9 @@
       "baseline_schema_version": "senate-disclosure-index-v1",
       "baseline_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
       "count_metric": "document_count",
-      "current_record_count": 2116,
+      "current_record_count": 2398,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "7920ca7b6d16f24ebd5f43f382994aec0bbd5b6624c4cf0ff3cc173627a1ba33",
+      "current_summary_sha256": "a2115e3afedf429b93282d64ed0bc471079518aa8a1683bf103fe007289db3d7",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
       "status": "changed"
@@ -78,7 +78,7 @@
   "refresh_duration": {
     "maximum": 4263.0,
     "p50": 475.0,
-    "p95": 4053.0,
+    "p95": 2051.0,
     "runs": [
       {
         "completed_at": "2026-07-13T01:59:24Z",
@@ -430,6 +430,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-08-14T11:12:43Z",
         "status": "failed"
+      },
+      {
+        "completed_at": "2026-08-14T15:03:03Z",
+        "duration_seconds": 689.0,
+        "failure_count": 0,
+        "run_id": "31811512411-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-08-14T14:51:34Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -657,8 +666,8 @@
   "summary": {
     "data_drift_count": 5,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 39,
-    "refresh_run_count": 39,
+    "measured_refresh_count": 40,
+    "refresh_run_count": 40,
     "source_failure_count": 36
   }
 }
