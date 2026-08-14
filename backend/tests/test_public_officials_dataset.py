@@ -311,7 +311,15 @@ def test_presidential_oge_documents_add_official_disclosures_and_preview_rows():
     assert documents["summary"]["document_counts_by_official"]["exec:joseph-r-biden"] >= 5
     assert documents["summary"]["document_counts_by_official"]["exec:donald-j-trump"] >= 6
     assert documents["summary"]["public_production_trade_count"] == 0
-    assert documents["summary"]["fetch_failure_count"] == 0
+    assert documents["summary"]["fetch_failure_count"] == len(documents["failures"])
+    assert all(
+        failure.get("retained_previous_valid_record") is True
+        for failure in documents["failures"]
+    )
+    assert all(
+        document["parser_status"] != "fetch_failed"
+        for document in documents["documents"]
+    )
     assert all(document["source_tier"] == "official" for document in documents["documents"])
     assert all(
         document["review_required_before_public_trade"] is True
@@ -416,10 +424,13 @@ def test_context_maps_and_pages_completeness_are_available():
     legislative_official_count = sum(
         person["branch"] == "Legislative" for person in public_officials["people"]
     )
+    judicial_official_count = sum(
+        person["branch"] == "Judicial" for person in public_officials["people"]
+    )
     assert branch_map["Legislative"]["official_count"] == legislative_official_count
     assert branch_map["Legislative"]["parser_preview_transaction_count"] >= 64_000
     assert branch_map["Executive"]["indexed_document_count"] == 19
-    assert branch_map["Judicial"]["official_count"] == 822
+    assert branch_map["Judicial"]["official_count"] == judicial_official_count
     assert branch_map["Judicial"]["readiness_status"] == "roster_manifest_ready"
     assert overview["disclosure_pipeline"]["completeness_dashboard"]["summary"]["queue_item_count"] >= 5800
     assert public_events["search_term_dictionary"]

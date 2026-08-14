@@ -34,6 +34,7 @@ jobs:
         run: python scripts/check_cloudflare_assets.py
       - name: Validate corpus growth and R2 migration reports
         run: |
+          cp docs/metrics/public_corpus_growth_history.json /tmp/public-corpus-growth.json
           python scripts/report_public_corpus_growth.py --output /tmp/public-corpus-growth.json
           cmp /tmp/public-corpus-growth.json docs/metrics/public_corpus_growth_history.json
           python scripts/simulate_r2_public_partition_migration.py --output /tmp/r2-simulation.json

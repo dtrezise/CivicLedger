@@ -8,13 +8,13 @@
         "triggered_now": false
       },
       "individual_asset_bytes": {
-        "current": 4412611,
+        "current": 4537246,
         "rationale": "Provides an early review point below the Workers Static Assets per-file hard limit.",
         "threshold": 20971520,
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 141120891,
+        "current": 141256168,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -25,7 +25,7 @@
   },
   "candidate_partitions": [
     {
-      "bytes": 4412611,
+      "bytes": 4537246,
       "group": "timelines",
       "key": "exec:donald-j-trump",
       "path": "data/partitions/timelines/exec-donald-j-trump.json",
@@ -68,10 +68,10 @@
   "current_static_footprint": {
     "asset_count": 432,
     "largest_asset": {
-      "bytes": 4412611,
+      "bytes": 4537246,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 141120891
+    "total_bytes": 141256168
   },
   "group_summary": {
     "events": {
@@ -93,10 +93,10 @@
       "total_bytes": 3363134
     },
     "timelines": {
-      "candidate_bytes": 12658491,
+      "candidate_bytes": 12783126,
       "candidate_count": 4,
       "partition_count": 360,
-      "total_bytes": 93442167
+      "total_bytes": 93566802
     }
   },
   "large_bootstrap_artifacts_kept_static": [
@@ -120,9 +120,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 427,
-    "bytes_removed": 15325606,
+    "bytes_removed": 15450241,
     "candidate_count": 5,
-    "remaining_total_bytes": 125795285
+    "remaining_total_bytes": 125805927
   },
   "safety": {
     "activates_r2": false,
@@ -135,6 +135,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 409,
-    "manifest_sha256": "5a0ee97c6cd5aaa58fb0eada8e8515878bbf58ab6cd661b915382fdf3df0d9e9"
+    "manifest_sha256": "e030c51969ef3d23f0589bb504a93158ffcbf4d06182f8ed5da15f6ccecaf531"
   }
 }

@@ -129,6 +129,33 @@ def test_source_reviewed_none_is_distinct_from_unparsed_document():
     )
 
 
+def test_valid_existing_snapshot_is_retained_only_when_transaction_counts_match():
+    document = {
+        "document_id": "oge-fixture",
+        "parser_status": "parsed_preview",
+        "transaction_summary": {"parser_preview_transaction_count": 1},
+    }
+    transaction = {"document_id": "oge-fixture", "id": "transaction-fixture"}
+
+    retained = BUILDER.retained_valid_snapshot(
+        "oge-fixture",
+        {"documents": [document]},
+        {"transactions": [transaction]},
+    )
+
+    assert retained == (document, [transaction])
+    assert retained[0] is not document
+    assert retained[1][0] is not transaction
+    assert (
+        BUILDER.retained_valid_snapshot(
+            "oge-fixture",
+            {"documents": [document]},
+            {"transactions": []},
+        )
+        is None
+    )
+
+
 def test_obama_archive_transcriptions_remain_review_gated():
     document = curated_document("oge-obama-2014-annual-278")
     rows = BUILDER.manual_transaction_rows(document)

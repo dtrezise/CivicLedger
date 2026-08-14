@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import re
@@ -962,6 +963,35 @@ def load_existing_documents() -> tuple[dict, dict]:
     return ({}, {})
 
 
+def retained_valid_snapshot(
+    document_id: str,
+    existing_documents: dict,
+    existing_transactions: dict,
+) -> tuple[dict, list[dict]] | None:
+    document = next(
+        (
+            row
+            for row in existing_documents.get("documents", [])
+            if row.get("document_id") == document_id
+        ),
+        None,
+    )
+    if not document or document.get("parser_status") == "fetch_failed":
+        return None
+
+    transactions = [
+        row
+        for row in existing_transactions.get("transactions", [])
+        if row.get("document_id") == document_id
+    ]
+    expected_count = document.get("transaction_summary", {}).get(
+        "parser_preview_transaction_count"
+    )
+    if expected_count != len(transactions):
+        return None
+    return copy.deepcopy(document), copy.deepcopy(transactions)
+
+
 def build(refresh: bool) -> tuple[dict, dict]:
     existing_documents, existing_transactions = load_existing_documents()
     if not refresh and existing_documents and existing_transactions:
@@ -970,6 +1000,7 @@ def build(refresh: bool) -> tuple[dict, dict]:
     documents = []
     transactions = []
     failures = []
+    retained_previous_valid_document_count = 0
     for document in CURATED_DOCUMENTS:
         if document.get("source_reviewed_without_live_pdf"):
             documents.append(
@@ -1001,7 +1032,22 @@ def build(refresh: bool) -> tuple[dict, dict]:
             documents.append(parsed_document)
             transactions.extend(parsed_transactions)
         except Exception as exc:  # pragma: no cover - defensive for live source outages.
-            failures.append({"document_id": document["document_id"], "error": f"{type(exc).__name__}: {exc}"})
+            retained = retained_valid_snapshot(
+                document["document_id"], existing_documents, existing_transactions
+            )
+            failures.append(
+                {
+                    "document_id": document["document_id"],
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "retained_previous_valid_record": retained is not None,
+                }
+            )
+            if retained is not None:
+                retained_document, retained_transactions = retained
+                documents.append(retained_document)
+                transactions.extend(retained_transactions)
+                retained_previous_valid_document_count += 1
+                continue
             documents.append(
                 {
                     **document,
@@ -1041,7 +1087,8 @@ def build(refresh: bool) -> tuple[dict, dict]:
         "schema_version": "presidential-oge-documents-v1",
         "context_label": (
             "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews "
-            "and require review before public production promotion."
+            "and require review before public production promotion. A valid prior snapshot is retained when "
+            "an official source is temporarily unavailable."
         ),
         "source": {
             "id": "oge-individual-disclosures",
@@ -1060,6 +1107,7 @@ def build(refresh: bool) -> tuple[dict, dict]:
             "document_counts_by_official": dict(sorted(document_counts.items())),
             "document_counts_by_term": dict(sorted(term_counts.items())),
             "fetch_failure_count": len(failures),
+            "retained_previous_valid_document_count": retained_previous_valid_document_count,
         },
         "unavailable_documents": UNAVAILABLE_DOCUMENTS,
         "documents": sorted(documents, key=lambda row: (row["official_id"], row["report_year"], row["document_id"])),

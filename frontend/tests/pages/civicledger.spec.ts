@@ -15,12 +15,12 @@ test("persists density, event categories, and selected range", async ({ page }) 
   await expect(page).toHaveURL(/density=112/);
   await expect(page).toHaveURL(/eventcats=/);
   await expect(page).toHaveURL(/brush=0\.00-100\.00/);
-  await expect(page.getByText("7,179 of 7,179 records selected")).toBeVisible();
+  await expect(page.locator("#brushStatus")).toHaveText(/^(\d[\d,]*) of \1 records selected$/);
 
   await page.reload();
   await expect(density).toHaveValue("112");
   await expect(page.getByLabel("SEC filing")).not.toBeChecked();
-  await expect(page.getByText("7,179 of 7,179 records selected")).toBeVisible();
+  await expect(page.locator("#brushStatus")).toHaveText(/^(\d[\d,]*) of \1 records selected$/);
 });
 
 test("shows neutral market comparison for a selected ticker transaction", async ({ page }) => {

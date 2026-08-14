@@ -103,7 +103,7 @@
     "officials": [],
     "partition_notice": "Official timelines and event records are available through manifest.json partitions.",
     "presidential_oge_documents": {
-      "context_label": "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews and require review before public production promotion.",
+      "context_label": "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews and require review before public production promotion. A valid prior snapshot is retained when an official source is temporarily unavailable.",
       "source": {
         "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
         "id": "oge-individual-disclosures",
@@ -126,9 +126,10 @@
           "trump-47": 4
         },
         "fetch_failure_count": 1,
-        "parser_preview_transaction_count": 7101,
+        "parser_preview_transaction_count": 7182,
         "public_production_trade_count": 0,
-        "timeline_included_transaction_count": 7101,
+        "retained_previous_valid_document_count": 1,
+        "timeline_included_transaction_count": 7182,
         "unavailable_official_count": 0
       },
       "unavailable_documents": []
@@ -157,27 +158,28 @@
       "context_label": "Official OGE annual, termination, and periodic parser-preview transaction rows plus source-page transcriptions for timeline exploration only; review is required before production trade promotion.",
       "summary": {
         "asset_class_counts": {
-          "equity": 6698,
-          "etf": 231,
-          "fixed_income": 145,
-          "fund": 27
+          "equity": 6717,
+          "etf": 248,
+          "fixed_income": 154,
+          "fund": 63
         },
         "cross_filing_duplicate_count": 0,
         "methodology_version": "oge-cross-filing-dedup-v1",
-        "parser_preview_transaction_count": 7101,
+        "parser_preview_transaction_count": 7182,
         "periodic_reference_transaction_count": 366,
         "public_production_trade_count": 0,
-        "review_required_transaction_count": 7101,
-        "timeline_included_transaction_count": 7101,
+        "review_required_transaction_count": 7182,
+        "timeline_included_transaction_count": 7182,
         "timeline_transaction_counts_by_official": {
           "exec:barack-obama": 16,
-          "exec:donald-j-trump": 7072,
+          "exec:donald-j-trump": 7153,
           "exec:joseph-r-biden": 13
         },
         "transaction_counts_by_document": {
           "oge-biden-2022-annual-278": 13,
           "oge-obama-2009-annual-278": 8,
           "oge-obama-2014-annual-278": 8,
+          "oge-trump-2020-annual-278": 81,
           "oge-trump-2021-termination-278": 148,
           "oge-trump-2025-278t-2025-10-17": 35,
           "oge-trump-2026-278t-2026-05-08": 331,
@@ -185,7 +187,7 @@
         },
         "transaction_counts_by_official": {
           "exec:barack-obama": 16,
-          "exec:donald-j-trump": 7072,
+          "exec:donald-j-trump": 7153,
           "exec:joseph-r-biden": 13
         }
       }
@@ -201,16 +203,16 @@
       "house_ptr_timeline_transaction_count": 54017,
       "official_count": 360,
       "presidential_oge_document_count": 19,
-      "presidential_oge_parser_preview_transaction_count": 7101,
+      "presidential_oge_parser_preview_transaction_count": 7182,
       "presidential_oge_public_production_trade_count": 0,
       "presidential_oge_status_count": 4,
       "senate_ptr_document_count": 1820,
       "senate_ptr_out_of_service_trade_count": 1,
       "senate_ptr_parser_preview_transaction_count": 10882,
       "senate_ptr_timeline_transaction_count": 10881,
-      "trade_cluster_count": 3365,
-      "trade_context_candidate_count": 22259,
-      "trade_count": 71996
+      "trade_cluster_count": 3372,
+      "trade_context_candidate_count": 22295,
+      "trade_count": 72077
     },
     "trade_context_methodology": {
       "focused_display_limit_per_official": 24,
@@ -559,7 +561,7 @@
           "source_indexed_document_count": 7688,
           "source_metadata_official_count": 297,
           "source_ocr_evidence_document_count": 50,
-          "source_ocr_evidence_page_count": 449,
+          "source_ocr_evidence_page_count": 419,
           "source_parser_preview_transaction_count": 54030,
           "source_pipeline_started": false,
           "source_processed_document_count": 7554
@@ -609,7 +611,7 @@
           "source_indexed_document_count": 7688,
           "source_metadata_official_count": 297,
           "source_ocr_evidence_document_count": 50,
-          "source_ocr_evidence_page_count": 449,
+          "source_ocr_evidence_page_count": 419,
           "source_parser_preview_transaction_count": 54030,
           "source_pipeline_started": false,
           "source_processed_document_count": 7554
@@ -659,7 +661,7 @@
           "source_indexed_document_count": 7688,
           "source_metadata_official_count": 297,
           "source_ocr_evidence_document_count": 50,
-          "source_ocr_evidence_page_count": 449,
+          "source_ocr_evidence_page_count": 419,
           "source_parser_preview_transaction_count": 54030,
           "source_pipeline_started": false,
           "source_processed_document_count": 7554
@@ -709,7 +711,7 @@
           "source_indexed_document_count": 7688,
           "source_metadata_official_count": 297,
           "source_ocr_evidence_document_count": 50,
-          "source_ocr_evidence_page_count": 449,
+          "source_ocr_evidence_page_count": 419,
           "source_parser_preview_transaction_count": 54030,
           "source_pipeline_started": false,
           "source_processed_document_count": 7554
@@ -748,7 +750,7 @@
         "evidence_review_batch_count": 100,
         "evidence_review_candidate_count": 43553,
         "ocr_evidence_document_count": 100,
-        "ocr_evidence_page_count": 601,
+        "ocr_evidence_page_count": 571,
         "open_warning_count": 6,
         "parser_preview_evaluated_record_count": 64912,
         "queue_item_count": 5900,
@@ -763,7 +765,7 @@
             "indexed_document_count": 7688,
             "metadata_official_count": 297,
             "ocr_evidence_document_count": 50,
-            "ocr_evidence_page_count": 449,
+            "ocr_evidence_page_count": 419,
             "parser_preview_transaction_count": 54030,
             "processed_document_count": 7554
           },
@@ -875,7 +877,7 @@
     "ocr_results": {
       "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
       "generated_at": "2026-08-14",
-      "ocr_engine": "tesseract 5.3.4",
+      "ocr_engine": "tesseract 5.5.2",
       "schema_version": "disclosure-ocr-results-manifest-v2",
       "summary": {
         "attempted_document_count": 100,
@@ -2384,7 +2386,7 @@
             }
           ],
           "retrieval_mode": "direct_public_sample",
-          "retrieved_at": "2026-08-14T14:55:46+00:00",
+          "retrieved_at": "2026-08-14T15:15:36+00:00",
           "review_required_before_public_trade": true,
           "source_id": "oge-individual-disclosures",
           "source_status": "downloadable_public_sample",
@@ -2528,7 +2530,7 @@
           "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
         }
       ],
-      "generated_at": "2026-08-14T14:55:47+00:00",
+      "generated_at": "2026-08-14T15:15:37+00:00",
       "schema_version": "raw-document-archive-index-v1",
       "summary": {
         "archived_document_count": 1,
@@ -5580,7 +5582,7 @@
         "current_queue_item_count": 1354,
         "data_drift_count": 5,
         "high_alert_count": 0,
-        "measured_refresh_count": 39,
+        "measured_refresh_count": 40,
         "open_warning_count": 6,
         "reviewed_public_trade_count": 0,
         "source_failure_count": 36
@@ -5876,7 +5878,7 @@
   "methodology_version": "1.0.0",
   "parser_version": "1.0.0",
   "presidential_oge_documents": {
-    "context_label": "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews and require review before public production promotion.",
+    "context_label": "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews and require review before public production promotion. A valid prior snapshot is retained when an official source is temporarily unavailable.",
     "summary": {
       "cross_filing_duplicate_count": 0,
       "document_count": 19,
@@ -5892,9 +5894,10 @@
         "trump-47": 4
       },
       "fetch_failure_count": 1,
-      "parser_preview_transaction_count": 7101,
+      "parser_preview_transaction_count": 7182,
       "public_production_trade_count": 0,
-      "timeline_included_transaction_count": 7101,
+      "retained_previous_valid_document_count": 1,
+      "timeline_included_transaction_count": 7182,
       "unavailable_official_count": 0
     },
     "unavailable_documents": []
@@ -5923,27 +5926,28 @@
     "context_label": "Official OGE annual, termination, and periodic parser-preview transaction rows plus source-page transcriptions for timeline exploration only; review is required before production trade promotion.",
     "summary": {
       "asset_class_counts": {
-        "equity": 6698,
-        "etf": 231,
-        "fixed_income": 145,
-        "fund": 27
+        "equity": 6717,
+        "etf": 248,
+        "fixed_income": 154,
+        "fund": 63
       },
       "cross_filing_duplicate_count": 0,
       "methodology_version": "oge-cross-filing-dedup-v1",
-      "parser_preview_transaction_count": 7101,
+      "parser_preview_transaction_count": 7182,
       "periodic_reference_transaction_count": 366,
       "public_production_trade_count": 0,
-      "review_required_transaction_count": 7101,
-      "timeline_included_transaction_count": 7101,
+      "review_required_transaction_count": 7182,
+      "timeline_included_transaction_count": 7182,
       "timeline_transaction_counts_by_official": {
         "exec:barack-obama": 16,
-        "exec:donald-j-trump": 7072,
+        "exec:donald-j-trump": 7153,
         "exec:joseph-r-biden": 13
       },
       "transaction_counts_by_document": {
         "oge-biden-2022-annual-278": 13,
         "oge-obama-2009-annual-278": 8,
         "oge-obama-2014-annual-278": 8,
+        "oge-trump-2020-annual-278": 81,
         "oge-trump-2021-termination-278": 148,
         "oge-trump-2025-278t-2025-10-17": 35,
         "oge-trump-2026-278t-2026-05-08": 331,
@@ -5951,7 +5955,7 @@
       },
       "transaction_counts_by_official": {
         "exec:barack-obama": 16,
-        "exec:donald-j-trump": 7072,
+        "exec:donald-j-trump": 7153,
         "exec:joseph-r-biden": 13
       }
     }
@@ -6217,16 +6221,16 @@
       "Executive": 3,
       "Legislative": 357
     },
-    "canonical_asset_count": 1188,
-    "canonical_organization_count": 1149,
+    "canonical_asset_count": 1193,
+    "canonical_organization_count": 1154,
     "career_timeline_crypto_trade_count": 122,
     "career_timeline_default_official_count": 3,
     "career_timeline_official_count": 360,
-    "career_timeline_trade_cluster_count": 3365,
-    "career_timeline_trade_count": 71996,
+    "career_timeline_trade_cluster_count": 3372,
+    "career_timeline_trade_count": 72077,
     "crypto_price_point_count": 14215,
     "disclosure_queue_item_count": 5900,
-    "entity_quality_issue_count": 7062,
+    "entity_quality_issue_count": 7066,
     "event_count": 4422,
     "executive_oge_indexed_document_count": 19,
     "executive_oge_manifest_official_count": 72,
@@ -6264,7 +6268,7 @@
     "official_event_relationship_count": 222030,
     "official_event_roll_call_count": 745,
     "presidential_oge_document_count": 19,
-    "presidential_oge_parser_preview_transaction_count": 7101,
+    "presidential_oge_parser_preview_transaction_count": 7182,
     "presidential_oge_public_production_trade_count": 0,
     "presidential_oge_source_status_count": 4,
     "primary_source_context_record_count": 4145,

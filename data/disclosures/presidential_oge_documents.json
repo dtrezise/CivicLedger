@@ -1,5 +1,5 @@
 {
-  "context_label": "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews and require review before public production promotion.",
+  "context_label": "Curated official OGE presidential disclosure documents. Parsed transaction rows are previews and require review before public production promotion. A valid prior snapshot is retained when an official source is temporarily unavailable.",
   "documents": [
     {
       "archive_status": "official_source_linked_not_committed",
@@ -304,27 +304,45 @@
       }
     },
     {
-      "archive_status": "official_source_linked_fetch_failed",
+      "archive_status": "official_source_linked_not_committed",
+      "byte_count": 37756250,
+      "content_type": "application/pdf",
       "document_id": "oge-trump-2020-annual-278",
       "expected_transaction_activity": "annual_report_review_required",
       "filing_label": "2020 Annual OGE Form 278e",
       "filing_type": "annual_278e",
       "full_name": "Donald J. Trump",
       "official_id": "exec:donald-j-trump",
-      "parser_status": "fetch_failed",
+      "page_count": 78,
+      "parser_preview": "7/31/2020 OGE Form 278e (March 2014) U.S. Office of Government Ethics: 5 C.F.R. part 2634 I Form Approved: OM B No. (3209-0001) Report Type: Annual Year (Annual Report only): 2019 Date of Appointmen t/Termination: January 20, 2017 Executive Branch Personnel Public Financial Disclosure Report (OGE Form 278e) Filer's Information Last Name First Name MI Position Trump Donald J President of the United States of America Other Federal Government Positions Held During the Preceding 12 Months: N/A Name of Congressional Committee Considering Nomination (Nominees only): N/A Filer's Certific: on - I certify that t e statements I have ade in this report are true, complete and correct to the best ofmy kn",
+      "parser_status": "parsed_preview",
       "presidential_term": "trump-45",
       "public_production_trade_count": 0,
       "report_year": 2020,
       "reported_date": "2020-07-31",
       "review_required_before_public_trade": true,
       "review_status": "review_required_before_public_trade",
+      "sha256": "bd416c6f2853065cb09354d4df8606da37ffd5e66b817b00ae8e056b59d903aa",
       "source_collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
       "source_tier": "official",
       "source_url": "https://extapps2.oge.gov/201/Presiden.nsf/PAS%2BIndex/181BAF52E298FD70852585B70027E054/%24FILE/Trump%2C%20Donald%20J.%202020Annual%20278.pdf",
+      "transaction_section_status": "transactions_detected",
       "transaction_summary": {
+        "asset_class_counts": {
+          "equity": 19,
+          "etf": 17,
+          "fixed_income": 9,
+          "fund": 36
+        },
         "cross_filing_duplicate_count": 0,
-        "parser_preview_transaction_count": 0,
-        "timeline_included_transaction_count": 0
+        "no_transaction_hint": false,
+        "parser_preview_actions": {
+          "BUY": 36,
+          "SELL": 45
+        },
+        "parser_preview_transaction_count": 81,
+        "source_account_counts": {},
+        "timeline_included_transaction_count": 81
       }
     },
     {
@@ -723,7 +741,8 @@
   "failures": [
     {
       "document_id": "oge-trump-2020-annual-278",
-      "error": "HTTPError: HTTP Error 404: Not Found"
+      "error": "HTTPError: HTTP Error 404: Not Found",
+      "retained_previous_valid_record": true
     }
   ],
   "generated_at": "2026-08-14",
@@ -750,9 +769,10 @@
       "trump-47": 4
     },
     "fetch_failure_count": 1,
-    "parser_preview_transaction_count": 7101,
+    "parser_preview_transaction_count": 7182,
     "public_production_trade_count": 0,
-    "timeline_included_transaction_count": 7101,
+    "retained_previous_valid_document_count": 1,
+    "timeline_included_transaction_count": 7182,
     "unavailable_official_count": 0
   },
   "unavailable_documents": []
