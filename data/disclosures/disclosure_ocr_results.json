@@ -1,76 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-08-14",
+  "generated_at": "2026-08-15",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 1241,
-      "document_id": "house-ptr-2025-8221223",
-      "field_label_confidence": {
-        "amount": 0.7237,
-        "asset": 0.7237,
-        "notification_date": 0.7237,
-        "owner": 0.0,
-        "transaction_date": 0.7237,
-        "transaction_type": 0.7237
-      },
-      "filing_date": "2025-11-05",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8333,
-      "mean_ocr_confidence": 0.7237,
-      "mean_page_quality_score": 73.7,
-      "mean_review_quality_score": 0.737,
-      "minimum_page_quality_score": 73.7,
-      "official_id": "congress:R000395",
-      "official_name": "Harold Rogers",
-      "page_count": 1,
-      "page_review_status_counts": {
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_complete_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221223.json",
-      "result_sha256": "c11c9fec0212923b289423918abfce86708b6d20635fd576946d6801ca39cbaf",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221223.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 247
-    },
-    {
-      "chamber": "House",
-      "character_count": 48838,
-      "document_id": "house-ptr-2025-8221231",
-      "field_label_confidence": {
-        "amount": 0.2093,
-        "asset": 0.3448,
-        "notification_date": 0.0502,
-        "owner": 0.0,
-        "transaction_date": 0.1969,
-        "transaction_type": 0.1743
-      },
-      "filing_date": "2025-11-06",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.78,
-      "mean_ocr_confidence": 0.4481,
-      "mean_page_quality_score": 48.37,
-      "mean_review_quality_score": 0.4837,
-      "minimum_page_quality_score": 22.04,
-      "official_id": "congress:K000389",
-      "official_name": "Ro Khanna",
-      "page_count": 23,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 22,
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_partial_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221231.json",
-      "result_sha256": "dea9a35ee2d10eb4ca2b0e843e4c4e4b64b849b17fe4f1ecd993d677fbda8938",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221231.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 6102
-    },
     {
       "chamber": "House",
       "character_count": 24199,
@@ -1674,6 +1607,73 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116267.pdf",
       "transaction_rows_created": 0,
       "word_count": 5669
+    },
+    {
+      "chamber": "House",
+      "character_count": 2279,
+      "document_id": "house-ptr-2026-9116290",
+      "field_label_confidence": {
+        "amount": 0.6283,
+        "asset": 0.6283,
+        "notification_date": 0.6283,
+        "owner": 0.0,
+        "transaction_date": 0.6283,
+        "transaction_type": 0.5325
+      },
+      "filing_date": "2026-08-12",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.8262,
+      "mean_ocr_confidence": 0.6283,
+      "mean_page_quality_score": 68.33,
+      "mean_review_quality_score": 0.6833,
+      "minimum_page_quality_score": 60.28,
+      "official_id": "congress:F000459",
+      "official_name": "Charles J. \"Chuck\" Fleischmann",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 1,
+        "usable_ocr_review_required": 1
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116290.json",
+      "result_sha256": "f67d1458163739d36f42fdb6dc1b679e1affcfa6de1bde55d0ed8da792d2d56e",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116290.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 438
+    },
+    {
+      "chamber": "House",
+      "character_count": 15127,
+      "document_id": "house-ptr-2026-9116292",
+      "field_label_confidence": {
+        "amount": 0.2148,
+        "asset": 0.252,
+        "notification_date": 0.3635,
+        "owner": 0.0,
+        "transaction_date": 0.2892,
+        "transaction_type": 0.2892
+      },
+      "filing_date": "2026-08-13",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.5362,
+      "mean_ocr_confidence": 0.3635,
+      "mean_page_quality_score": 47.38,
+      "mean_review_quality_score": 0.4738,
+      "minimum_page_quality_score": 39.73,
+      "official_id": "congress:M000871",
+      "official_name": "Tracey Mann",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 2
+      },
+      "processing_status": "ocr_low_quality_review_required",
+      "readable_page_count": 0,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116292.json",
+      "result_sha256": "73ed58429ee88696d2dc251d1297f08f6e4bad19a24949ee44865dd1ad2b9411",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116292.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 130
     },
     {
       "chamber": "Senate",
@@ -3365,17 +3365,17 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 100,
-    "ocr_character_count": 1158061,
-    "ocr_word_count": 144896,
+    "ocr_character_count": 1125388,
+    "ocr_word_count": 139115,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 19,
-      "low_quality_ocr_review_required": 396,
-      "usable_ocr_review_required": 156
+      "low_quality_ocr_review_required": 377,
+      "usable_ocr_review_required": 155
     },
-    "processed_page_count": 571,
+    "processed_page_count": 551,
     "processing_status_counts": {
-      "ocr_complete_review_required": 52,
-      "ocr_low_quality_review_required": 15,
+      "ocr_complete_review_required": 51,
+      "ocr_low_quality_review_required": 16,
       "ocr_partial_review_required": 33
     },
     "quality_dimensions": [
@@ -3384,7 +3384,7 @@
       "field_label_confidence",
       "document_review_quality_score"
     ],
-    "readable_page_count": 175,
+    "readable_page_count": 174,
     "transaction_rows_created": 0
   }
 }
