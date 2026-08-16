@@ -1,6 +1,6 @@
 {
   "context_label": "Document-level amendment reconciliation retains every official filing. Links are annotations supported by explicit source fields, official report dates, and transaction signatures when available; no source record is overwritten.",
-  "generated_at": "2026-08-15",
+  "generated_at": "2026-08-16",
   "reconciliation_policy": {
     "automatic_trade_suppression_allowed": false,
     "destructive_merge_allowed": false,
@@ -1238,12 +1238,12 @@
               "filing_date_day_gap": 8,
               "predecessor_filing_date": "2014-08-26",
               "predecessor_report_date": "2014-08-26",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 12,
               "reasons": [
                 "predecessor_within_45_days"
               ],
               "score": 16.5217,
-              "transaction_signature_jaccard_similarity": null
+              "transaction_signature_jaccard_similarity": 0.0
             }
           ],
           "evidence_type": "scored_predecessor_candidates",
@@ -1567,7 +1567,7 @@
             {
               "amendment_filing_date": "2015-04-14",
               "amendment_report_date": "2014-10-30",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 1,
               "document_id": "senate-ptr-c5686418-bc96-42e3-923a-01fe2ea062cc",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -1585,7 +1585,7 @@
             {
               "amendment_filing_date": "2015-04-14",
               "amendment_report_date": "2014-10-30",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 1,
               "document_id": "senate-ptr-428a100c-5ccb-4e43-9a4b-959cf8f93eba",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -1611,7 +1611,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/93197e20-c947-4bd3-90de-4f0fcdb9a17c/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 1
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -1709,7 +1709,7 @@
             {
               "amendment_filing_date": "2015-04-14",
               "amendment_report_date": "2014-09-09",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 9,
               "document_id": "senate-ptr-c5686418-bc96-42e3-923a-01fe2ea062cc",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -1727,7 +1727,7 @@
             {
               "amendment_filing_date": "2015-04-14",
               "amendment_report_date": "2014-09-09",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 9,
               "document_id": "senate-ptr-428a100c-5ccb-4e43-9a4b-959cf8f93eba",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -1753,7 +1753,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/b788223e-d357-4314-9625-51d0ba9cdd22/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 9
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -1815,25 +1815,25 @@
             {
               "amendment_filing_date": "2015-05-13",
               "amendment_report_date": "2014-04-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-66324d46-8701-47f3-97ba-ba1f58084f92",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2015-05-13",
               "predecessor_report_date": "2015-05-13",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 11,
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date"
               ],
               "score": 45.0,
-              "transaction_signature_jaccard_similarity": null
+              "transaction_signature_jaccard_similarity": 0.0
             },
             {
               "amendment_filing_date": "2015-05-13",
               "amendment_report_date": "2014-04-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-b28b6273-8a44-48ea-a17d-9ebb630f9cc9",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -1850,19 +1850,19 @@
             {
               "amendment_filing_date": "2015-05-13",
               "amendment_report_date": "2014-04-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-22e90ec7-94da-45e7-8e4c-220586b552ac",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
               "filing_date_day_gap": 42,
               "predecessor_filing_date": "2015-04-01",
               "predecessor_report_date": "2015-04-01",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 4,
               "reasons": [
                 "predecessor_within_45_days"
               ],
               "score": 1.7391,
-              "transaction_signature_jaccard_similarity": null
+              "transaction_signature_jaccard_similarity": 0.0
             }
           ],
           "evidence_type": "scored_predecessor_candidates",
@@ -1876,7 +1876,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/b2d35534-8daf-406b-abc8-647a2a016108/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 3
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -2043,7 +2043,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2014-03-19",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 9,
               "document_id": "senate-ptr-9333e385-ff73-4bdf-b32e-8b1059e052bd",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2061,7 +2061,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2014-03-19",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 9,
               "document_id": "senate-ptr-bfbe1b67-fbdf-426b-bb12-46e50f9a2d5b",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2078,7 +2078,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2014-03-19",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 9,
               "document_id": "senate-ptr-6939846a-1fa1-44df-bbe0-abbc43a7d4ce",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2104,7 +2104,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/06d6db62-37eb-4a7c-9a98-038ae20720a5/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 9
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -2131,7 +2131,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2015-01-09",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 5,
               "document_id": "senate-ptr-9333e385-ff73-4bdf-b32e-8b1059e052bd",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2149,7 +2149,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2015-01-09",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 5,
               "document_id": "senate-ptr-bfbe1b67-fbdf-426b-bb12-46e50f9a2d5b",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2166,7 +2166,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2015-01-09",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 5,
               "document_id": "senate-ptr-6939846a-1fa1-44df-bbe0-abbc43a7d4ce",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2192,7 +2192,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/26ae70ce-c44b-4186-b6f3-89b7b9a00b0a/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 5
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -2571,7 +2571,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2014-06-27",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 31,
               "document_id": "senate-ptr-9333e385-ff73-4bdf-b32e-8b1059e052bd",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2589,7 +2589,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2014-06-27",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 31,
               "document_id": "senate-ptr-bfbe1b67-fbdf-426b-bb12-46e50f9a2d5b",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2606,7 +2606,7 @@
             {
               "amendment_filing_date": "2015-07-20",
               "amendment_report_date": "2014-06-27",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 31,
               "document_id": "senate-ptr-6939846a-1fa1-44df-bbe0-abbc43a7d4ce",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -2632,7 +2632,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/c8474757-9bc8-44c9-bbd3-cf841006d6fd/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 31
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -3158,7 +3158,7 @@
             {
               "amendment_filing_date": "2015-08-13",
               "amendment_report_date": "2014-03-26",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 18,
               "document_id": "senate-ptr-94becbbc-bd82-4e43-98a3-ac8004a59e55",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3175,7 +3175,7 @@
             {
               "amendment_filing_date": "2015-08-13",
               "amendment_report_date": "2014-03-26",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 18,
               "document_id": "senate-ptr-bc98ba42-c220-473c-9b6a-218ab3f54776",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3201,7 +3201,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/74a4261b-5071-484a-8b15-b10d2b6984d9/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 18
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -3274,15 +3274,15 @@
       "transaction_signature_count": 18
     },
     {
-      "amendment_status": "ambiguous_predecessor_candidates",
-      "candidate_supersedes_document_id": null,
+      "amendment_status": "candidate_predecessor_identified",
+      "candidate_supersedes_document_id": "senate-ptr-94becbbc-bd82-4e43-98a3-ac8004a59e55",
       "chamber": "Senate",
       "document_family_id": "senate-family-f3442d069663222819aa",
       "document_id": "senate-ptr-c9366540-4880-467e-b952-95aeabaa10b2",
       "filer_name": "Sheldon Whitehouse",
       "filing_date": "2015-08-13",
       "is_amendment": true,
-      "linkage_confidence": "ambiguous_scored_candidates",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:W000802",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -3298,25 +3298,26 @@
             {
               "amendment_filing_date": "2015-08-13",
               "amendment_report_date": "2015-08-12",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 2,
               "document_id": "senate-ptr-94becbbc-bd82-4e43-98a3-ac8004a59e55",
               "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
+              "exact_transaction_signature_overlap_count": 2,
               "filing_date_day_gap": 1,
               "predecessor_filing_date": "2015-08-12",
               "predecessor_report_date": "2015-08-12",
               "predecessor_signature_count": 3,
               "reasons": [
                 "predecessor_within_45_days",
-                "same_report_date_from_official_title"
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
               ],
-              "score": 79.5652,
-              "transaction_signature_jaccard_similarity": 0.0
+              "score": 106.2319,
+              "transaction_signature_jaccard_similarity": 0.6667
             },
             {
               "amendment_filing_date": "2015-08-13",
               "amendment_report_date": "2015-08-12",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 2,
               "document_id": "senate-ptr-bc98ba42-c220-473c-9b6a-218ab3f54776",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3333,7 +3334,7 @@
           ],
           "evidence_type": "scored_predecessor_candidates",
           "minimum_score_margin": 15,
-          "score_margin": 69.5652,
+          "score_margin": 96.2319,
           "selection_threshold": 80,
           "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
         }
@@ -3342,7 +3343,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/c9366540-4880-467e-b952-95aeabaa10b2/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
       "amendment_status": "candidate_predecessor_identified",
@@ -3424,7 +3425,7 @@
             {
               "amendment_filing_date": "2015-08-24",
               "amendment_report_date": "2014-09-09",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 9,
               "document_id": "senate-ptr-c56210d5-0612-4026-a361-df15fb546545",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3450,7 +3451,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/68cc994d-3b0f-4354-a8a1-761d3b1fa947/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 9
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -3477,7 +3478,7 @@
             {
               "amendment_filing_date": "2015-08-24",
               "amendment_report_date": "2014-12-29",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-c56210d5-0612-4026-a361-df15fb546545",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3503,7 +3504,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/d170595c-5ecd-4ad6-b06f-2ace527349a4/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 4
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -3900,7 +3901,7 @@
             {
               "amendment_filing_date": "2015-10-02",
               "amendment_report_date": "2015-04-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 5,
               "document_id": "senate-ptr-b7b47a67-051c-4a4f-99de-1b6e60b517bb",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3918,7 +3919,7 @@
             {
               "amendment_filing_date": "2015-10-02",
               "amendment_report_date": "2015-04-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 5,
               "document_id": "senate-ptr-bd75505b-cd44-431d-94b2-7eda40672953",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3944,7 +3945,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/eaf30e17-3ed0-455b-b63e-6b6d7341bea5/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 5
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -3971,7 +3972,7 @@
             {
               "amendment_filing_date": "2015-10-05",
               "amendment_report_date": "2015-04-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-b7b47a67-051c-4a4f-99de-1b6e60b517bb",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -3988,7 +3989,7 @@
             {
               "amendment_filing_date": "2015-10-05",
               "amendment_report_date": "2015-04-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-bd75505b-cd44-431d-94b2-7eda40672953",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4014,7 +4015,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/8a34aacd-4b99-44bd-bd60-1881c260d4fe/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 4
     },
     {
       "amendment_status": "candidate_predecessor_identified",
@@ -4072,15 +4073,15 @@
       "transaction_signature_count": 3
     },
     {
-      "amendment_status": "ambiguous_predecessor_candidates",
-      "candidate_supersedes_document_id": null,
+      "amendment_status": "candidate_predecessor_identified",
+      "candidate_supersedes_document_id": "senate-ptr-75e51247-1b2c-409f-a73a-53a663bf2044",
       "chamber": "Senate",
       "document_family_id": "senate-family-18a9d40f31af67735b9f",
       "document_id": "senate-ptr-17caad4c-3801-48b6-85b5-b4bfbe09be8b",
       "filer_name": "Thomas R. Carper",
       "filing_date": "2016-03-04",
       "is_amendment": true,
-      "linkage_confidence": "ambiguous_scored_candidates",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:C000174",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -4099,17 +4100,18 @@
               "amendment_signature_count": 3,
               "document_id": "senate-ptr-75e51247-1b2c-409f-a73a-53a663bf2044",
               "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
+              "exact_transaction_signature_overlap_count": 2,
               "filing_date_day_gap": 1,
               "predecessor_filing_date": "2016-03-03",
               "predecessor_report_date": "2016-03-03",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 3,
               "reasons": [
                 "predecessor_within_45_days",
-                "same_report_date_from_official_title"
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
               ],
-              "score": 79.5652,
-              "transaction_signature_jaccard_similarity": 0.0
+              "score": 99.5652,
+              "transaction_signature_jaccard_similarity": 0.5
             },
             {
               "amendment_filing_date": "2016-03-04",
@@ -4121,7 +4123,7 @@
               "filing_date_day_gap": 31,
               "predecessor_filing_date": "2016-02-02",
               "predecessor_report_date": "2016-02-02",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 17,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -4131,7 +4133,7 @@
           ],
           "evidence_type": "scored_predecessor_candidates",
           "minimum_score_margin": 15,
-          "score_margin": 73.0435,
+          "score_margin": 93.0435,
           "selection_threshold": 80,
           "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
         }
@@ -4299,7 +4301,7 @@
               "filing_date_day_gap": 26,
               "predecessor_filing_date": "2016-04-07",
               "predecessor_report_date": "2016-04-07",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 4,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -4370,7 +4372,7 @@
               "filing_date_day_gap": 26,
               "predecessor_filing_date": "2016-04-07",
               "predecessor_report_date": "2016-04-07",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 4,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -4416,7 +4418,7 @@
             {
               "amendment_filing_date": "2016-05-16",
               "amendment_report_date": "2015-04-06",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 2,
               "document_id": "senate-ptr-4fcd4d35-4f84-466c-94c7-d372284bfced",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4433,7 +4435,7 @@
             {
               "amendment_filing_date": "2016-05-16",
               "amendment_report_date": "2015-04-06",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 2,
               "document_id": "senate-ptr-fe0f7e78-70eb-4974-b982-a9c314942e22",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4459,7 +4461,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/33773030-9b75-4f65-928f-f9ad31504f55/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -4486,7 +4488,7 @@
             {
               "amendment_filing_date": "2016-06-16",
               "amendment_report_date": "2015-12-16",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 15,
               "document_id": "senate-ptr-9579d098-4992-4d7a-b7da-75f6b195ed9d",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4504,7 +4506,7 @@
             {
               "amendment_filing_date": "2016-06-16",
               "amendment_report_date": "2015-12-16",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 15,
               "document_id": "senate-ptr-d22782c5-434d-4e49-ac10-64a8deca52b9",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4530,7 +4532,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/4d457194-11d5-4964-bf80-c5f95d047b23/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 15
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -4686,7 +4688,7 @@
               "filing_date_day_gap": 32,
               "predecessor_filing_date": "2016-07-11",
               "predecessor_report_date": "2016-07-11",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 26,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -4756,7 +4758,7 @@
               "filing_date_day_gap": 32,
               "predecessor_filing_date": "2016-07-11",
               "predecessor_report_date": "2016-07-11",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 26,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -4802,7 +4804,7 @@
             {
               "amendment_filing_date": "2016-08-12",
               "amendment_report_date": "2015-09-08",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 76,
               "document_id": "senate-ptr-01b2a815-4273-4ee6-8d7a-748599283d2c",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4819,19 +4821,19 @@
             {
               "amendment_filing_date": "2016-08-12",
               "amendment_report_date": "2015-09-08",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 76,
               "document_id": "senate-ptr-ad77d4e6-49b5-4bff-bbc0-3dca02ad19f3",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
               "filing_date_day_gap": 32,
               "predecessor_filing_date": "2016-07-11",
               "predecessor_report_date": "2016-07-11",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 26,
               "reasons": [
                 "predecessor_within_45_days"
               ],
               "score": 6.087,
-              "transaction_signature_jaccard_similarity": null
+              "transaction_signature_jaccard_similarity": 0.0
             }
           ],
           "evidence_type": "scored_predecessor_candidates",
@@ -4845,7 +4847,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/d2f4ab8b-59c2-4495-a26c-e3fbb101d388/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 76
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -4872,7 +4874,7 @@
             {
               "amendment_filing_date": "2016-08-13",
               "amendment_report_date": "2015-06-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 115,
               "document_id": "senate-ptr-01b2a815-4273-4ee6-8d7a-748599283d2c",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4889,19 +4891,19 @@
             {
               "amendment_filing_date": "2016-08-13",
               "amendment_report_date": "2015-06-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 115,
               "document_id": "senate-ptr-ad77d4e6-49b5-4bff-bbc0-3dca02ad19f3",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
               "filing_date_day_gap": 33,
               "predecessor_filing_date": "2016-07-11",
               "predecessor_report_date": "2016-07-11",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 26,
               "reasons": [
                 "predecessor_within_45_days"
               ],
               "score": 5.6522,
-              "transaction_signature_jaccard_similarity": null
+              "transaction_signature_jaccard_similarity": 0.0
             }
           ],
           "evidence_type": "scored_predecessor_candidates",
@@ -4915,7 +4917,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/75f0461a-c84a-468b-a567-1ce5cf492f91/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 115
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -4942,7 +4944,7 @@
             {
               "amendment_filing_date": "2016-09-01",
               "amendment_report_date": "2015-06-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 115,
               "document_id": "senate-ptr-a4d6b0f9-fffb-4709-acaf-7b0966e1820d",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4960,7 +4962,7 @@
             {
               "amendment_filing_date": "2016-09-01",
               "amendment_report_date": "2015-06-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 115,
               "document_id": "senate-ptr-01b2a815-4273-4ee6-8d7a-748599283d2c",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -4986,7 +4988,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/5bdbba1a-4794-48fa-a26c-09717428dc37/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 115
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -5020,7 +5022,7 @@
               "filing_date_day_gap": 17,
               "predecessor_filing_date": "2016-08-22",
               "predecessor_report_date": "2016-08-22",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 13,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -5108,7 +5110,7 @@
               "filing_date_day_gap": 11,
               "predecessor_filing_date": "2017-03-03",
               "predecessor_report_date": "2017-03-03",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 3,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -5178,7 +5180,7 @@
               "filing_date_day_gap": 17,
               "predecessor_filing_date": "2017-04-03",
               "predecessor_report_date": "2017-04-03",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 10,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -5460,7 +5462,7 @@
               "filing_date_day_gap": 14,
               "predecessor_filing_date": "2017-07-24",
               "predecessor_report_date": "2017-07-24",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 13,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -5876,7 +5878,7 @@
             {
               "amendment_filing_date": "2017-12-06",
               "amendment_report_date": "2017-10-02",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 37,
               "document_id": "senate-ptr-b9d662ab-e715-4035-a8ea-20b76f450ea4",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -5894,7 +5896,7 @@
             {
               "amendment_filing_date": "2017-12-06",
               "amendment_report_date": "2017-10-02",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 37,
               "document_id": "senate-ptr-d210797a-cc90-4c49-8372-8db2595c08e5",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -5912,7 +5914,7 @@
             {
               "amendment_filing_date": "2017-12-06",
               "amendment_report_date": "2017-10-02",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 37,
               "document_id": "senate-ptr-97bc57cc-c629-47d6-9752-0378431de91a",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -5938,7 +5940,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/e0d89ca5-da6d-49f5-b191-07000462306e/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 37
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -6008,7 +6010,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/fba0b99c-4ab5-4493-aaaa-69268002dca6/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -6043,7 +6045,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/1179b764-b4af-4732-9948-81a32fbf2a54/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 1
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -6148,7 +6150,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/ae40e5f0-02f3-44db-8a27-aa9a303e9cce/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -6182,7 +6184,7 @@
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2017-12-21",
               "predecessor_report_date": "2017-12-21",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 2,
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date"
@@ -6218,7 +6220,7 @@
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2017-12-21",
               "predecessor_report_date": "2017-12-21",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 2,
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date"
@@ -6272,7 +6274,7 @@
               "filing_date_day_gap": 11,
               "predecessor_filing_date": "2018-03-01",
               "predecessor_report_date": "2018-03-01",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 2,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -6289,7 +6291,7 @@
               "filing_date_day_gap": 34,
               "predecessor_filing_date": "2018-02-06",
               "predecessor_report_date": "2018-02-06",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 33,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -6335,7 +6337,7 @@
             {
               "amendment_filing_date": "2018-05-02",
               "amendment_report_date": "2018-01-10",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 5,
               "document_id": "senate-ptr-ccac59b4-ae2d-47b6-ae63-69a4f1f5f968",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -6361,7 +6363,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/06bc054e-4044-4322-80ad-ae881b8c8843/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 5
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -6518,7 +6520,7 @@
               "filing_date_day_gap": 29,
               "predecessor_filing_date": "2018-04-05",
               "predecessor_report_date": "2018-04-05",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 10,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -6588,7 +6590,7 @@
               "filing_date_day_gap": 29,
               "predecessor_filing_date": "2018-04-05",
               "predecessor_report_date": "2018-04-05",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 10,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -6882,7 +6884,7 @@
       "filer_name": "David Perdue",
       "filing_date": "2018-08-01",
       "is_amendment": true,
-      "linkage_confidence": "candidate_exact_report_date",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:P000612",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -6898,10 +6900,10 @@
             {
               "amendment_filing_date": "2018-08-01",
               "amendment_report_date": "2018-08-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 26,
               "document_id": "senate-ptr-e30d1fb6-65ba-4fc7-8168-b2001a1ceb9a",
               "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
+              "exact_transaction_signature_overlap_count": 25,
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2018-08-01",
               "predecessor_report_date": "2018-08-01",
@@ -6909,15 +6911,16 @@
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date",
-                "same_report_date_from_official_title"
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
               ],
-              "score": 105.0,
-              "transaction_signature_jaccard_similarity": 0.0
+              "score": 142.037,
+              "transaction_signature_jaccard_similarity": 0.9259
             },
             {
               "amendment_filing_date": "2018-08-01",
               "amendment_report_date": "2018-08-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 26,
               "document_id": "senate-ptr-e842308f-a07d-4885-be7e-b2a516dafe69",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -6934,7 +6937,7 @@
           ],
           "evidence_type": "scored_predecessor_candidates",
           "minimum_score_margin": 15,
-          "score_margin": 96.3043,
+          "score_margin": 133.3413,
           "selection_threshold": 80,
           "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
         }
@@ -6943,7 +6946,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/025cc231-0964-4f3b-a84a-b33d8b5572e3/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 26
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -7215,7 +7218,7 @@
             {
               "amendment_filing_date": "2018-08-13",
               "amendment_report_date": "2017-06-07",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 1,
               "document_id": "senate-ptr-a622eaed-e4dc-4093-b5f5-e4fbd1834af1",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -7232,7 +7235,7 @@
             {
               "amendment_filing_date": "2018-08-13",
               "amendment_report_date": "2017-06-07",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 1,
               "document_id": "senate-ptr-b84a1f1a-2d61-4784-b25b-91cb4ab93224",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -7258,7 +7261,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/b0a1b06d-a56b-429a-b393-d44f2c4ce4b0/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 1
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -7519,7 +7522,7 @@
               "filing_date_day_gap": 33,
               "predecessor_filing_date": "2018-09-13",
               "predecessor_report_date": "2018-09-13",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 2,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -7795,7 +7798,7 @@
             {
               "amendment_filing_date": "2019-04-09",
               "amendment_report_date": "2019-01-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-61f45eac-be7d-4441-a2c0-1fe36d2cff9b",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -7813,7 +7816,7 @@
             {
               "amendment_filing_date": "2019-04-09",
               "amendment_report_date": "2019-01-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-e33b0e5c-b70c-446d-aaa7-df227bd59c3e",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -7830,7 +7833,7 @@
             {
               "amendment_filing_date": "2019-04-09",
               "amendment_report_date": "2019-01-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-7b87f21b-3a74-4ef9-8069-17be2c728a12",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -7856,7 +7859,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/2ae1f15e-73c5-40ea-bff7-28aecdbeb585/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 4
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -8082,7 +8085,7 @@
       "filer_name": "John Hoeven",
       "filing_date": "2019-05-08",
       "is_amendment": true,
-      "linkage_confidence": "candidate_exact_report_date",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:H001061",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -8098,10 +8101,10 @@
             {
               "amendment_filing_date": "2019-05-08",
               "amendment_report_date": "2019-05-08",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-654577b9-4028-4cfa-bb47-c961a41f2b1b",
               "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
+              "exact_transaction_signature_overlap_count": 2,
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2019-05-08",
               "predecessor_report_date": "2019-05-08",
@@ -8109,15 +8112,16 @@
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date",
-                "same_report_date_from_official_title"
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
               ],
-              "score": 105.0,
-              "transaction_signature_jaccard_similarity": 0.0
+              "score": 125.0,
+              "transaction_signature_jaccard_similarity": 0.5
             },
             {
               "amendment_filing_date": "2019-05-08",
               "amendment_report_date": "2019-05-08",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-6973eebd-1e5e-41a8-8fa6-2baff09adbac",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8134,7 +8138,7 @@
             {
               "amendment_filing_date": "2019-05-08",
               "amendment_report_date": "2019-05-08",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-514f7dc7-c7bf-47ed-92fe-baa8c553eaec",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8151,7 +8155,7 @@
             {
               "amendment_filing_date": "2019-05-08",
               "amendment_report_date": "2019-05-08",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-252cb80b-a178-4762-8e33-d1d3776a0656",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8168,7 +8172,7 @@
           ],
           "evidence_type": "scored_predecessor_candidates",
           "minimum_score_margin": 15,
-          "score_margin": 88.913,
+          "score_margin": 108.913,
           "selection_threshold": 80,
           "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
         }
@@ -8177,7 +8181,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/9b76f720-181f-496f-aed1-9f22805876e8/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 3
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -8606,7 +8610,7 @@
             {
               "amendment_filing_date": "2019-05-15",
               "amendment_report_date": "2019-01-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-ee11f53b-a3b1-4824-a16c-d3a98f090527",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8623,7 +8627,7 @@
             {
               "amendment_filing_date": "2019-05-15",
               "amendment_report_date": "2019-01-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-61f45eac-be7d-4441-a2c0-1fe36d2cff9b",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8640,7 +8644,7 @@
             {
               "amendment_filing_date": "2019-05-15",
               "amendment_report_date": "2019-01-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 4,
               "document_id": "senate-ptr-e33b0e5c-b70c-446d-aaa7-df227bd59c3e",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8666,7 +8670,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/acf289a7-36c4-40fb-a491-8f31e24cdb32/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 4
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -8693,7 +8697,7 @@
             {
               "amendment_filing_date": "2019-05-15",
               "amendment_report_date": "2018-02-06",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 33,
               "document_id": "senate-ptr-ee11f53b-a3b1-4824-a16c-d3a98f090527",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8710,7 +8714,7 @@
             {
               "amendment_filing_date": "2019-05-15",
               "amendment_report_date": "2018-02-06",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 33,
               "document_id": "senate-ptr-61f45eac-be7d-4441-a2c0-1fe36d2cff9b",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8727,7 +8731,7 @@
             {
               "amendment_filing_date": "2019-05-15",
               "amendment_report_date": "2018-02-06",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 33,
               "document_id": "senate-ptr-e33b0e5c-b70c-446d-aaa7-df227bd59c3e",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -8753,7 +8757,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/b9beb296-ed8a-49f3-8d2a-dc782679fd71/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 33
     },
     {
       "amendment_status": "candidate_predecessor_identified",
@@ -9191,7 +9195,7 @@
             {
               "amendment_filing_date": "2019-08-12",
               "amendment_report_date": "2018-09-07",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-54bc8764-f9ae-4467-b3d3-e930069c929e",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -9217,7 +9221,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/42013227-54d2-4641-ba01-d21a7d77cee7/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 3
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -9403,7 +9407,7 @@
             {
               "amendment_filing_date": "2019-08-12",
               "amendment_report_date": "2018-06-07",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-54bc8764-f9ae-4467-b3d3-e930069c929e",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -9429,7 +9433,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/a2e8208b-16b3-4e97-ad54-fa8b2e6e443a/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 3
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -9456,7 +9460,7 @@
             {
               "amendment_filing_date": "2019-08-12",
               "amendment_report_date": "2018-04-10",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 2,
               "document_id": "senate-ptr-54bc8764-f9ae-4467-b3d3-e930069c929e",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -9482,7 +9486,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/adfa0396-aa71-4fe6-8033-600e6e70e669/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -9834,7 +9838,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/3d907991-077d-4816-81d5-9644415cff66/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 1
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -10447,7 +10451,7 @@
             {
               "amendment_filing_date": "2020-05-27",
               "amendment_report_date": "2019-05-01",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 3,
               "document_id": "senate-ptr-a1c431fc-093e-4ace-8f0a-4f2ae481556d",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -10473,7 +10477,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/5a076a67-a796-4c09-91e7-c0d1aa0302a4/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 3
     },
     {
       "amendment_status": "candidate_predecessor_identified",
@@ -10988,7 +10992,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/3644a5ce-e1f9-4b36-9f48-65842e44f75e/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 57
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -11209,7 +11213,7 @@
             {
               "amendment_filing_date": "2021-05-17",
               "amendment_report_date": "2020-08-04",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 48,
               "document_id": "senate-ptr-50c0a1b2-4fe2-468b-8084-36832c976a95",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -11235,7 +11239,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/66e04e1d-0b8e-4619-bfa4-6ff7b2ee8160/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 48
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -11476,7 +11480,7 @@
             {
               "amendment_filing_date": "2021-08-06",
               "amendment_report_date": "2020-11-19",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 2,
               "document_id": "senate-ptr-89f81dcb-e3d3-4c79-bc26-3aa06b346e41",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -11502,18 +11506,18 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/267d588f-a44e-46c0-8654-9b6396851c34/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
-      "amendment_status": "ambiguous_predecessor_candidates",
-      "candidate_supersedes_document_id": null,
+      "amendment_status": "candidate_predecessor_identified",
+      "candidate_supersedes_document_id": "senate-ptr-d3e4f531-5e2e-4348-b928-e6b7d5312777",
       "chamber": "Senate",
       "document_family_id": "senate-family-7a24210b28c6f197eb71",
       "document_id": "senate-ptr-cbca251b-4a4d-40cb-95c9-7ac3fc6b8d7c",
       "filer_name": "Shelley Moore Capito",
       "filing_date": "2022-01-21",
       "is_amendment": true,
-      "linkage_confidence": "ambiguous_scored_candidates",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:C001047",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -11532,17 +11536,18 @@
               "amendment_signature_count": 4,
               "document_id": "senate-ptr-d3e4f531-5e2e-4348-b928-e6b7d5312777",
               "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
+              "exact_transaction_signature_overlap_count": 4,
               "filing_date_day_gap": 6,
               "predecessor_filing_date": "2022-01-15",
               "predecessor_report_date": "2022-01-15",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 5,
               "reasons": [
                 "predecessor_within_45_days",
-                "same_report_date_from_official_title"
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
               ],
-              "score": 77.3913,
-              "transaction_signature_jaccard_similarity": 0.0
+              "score": 109.3913,
+              "transaction_signature_jaccard_similarity": 0.8
             },
             {
               "amendment_filing_date": "2022-01-21",
@@ -11565,7 +11570,7 @@
           ],
           "evidence_type": "scored_predecessor_candidates",
           "minimum_score_margin": 15,
-          "score_margin": 32.3913,
+          "score_margin": 64.3913,
           "selection_threshold": 80,
           "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
         }
@@ -11601,7 +11606,7 @@
             {
               "amendment_filing_date": "2022-04-28",
               "amendment_report_date": "2021-03-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 7,
               "document_id": "senate-ptr-79382c5c-4004-4888-8469-de7dcd6d45c0",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
@@ -11627,7 +11632,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/7fe3d995-edac-445a-b57b-fe4d67504e8a/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 7
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -11662,7 +11667,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/3da479a8-e0f2-4a53-b787-4fbbb1f075ab/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 2
     },
     {
       "amendment_status": "predecessor_not_identified",
@@ -11708,7 +11713,7 @@
       "filer_name": "Shelley Moore Capito",
       "filing_date": "2022-11-13",
       "is_amendment": true,
-      "linkage_confidence": "candidate_exact_report_date",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:C001047",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -11724,10 +11729,10 @@
             {
               "amendment_filing_date": "2022-11-13",
               "amendment_report_date": "2022-11-13",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 10,
               "document_id": "senate-ptr-dc79907d-3b7a-4a2e-9a3d-e8f1625c70f6",
               "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
+              "exact_transaction_signature_overlap_count": 9,
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2022-11-13",
               "predecessor_report_date": "2022-11-13",
@@ -11735,10 +11740,11 @@
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date",
-                "same_report_date_from_official_title"
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
               ],
-              "score": 105.0,
-              "transaction_signature_jaccard_similarity": 0.0
+              "score": 137.7273,
+              "transaction_signature_jaccard_similarity": 0.8182
             }
           ],
           "evidence_type": "scored_predecessor_candidates",
@@ -11752,7 +11758,7 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/3e37ef80-caff-4b2a-a6dd-ba4f557fd3f4/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 10
     },
     {
       "amendment_status": "ambiguous_predecessor_candidates",
@@ -12142,7 +12148,7 @@
               "filing_date_day_gap": 38,
               "predecessor_filing_date": "2025-02-09",
               "predecessor_report_date": "2025-02-10",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 29,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -12181,15 +12187,15 @@
       "transaction_signature_count": 23
     },
     {
-      "amendment_status": "ambiguous_predecessor_candidates",
-      "candidate_supersedes_document_id": null,
+      "amendment_status": "candidate_predecessor_identified",
+      "candidate_supersedes_document_id": "senate-ptr-db2a4c73-e714-4ad0-9548-b1b83f1d0773",
       "chamber": "Senate",
       "document_family_id": "senate-family-979f2b4e4cefa6e4d2f3",
       "document_id": "senate-ptr-4b5c15fa-74ca-4e12-a0c4-3dd9ef5124b7",
       "filer_name": "John Boozman",
       "filing_date": "2025-07-09",
       "is_amendment": true,
-      "linkage_confidence": "ambiguous_scored_candidates",
+      "linkage_confidence": "candidate_date_and_signature_evidence",
       "official_id": "congress:B001236",
       "reconciliation_action": "annotate_only",
       "reconciliation_evidence": [
@@ -12206,6 +12212,25 @@
               "amendment_filing_date": "2025-07-09",
               "amendment_report_date": "2025-06-14",
               "amendment_signature_count": 10,
+              "document_id": "senate-ptr-db2a4c73-e714-4ad0-9548-b1b83f1d0773",
+              "exact_report_date_match": true,
+              "exact_transaction_signature_overlap_count": 9,
+              "filing_date_day_gap": 25,
+              "predecessor_filing_date": "2025-06-14",
+              "predecessor_report_date": "2025-06-14",
+              "predecessor_signature_count": 10,
+              "reasons": [
+                "predecessor_within_45_days",
+                "same_report_date_from_official_title",
+                "exact_transaction_signature_overlap"
+              ],
+              "score": 101.8577,
+              "transaction_signature_jaccard_similarity": 0.8182
+            },
+            {
+              "amendment_filing_date": "2025-07-09",
+              "amendment_report_date": "2025-06-14",
+              "amendment_signature_count": 10,
               "document_id": "senate-ptr-7f1f888e-f759-4c18-8fbe-baf8f3488374",
               "exact_report_date_match": true,
               "exact_transaction_signature_overlap_count": 0,
@@ -12213,24 +12238,6 @@
               "predecessor_filing_date": "2025-06-14",
               "predecessor_report_date": "2025-06-14",
               "predecessor_signature_count": 7,
-              "reasons": [
-                "predecessor_within_45_days",
-                "same_report_date_from_official_title"
-              ],
-              "score": 69.1304,
-              "transaction_signature_jaccard_similarity": 0.0
-            },
-            {
-              "amendment_filing_date": "2025-07-09",
-              "amendment_report_date": "2025-06-14",
-              "amendment_signature_count": 10,
-              "document_id": "senate-ptr-db2a4c73-e714-4ad0-9548-b1b83f1d0773",
-              "exact_report_date_match": true,
-              "exact_transaction_signature_overlap_count": 0,
-              "filing_date_day_gap": 25,
-              "predecessor_filing_date": "2025-06-14",
-              "predecessor_report_date": "2025-06-14",
-              "predecessor_signature_count": 0,
               "reasons": [
                 "predecessor_within_45_days",
                 "same_report_date_from_official_title"
@@ -12266,7 +12273,7 @@
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2025-07-09",
               "predecessor_report_date": "2025-07-09",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 2,
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date"
@@ -12277,7 +12284,7 @@
           ],
           "evidence_type": "scored_predecessor_candidates",
           "minimum_score_margin": 15,
-          "score_margin": 0.0,
+          "score_margin": 32.7273,
           "selection_threshold": 80,
           "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
         }
@@ -12955,7 +12962,7 @@
               "filing_date_day_gap": 3,
               "predecessor_filing_date": "2026-05-08",
               "predecessor_report_date": "2026-05-08",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 1,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -12989,7 +12996,7 @@
               "filing_date_day_gap": 27,
               "predecessor_filing_date": "2026-04-14",
               "predecessor_report_date": "2026-04-14",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 6,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -13006,7 +13013,7 @@
               "filing_date_day_gap": 27,
               "predecessor_filing_date": "2026-04-14",
               "predecessor_report_date": "2026-04-14",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 3,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -13059,7 +13066,7 @@
               "filing_date_day_gap": 3,
               "predecessor_filing_date": "2026-05-08",
               "predecessor_report_date": "2026-05-08",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 1,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -13093,7 +13100,7 @@
               "filing_date_day_gap": 27,
               "predecessor_filing_date": "2026-04-14",
               "predecessor_report_date": "2026-04-14",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 6,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -13110,7 +13117,7 @@
               "filing_date_day_gap": 27,
               "predecessor_filing_date": "2026-04-14",
               "predecessor_report_date": "2026-04-14",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 3,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -13271,7 +13278,7 @@
               "filing_date_day_gap": 0,
               "predecessor_filing_date": "2026-06-16",
               "predecessor_report_date": "2026-06-16",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 15,
               "reasons": [
                 "predecessor_within_45_days",
                 "same_filing_date",
@@ -13290,7 +13297,7 @@
               "filing_date_day_gap": 39,
               "predecessor_filing_date": "2026-05-08",
               "predecessor_report_date": "2026-05-08",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 1,
               "reasons": [
                 "predecessor_within_45_days"
               ],
@@ -13830,19 +13837,19 @@
             {
               "amendment_filing_date": "2026-08-13",
               "amendment_report_date": "2025-03-03",
-              "amendment_signature_count": 0,
+              "amendment_signature_count": 6,
               "document_id": "senate-ptr-d20def77-73a7-44e0-8be0-b9b05492deed",
               "exact_report_date_match": false,
               "exact_transaction_signature_overlap_count": 0,
               "filing_date_day_gap": 10,
               "predecessor_filing_date": "2026-08-03",
               "predecessor_report_date": "2026-08-03",
-              "predecessor_signature_count": 0,
+              "predecessor_signature_count": 11,
               "reasons": [
                 "predecessor_within_45_days"
               ],
               "score": 15.6522,
-              "transaction_signature_jaccard_similarity": null
+              "transaction_signature_jaccard_similarity": 0.0
             }
           ],
           "evidence_type": "scored_predecessor_candidates",
@@ -13856,33 +13863,33 @@
       "source_record_preserved": true,
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/f0a05c3b-66e0-4287-a388-454e2b4c823d/",
-      "transaction_signature_count": 0
+      "transaction_signature_count": 6
     }
   ],
   "schema_version": "disclosure-amendment-reconciliation-v2",
   "summary": {
     "amendment_document_count": 219,
-    "amendment_with_transaction_signature_count": 126,
+    "amendment_with_transaction_signature_count": 166,
     "chamber_counts": {
       "Senate": 219
     },
     "destructive_change_count": 0,
     "linkage_confidence_counts": {
-      "ambiguous_scored_candidates": 149,
-      "candidate_date_and_signature_evidence": 13,
-      "candidate_exact_report_date": 12,
+      "ambiguous_scored_candidates": 145,
+      "candidate_date_and_signature_evidence": 20,
+      "candidate_exact_report_date": 9,
       "none": 45
     },
-    "linked_candidate_count": 25,
-    "report_date_evidence_link_count": 12,
-    "source_document_count": 10093,
+    "linked_candidate_count": 29,
+    "report_date_evidence_link_count": 9,
+    "source_document_count": 9961,
     "source_record_preserved_count": 219,
     "status_counts": {
-      "ambiguous_predecessor_candidates": 149,
-      "candidate_predecessor_identified": 25,
+      "ambiguous_predecessor_candidates": 145,
+      "candidate_predecessor_identified": 29,
       "predecessor_not_identified": 45
     },
-    "transaction_signature_evidence_link_count": 13,
-    "unlinked_or_ambiguous_count": 194
+    "transaction_signature_evidence_link_count": 20,
+    "unlinked_or_ambiguous_count": 190
   }
 }
