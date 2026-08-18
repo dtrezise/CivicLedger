@@ -1,6 +1,6 @@
 {
   "context_label": "Document-level amendment reconciliation retains every official filing. Links are annotations supported by explicit source fields, official report dates, and transaction signatures when available; no source record is overwritten.",
-  "generated_at": "2026-08-17",
+  "generated_at": "2026-08-18",
   "reconciliation_policy": {
     "automatic_trade_suppression_allowed": false,
     "destructive_merge_allowed": false,
@@ -13864,32 +13864,140 @@
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/f0a05c3b-66e0-4287-a388-454e2b4c823d/",
       "transaction_signature_count": 6
+    },
+    {
+      "amendment_status": "ambiguous_predecessor_candidates",
+      "candidate_supersedes_document_id": null,
+      "chamber": "Senate",
+      "document_family_id": "senate-family-88cc26ee9f20fe513cad",
+      "document_id": "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98",
+      "filer_name": "John Boozman",
+      "filing_date": "2026-08-17",
+      "is_amendment": true,
+      "linkage_confidence": "ambiguous_scored_candidates",
+      "official_id": "congress:B001236",
+      "reconciliation_action": "annotate_only",
+      "reconciliation_evidence": [
+        {
+          "evidence_type": "official_title_marker",
+          "field": "portal_report_title",
+          "source_document_id": "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98",
+          "value": "Periodic Transaction Report for 08/17/2026 (Amendment 1)"
+        },
+        {
+          "candidate_count": 4,
+          "candidate_evidence": [
+            {
+              "amendment_filing_date": "2026-08-17",
+              "amendment_report_date": "2026-08-17",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-28e465df-caf1-4a98-8ebc-605e1e1ba99b",
+              "exact_report_date_match": true,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 0,
+              "predecessor_filing_date": "2026-08-17",
+              "predecessor_report_date": "2026-08-17",
+              "predecessor_signature_count": 0,
+              "reasons": [
+                "predecessor_within_45_days",
+                "same_filing_date",
+                "same_report_date_from_official_title"
+              ],
+              "score": 105.0,
+              "transaction_signature_jaccard_similarity": null
+            },
+            {
+              "amendment_filing_date": "2026-08-17",
+              "amendment_report_date": "2026-08-17",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08",
+              "exact_report_date_match": true,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 0,
+              "predecessor_filing_date": "2026-08-17",
+              "predecessor_report_date": "2026-08-17",
+              "predecessor_signature_count": 0,
+              "reasons": [
+                "predecessor_within_45_days",
+                "same_filing_date",
+                "same_report_date_from_official_title"
+              ],
+              "score": 105.0,
+              "transaction_signature_jaccard_similarity": null
+            },
+            {
+              "amendment_filing_date": "2026-08-17",
+              "amendment_report_date": "2026-08-17",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-9c0b720d-7e27-4b02-8cf5-a85ba88c9543",
+              "exact_report_date_match": false,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 35,
+              "predecessor_filing_date": "2026-07-13",
+              "predecessor_report_date": "2026-07-13",
+              "predecessor_signature_count": 5,
+              "reasons": [
+                "predecessor_within_45_days"
+              ],
+              "score": 4.7826,
+              "transaction_signature_jaccard_similarity": 0.0
+            },
+            {
+              "amendment_filing_date": "2026-08-17",
+              "amendment_report_date": "2026-08-17",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-c52854ed-a778-483a-883c-0ba2bba17877",
+              "exact_report_date_match": false,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 35,
+              "predecessor_filing_date": "2026-07-13",
+              "predecessor_report_date": "2026-07-13",
+              "predecessor_signature_count": 5,
+              "reasons": [
+                "predecessor_within_45_days"
+              ],
+              "score": 4.7826,
+              "transaction_signature_jaccard_similarity": 0.0
+            }
+          ],
+          "evidence_type": "scored_predecessor_candidates",
+          "minimum_score_margin": 15,
+          "score_margin": 0.0,
+          "selection_threshold": 80,
+          "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
+        }
+      ],
+      "report_date": "2026-08-17",
+      "source_record_preserved": true,
+      "source_tier": "official",
+      "source_url": "https://efdsearch.senate.gov/search/view/ptr/4184cc9a-78e0-45f3-84f7-642011e6ff98/",
+      "transaction_signature_count": 0
     }
   ],
   "schema_version": "disclosure-amendment-reconciliation-v2",
   "summary": {
-    "amendment_document_count": 219,
+    "amendment_document_count": 220,
     "amendment_with_transaction_signature_count": 166,
     "chamber_counts": {
-      "Senate": 219
+      "Senate": 220
     },
     "destructive_change_count": 0,
     "linkage_confidence_counts": {
-      "ambiguous_scored_candidates": 145,
+      "ambiguous_scored_candidates": 146,
       "candidate_date_and_signature_evidence": 20,
       "candidate_exact_report_date": 9,
       "none": 45
     },
     "linked_candidate_count": 29,
     "report_date_evidence_link_count": 9,
-    "source_document_count": 9961,
-    "source_record_preserved_count": 219,
+    "source_document_count": 10098,
+    "source_record_preserved_count": 220,
     "status_counts": {
-      "ambiguous_predecessor_candidates": 145,
+      "ambiguous_predecessor_candidates": 146,
       "candidate_predecessor_identified": 29,
       "predecessor_not_identified": 45
     },
     "transaction_signature_evidence_link_count": 20,
-    "unlinked_or_ambiguous_count": 190
+    "unlinked_or_ambiguous_count": 191
   }
 }
