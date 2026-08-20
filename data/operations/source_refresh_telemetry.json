@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41260,
+      "current_record_count": 41275,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "9623e90c6d7ba6631d12b69e65ca54f7aff54216b9cc844c7addfaba6b111179",
+      "current_summary_sha256": "5c33309027fe0e577dec657ebcc182d561093245d2546bdf445bf63113c0ce09",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -17,9 +17,9 @@
       "baseline_schema_version": "house-ptr-transactions-manifest-v2",
       "baseline_summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba",
       "count_metric": "processed_document_count",
-      "current_record_count": 7562,
+      "current_record_count": 7567,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "0d5ad35950c580c81d20ba67e553b5b91d6e26b4ec32e490cc5d3c54bc87fe06",
+      "current_summary_sha256": "c9d396d5b43a8ae710cf4bb4245fe9fe889db4751ea277c472ba3fcd61ad950c",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -43,7 +43,7 @@
       "count_metric": "document_count",
       "current_record_count": 19,
       "current_schema_version": "presidential-oge-documents-v1",
-      "current_summary_sha256": "da7bf673d251cb5c1580ad90e630163c00f9f48d4edd8aefe53247b35ba44a38",
+      "current_summary_sha256": "0f94125848e28571c3378da3938371f9eeac5f64858f9f57069159ef8ae46f15",
       "path": "data/disclosures/presidential_oge_documents.json",
       "source_id": "presidential-oge-documents",
       "status": "changed"
@@ -73,7 +73,7 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-08-18",
+  "generated_at": "2026-08-20",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 4617.0,
@@ -484,6 +484,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-08-18T10:51:27Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-08-20T11:20:14Z",
+        "duration_seconds": 1666.0,
+        "failure_count": 0,
+        "run_id": "32360994487-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-08-20T10:52:28Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -491,7 +500,7 @@
   "schema_version": "reviewer-source-telemetry-v1",
   "source_failures": [
     {
-      "failure_count": 1,
+      "failure_count": 11,
       "metric": "fetch_failure_count",
       "source_artifact": "data/disclosures/presidential_oge_documents.json",
       "source_id": "presidential-oge-documents"
@@ -711,8 +720,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 45,
-    "refresh_run_count": 45,
-    "source_failure_count": 36
+    "measured_refresh_count": 46,
+    "refresh_run_count": 46,
+    "source_failure_count": 46
   }
 }
