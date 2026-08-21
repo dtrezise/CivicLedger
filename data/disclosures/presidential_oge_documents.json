@@ -740,62 +740,12 @@
   ],
   "failures": [
     {
-      "document_id": "oge-biden-2021-annual-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-biden-2022-annual-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-biden-2023-annual-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-biden-2024-annual-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-biden-2025-termination-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
       "document_id": "oge-trump-2020-annual-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-trump-2021-termination-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-trump-2025-annual-278",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-trump-2025-278t-2025-10-17",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-trump-2026-278t-2026-05-08",
-      "error": "URLError: <urlopen error timed out>",
-      "retained_previous_valid_record": true
-    },
-    {
-      "document_id": "oge-trump-2026-annual-278",
-      "error": "URLError: <urlopen error timed out>",
+      "error": "HTTPError: HTTP Error 404: Not Found",
       "retained_previous_valid_record": true
     }
   ],
-  "generated_at": "2026-08-20",
+  "generated_at": "2026-08-21",
   "schema_version": "presidential-oge-documents-v1",
   "source": {
     "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
@@ -818,10 +768,10 @@
       "trump-45": 2,
       "trump-47": 4
     },
-    "fetch_failure_count": 11,
+    "fetch_failure_count": 1,
     "parser_preview_transaction_count": 7182,
     "public_production_trade_count": 0,
-    "retained_previous_valid_document_count": 11,
+    "retained_previous_valid_document_count": 1,
     "timeline_included_transaction_count": 7182,
     "unavailable_official_count": 0
   },
