@@ -27442,8 +27442,8 @@
     }
   ],
   "context_label": "Canonical entity reference compiled from source-backed CivicLedger context. Unresolved or ambiguous labels are retained for review; no identifier, ownership relationship, or effective date is inferred.",
-  "dataset_hash": "6ec55c1f3d105a65c3b0feb7414e63d372a8b427aa23fd4eadc595c70fffab41",
-  "generated_at": "2026-08-21",
+  "dataset_hash": "0032466dd3c2dea2d17fd6f51ec1e8832192f4df7e5161cc734b572d7345a84c",
+  "generated_at": "2026-08-22",
   "methodology": {
     "identity_resolution": "Deterministic exact matching on SEC CIK, source entity ID, unique supported ticker, or exact normalized issuer name. Fuzzy matching is disabled.",
     "quality_policy": "Unsupported and multiply matched labels remain review issues and do not create links.",
@@ -184075,7 +184075,7 @@
           "confidence": 1.0,
           "id": "c3df700e-a9ad-5e8f-b845-b19005181e07",
           "normalized_alias": "microsoft corporation common stock msft st",
-          "occurrence_count": 155,
+          "occurrence_count": 156,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -184083,7 +184083,7 @@
               "source_record_id": "house-ptr-2024-20024375-row-0003"
             }
           ],
-          "record_hash": "5b5035a38e06308f12062ec675b9b83f11b34482971bdadfb3d018e1114294bd",
+          "record_hash": "1a60e7475fe5e5867605fe6538751a0f52f09a7a6d25158870f827b44cb4fda1",
           "sample_transaction_ids": [
             "house-ptr-2024-20024375-row-0003",
             "house-ptr-2024-20024461-row-0023",
@@ -185074,7 +185074,7 @@
       },
       "normalized_name": "microsoft corporation",
       "organization_type": "company",
-      "record_hash": "c2abaaa9e1678823b6ef3c84c93930e0bde104c6b29aeef14855fcdc159ef812",
+      "record_hash": "b476014cc7030e8e99c5789aee7d5297dc1be63f50d8145227b2a0aa022ebc15",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -251566,7 +251566,7 @@
           "confidence": 1.0,
           "id": "e773fbc2-b4e7-5907-8df7-ffa431f946c6",
           "normalized_alias": "alphabet inc class a common stock googl st",
-          "occurrence_count": 66,
+          "occurrence_count": 68,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -251574,7 +251574,7 @@
               "source_record_id": "house-ptr-2024-20024468-row-0001"
             }
           ],
-          "record_hash": "a8a3549807e9b77e03ba3e959d2268db9fa26896a78b3affca68dfdbcc3fc1dc",
+          "record_hash": "b9bc67ce20e7ee5d104f0ae3db263c9d500ec4ce2fdb2c805d6d4c0ba7892e4b",
           "sample_transaction_ids": [
             "house-ptr-2024-20024468-row-0001",
             "house-ptr-2024-20024468-row-0002",
@@ -251682,7 +251682,7 @@
       },
       "normalized_name": "alphabet inc",
       "organization_type": "company",
-      "record_hash": "d332fa7cf987672acdbc1ee2743ff8fd6207098c9ee2f30ddde1dedf06915a8a",
+      "record_hash": "398706bc9d72c8513dd3cbf539668a635369aad97376ab8bd8e98a141a13c8db",
       "sector_assignments": [
         {
           "confidence": 0.8,
@@ -431039,173 +431039,173 @@
   ],
   "source_snapshots": [
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/context/asset_resolution.json",
-      "record_hash": "00c7e22de4205df49c837d9109853f1d007a57feb0d5f6f335fab65e5ea9b6e8",
+      "record_hash": "79e08e6a12a074bec0b7d918789e19997225c017460afd07931331033a21225d",
       "schema_version": "asset-resolution-context-v1",
-      "sha256": "097a57c0faf453d03c4ecd2882d9e58de624e2f29b2f0fcab094f57a4caf2b72",
+      "sha256": "9bc507416d1a679b0aaa6293c7a44244fbf62ac68fe422eaffc5fd4e1b9b4f01",
       "source_id": "asset_resolution",
       "source_tier": "curated_parser_context"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/context/company_entity_reference.json",
-      "record_hash": "9bf07d0492d513c283bf10756041a5b90ce23bdd610dead3b045fc3b69f87fd7",
+      "record_hash": "f05ceddbe60fa80b83ea4f1b161e324a059104bea346a1ef3532188b29e3a4c6",
       "schema_version": "company-entity-reference-v1",
       "sha256": "dac8161d784b5a41ab527a8d60f54dbc0997ffdca0e3cd2d7672d139e354095d",
       "source_id": "company_entity_reference",
       "source_tier": "curated_context"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "logical:combined-disclosure-labels",
-      "record_hash": "a6ba70cb3d6c3494985ca31f07f9bce1a3da76d04cd64ce27e9d67e0334bb342",
+      "record_hash": "2f813cd6367f9b7ee29a91ad12522482bfdddf97dfc469a38696afe222447cc7",
       "schema_version": "combined-disclosure-labels-v1",
-      "sha256": "a1a745956c0f5df3d4f9a63d56215fdc75ad4e5e9afbc47784084265b4cbe1aa",
+      "sha256": "a5b3fbc8dd73b8a8bf8ee3d2589ee2436f008513574f82b3e083b052f47aed16",
       "source_id": "disclosure_labels",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2015.json",
-      "record_hash": "559e4814aac497206058c7c276adc8093323afca6bdfd5ea8d356ecb7b2b7e76",
+      "record_hash": "cc65bb4a5608992171c834ee78a0f31d9b5d6bbf743dbea91c390266e96ef8d3",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "0efd810fc25be56f366d1e2f663ba1d3bd32702b20abdd411b67bdbc679b4bee",
+      "sha256": "a2bea239f373455604ad2210864857f2bc2d9811c3d286073b70273058f179ef",
       "source_id": "house_ptr_transactions:2015",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2016.json",
-      "record_hash": "ac86a4ce6194cb7b18722bc1c11d9d9ad7c8c76e49a0732be75413d218b4b525",
+      "record_hash": "87d6fb129bc63d76d380a443301362d8a18fe47191a493ae2042e4b304e07b2d",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "426faff5965dc837f3813cb4f8f1161ef85806883772ba6558abefcce1ae80f1",
+      "sha256": "2f51f91b7d1f492f231ab3c7c26fd6ab17ce5dbe35dffb81589cd1420ed1ff17",
       "source_id": "house_ptr_transactions:2016",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2017.json",
-      "record_hash": "7b6bc383a935a629b1eaa0b4e9360bed8c7a4d99afa8eaf9d9d613568e4eb823",
+      "record_hash": "d482877628369d37ed4af17c548d387ebd2c0b1345916f240e357d9425494877",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "1c842e7461814eabfb30aea8b8f015550028333fd2613add108ef44f27eb04ca",
+      "sha256": "db6c0d6070f45ae6372c06fab394632dd6c52a807e6571692e77712d5c0c9d6e",
       "source_id": "house_ptr_transactions:2017",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2018.json",
-      "record_hash": "d2d522a274b819a1c50e98f84f73711d54f120ddbb442d52cb0403655cffc54c",
+      "record_hash": "bbe31969398587cae9449c699f0292fec93810ae728692df7822fccb90a714ef",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "afe3578655b32cf8103731ab8867c6c45fca89340d9ee1a42be2fcd1e213eaa2",
+      "sha256": "0c901611d922eac1b485c10f0a2d4c20fff684158dbf65547a2a93d9fcba9b34",
       "source_id": "house_ptr_transactions:2018",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2019.json",
-      "record_hash": "ca8d80320ca5799b6da35c66ca6ae806a4bb245bb2c41a852f7fa32e4afa24a9",
+      "record_hash": "8df994295f7f24ec9fb736110188af155a26db788f4516612fae01640de3f097",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "e5b15943d2b57179cb80316f3247f69ea1847e80625f2c00799ddf4f045aeab8",
+      "sha256": "0a6c82cb9d1d752e525906a0ac396d1c4cb5d14fcba9dff5f75f3df5d75a7132",
       "source_id": "house_ptr_transactions:2019",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2020.json",
-      "record_hash": "e45732c702de352fdce284bdafef5115e721c5d92addc4edd8cbc487e39554e4",
+      "record_hash": "678d5ff1efe568ab169fbc678271016626c1a050e7cf38c029d75aabd263cd01",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "697ad988353824be7555bb6977b38bf3dfcb3883dc04d8886854435e8fff5ec4",
+      "sha256": "9685b6a4e12f996f942e463ce78fad8265425778cf97e4016d73790d188e97a7",
       "source_id": "house_ptr_transactions:2020",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2021.json",
-      "record_hash": "cc249c5f93d50e95a4357aa2fc26fecdd1a6f66ee2b0b54a2ceb608a4aadf0ec",
+      "record_hash": "612eb29092c5c347ca13d315b1497746a4067063fdeef03a26969f53bbaa2851",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "bf62b67fd31fb9cc9b7099f96c0ac4840269c919dabf7a329ef91d13a05b42e0",
+      "sha256": "b7eaea0cdbe4c34c30c23d3444451d29d12a55cf6f0fb383665009365cc69734",
       "source_id": "house_ptr_transactions:2021",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2022.json",
-      "record_hash": "c5a0eb835132e42bcc229d2e5b4e1187d34a5dc7fb6744855818178aff32c096",
+      "record_hash": "716d6f9fc6dce495ed6f0c2c87d43a82b8e3bb699805b21b423c467c8e74e339",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "61039fcc598c708666723ae14bf3f98f9c861e6738802d2d924d4bb2676ef227",
+      "sha256": "16d98f1cca022506d89b7966ec13eef34b3d0e3a30671f522fc8217a2ed7210e",
       "source_id": "house_ptr_transactions:2022",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2023.json",
-      "record_hash": "d6ce2bb9442e148ac5002df63795d19490de91427f1d91bf8cec11b0a4c41b3c",
+      "record_hash": "5f7f5fbfc1f6b7d9d729cac17ea250513f7308aa18a91351d3b255b1ea5a4c3a",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "697b989b89393dcf7a48580cdde6f0b22eff5a710edb6d16e4226bb5dfe03cee",
+      "sha256": "9fbe3ddd73146e6e857fa7ccf8c48bed898ae603219491283fdaa62b577aa92e",
       "source_id": "house_ptr_transactions:2023",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2024.json",
-      "record_hash": "f66e01387b3e59aee4fa355369bd3d4bcddfe6eb448b7a50fa735dbb0b850b3a",
+      "record_hash": "421bbbc413bc7e94fdda38ad4fecb6f93e472af5fdfe3a677fa034f18be62f7b",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "18b65a37fc168f37b3fc99a687fe836b6bdbacf6d8fb20d86f582723148ea45a",
+      "sha256": "59d7da6c2fc0deed95e41deddab13a26e2bd77e5afb0123deab521f66205ea24",
       "source_id": "house_ptr_transactions:2024",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2025.json",
-      "record_hash": "9b7e30c2d99875fe93a0c2c640e77820f57864ff07a864d30f224137ed6d1f98",
+      "record_hash": "27d10e0336e9b1d71700d13a022fc253c53fe981f47c25961cf56a10642e8ba9",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "3a55598a271e5900ec332697eca63eb1b822bcdb9c5f61eabf2c9b6dbde277d0",
+      "sha256": "658413b946608e8ffa774c4cdbe3843e798d8127c27209612e13cd98b0ea1ccd",
       "source_id": "house_ptr_transactions:2025",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr/2026.json",
-      "record_hash": "50cfd1ee01f7cc14df632a61779a9dc32bb862925cf14e50df4ed277e3413b68",
+      "record_hash": "d57a9c47aecb5c18ef4b203241cbd4fb9610396319ed41e14d6c30de20990ad2",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "d2dfda0541ace8797ff6d0e5c7020fcdbe73facbb6f5725eb56c59b3190787bc",
+      "sha256": "e9ece85a79e4a1d86a3d39efe5b065294141ddee807f74aa1e7d729863672bcb",
       "source_id": "house_ptr_transactions:2026",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/house_ptr_transactions.json",
-      "record_hash": "aa9293a244acb6ba59a2970a02feab26e6d18658926d8b68e15621cb043b863f",
+      "record_hash": "5d33b022c0db1d52a483783c5853ebc6251c4e57faef4fcce95b662ba5e29688",
       "schema_version": "house-ptr-transactions-manifest-v2",
-      "sha256": "08f3721f7d33775d9ffb67e44561118bbf75c3e8b33eb290fea68bad38d1b9d4",
+      "sha256": "be760db319ccda8e16ef11ca9bcea09434a6df6d2f9bc936f28b300000c22fbe",
       "source_id": "house_ptr_transactions:index",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/context/market_prices.json",
-      "record_hash": "00569db216dbd64fd58d86421a33d932743d592fe9a4427ee882cab9a3db1dc5",
+      "record_hash": "3194a2252d19faf07e613cff6f297b778d7aa7b9c60077e82bfb469693d57d51",
       "schema_version": null,
-      "sha256": "0d28a0b22d1aba30337c32749de11a2659d7f2623d1aa169bca64a3c6a26f182",
+      "sha256": "77226b6c96e62b7c5a8a080745df0918f0074dc37085a69fd440aa0d22671c86",
       "source_id": "market_prices",
       "source_tier": "market_data_provider"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "backend/app/services/market_prices.py#TICKER_HISTORY",
-      "record_hash": "dd8426496a0b1ff352b0d02d09df2753c0118c4105f58556d174a3755f49262e",
+      "record_hash": "ee8675ef22d3124f4def83aaa84db681ccb4c72930dee5323b0de2cd6778f6db",
       "schema_version": "ticker-history-v1",
       "sha256": "2f9b2b07f8a786ac7d4a5627323ee6af92911676d7bcd35888c1fb6c17b7cf08",
       "source_id": "market_ticker_history",
       "source_tier": "source_checked_curated_reference"
     },
     {
-      "artifact_date": "2026-08-21",
+      "artifact_date": "2026-08-22",
       "path": "data/disclosures/presidential_oge_transactions.json",
-      "record_hash": "f6b9cd272f4b482a11342e1985f21b25a91edc8be718cdb1fa30ef433a2bf243",
+      "record_hash": "3ddc80e5f54e021af6a6d09ea4f4bd9f041c1d6cd417be3e72ff910ec3cb0f4f",
       "schema_version": "presidential-oge-transactions-v1",
-      "sha256": "6c146f669b74f315fc9e6a0d84b5bc6890c97e590e9c715992d0770848a53570",
+      "sha256": "f57c9d77341768e1da960aa30b45c3d61d86dc31567a5926fde199b6165ab43b",
       "source_id": "presidential_oge_transactions",
       "source_tier": "official_parser_preview"
     },
