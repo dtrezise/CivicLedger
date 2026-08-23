@@ -8,13 +8,13 @@
         "triggered_now": false
       },
       "individual_asset_bytes": {
-        "current": 4537246,
+        "current": 4537247,
         "rationale": "Provides an early review point below the Workers Static Assets per-file hard limit.",
         "threshold": 20971520,
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 147053653,
+        "current": 147246415,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -25,7 +25,7 @@
   },
   "candidate_partitions": [
     {
-      "bytes": 4537246,
+      "bytes": 4537247,
       "group": "timelines",
       "key": "exec:donald-j-trump",
       "path": "data/partitions/timelines/exec-donald-j-trump.json",
@@ -33,7 +33,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3167048,
+      "bytes": 3167055,
       "group": "timelines",
       "key": "congress:P000612",
       "path": "data/partitions/timelines/congress-p000612.json",
@@ -41,7 +41,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3129207,
+      "bytes": 3129351,
       "group": "timelines",
       "key": "congress:G000583",
       "path": "data/partitions/timelines/congress-g000583.json",
@@ -49,7 +49,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2900121,
+      "bytes": 2900114,
       "group": "timelines",
       "key": "congress:M001193",
       "path": "data/partitions/timelines/congress-m001193.json",
@@ -73,7 +73,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2099986,
+      "bytes": 2099718,
       "group": "timelines",
       "key": "congress:W000802",
       "path": "data/partitions/timelines/congress-w000802.json",
@@ -84,23 +84,23 @@
   "current_static_footprint": {
     "asset_count": 434,
     "largest_asset": {
-      "bytes": 4537246,
+      "bytes": 4537247,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 147053653
+    "total_bytes": 147246415
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6018634
+      "total_bytes": 6017476
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 29789219
+      "total_bytes": 29819170
     },
     "roles": {
       "candidate_bytes": 2667115,
@@ -109,15 +109,15 @@
       "total_bytes": 3363134
     },
     "timelines": {
-      "candidate_bytes": 18539177,
+      "candidate_bytes": 18539054,
       "candidate_count": 6,
       "partition_count": 362,
-      "total_bytes": 99357099
+      "total_bytes": 99521193
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2397575,
+      "bytes": 2397579,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -136,9 +136,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 427,
-    "bytes_removed": 21206292,
+    "bytes_removed": 21206169,
     "candidate_count": 7,
-    "remaining_total_bytes": 125847361
+    "remaining_total_bytes": 126040246
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 411,
-    "manifest_sha256": "673b480f5a4dc168ffcbd96a0793bb84b7a5a2b315878f90fccc701b85b8284e"
+    "manifest_sha256": "1d9de7a7b4a8b7c77b1d95edd746e0d24f81bb21530be4d5a4ab2832c8d8896b"
   }
 }

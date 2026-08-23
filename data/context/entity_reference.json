@@ -27442,8 +27442,8 @@
     }
   ],
   "context_label": "Canonical entity reference compiled from source-backed CivicLedger context. Unresolved or ambiguous labels are retained for review; no identifier, ownership relationship, or effective date is inferred.",
-  "dataset_hash": "0032466dd3c2dea2d17fd6f51ec1e8832192f4df7e5161cc734b572d7345a84c",
-  "generated_at": "2026-08-22",
+  "dataset_hash": "452a8b0018edbb17fdab7315be933334df5161220ee54298e59c22a9aeac08cd",
+  "generated_at": "2026-08-23",
   "methodology": {
     "identity_resolution": "Deterministic exact matching on SEC CIK, source entity ID, unique supported ticker, or exact normalized issuer name. Fuzzy matching is disabled.",
     "quality_policy": "Unsupported and multiply matched labels remain review issues and do not create links.",
@@ -122714,15 +122714,16 @@
           "confidence": 0.9,
           "id": "99c5ec66-d265-532f-b9a6-8f7e434e319d",
           "normalized_alias": "spym tradr 2x long spy monthly etf",
-          "occurrence_count": 1,
+          "occurrence_count": 2,
           "provenance": [
             {
               "source_id": "asset_resolution",
               "source_record_id": "asset-resolution-7a25d5599fd71f35"
             }
           ],
-          "record_hash": "305c40c775b2aa48552695feb4ca455099984bb7a011fc381d9d1587ffc09522",
+          "record_hash": "08d146a4d8b04bf3079dbc1e4ceba8a1625a4140facbaf1c878e05cfd47cfb54",
           "sample_transaction_ids": [
+            "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0001-3aed3b6b8f",
             "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0011-ed2316900f"
           ],
           "source_datasets": [
@@ -122784,15 +122785,18 @@
           "confidence": 0.9,
           "id": "b044be16-e589-558d-b63b-e0e1a40ddf3d",
           "normalized_alias": "tradr 2x long spy monthly etf",
-          "occurrence_count": 2,
+          "occurrence_count": 5,
           "provenance": [
             {
               "source_id": "asset_resolution",
               "source_record_id": "asset-resolution-87098436ba6c5c6e"
             }
           ],
-          "record_hash": "5b1fe4a6d28f9a77577fac77f0c60268c6ccf013881c73710f262570dac1ff8e",
+          "record_hash": "b2ca41fb5926eddeed9753dc7c8b4d6517cb9cccfb37ec459c0e0ee9410074ed",
           "sample_transaction_ids": [
+            "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0001-97598143d7",
+            "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0004-a6416bcd95",
+            "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0004-a6416bcd95",
             "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0011-ad72ef74e5",
             "senate-ptr-88c765c5-6550-47af-a81d-2e052c1c1b7e-row-0005-2a49d8841f"
           ],
@@ -123272,7 +123276,7 @@
       },
       "normalized_name": "spdr s p 500 etf trust",
       "organization_type": "fund",
-      "record_hash": "fb72d20c6d64c04286c3176e879ead3c007f570406ead17cbdf88c919a56b778",
+      "record_hash": "2f5a54b8a7a86ae9c7957b08928c6f6fec4a66d853bbc413b9747763d0415e80",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -171859,7 +171863,7 @@
           "confidence": 1.0,
           "id": "135a72be-8336-597d-8de8-2b69536d75c8",
           "normalized_alias": "meta platforms inc",
-          "occurrence_count": 12,
+          "occurrence_count": 13,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -171867,7 +171871,7 @@
               "source_record_id": "senate-ptr-1e086831-c7e8-43cd-a11d-dd366a27f400-row-0009-4cbb4563f5"
             }
           ],
-          "record_hash": "38b79692e2762ce06b150662e7e06c714577cdb115f69fb599dfd8d9cc3ae631",
+          "record_hash": "482a585ce00fb8654ba43842b0546eb424e059f31977f84f3558c02e1e112e89",
           "sample_transaction_ids": [
             "senate-ptr-1e086831-c7e8-43cd-a11d-dd366a27f400-row-0009-4cbb4563f5",
             "senate-ptr-1f88d468-fa98-4064-bc40-05cc6f58b555-row-0003-38565004c7",
@@ -172168,7 +172172,7 @@
       },
       "normalized_name": "meta platforms inc",
       "organization_type": "company",
-      "record_hash": "67cc3bcd2afb3b52a19bb74cf17d42da8caae1310cb7ab45943b6ec6bb5c2727",
+      "record_hash": "4116c0b8a486aa864510a905e0134eecc73b9a165f77c9d486211b04a830721f",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -183271,7 +183275,7 @@
           "confidence": 1.0,
           "id": "90c82535-bc92-5c1d-a891-05332a5f4e4e",
           "normalized_alias": "microsoft corp",
-          "occurrence_count": 56,
+          "occurrence_count": 58,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -183284,7 +183288,7 @@
               "source_record_id": "senate-ptr-0677bd3f-167e-4cae-8f1d-05eb4340fcdc-row-0005-86815b1783"
             }
           ],
-          "record_hash": "8a1d19e1396c28c3a20d6bb96d0df92a219bea4fa0ccc330f0b4ab03b783e4db",
+          "record_hash": "9a4a301212f39372e07c5efb024705e1ec4e20548614c3db60c6bddeb744aaa6",
           "sample_transaction_ids": [
             "oge-trump-2026-278t-2026-05-08:tx-0168",
             "oge-trump-2026-278t-2026-05-08:tx-0174",
@@ -185074,7 +185078,7 @@
       },
       "normalized_name": "microsoft corporation",
       "organization_type": "company",
-      "record_hash": "b476014cc7030e8e99c5789aee7d5297dc1be63f50d8145227b2a0aa022ebc15",
+      "record_hash": "34596e3dc827514839a7d8fc799095da5ed6cccd4a74a0ed9fbc1b1bd4ea78a3",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -231213,7 +231217,7 @@
           "confidence": 1.0,
           "id": "4ec30e02-30aa-5f8d-92d7-4fe963d1a954",
           "normalized_alias": "ishares iboxx high yield corporate bond etf",
-          "occurrence_count": 4,
+          "occurrence_count": 6,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -231225,10 +231229,11 @@
               "source_record_id": "asset-resolution-3aed9cd99d804f42"
             }
           ],
-          "record_hash": "58dcdcc90c8caf39c1983290e729b711d3d11af1ada271e8ecab375f2a73ecba",
+          "record_hash": "4ccc8cefee7dbf0478b72522c2ed9be8ac10677032e2a141047ec73c75e877a8",
           "sample_transaction_ids": [
             "senate-ptr-331e9f42-09c3-4edc-b923-a1566486262c-row-0002-b8b997594d",
-            "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0004-d59d7c6f75"
+            "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0004-d59d7c6f75",
+            "senate-ptr-f727289a-4d72-4c90-a3ea-63d5bcd23398-row-0004-d59d7c6f75"
           ],
           "source_datasets": [
             "senate_ptr_transactions"
@@ -231390,7 +231395,7 @@
       },
       "normalized_name": "ishares iboxx high yield corporate bond etf",
       "organization_type": "fund",
-      "record_hash": "ae8b09efb1d8eaee56d86f97f6b04320ccca2c79ac47701e5983cba506b83aaa",
+      "record_hash": "47ee03d662b61962347a8e7038067a101385098e8c3bb788a2767340253fe6ca",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -256643,21 +256648,21 @@
           "confidence": 1.0,
           "id": "5f272dad-411e-507c-961e-0e56307cadc3",
           "normalized_alias": "jp morgan chase co common stock",
-          "occurrence_count": 7,
+          "occurrence_count": 8,
           "provenance": [
             {
               "source_field": "asset_display_name",
               "source_id": "senate_ptr_transactions",
-              "source_record_id": "senate-ptr-3e37ef80-caff-4b2a-a6dd-ba4f557fd3f4-row-0009-51dcb7311a"
+              "source_record_id": "senate-ptr-28e465df-caf1-4a98-8ebc-605e1e1ba99b-row-0003-e1f5d5fe55"
             }
           ],
-          "record_hash": "9924a985d4568fe6b55bd5ff99fa9b06c3873244d205f2b012f431f254e98f66",
+          "record_hash": "53372d0bbd9c34836672e99f58df1718a232bc7ae8639ed38b4a6317309ca8bd",
           "sample_transaction_ids": [
+            "senate-ptr-28e465df-caf1-4a98-8ebc-605e1e1ba99b-row-0003-e1f5d5fe55",
             "senate-ptr-3e37ef80-caff-4b2a-a6dd-ba4f557fd3f4-row-0009-51dcb7311a",
             "senate-ptr-747b4aac-bbc9-4636-bf0f-95b0454e39d9-row-0001-3d9a807d1b",
             "senate-ptr-7810aff4-67d6-44e9-8464-9267478cbe5f-row-0024-68f1626511",
-            "senate-ptr-9767e5d2-9e46-4987-bd76-27d75d67647b-row-0022-22d576da95",
-            "senate-ptr-b195126e-7bb2-4d54-baf5-e6fc8e7a0165-row-0029-53bde8eb78"
+            "senate-ptr-9767e5d2-9e46-4987-bd76-27d75d67647b-row-0022-22d576da95"
           ],
           "source_datasets": [
             "senate_ptr_transactions"
@@ -257914,7 +257919,7 @@
       },
       "normalized_name": "jpmorgan chase co",
       "organization_type": "company",
-      "record_hash": "9eafb0064a55cb6a6d2c3047b73fa35a81cff5ec682fdff44cb4812ba53bc053",
+      "record_hash": "697aff1a46ca443fbd9f9526c8f8f961f1950f82168d022ccc41e45ccc94087d",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -293935,6 +293940,26 @@
       "source_record_id": "asset-resolution-4898efde67e5ca01"
     },
     {
+      "evidence_record_id": "sec-issuer-alias:0001374310:CBOE",
+      "id": "0180f2b8-9011-50fb-bae8-86daa81f103a",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "cboe global markets inc common stock",
+      "observed_label": "Cboe Global Markets, Inc. Common Stock",
+      "occurrence_count": 3,
+      "record_hash": "0e6fc4f3b03934e1b09f7a9783aec8bea2050104e76a6251db52ad1c7f46d4c1",
+      "sample_transaction_ids": [
+        "senate-ptr-28e465df-caf1-4a98-8ebc-605e1e1ba99b-row-0004-bc4371533d",
+        "senate-ptr-f727289a-4d72-4c90-a3ea-63d5bcd23398-row-0002-d3f3a9c388",
+        "senate-ptr-fda235b3-bad7-4637-8fa1-053f354d929c-row-0062-72b3b35635"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "CBOE"
+    },
+    {
       "id": "0185cfdf-43d4-50cb-9191-00c9cd4cba05",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "INVESCO VARIABLE RATE PREFERRED ETF VRP",
@@ -302926,24 +302951,6 @@
       "ticker": "DAIUF"
     },
     {
-      "id": "123e9fed-cec7-5cdb-88cb-4852e5912d28",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "colgate palmolive ltd",
-      "observed_label": "COLGATE PALMOLIVE LTD.",
-      "occurrence_count": 2,
-      "record_hash": "44be56f2d2a3c83567640a1967482f0f003f6d09013da2df96f5cd73437cae83",
-      "sample_transaction_ids": [
-        "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0003-c6d57dac11",
-        "senate-ptr-6be39035-04e2-432c-8fcb-0b4866041d11-row-0001-87d013f812"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "COLPAL"
-    },
-    {
       "id": "1243a8a4-0f0b-5c99-a9e8-c3d873221ddd",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "KRANESHARES CSI CHINA INTERNET ETF",
@@ -311249,6 +311256,25 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "MDY"
+    },
+    {
+      "evidence_record_id": "sec-issuer-alias:0000086312:TRV",
+      "id": "2145dfad-25bd-5793-9e7a-5931f7d95b11",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "the travelers companies inc common stock",
+      "observed_label": "The Travelers Companies, Inc. Common Stock",
+      "occurrence_count": 2,
+      "record_hash": "0cf7bbfe73b38f14dfbae035a3d786bbb55f1d61e95b7779ac3536e27439a7e7",
+      "sample_transaction_ids": [
+        "senate-ptr-28e465df-caf1-4a98-8ebc-605e1e1ba99b-row-0001-91d8738240",
+        "senate-ptr-fda235b3-bad7-4637-8fa1-053f354d929c-row-0341-418b32082b"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "TRV"
     },
     {
       "id": "21587157-f636-5a88-8f2f-9b4908a4c342",
@@ -330867,24 +330893,6 @@
       "ticker": "MPW"
     },
     {
-      "evidence_record_id": "sec-issuer-alias:0001374310:CBOE",
-      "id": "4437d08f-a45a-5472-bae8-512edb6e2e45",
-      "issue_type": "unsupported_sec_alias_label",
-      "normalized_label": "cboe global markets inc common stock",
-      "observed_label": "Cboe Global Markets, Inc. Common Stock",
-      "occurrence_count": 1,
-      "record_hash": "47f62843d0b1d732f6627a1067c4fcbcc452b242df1788c11d3165a163330526",
-      "sample_transaction_ids": [
-        "senate-ptr-fda235b3-bad7-4637-8fa1-053f354d929c-row-0062-72b3b35635"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "CBOE"
-    },
-    {
       "evidence_record_id": "sec-issuer-alias:0001156375:CME",
       "id": "4439d675-d90e-563a-ba08-ad3b25d81daf",
       "issue_type": "unsupported_sec_alias_label",
@@ -335435,6 +335443,25 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "TS"
+    },
+    {
+      "evidence_record_id": "sec-issuer-alias:0001001250:EL",
+      "id": "4ca52032-4803-5f3c-bcc9-b3e962bc099b",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "estee lauder companies inc the common stock",
+      "observed_label": "Estee Lauder Companies, Inc. (The) Common Stock",
+      "occurrence_count": 2,
+      "record_hash": "b70e5e5e8ee93e19c6ee294cc59ce41b263dbc368ebcc544bbfd1775f65d5b60",
+      "sample_transaction_ids": [
+        "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0003-2ce0f402cc",
+        "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0003-2ce0f402cc"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "EL"
     },
     {
       "id": "4cada794-7fa3-52f4-98ce-71a3b73a86b7",
@@ -343250,24 +343277,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "HPT"
-    },
-    {
-      "evidence_record_id": "sec-issuer-alias:0000086312:TRV",
-      "id": "5ab07366-bd3a-51da-acd8-ba56c022fb5d",
-      "issue_type": "unsupported_sec_alias_label",
-      "normalized_label": "the travelers companies inc common stock",
-      "observed_label": "The Travelers Companies, Inc. Common Stock",
-      "occurrence_count": 1,
-      "record_hash": "bd37f61eeba2871e68cc0442fc7b12542621e23baa13bfeaba9b0b5510177263",
-      "sample_transaction_ids": [
-        "senate-ptr-fda235b3-bad7-4637-8fa1-053f354d929c-row-0341-418b32082b"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "TRV"
     },
     {
       "id": "5abcdbae-c878-57d4-b3f8-ba726ca48841",
@@ -376935,6 +376944,25 @@
       "ticker": "BMO"
     },
     {
+      "id": "9ad6c6c5-f60e-5ade-bed8-1443dc3dac6d",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "colgate palmolive ltd",
+      "observed_label": "COLGATE PALMOLIVE LTD.",
+      "occurrence_count": 3,
+      "record_hash": "0852d688a9f8d0126beb0cb0c86dd512f43732c455b3d5fc1220eb16466222aa",
+      "sample_transaction_ids": [
+        "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0003-c6d57dac11",
+        "senate-ptr-6be39035-04e2-432c-8fcb-0b4866041d11-row-0001-87d013f812",
+        "senate-ptr-f727289a-4d72-4c90-a3ea-63d5bcd23398-row-0003-c6d57dac11"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "COLPAL"
+    },
+    {
       "id": "9ad9c469-fee8-57f7-a82e-7c591f628e06",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "wells fargo co",
@@ -377500,6 +377528,27 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "SRLN"
+    },
+    {
+      "id": "9bfdaa03-8f16-5d41-9b1f-9b2f43d9b819",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "tradr 2x long spy monthly etf",
+      "observed_label": "Tradr 2X Long SPY Monthly ETF",
+      "occurrence_count": 5,
+      "record_hash": "330ef2ee373aba5b8a065dc6788da6d88133919726441831e60eda373c186ef5",
+      "sample_transaction_ids": [
+        "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0001-97598143d7",
+        "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0004-a6416bcd95",
+        "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0004-a6416bcd95",
+        "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0011-ad72ef74e5",
+        "senate-ptr-88c765c5-6550-47af-a81d-2e052c1c1b7e-row-0005-2a49d8841f"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "SPYM"
     },
     {
       "id": "9c0059dd-77e0-5668-85e7-ce5f50fbe50f",
@@ -416032,24 +416081,6 @@
       "ticker": "GEHC"
     },
     {
-      "id": "e4d6e214-84aa-5a4e-821a-6fd023e7a1d1",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "tradr 2x long spy monthly etf",
-      "observed_label": "Tradr 2X Long SPY Monthly ETF",
-      "occurrence_count": 2,
-      "record_hash": "31e37a9ae56421ca1a3ae81e9f4c5ff9c07e2bcfc7a2abc2859387baa6a9abfa",
-      "sample_transaction_ids": [
-        "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0011-ad72ef74e5",
-        "senate-ptr-88c765c5-6550-47af-a81d-2e052c1c1b7e-row-0005-2a49d8841f"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "SPYM"
-    },
-    {
       "id": "e4dcf3b4-e8bd-5241-a847-88dde474ac24",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "materials etf vanguard",
@@ -424591,6 +424622,25 @@
       "ticker": "JETS"
     },
     {
+      "evidence_record_id": "sec-issuer-alias:0001521332:APTV",
+      "id": "f55cf1a8-e193-51aa-95d7-09358875aa23",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "aptiv plc ordinary shares",
+      "observed_label": "Aptiv PLC Ordinary Shares",
+      "occurrence_count": 2,
+      "record_hash": "ac3731d08b383e5a562f62d182304800ab017c5af5c87e5516400fddc5bd9dc7",
+      "sample_transaction_ids": [
+        "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0006-e86157963f",
+        "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0006-e86157963f"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "APTV"
+    },
+    {
       "id": "f56cf450-6b10-5caf-a737-760011f049f0",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "via renewables inc 8 75 series a fixed to floating rate cumulative redeemable perpetual preferred stock viasp st filing status new",
@@ -431039,173 +431089,173 @@
   ],
   "source_snapshots": [
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/context/asset_resolution.json",
-      "record_hash": "79e08e6a12a074bec0b7d918789e19997225c017460afd07931331033a21225d",
+      "record_hash": "1f46bb0b6e3fffc85c6c40dd1083a697de94d1e889b6179e1cd393466bab87c2",
       "schema_version": "asset-resolution-context-v1",
-      "sha256": "9bc507416d1a679b0aaa6293c7a44244fbf62ac68fe422eaffc5fd4e1b9b4f01",
+      "sha256": "24f54d14578a45cdf9c8b386e5afb2401a638cd02299b6a02cf98c61d4d0f6f1",
       "source_id": "asset_resolution",
       "source_tier": "curated_parser_context"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/context/company_entity_reference.json",
-      "record_hash": "f05ceddbe60fa80b83ea4f1b161e324a059104bea346a1ef3532188b29e3a4c6",
+      "record_hash": "3f06a11d7ca62c68e9281e18b9a81efde5264db560606494b76d89e03d585fff",
       "schema_version": "company-entity-reference-v1",
       "sha256": "dac8161d784b5a41ab527a8d60f54dbc0997ffdca0e3cd2d7672d139e354095d",
       "source_id": "company_entity_reference",
       "source_tier": "curated_context"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "logical:combined-disclosure-labels",
-      "record_hash": "2f813cd6367f9b7ee29a91ad12522482bfdddf97dfc469a38696afe222447cc7",
+      "record_hash": "3ccf54a9d718bf4339922a1cf5012347563b9d9b5ff3da01699555165cdae274",
       "schema_version": "combined-disclosure-labels-v1",
-      "sha256": "a5b3fbc8dd73b8a8bf8ee3d2589ee2436f008513574f82b3e083b052f47aed16",
+      "sha256": "0fe522931d277c4519b88d1bf619d457e9eb470a84681c58caf3e83f58115b8e",
       "source_id": "disclosure_labels",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2015.json",
-      "record_hash": "cc65bb4a5608992171c834ee78a0f31d9b5d6bbf743dbea91c390266e96ef8d3",
+      "record_hash": "72a4550c1729f3fdc585fb53e63d134cb70e5673bc1acd7a5152cbc2d48526ed",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "a2bea239f373455604ad2210864857f2bc2d9811c3d286073b70273058f179ef",
+      "sha256": "ebf62c581108573a67c314fec9a6090bca435d6f5a5e0b6fcdf37456f8cbe915",
       "source_id": "house_ptr_transactions:2015",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2016.json",
-      "record_hash": "87d6fb129bc63d76d380a443301362d8a18fe47191a493ae2042e4b304e07b2d",
+      "record_hash": "69ee6ad049f5f02c1a50a9d10ddc79693f2b79ebc680e960395f3591a5e5db81",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "2f51f91b7d1f492f231ab3c7c26fd6ab17ce5dbe35dffb81589cd1420ed1ff17",
+      "sha256": "fc478aaa88ee826891e5a9fe2d6fe6e56f31f677feb606a33ce910aee07d34a5",
       "source_id": "house_ptr_transactions:2016",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2017.json",
-      "record_hash": "d482877628369d37ed4af17c548d387ebd2c0b1345916f240e357d9425494877",
+      "record_hash": "616fd7d234d65fdf86bf2ecd56673e615996eb5d055f7b59acc4379d752c943f",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "db6c0d6070f45ae6372c06fab394632dd6c52a807e6571692e77712d5c0c9d6e",
+      "sha256": "2530ba8cd9b16dc39b699db8b5d49cbd0a3f4fcb5bd566a10ed9cd0055d781f2",
       "source_id": "house_ptr_transactions:2017",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2018.json",
-      "record_hash": "bbe31969398587cae9449c699f0292fec93810ae728692df7822fccb90a714ef",
+      "record_hash": "3dc7ca466f7e55a34e0d8d1782fe928cbd9ad880ec6407be67bd3df9d9920a42",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "0c901611d922eac1b485c10f0a2d4c20fff684158dbf65547a2a93d9fcba9b34",
+      "sha256": "3dcf59e7f2536eaf7f14ca34e09565b9c7c506a913bfdee70f0a4b77b043f13a",
       "source_id": "house_ptr_transactions:2018",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2019.json",
-      "record_hash": "8df994295f7f24ec9fb736110188af155a26db788f4516612fae01640de3f097",
+      "record_hash": "83a321d3ba4e37c1faf6d4e2762b316a0569f34edd6d17e05453df961c89b1f6",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "0a6c82cb9d1d752e525906a0ac396d1c4cb5d14fcba9dff5f75f3df5d75a7132",
+      "sha256": "3f2603817ffb4682abc0666e670d76c22bfada358cc6ffa16e02f6fd51e57c12",
       "source_id": "house_ptr_transactions:2019",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2020.json",
-      "record_hash": "678d5ff1efe568ab169fbc678271016626c1a050e7cf38c029d75aabd263cd01",
+      "record_hash": "e275e58f3847d4001496f17c68186ec2dbdd093423a15e0ac930150a8335f024",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "9685b6a4e12f996f942e463ce78fad8265425778cf97e4016d73790d188e97a7",
+      "sha256": "eaf89198c465bd252157bd79b377804a7cc9ae2796eb2df22d0a8b92995b40e4",
       "source_id": "house_ptr_transactions:2020",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2021.json",
-      "record_hash": "612eb29092c5c347ca13d315b1497746a4067063fdeef03a26969f53bbaa2851",
+      "record_hash": "fbd3a6f828dd7abb1a6420570727b5f7ae8f00c2905e9626ade45080143102ef",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "b7eaea0cdbe4c34c30c23d3444451d29d12a55cf6f0fb383665009365cc69734",
+      "sha256": "2b88eaaf0a4f33a051fdb065f28ff6de03b203cd7a7e0b7ac8ae3b16336a4925",
       "source_id": "house_ptr_transactions:2021",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2022.json",
-      "record_hash": "716d6f9fc6dce495ed6f0c2c87d43a82b8e3bb699805b21b423c467c8e74e339",
+      "record_hash": "c4fce3015c6b9d811f06d23fc69d0cfc28dc105ebe940b21d34aae76e5f83b63",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "16d98f1cca022506d89b7966ec13eef34b3d0e3a30671f522fc8217a2ed7210e",
+      "sha256": "97698062d89d4a600d819b399642d3fc2dd5dd9ae87e3815857045c4274253f4",
       "source_id": "house_ptr_transactions:2022",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2023.json",
-      "record_hash": "5f7f5fbfc1f6b7d9d729cac17ea250513f7308aa18a91351d3b255b1ea5a4c3a",
+      "record_hash": "ff72f9eb4a5d8250cb590fbed07ba288d77388d956b95e25e9219ab8fdf9aeee",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "9fbe3ddd73146e6e857fa7ccf8c48bed898ae603219491283fdaa62b577aa92e",
+      "sha256": "72eef950157787bfb976c072abe2e1a7230fcbabcc5ca2b8b365c2915ed96216",
       "source_id": "house_ptr_transactions:2023",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2024.json",
-      "record_hash": "421bbbc413bc7e94fdda38ad4fecb6f93e472af5fdfe3a677fa034f18be62f7b",
+      "record_hash": "8f5b346bd88e1f9012ed2d0856234ea048c2e01188b2d6ff4b09b7c4667946ce",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "59d7da6c2fc0deed95e41deddab13a26e2bd77e5afb0123deab521f66205ea24",
+      "sha256": "442a63efcb9bad7c7b3c74e1217d2e53ac334437e44b54e8d7fe9579f829b981",
       "source_id": "house_ptr_transactions:2024",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2025.json",
-      "record_hash": "27d10e0336e9b1d71700d13a022fc253c53fe981f47c25961cf56a10642e8ba9",
+      "record_hash": "d9460d6099eca4bf3e1aa22f289f9d792b073e462e342c05b67a35eeb1a27f82",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "658413b946608e8ffa774c4cdbe3843e798d8127c27209612e13cd98b0ea1ccd",
+      "sha256": "1da29964965a38f91ec2b8123ab60d8f4c5ac42a70cf1e7aec2347109ebc315e",
       "source_id": "house_ptr_transactions:2025",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr/2026.json",
-      "record_hash": "d57a9c47aecb5c18ef4b203241cbd4fb9610396319ed41e14d6c30de20990ad2",
+      "record_hash": "4a83beb4e6fd37b17a09ccb279f2136aae47b024caa39ebfef6e1a9772bcd645",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "e9ece85a79e4a1d86a3d39efe5b065294141ddee807f74aa1e7d729863672bcb",
+      "sha256": "2d9031dc0c844143ef1ac0b53863556acd3c65adf41c0e1f0f54131fb0b2f688",
       "source_id": "house_ptr_transactions:2026",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/house_ptr_transactions.json",
-      "record_hash": "5d33b022c0db1d52a483783c5853ebc6251c4e57faef4fcce95b662ba5e29688",
+      "record_hash": "e2f37a8af7ac3361c7fcd2e307ae0879dc03ec50e533d7c601d9ad753394bd25",
       "schema_version": "house-ptr-transactions-manifest-v2",
-      "sha256": "be760db319ccda8e16ef11ca9bcea09434a6df6d2f9bc936f28b300000c22fbe",
+      "sha256": "34d5a262e42adcd8cbc86059059808f5a87e590dc2cb7af50d36a6c7f718b4e5",
       "source_id": "house_ptr_transactions:index",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/context/market_prices.json",
-      "record_hash": "3194a2252d19faf07e613cff6f297b778d7aa7b9c60077e82bfb469693d57d51",
+      "record_hash": "cf1c6ae953e7a7f2e01e9d015bc735b700678580140be2130031d988515cef14",
       "schema_version": null,
-      "sha256": "77226b6c96e62b7c5a8a080745df0918f0074dc37085a69fd440aa0d22671c86",
+      "sha256": "438cc864ba99543ac18a83f14f36335de3620e000414561700a5c25bbbe4ca0f",
       "source_id": "market_prices",
       "source_tier": "market_data_provider"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "backend/app/services/market_prices.py#TICKER_HISTORY",
-      "record_hash": "ee8675ef22d3124f4def83aaa84db681ccb4c72930dee5323b0de2cd6778f6db",
+      "record_hash": "726d6a75908dce11c133820da69bb1d4539b975656ebb4efb2967e397083a7a9",
       "schema_version": "ticker-history-v1",
       "sha256": "2f9b2b07f8a786ac7d4a5627323ee6af92911676d7bcd35888c1fb6c17b7cf08",
       "source_id": "market_ticker_history",
       "source_tier": "source_checked_curated_reference"
     },
     {
-      "artifact_date": "2026-08-22",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/presidential_oge_transactions.json",
-      "record_hash": "3ddc80e5f54e021af6a6d09ea4f4bd9f041c1d6cd417be3e72ff910ec3cb0f4f",
+      "record_hash": "73bc958f982483a630bd586850ae522e45de4f0044fa41b08ba4ab3e00318c60",
       "schema_version": "presidential-oge-transactions-v1",
-      "sha256": "f57c9d77341768e1da960aa30b45c3d61d86dc31567a5926fde199b6165ab43b",
+      "sha256": "2673b58af923fab15d82fb4e0aa8eb18e30ed02cc9eac5784e1c40f85b9ad625",
       "source_id": "presidential_oge_transactions",
       "source_tier": "official_parser_preview"
     },
@@ -431228,11 +431278,11 @@
       "source_tier": "official"
     },
     {
-      "artifact_date": "2026-08-16",
+      "artifact_date": "2026-08-23",
       "path": "data/disclosures/senate_ptr_transactions.json",
-      "record_hash": "ee23bb4f48d5e382c4bc7896ab60a20461390370b47ec301b088145538ed7f61",
+      "record_hash": "76ab57fdb7a00487007c3664621281229042ce436d8bdfad5a0949195466034e",
       "schema_version": "senate-ptr-transactions-v1",
-      "sha256": "82c33efd1b1d92c63df71decbc47970fb25336b84c3c576a70f0e0da2c4a7141",
+      "sha256": "6355d7ef9001a254d3e03064feb3292970ea400ca01670acb40341cc5e3c32c4",
       "source_id": "senate_ptr_transactions",
       "source_tier": "official_parser_preview"
     }
@@ -431245,17 +431295,17 @@
     "identifier_count": 1096,
     "issuer_count": 1152,
     "organization_count": 1154,
-    "quality_issue_count": 7404,
+    "quality_issue_count": 7406,
     "quality_issue_counts": {
       "unresolved_asset_resolution": 544,
       "unresolved_disclosed_ticker": 5470,
-      "unsupported_sec_alias_label": 1390
+      "unsupported_sec_alias_label": 1392
     },
     "relationship_count": 0,
     "sec_evidence_supported_symbol_count": 1087,
     "sector_count": 55,
     "ticker_history_count": 1194,
-    "unlinked_disclosure_label_occurrence_count": 29112
+    "unlinked_disclosure_label_occurrence_count": 29113
   },
   "ticker_histories": [
     {

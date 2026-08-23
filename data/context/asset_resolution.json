@@ -10107,7 +10107,7 @@
       "observed_names": [
         "iShares iBoxx $ High Yield Corporate Bond ETF"
       ],
-      "occurrence_count": 2,
+      "occurrence_count": 3,
       "resolution_status": "resolved",
       "sector": "High Yield Fixed Income",
       "sectors": [
@@ -10122,7 +10122,8 @@
       "ticker_history_status": "passthrough_no_history",
       "transaction_ids": [
         "senate-ptr-331e9f42-09c3-4edc-b923-a1566486262c-row-0002-b8b997594d",
-        "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0004-d59d7c6f75"
+        "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0004-d59d7c6f75",
+        "senate-ptr-f727289a-4d72-4c90-a3ea-63d5bcd23398-row-0004-d59d7c6f75"
       ]
     },
     {
@@ -20649,7 +20650,7 @@
       "observed_names": [
         "SPYM - Tradr 2X Long SPY Monthly ETF"
       ],
-      "occurrence_count": 1,
+      "occurrence_count": 2,
       "resolution_status": "resolved",
       "sector": "Broad Market",
       "sectors": [
@@ -20663,6 +20664,7 @@
       "ticker_history_mapping": null,
       "ticker_history_status": "passthrough_no_history",
       "transaction_ids": [
+        "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0001-3aed3b6b8f",
         "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0011-ed2316900f"
       ]
     },
@@ -21162,7 +21164,7 @@
       "observed_names": [
         "Tradr 2X Long SPY Monthly ETF"
       ],
-      "occurrence_count": 2,
+      "occurrence_count": 5,
       "resolution_status": "resolved",
       "sector": "Broad Market",
       "sectors": [
@@ -21176,6 +21178,9 @@
       "ticker_history_mapping": null,
       "ticker_history_status": "passthrough_no_history",
       "transaction_ids": [
+        "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0001-97598143d7",
+        "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0004-a6416bcd95",
+        "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0004-a6416bcd95",
         "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0011-ad72ef74e5",
         "senate-ptr-88c765c5-6550-47af-a81d-2e052c1c1b7e-row-0005-2a49d8841f"
       ]
@@ -26130,13 +26135,13 @@
     "duplicate_transaction_ids": [],
     "historical_symbol_change_count": 0,
     "match_method_counts": {
-      "curated_explicit_symbol": 668,
-      "curated_normalized_name": 259,
+      "curated_explicit_symbol": 672,
+      "curated_normalized_name": 260,
       "unresolved": 1420
     },
     "missing_effective_date_count": 0,
-    "record_count": 2347,
-    "resolved_count": 927,
+    "record_count": 2352,
+    "resolved_count": 932,
     "source_year_counts": {
       "house_ptr_transactions:2014": 5,
       "house_ptr_transactions:2015": 195,
@@ -26169,14 +26174,14 @@
       "senate_ptr_transactions:2022": 72,
       "senate_ptr_transactions:2023": 57,
       "senate_ptr_transactions:2024": 65,
-      "senate_ptr_transactions:2025": 84,
-      "senate_ptr_transactions:2026": 71
+      "senate_ptr_transactions:2025": 85,
+      "senate_ptr_transactions:2026": 75
     },
     "stale_or_invalid_mapping_count": 0,
     "stale_or_invalid_mapping_transaction_ids": [],
     "unresolved_count": 1420
   },
-  "generated_at": "2026-08-22",
+  "generated_at": "2026-08-23",
   "methodology": {
     "fuzzy_matching": false,
     "matching": "Exact curated aliases after conservative punctuation, ownership-note, and disclosure-suffix normalization; otherwise one explicit known symbol token.",
@@ -26203,17 +26208,17 @@
     "duplicate_transaction_id_count": 0,
     "historical_symbol_change_count": 0,
     "missing_effective_date_count": 0,
-    "resolved_transaction_count": 927,
+    "resolved_transaction_count": 932,
     "resolved_transaction_counts_by_asset_class": {
       "529_portfolio": 4,
-      "etf": 886,
+      "etf": 891,
       "mutual_fund": 37
     },
     "resolved_unique_asset_count": 107,
-    "review_required_transaction_count": 2347,
-    "source_transaction_count": 75335,
+    "review_required_transaction_count": 2352,
+    "source_transaction_count": 75360,
     "stale_or_invalid_mapping_count": 0,
-    "target_transaction_count": 2347,
+    "target_transaction_count": 2352,
     "unique_asset_name_count": 657,
     "unresolved_transaction_count": 1420,
     "unresolved_unique_asset_count": 550
@@ -89236,6 +89241,39 @@
     },
     {
       "asset_class": "etf",
+      "asset_display_name": "iShares iBoxx $ High Yield Corporate Bond ETF",
+      "benchmark_symbol": "BND",
+      "canonical_name": "iShares iBoxx $ High Yield Corporate Bond ETF",
+      "disclosed_asset_class": "etf",
+      "disclosed_ticker": "HYG",
+      "document_id": "senate-ptr-f727289a-4d72-4c90-a3ea-63d5bcd23398",
+      "fund_family": "BlackRock / iShares",
+      "identifier": "HYG",
+      "identifier_type": "ticker",
+      "issuer_name": "iShares iBoxx $ High Yield Corporate Bond ETF",
+      "market_symbol": "HYG",
+      "match_method": "curated_normalized_name",
+      "matched_value": "ISHARES IBOXX HIGH YIELD CORPORATE BOND ETF",
+      "normalized_name": "ISHARES IBOXX HIGH YIELD CORPORATE BOND ETF",
+      "official_id": "congress:B001236",
+      "public_production_trade": false,
+      "resolution_status": "resolved",
+      "review_required_before_public_trade": true,
+      "sector": "High Yield Fixed Income",
+      "sectors": [
+        "High Yield Fixed Income"
+      ],
+      "source_dataset": "senate_ptr_transactions",
+      "source_record_status": "official_senate_structured_parser_preview_not_promoted",
+      "symbol": "HYG",
+      "ticker_history_effective_date": "2025-04-09",
+      "ticker_history_mapping": null,
+      "ticker_history_status": "passthrough_no_history",
+      "trade_date": "2025-04-09",
+      "transaction_id": "senate-ptr-f727289a-4d72-4c90-a3ea-63d5bcd23398-row-0004-d59d7c6f75"
+    },
+    {
+      "asset_class": "etf",
       "asset_display_name": "Proshares Ultrapro QQQ ETF (TQQQ) [OT] L: US D: ETF",
       "benchmark_symbol": "QQQ",
       "canonical_name": "Invesco QQQ Trust",
@@ -100829,6 +100867,138 @@
       "ticker_history_status": null,
       "trade_date": "2026-06-25",
       "transaction_id": "senate-ptr-9c0b720d-7e27-4b02-8cf5-a85ba88c9543-row-0005-b7282b2d69"
+    },
+    {
+      "asset_class": "etf",
+      "asset_display_name": "Tradr 2X Long SPY Monthly ETF",
+      "benchmark_symbol": "SPY",
+      "canonical_name": "SPDR S&P 500 ETF Trust",
+      "disclosed_asset_class": "etf",
+      "disclosed_ticker": "SPYM",
+      "document_id": "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98",
+      "fund_family": "State Street Global Advisors / SPDR",
+      "identifier": "SPY",
+      "identifier_type": "ticker",
+      "issuer_name": "SPDR S&P 500 ETF Trust",
+      "market_symbol": "SPY",
+      "match_method": "curated_explicit_symbol",
+      "matched_value": "SPY",
+      "normalized_name": "TRADR 2X LONG SPY MONTHLY ETF",
+      "official_id": "congress:B001236",
+      "public_production_trade": false,
+      "resolution_status": "resolved",
+      "review_required_before_public_trade": true,
+      "sector": "Broad Market",
+      "sectors": [
+        "Broad Market"
+      ],
+      "source_dataset": "senate_ptr_transactions",
+      "source_record_status": "official_senate_structured_parser_preview_not_promoted",
+      "symbol": "SPY",
+      "ticker_history_effective_date": "2026-07-02",
+      "ticker_history_mapping": null,
+      "ticker_history_status": "passthrough_no_history",
+      "trade_date": "2026-07-02",
+      "transaction_id": "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0001-97598143d7"
+    },
+    {
+      "asset_class": "etf",
+      "asset_display_name": "SPYM - Tradr 2X Long SPY Monthly ETF",
+      "benchmark_symbol": "SPY",
+      "canonical_name": "SPDR S&P 500 ETF Trust",
+      "disclosed_asset_class": "etf",
+      "disclosed_ticker": null,
+      "document_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08",
+      "fund_family": "State Street Global Advisors / SPDR",
+      "identifier": "SPY",
+      "identifier_type": "ticker",
+      "issuer_name": "SPDR S&P 500 ETF Trust",
+      "market_symbol": "SPY",
+      "match_method": "curated_explicit_symbol",
+      "matched_value": "SPY",
+      "normalized_name": "SPYM TRADR 2X LONG SPY MONTHLY ETF",
+      "official_id": "congress:B001236",
+      "public_production_trade": false,
+      "resolution_status": "resolved",
+      "review_required_before_public_trade": true,
+      "sector": "Broad Market",
+      "sectors": [
+        "Broad Market"
+      ],
+      "source_dataset": "senate_ptr_transactions",
+      "source_record_status": "official_senate_structured_parser_preview_not_promoted",
+      "symbol": "SPY",
+      "ticker_history_effective_date": "2026-07-02",
+      "ticker_history_mapping": null,
+      "ticker_history_status": "passthrough_no_history",
+      "trade_date": "2026-07-02",
+      "transaction_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0001-3aed3b6b8f"
+    },
+    {
+      "asset_class": "etf",
+      "asset_display_name": "Tradr 2X Long SPY Monthly ETF",
+      "benchmark_symbol": "SPY",
+      "canonical_name": "SPDR S&P 500 ETF Trust",
+      "disclosed_asset_class": "etf",
+      "disclosed_ticker": "SPYM",
+      "document_id": "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98",
+      "fund_family": "State Street Global Advisors / SPDR",
+      "identifier": "SPY",
+      "identifier_type": "ticker",
+      "issuer_name": "SPDR S&P 500 ETF Trust",
+      "market_symbol": "SPY",
+      "match_method": "curated_explicit_symbol",
+      "matched_value": "SPY",
+      "normalized_name": "TRADR 2X LONG SPY MONTHLY ETF",
+      "official_id": "congress:B001236",
+      "public_production_trade": false,
+      "resolution_status": "resolved",
+      "review_required_before_public_trade": true,
+      "sector": "Broad Market",
+      "sectors": [
+        "Broad Market"
+      ],
+      "source_dataset": "senate_ptr_transactions",
+      "source_record_status": "official_senate_structured_parser_preview_not_promoted",
+      "symbol": "SPY",
+      "ticker_history_effective_date": "2026-07-23",
+      "ticker_history_mapping": null,
+      "ticker_history_status": "passthrough_no_history",
+      "trade_date": "2026-07-23",
+      "transaction_id": "senate-ptr-4184cc9a-78e0-45f3-84f7-642011e6ff98-row-0004-a6416bcd95"
+    },
+    {
+      "asset_class": "etf",
+      "asset_display_name": "Tradr 2X Long SPY Monthly ETF",
+      "benchmark_symbol": "SPY",
+      "canonical_name": "SPDR S&P 500 ETF Trust",
+      "disclosed_asset_class": "etf",
+      "disclosed_ticker": "SPYM",
+      "document_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08",
+      "fund_family": "State Street Global Advisors / SPDR",
+      "identifier": "SPY",
+      "identifier_type": "ticker",
+      "issuer_name": "SPDR S&P 500 ETF Trust",
+      "market_symbol": "SPY",
+      "match_method": "curated_explicit_symbol",
+      "matched_value": "SPY",
+      "normalized_name": "TRADR 2X LONG SPY MONTHLY ETF",
+      "official_id": "congress:B001236",
+      "public_production_trade": false,
+      "resolution_status": "resolved",
+      "review_required_before_public_trade": true,
+      "sector": "Broad Market",
+      "sectors": [
+        "Broad Market"
+      ],
+      "source_dataset": "senate_ptr_transactions",
+      "source_record_status": "official_senate_structured_parser_preview_not_promoted",
+      "symbol": "SPY",
+      "ticker_history_effective_date": "2026-07-23",
+      "ticker_history_mapping": null,
+      "ticker_history_status": "passthrough_no_history",
+      "trade_date": "2026-07-23",
+      "transaction_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0004-a6416bcd95"
     }
   ]
 }
