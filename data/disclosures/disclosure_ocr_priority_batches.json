@@ -1,10 +1,34 @@
 {
   "batches": [
     {
-      "backlog_document_count": 1994,
-      "batch_id": "house-ocr-highest-confidence-2026-08-24",
+      "backlog_document_count": 1995,
+      "batch_id": "house-ocr-highest-confidence-2026-08-25",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [
+        {
+          "chamber": "House",
+          "document_id": "house-ptr-2026-9116311",
+          "eligibility_checks": {
+            "filer_identity_deterministically_matched": true,
+            "official_source_url": true,
+            "source_file_sha256_present": true,
+            "source_page_count_present": true
+          },
+          "eligible_for_ocr_batch": true,
+          "filing_date": "2026-08-20",
+          "ocr_content_present": false,
+          "official_id": "congress:R000395",
+          "official_name": "Harold Rogers",
+          "priority_score": 100,
+          "priority_tier": "highest_confidence",
+          "processing_status": "metadata_prioritized_ocr_not_run",
+          "source_byte_count": 24669,
+          "source_file_sha256": "aa3092ca162c206e04512a28baf0e06619e49252779e035cdf10e5afa6ccbe8c",
+          "source_id": "house-financial-disclosure",
+          "source_page_count": 1,
+          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116311.pdf",
+          "transaction_rows_created": 0
+        },
         {
           "chamber": "House",
           "document_id": "house-ptr-2026-9116292",
@@ -1180,47 +1204,23 @@
           "source_page_count": 1,
           "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221238.pdf",
           "transaction_rows_created": 0
-        },
-        {
-          "chamber": "House",
-          "document_id": "house-ptr-2025-8221228",
-          "eligibility_checks": {
-            "filer_identity_deterministically_matched": true,
-            "official_source_url": true,
-            "source_file_sha256_present": true,
-            "source_page_count_present": true
-          },
-          "eligible_for_ocr_batch": true,
-          "filing_date": "2025-11-10",
-          "ocr_content_present": false,
-          "official_id": "congress:M001157",
-          "official_name": "Michael T. McCaul",
-          "priority_score": 100,
-          "priority_tier": "highest_confidence",
-          "processing_status": "metadata_prioritized_ocr_not_run",
-          "source_byte_count": 242958,
-          "source_file_sha256": "c8d1ccdf4e14ad4a737bd4b12d76e3e49a357de3fadbcdf0cdbe8a7bf8e167ff",
-          "source_id": "house-financial-disclosure",
-          "source_page_count": 9,
-          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221228.pdf",
-          "transaction_rows_created": 0
         }
       ],
       "chamber": "House",
-      "eligible_document_count": 1994,
+      "eligible_document_count": 1995,
       "priority_tier_counts": {
-        "highest_confidence": 1994
+        "highest_confidence": 1995
       },
       "processing_boundary": "metadata_only_no_ocr_content_generated",
-      "remaining_eligible_document_count": 1944,
+      "remaining_eligible_document_count": 1945,
       "selected_document_count": 50,
-      "selected_document_id_sha256": "5d373449cdcb6f8e89a4e042e6a0654a69cd5ace6a3ad65f391796fb77e3bce6",
-      "selected_source_byte_count": 10214001,
-      "selected_source_page_count": 399
+      "selected_document_id_sha256": "ab07ecf9f4f3c0f4c6fa682d4034b0af70cc8392e0cd032876b674792ade1ede",
+      "selected_source_byte_count": 9995712,
+      "selected_source_page_count": 391
     },
     {
       "backlog_document_count": 585,
-      "batch_id": "senate-ocr-highest-confidence-2026-08-24",
+      "batch_id": "senate-ocr-highest-confidence-2026-08-25",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [],
       "chamber": "Senate",
@@ -1237,7 +1237,7 @@
     }
   ],
   "context_label": "Deterministic metadata-only priority batches for official image disclosures. No OCR text or transaction content is inferred or fabricated.",
-  "generated_at": "2026-08-24",
+  "generated_at": "2026-08-25",
   "priority_policy": {
     "batch_size_per_chamber": 50,
     "house_evidence": [
@@ -1261,12 +1261,12 @@
   },
   "schema_version": "disclosure-ocr-priority-batches-v1",
   "summary": {
-    "backlog_document_count": 2579,
-    "eligible_document_count": 1994,
+    "backlog_document_count": 2580,
+    "eligible_document_count": 1995,
     "ocr_content_record_count": 0,
     "selected_document_count": 50,
-    "selected_source_byte_count": 10214001,
-    "selected_source_page_count": 399,
+    "selected_source_byte_count": 9995712,
+    "selected_source_page_count": 391,
     "transaction_rows_created": 0
   }
 }

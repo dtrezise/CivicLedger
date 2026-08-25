@@ -2,7 +2,7 @@
   "acquisition": {
     "minimum_request_interval_seconds": 1.0,
     "mode": "live_portal",
-    "retrieved_at": "2026-08-24T11:06:29+00:00",
+    "retrieved_at": "2026-08-25T11:01:55+00:00",
     "source_request_count": 32,
     "source_requests": [
       {
@@ -31,7 +31,7 @@
           "submitted_end_date": "12/31/2012 23:59:59",
           "submitted_start_date": "01/01/2012 00:00:00"
         },
-        "response_sha256": "efaeac8f7fa02353c6909596b7de5dcbc7631a357154968e0dae215b3381aa92",
+        "response_sha256": "62b312cedcfc98d0ee588bebe89bdd89870e548eddda8363ae2c9d3777742cff",
         "row_count": 60,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -91,7 +91,7 @@
           "submitted_end_date": "12/31/2013 23:59:59",
           "submitted_start_date": "01/01/2013 00:00:00"
         },
-        "response_sha256": "dfeca99ac11d903e807321409a78cd12ed4ca932390ce0124ee9a85178125bba",
+        "response_sha256": "e5c08e616a4e389b5dcf42c5b4669c9773aab56843dac30fc526a568e2e31deb",
         "row_count": 69,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -121,7 +121,7 @@
           "submitted_end_date": "12/31/2014 23:59:59",
           "submitted_start_date": "01/01/2014 00:00:00"
         },
-        "response_sha256": "8803a2c9633745fdfb7c3572c7b3b447de1951e258f6d495cdd3265684d71d28",
+        "response_sha256": "12660c2aea52558b49d02cf8e61aaf31367c4238b25f8136d733cf867165282d",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -181,7 +181,7 @@
           "submitted_end_date": "12/31/2015 23:59:59",
           "submitted_start_date": "01/01/2015 00:00:00"
         },
-        "response_sha256": "a76f8a9400bbe37693fbc5d4ad6fc525e6c06a4af548237669bfa0d7cb264970",
+        "response_sha256": "b1c4bffcbd7acd529eb2b294306372c6b95a27bdef782f4bac76161630a3b52c",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -391,7 +391,7 @@
           "submitted_end_date": "12/31/2018 23:59:59",
           "submitted_start_date": "01/01/2018 00:00:00"
         },
-        "response_sha256": "92d4a93ec7452a58f253d045e142294283843cc1f81211ede0be63c2ed58fd7b",
+        "response_sha256": "fa998c674f46f80afe9222cd47625a2b47dfce0183d0e9b9ee61a77b98235451",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -906,10 +906,10 @@
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
       {
-        "byte_count": 20321,
+        "byte_count": 20310,
         "kind": "report_index_page",
-        "records_filtered": 118,
-        "records_total": 118,
+        "records_filtered": 119,
+        "records_total": 119,
         "request": {
           "filer_types": [
             1,
@@ -928,18 +928,18 @@
             11
           ],
           "start": 0,
-          "submitted_end_date": "08/24/2026 23:59:59",
+          "submitted_end_date": "08/25/2026 23:59:59",
           "submitted_start_date": "01/01/2026 00:00:00"
         },
-        "response_sha256": "aa91cc37e6f17b04e136dae12a08825102aac706ae71e23a67255f88f95d58e2",
+        "response_sha256": "184a8797fe5f7cae3790df148eafde243ae6cdf21c68f1862b413c9df7819ad2",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
       {
-        "byte_count": 3908,
+        "byte_count": 4130,
         "kind": "report_index_page",
-        "records_filtered": 118,
-        "records_total": 118,
+        "records_filtered": 119,
+        "records_total": 119,
         "request": {
           "filer_types": [
             1,
@@ -958,11 +958,11 @@
             11
           ],
           "start": 100,
-          "submitted_end_date": "08/24/2026 23:59:59",
+          "submitted_end_date": "08/25/2026 23:59:59",
           "submitted_start_date": "01/01/2026 00:00:00"
         },
-        "response_sha256": "e302b070492ac2eebf789e42b6a558fd16296ffd1e5cc240fd8ad3c788dae8b4",
-        "row_count": 18,
+        "response_sha256": "f407ed169b39f8aeacd061a51d5ae53d0e5ee78c20e8251500bb6b80676e4b46",
+        "row_count": 19,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       }
     ],
@@ -166843,9 +166843,166 @@
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/f727289a-4d72-4c90-a3ea-63d5bcd23398/",
       "state": "AR"
+    },
+    {
+      "amendment_linkage_confidence": "ambiguous_scored_candidates",
+      "amendment_reconciliation_action": "annotate_only",
+      "amendment_reconciliation_evidence": [
+        {
+          "evidence_type": "official_title_marker",
+          "field": "portal_report_title",
+          "source_document_id": "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae",
+          "value": "Periodic Transaction Report for 12/08/2025 (Amendment 1)"
+        },
+        {
+          "candidate_count": 4,
+          "candidate_evidence": [
+            {
+              "amendment_filing_date": "2026-08-24",
+              "amendment_report_date": "2025-12-08",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-28e465df-caf1-4a98-8ebc-605e1e1ba99b",
+              "exact_report_date_match": false,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 7,
+              "predecessor_filing_date": "2026-08-17",
+              "predecessor_report_date": "2026-08-17",
+              "predecessor_signature_count": 0,
+              "reasons": [
+                "predecessor_within_45_days"
+              ],
+              "score": 16.9565,
+              "transaction_signature_jaccard_similarity": null
+            },
+            {
+              "amendment_filing_date": "2026-08-24",
+              "amendment_report_date": "2025-12-08",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08",
+              "exact_report_date_match": false,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 7,
+              "predecessor_filing_date": "2026-08-17",
+              "predecessor_report_date": "2026-08-17",
+              "predecessor_signature_count": 0,
+              "reasons": [
+                "predecessor_within_45_days"
+              ],
+              "score": 16.9565,
+              "transaction_signature_jaccard_similarity": null
+            },
+            {
+              "amendment_filing_date": "2026-08-24",
+              "amendment_report_date": "2025-12-08",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-9c0b720d-7e27-4b02-8cf5-a85ba88c9543",
+              "exact_report_date_match": false,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 42,
+              "predecessor_filing_date": "2026-07-13",
+              "predecessor_report_date": "2026-07-13",
+              "predecessor_signature_count": 0,
+              "reasons": [
+                "predecessor_within_45_days"
+              ],
+              "score": 1.7391,
+              "transaction_signature_jaccard_similarity": null
+            },
+            {
+              "amendment_filing_date": "2026-08-24",
+              "amendment_report_date": "2025-12-08",
+              "amendment_signature_count": 0,
+              "document_id": "senate-ptr-c52854ed-a778-483a-883c-0ba2bba17877",
+              "exact_report_date_match": false,
+              "exact_transaction_signature_overlap_count": 0,
+              "filing_date_day_gap": 42,
+              "predecessor_filing_date": "2026-07-13",
+              "predecessor_report_date": "2026-07-13",
+              "predecessor_signature_count": 0,
+              "reasons": [
+                "predecessor_within_45_days"
+              ],
+              "score": 1.7391,
+              "transaction_signature_jaccard_similarity": null
+            }
+          ],
+          "evidence_type": "scored_predecessor_candidates",
+          "minimum_score_margin": 15,
+          "score_margin": 0.0,
+          "selection_threshold": 80,
+          "transaction_signature_algorithm": "normalized-official-date-action-owner-asset-ticker-amount-sha256"
+        }
+      ],
+      "amendment_status": "ambiguous_predecessor_candidates",
+      "bioguide_id": "B001236",
+      "candidate_supersedes_document_id": null,
+      "congress_numbers": [
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119
+      ],
+      "document_family_id": "senate-family-ab292b4db24e3a803c6a",
+      "document_id": "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae",
+      "filer_first_name": "John",
+      "filer_last_name": "Boozman",
+      "filer_name": "John Boozman",
+      "filing_date": "2026-08-24",
+      "filing_year": 2026,
+      "identity_candidates": [
+        {
+          "congress_numbers": [
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119
+          ],
+          "official_id": "congress:B001236",
+          "official_name": "John Boozman",
+          "reasons": [
+            "surname",
+            "first_name",
+            "senate_service_period"
+          ],
+          "score": 9
+        }
+      ],
+      "identity_resolution": "deterministic_match",
+      "is_amendment": true,
+      "match_reasons": [
+        "surname",
+        "first_name",
+        "senate_service_period"
+      ],
+      "match_score": 9,
+      "match_status": "matched",
+      "official_id": "congress:B001236",
+      "official_name": "John Boozman",
+      "portal_filer_description": "Boozman, John (Senator)",
+      "portal_report_title": "Periodic Transaction Report for 12/08/2025 (Amendment 1)",
+      "public_production_trade": false,
+      "record_status": "official_senate_index",
+      "report_format": "electronic_html",
+      "report_type": "periodic_transaction_report",
+      "review_required_before_public_trade": true,
+      "senate_report_uuid": "51455bcd-4966-4e77-b481-09897ada81ae",
+      "source_id": "senate-public-financial-disclosure",
+      "source_index_url": "https://efdsearch.senate.gov/search/report/data/",
+      "source_record_preserved": true,
+      "source_tier": "official",
+      "source_url": "https://efdsearch.senate.gov/search/view/ptr/51455bcd-4966-4e77-b481-09897ada81ae/",
+      "state": "AR"
     }
   ],
-  "generated_at": "2026-08-24",
+  "generated_at": "2026-08-25",
   "roster_coverage": {
     "congresses": [
       111,
@@ -166887,7 +167044,7 @@
   "scope": {
     "coverage_mode": "all_111th_119th_senators",
     "document_scope": "Senator and former-Senator periodic transaction reports",
-    "query_end_date": "2026-08-24",
+    "query_end_date": "2026-08-25",
     "query_start_date": "2012-01-01",
     "roster_congress_end": 119,
     "roster_congress_start": 111,
@@ -166904,18 +167061,18 @@
   },
   "summary": {
     "ambiguous_document_count": 0,
-    "amendment_document_count": 221,
-    "document_count": 2403,
+    "amendment_document_count": 222,
+    "document_count": 2404,
     "duplicate_source_row_count": 0,
-    "matched_document_count": 2100,
+    "matched_document_count": 2101,
     "public_production_trade_count": 0,
     "report_format_counts": {
-      "electronic_html": 1800,
+      "electronic_html": 1801,
       "paper_images": 603
     },
     "review_required_before_public_trade": true,
     "selected_scope_excluded_row_count": 0,
-    "source_index_row_count": 2403,
+    "source_index_row_count": 2404,
     "unmatched_document_count": 303
   },
   "validation": {

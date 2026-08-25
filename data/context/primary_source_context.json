@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-08-24",
+  "artifact_date": "2026-08-25",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "9af463b79af9c0199309a29daf6753e3390bae0dd4f3111db0e80179771968b9",
+  "dataset_hash": "1367ba739c75111a7774dddbf4b1fb0be80fd1ac2a3746f341175c19717e3835",
   "gaps": [
     {
       "available_classified_record_count": 4758,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 522,
+      "selected_record_count": 523,
       "status": "declared_scope_limit"
     },
     {
@@ -11241,27 +11241,6 @@
         "TJX"
       ],
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2013-05-01",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1246",
-      "law_number": "113-8",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
-      "source_event_id": "congress-law-113-hr-1246",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "District of Columbia Chief Financial Officer Vacancy Act"
     },
     {
       "agency_names": [
@@ -104721,7 +104700,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "6387add5fe208d78f7181eea630d1fc9f993ea26d0b464bea3bd665d4e83c3f6",
+      "sha256": "68d249e41da52da91154c1e0ead82fee55901cd353a06e7821bd43f148fa00d4",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104741,13 +104720,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4145,
+    "record_count": 4144,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 522,
+      "congress": 521,
       "courts": 344,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4145
+    "record_with_official_url_count": 4144
   }
 }
