@@ -2,7 +2,7 @@
   "acquisition": {
     "minimum_request_interval_seconds": 1.0,
     "mode": "live_portal",
-    "retrieved_at": "2026-08-27T20:42:01+00:00",
+    "retrieved_at": "2026-08-28T21:17:59+00:00",
     "source_request_count": 32,
     "source_requests": [
       {
@@ -61,7 +61,7 @@
           "submitted_end_date": "12/31/2013 23:59:59",
           "submitted_start_date": "01/01/2013 00:00:00"
         },
-        "response_sha256": "875e48da1ace1ce3055b0f8b0e4090746de0266f424aa11446ccb94874f3a27a",
+        "response_sha256": "04853a39e0010811447b175e11c5a750113485b6a0f0529f1b4e3021f97afc1a",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -91,7 +91,7 @@
           "submitted_end_date": "12/31/2013 23:59:59",
           "submitted_start_date": "01/01/2013 00:00:00"
         },
-        "response_sha256": "3cf4b7d753fc9c651442eb26c3d217046bf616996d9a46a0df7771d121c16235",
+        "response_sha256": "6924176fabf7dab1d6fb0fc754a1c7864e8c6561262fca9629b4325957f0e52c",
         "row_count": 69,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -181,7 +181,7 @@
           "submitted_end_date": "12/31/2015 23:59:59",
           "submitted_start_date": "01/01/2015 00:00:00"
         },
-        "response_sha256": "e301e272701788bf63d40edd1a53e25a65bde2ef752cbee6ea60ddf90cd47f1d",
+        "response_sha256": "d22ccbdc4e06088b48b9897dfbcf321285b9fb1afade2e18dafe27851ee5a862",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -391,7 +391,7 @@
           "submitted_end_date": "12/31/2018 23:59:59",
           "submitted_start_date": "01/01/2018 00:00:00"
         },
-        "response_sha256": "8948ea016674a6812b7d4557624c7913618aceee090c88d87394e296720e99ef",
+        "response_sha256": "affdea7ebb7fad27a20e3f420f71a3cb45f1e4f138bcf043bb50ad3adf30804e",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -481,7 +481,7 @@
           "submitted_end_date": "12/31/2019 23:59:59",
           "submitted_start_date": "01/01/2019 00:00:00"
         },
-        "response_sha256": "33f26c1d5f34456631e90fa941b38a631ceda0f615f007ee2574f084bd01f68f",
+        "response_sha256": "2e97fe45f561fbf1b5b8395613913eb445579b17a74447b3b637c220473188f4",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -906,10 +906,10 @@
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
       {
-        "byte_count": 20292,
+        "byte_count": 20302,
         "kind": "report_index_page",
-        "records_filtered": 120,
-        "records_total": 120,
+        "records_filtered": 122,
+        "records_total": 122,
         "request": {
           "filer_types": [
             1,
@@ -928,18 +928,18 @@
             11
           ],
           "start": 0,
-          "submitted_end_date": "08/27/2026 23:59:59",
+          "submitted_end_date": "08/28/2026 23:59:59",
           "submitted_start_date": "01/01/2026 00:00:00"
         },
-        "response_sha256": "213c23c2046211788d5d6c8913006c939ad6930f0b251eb6da06b70ef5ea3511",
+        "response_sha256": "b2783f2536fab225f0e85b1df121c4a7ff9474163fca075294def3dddd3c3023",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
       {
-        "byte_count": 4338,
+        "byte_count": 4739,
         "kind": "report_index_page",
-        "records_filtered": 120,
-        "records_total": 120,
+        "records_filtered": 122,
+        "records_total": 122,
         "request": {
           "filer_types": [
             1,
@@ -958,11 +958,11 @@
             11
           ],
           "start": 100,
-          "submitted_end_date": "08/27/2026 23:59:59",
+          "submitted_end_date": "08/28/2026 23:59:59",
           "submitted_start_date": "01/01/2026 00:00:00"
         },
-        "response_sha256": "9c147c3308898723d3a615350e92728d5a67b22c6189bb439421113aaed25c5d",
-        "row_count": 20,
+        "response_sha256": "43314d7cbf51275da84b681fcb5e5b0095f3501d8b9e5cae7d652c0195e0a135",
+        "row_count": 22,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       }
     ],
@@ -167072,9 +167072,141 @@
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/51455bcd-4966-4e77-b481-09897ada81ae/",
       "state": "AR"
+    },
+    {
+      "amendment_linkage_confidence": "not_applicable",
+      "amendment_reconciliation_action": "annotate_only",
+      "amendment_reconciliation_evidence": [],
+      "amendment_status": "original_or_standalone_filing",
+      "bioguide_id": "M001243",
+      "candidate_supersedes_document_id": null,
+      "congress_numbers": [
+        119
+      ],
+      "document_family_id": "senate-family-c39005e9663663615570",
+      "document_id": "senate-ptr-257795ae-e1b2-411d-b562-8fe4c2a4f2a1",
+      "filer_first_name": "David H",
+      "filer_last_name": "McCormick",
+      "filer_name": "David H McCormick",
+      "filing_date": "2026-08-27",
+      "filing_year": 2026,
+      "identity_candidates": [
+        {
+          "congress_numbers": [
+            119
+          ],
+          "official_id": "congress:M001243",
+          "official_name": "David McCormick",
+          "reasons": [
+            "surname",
+            "first_name",
+            "senate_service_period"
+          ],
+          "score": 9
+        }
+      ],
+      "identity_resolution": "deterministic_match",
+      "is_amendment": false,
+      "match_reasons": [
+        "surname",
+        "first_name",
+        "senate_service_period"
+      ],
+      "match_score": 9,
+      "match_status": "matched",
+      "official_id": "congress:M001243",
+      "official_name": "David McCormick",
+      "portal_filer_description": "McCormick, David H. (Senator)",
+      "portal_report_title": "Periodic Transaction Report for 08/27/2026",
+      "public_production_trade": false,
+      "record_status": "official_senate_index",
+      "report_format": "electronic_html",
+      "report_type": "periodic_transaction_report",
+      "review_required_before_public_trade": true,
+      "senate_report_uuid": "257795ae-e1b2-411d-b562-8fe4c2a4f2a1",
+      "source_id": "senate-public-financial-disclosure",
+      "source_index_url": "https://efdsearch.senate.gov/search/report/data/",
+      "source_record_preserved": true,
+      "source_tier": "official",
+      "source_url": "https://efdsearch.senate.gov/search/view/ptr/257795ae-e1b2-411d-b562-8fe4c2a4f2a1/",
+      "state": "PA"
+    },
+    {
+      "amendment_linkage_confidence": "not_applicable",
+      "amendment_reconciliation_action": "annotate_only",
+      "amendment_reconciliation_evidence": [],
+      "amendment_status": "original_or_standalone_filing",
+      "bioguide_id": "C001088",
+      "candidate_supersedes_document_id": null,
+      "congress_numbers": [
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119
+      ],
+      "document_family_id": "senate-family-da7d1b95d3e699b8d582",
+      "document_id": "senate-ptr-5a76ceb6-2d1d-4430-8a17-6512bcb402be",
+      "filer_first_name": "Christopher A",
+      "filer_last_name": "Coons",
+      "filer_name": "Christopher A Coons",
+      "filing_date": "2026-08-28",
+      "filing_year": 2026,
+      "identity_candidates": [
+        {
+          "congress_numbers": [
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119
+          ],
+          "official_id": "congress:C001088",
+          "official_name": "Christopher A. Coons",
+          "reasons": [
+            "surname",
+            "first_name",
+            "senate_service_period"
+          ],
+          "score": 9
+        }
+      ],
+      "identity_resolution": "deterministic_match",
+      "is_amendment": false,
+      "match_reasons": [
+        "surname",
+        "first_name",
+        "senate_service_period"
+      ],
+      "match_score": 9,
+      "match_status": "matched",
+      "official_id": "congress:C001088",
+      "official_name": "Christopher A. Coons",
+      "portal_filer_description": "Coons, Chris (Senator)",
+      "portal_report_title": "Periodic Transaction Report for 08/28/2026",
+      "public_production_trade": false,
+      "record_status": "official_senate_index",
+      "report_format": "electronic_html",
+      "report_type": "periodic_transaction_report",
+      "review_required_before_public_trade": true,
+      "senate_report_uuid": "5a76ceb6-2d1d-4430-8a17-6512bcb402be",
+      "source_id": "senate-public-financial-disclosure",
+      "source_index_url": "https://efdsearch.senate.gov/search/report/data/",
+      "source_record_preserved": true,
+      "source_tier": "official",
+      "source_url": "https://efdsearch.senate.gov/search/view/ptr/5a76ceb6-2d1d-4430-8a17-6512bcb402be/",
+      "state": "DE"
     }
   ],
-  "generated_at": "2026-08-27",
+  "generated_at": "2026-08-28",
   "roster_coverage": {
     "congresses": [
       111,
@@ -167116,7 +167248,7 @@
   "scope": {
     "coverage_mode": "all_111th_119th_senators",
     "document_scope": "Senator and former-Senator periodic transaction reports",
-    "query_end_date": "2026-08-27",
+    "query_end_date": "2026-08-28",
     "query_start_date": "2012-01-01",
     "roster_congress_end": 119,
     "roster_congress_start": 111,
@@ -167134,17 +167266,17 @@
   "summary": {
     "ambiguous_document_count": 0,
     "amendment_document_count": 222,
-    "document_count": 2405,
+    "document_count": 2407,
     "duplicate_source_row_count": 0,
-    "matched_document_count": 2102,
+    "matched_document_count": 2104,
     "public_production_trade_count": 0,
     "report_format_counts": {
-      "electronic_html": 1801,
+      "electronic_html": 1803,
       "paper_images": 604
     },
     "review_required_before_public_trade": true,
     "selected_scope_excluded_row_count": 0,
-    "source_index_row_count": 2405,
+    "source_index_row_count": 2407,
     "unmatched_document_count": 303
   },
   "validation": {
