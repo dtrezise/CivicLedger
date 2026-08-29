@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-08-28",
+  "artifact_date": "2026-08-29",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "04018751b5d27dbf2f0aa0c603b8f4626fa70ba1b0496426c79698efe223f7a6",
+  "dataset_hash": "1d4bc4c36f077b8be12382fa3699c14bcbf990d1c20834cb3b85371d99b82235",
   "gaps": [
     {
       "available_classified_record_count": 4761,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 522,
+      "selected_record_count": 521,
       "status": "declared_scope_limit"
     },
     {
@@ -11243,6 +11243,27 @@
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
     },
     {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2013-05-01",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-1246",
+      "law_number": "113-8",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
+      "source_event_id": "congress-law-113-hr-1246",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "District of Columbia Chief Financial Officer Vacancy Act"
+    },
+    {
       "agency_names": [
         "Fish and Wildlife Service",
         "Interior Department"
@@ -12029,27 +12050,6 @@
       "source_record_sha256": "fd4c13183d58f13712eeb8f330b58522282391dc4e817cf21988191fe4d0a12d",
       "source_tier": "official",
       "title": "Regulation of Fuels and Fuel Additives: Additional Qualifying Renewable Fuel Pathways Under the Renewable Fuel Standard Program; Final Rule Approving Renewable Fuel Pathways for Giant Reed (Arundo Donax) and Napier Grass (Pennisetum Purpureum)"
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2013-07-12",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1151",
-      "law_number": "113-17",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1151"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1151",
-      "source_event_id": "congress-law-113-hr-1151",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes."
     },
     {
       "agency_names": [],
@@ -14900,27 +14900,6 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "To provide for the approval of the Amendment to the Agreement Between the Government of the United States of America and the Government of the United Kingdom of Great Britain and Northern Ireland for Cooperation on the Uses of Atomic Energy for Mutual Defense Purposes."
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2014-12-18",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1204",
-      "law_number": "113-238",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1204"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1204",
-      "source_event_id": "congress-law-113-hr-1204",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "Aviation Security Stakeholder Participation Act of 2014"
     },
     {
       "agency_names": [],
@@ -103972,16 +103951,16 @@
       "id": "primary-source:courts:scotus-2025-49-25-197",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/25pdf/25-197_new_4g15.pdf",
+        "https://www.supremecourt.gov/opinions/25pdf/25-197diff_8759.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/25"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/25pdf/25-197_new_4g15.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/25pdf/25-197diff_8759.pdf",
       "source_event_id": "scotus-2025-49-25-197",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
       "source_record_sha256": null,
       "source_tier": "official",
-      "title": "T. M. v. University of Md. Medical System Corporation"
+      "title": "T. M. v. University of Md. Medical System Corporation Revisions: 6/19/26"
     },
     {
       "accession_number": "0000078003-26-000085",
@@ -104700,7 +104679,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "b5411a06fc58a49dd074dc23c130e0d18f9ff3d4b5402d720332b0b45a2c4574",
+      "sha256": "9a530f4fbd0e702c4da082479063b0f6cce4a3b28b016e57145c0adb811bb32c",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104720,13 +104699,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4144,
+    "record_count": 4143,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 521,
+      "congress": 520,
       "courts": 344,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4144
+    "record_with_official_url_count": 4143
   }
 }

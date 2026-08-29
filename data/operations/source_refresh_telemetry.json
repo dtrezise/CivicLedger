@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41301,
+      "current_record_count": 48189,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "7945ea859b033bcb65ddb869bb84a927091531bb039c5c70ab8dbc1551073976",
+      "current_summary_sha256": "5e5104e79a6425a305b1e0c93c0610c3f65e1d0f5c22f16300abb583918ea499",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -19,7 +19,7 @@
       "count_metric": "processed_document_count",
       "current_record_count": 7576,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "0a37d3768d48ff629a0fb0045e56577d95a9a62a289180d86c8b034dbc552b89",
+      "current_summary_sha256": "6f0c2353822d7f9119f833b5198cf11f7d24bcb9f7fd5835f3451276c91488a4",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -73,11 +73,11 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-08-28",
+  "generated_at": "2026-08-29",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5039.0,
-    "p50": 697.0,
+    "p50": 703.0,
     "p95": 4263.0,
     "runs": [
       {
@@ -565,6 +565,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-08-28T21:12:48Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-08-29T15:21:48Z",
+        "duration_seconds": 784.0,
+        "failure_count": 0,
+        "run_id": "33259387348-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-08-29T15:08:44Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -792,8 +801,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 54,
-    "refresh_run_count": 54,
+    "measured_refresh_count": 55,
+    "refresh_run_count": 55,
     "source_failure_count": 36
   }
 }
