@@ -27442,8 +27442,8 @@
     }
   ],
   "context_label": "Canonical entity reference compiled from source-backed CivicLedger context. Unresolved or ambiguous labels are retained for review; no identifier, ownership relationship, or effective date is inferred.",
-  "dataset_hash": "f2661483e7dd5eb754e6e7a7313a430621562d8aabc181e8123e58fdbfee9f1b",
-  "generated_at": "2026-08-29",
+  "dataset_hash": "d9a908834b6ea3a596a19ca6a3c2e140598ad48266808b8fb9d9c57b3991c9cb",
+  "generated_at": "2026-08-30",
   "methodology": {
     "identity_resolution": "Deterministic exact matching on SEC CIK, source entity ID, unique supported ticker, or exact normalized issuer name. Fuzzy matching is disabled.",
     "quality_policy": "Unsupported and multiply matched labels remain review issues and do not create links.",
@@ -42019,7 +42019,7 @@
           "confidence": 1.0,
           "id": "6bca016a-e511-5a8f-aa19-d3d6cae625d2",
           "normalized_alias": "ishares core s p 500 etf",
-          "occurrence_count": 60,
+          "occurrence_count": 64,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -42031,7 +42031,7 @@
               "source_record_id": "asset-resolution-3485cd8fe0671c94"
             }
           ],
-          "record_hash": "0341a31dd1408a3c6dbbf594e0a8d4dd0a66acf4a21b59097bf3a84070d49e19",
+          "record_hash": "b7b87ddd127db73c793b565d21ddc5e0858636d09bd6013b532245d06558f06a",
           "sample_transaction_ids": [
             "house-ptr-2024-20024924-row-0006",
             "house-ptr-2024-20025711-row-0035",
@@ -42081,14 +42081,14 @@
           "confidence": 0.9,
           "id": "a5705db8-13eb-5229-801c-86f63a1aab9b",
           "normalized_alias": "ishares core s p 500 etf ot",
-          "occurrence_count": 16,
+          "occurrence_count": 17,
           "provenance": [
             {
               "source_id": "asset_resolution",
               "source_record_id": "asset-resolution-3485cd8fe0671c94"
             }
           ],
-          "record_hash": "3b68fb916aa1a826e77eb1b9c94374ea3d872963d686a76775485ccd58cd98df",
+          "record_hash": "6b48cd95054a6a7b5f9f692fc4af15e685f8219e02c2dc2f546ca21a007c8496",
           "sample_transaction_ids": [
             "house-ptr-2024-20024924-row-0006",
             "house-ptr-2024-20025711-row-0035",
@@ -42211,7 +42211,7 @@
       },
       "normalized_name": "ishares core s p 500 etf",
       "organization_type": "fund",
-      "record_hash": "39c57372821f099ebc2d9f5ff6a46b8aee3431ed6bff62ceaea772e3f2911371",
+      "record_hash": "ffc419e2d6f0fd18acfc24dd4258f8dd6c37887000ab08faac3c0d4173446327",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -68396,20 +68396,20 @@
           "confidence": 0.9,
           "id": "391f84c9-a326-5544-86c6-8436a8227486",
           "normalized_alias": "vanguard ftse developed markets etf filing status new subholding of sp m92 merrill lynch location us description vanguard ftse developed",
-          "occurrence_count": 10,
+          "occurrence_count": 11,
           "provenance": [
             {
               "source_id": "asset_resolution",
               "source_record_id": "asset-resolution-861030f05ca6e8f0"
             }
           ],
-          "record_hash": "736464779141164922c356e8a757a1bfda609586120ec993779f5bf1af9d1a70",
+          "record_hash": "87e5f47ca5c222e758b0bca8066537a2c86c57bd9defd86e4debf0d229d88a1d",
           "sample_transaction_ids": [
             "house-ptr-2017-20006480-row-0090",
             "house-ptr-2017-20008329-row-0012",
             "senate-ptr-2c4705cc-0f3e-4105-9093-f82fcec8bacd-row-0012-999e8f12c5",
             "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0014-bd930cf8e0",
-            "senate-ptr-53393448-4e89-49a2-9fb0-ddce2e0d4832-row-0005-41599f5065"
+            "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0014-bd930cf8e0"
           ],
           "source_datasets": [
             "house_ptr_transactions",
@@ -68717,7 +68717,7 @@
           "confidence": 1.0,
           "id": "b2fc1541-e9bd-5f1e-b485-62cd1cb16b33",
           "normalized_alias": "vanguard ftse developed markets etf",
-          "occurrence_count": 18,
+          "occurrence_count": 20,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -68729,13 +68729,13 @@
               "source_record_id": "asset-resolution-861030f05ca6e8f0"
             }
           ],
-          "record_hash": "3128d49f4e78f1398d867c8d4365470d63ec414e26512ffd319714570f67920c",
+          "record_hash": "6ea916417d04dcbfb440293450152c71d43d35d8b756d30c1c73284d23b84636",
           "sample_transaction_ids": [
             "house-ptr-2017-20006480-row-0090",
             "house-ptr-2017-20008329-row-0012",
             "senate-ptr-2c4705cc-0f3e-4105-9093-f82fcec8bacd-row-0012-999e8f12c5",
             "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0014-bd930cf8e0",
-            "senate-ptr-53393448-4e89-49a2-9fb0-ddce2e0d4832-row-0005-41599f5065"
+            "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0014-bd930cf8e0"
           ],
           "source_datasets": [
             "house_ptr_transactions",
@@ -68864,7 +68864,7 @@
       },
       "normalized_name": "vanguard ftse developed markets etf",
       "organization_type": "fund",
-      "record_hash": "ecb9c97640fddba4801bcc07c47276db34872a503cb999f45d0a20e51253e104",
+      "record_hash": "195114430b47908e87750473695fd07132a3970f1a1f24dcf1b02a71391281a1",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -118000,7 +118000,7 @@
           "confidence": 1.0,
           "id": "8f9af060-2403-5414-a18e-53d2fa1d531e",
           "normalized_alias": "ishares msci eafe etf",
-          "occurrence_count": 53,
+          "occurrence_count": 57,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -118012,7 +118012,7 @@
               "source_record_id": "asset-resolution-1b9ed6af7904b263"
             }
           ],
-          "record_hash": "98d8393ad366b3fbf24ad4ecf143c3797fa4fa81d8fd96937589555201295850",
+          "record_hash": "ad819220e5ef28bfd0f394af2481a17928d5a8ce95b2c34cab903a0d4aa78509",
           "sample_transaction_ids": [
             "house-ptr-2019-20012046-row-0005",
             "oge-trump-2021-termination-278:tx-0082",
@@ -118113,14 +118113,14 @@
           "confidence": 0.9,
           "id": "c57ec8fa-ee4f-55e8-b621-080b29acca4e",
           "normalized_alias": "ishares msci eafe etf ot filing status new",
-          "occurrence_count": 15,
+          "occurrence_count": 16,
           "provenance": [
             {
               "source_id": "asset_resolution",
               "source_record_id": "asset-resolution-1b9ed6af7904b263"
             }
           ],
-          "record_hash": "7f708d605c2ec6326b3b865f2bc1c7b2f9da3bd9fdfad968d614260a76c2824d",
+          "record_hash": "45e95eeeecabf7fe98b6dd15e40e4804fbeed755f3d07e3ae162ee6604ae0330",
           "sample_transaction_ids": [
             "house-ptr-2019-20012046-row-0005",
             "oge-trump-2021-termination-278:tx-0082",
@@ -118238,7 +118238,7 @@
       },
       "normalized_name": "ishares msci eafe etf",
       "organization_type": "fund",
-      "record_hash": "47995903adace0650dc9f79cb702228087a4c10c50f4921109d27a6e01dbbcff",
+      "record_hash": "9543d8a2dc17963104077c56c92006c74a02ea8d5ea4bd43c49b3beb55712311",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -212738,7 +212738,7 @@
           "confidence": 1.0,
           "id": "03344136-e7e5-5b93-87de-880b07ea5113",
           "normalized_alias": "ishares russell 2000 etf",
-          "occurrence_count": 14,
+          "occurrence_count": 16,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -212750,13 +212750,13 @@
               "source_record_id": "asset-resolution-15fb20537213ae5a"
             }
           ],
-          "record_hash": "1234dd5c78b81466874948b4b617661cef58a34a5a0e0167dac07a165912a074",
+          "record_hash": "a4f967c0953df209e5905cddadc9af22c3d2d3f3478268da90138df4a40fb095",
           "sample_transaction_ids": [
             "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0007-8bff89bc8d",
+            "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0007-8bff89bc8d",
             "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0012-76fa58d548",
             "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0010-b766f7cad9",
-            "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0010-b766f7cad9",
-            "senate-ptr-b907f852-1e91-473b-ab7b-3b33cf57b58f-row-0177-d1793dd33a"
+            "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0010-b766f7cad9"
           ],
           "source_datasets": [
             "senate_ptr_transactions"
@@ -213038,7 +213038,7 @@
           "confidence": 1.0,
           "id": "95e4e005-bae3-5503-89d9-9ac17eaf9752",
           "normalized_alias": "ishares russell 2000 etf description exchange traded fund",
-          "occurrence_count": 10,
+          "occurrence_count": 11,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -213050,13 +213050,13 @@
               "source_record_id": "asset-resolution-15fb20537213ae5a"
             }
           ],
-          "record_hash": "cc2d869032f85309df91b19b1fbdca03abc3253f9342ebc2b9695c2638b85827",
+          "record_hash": "a410f4e109f37ac3316a6e8f41cfbc0854bee126b4e38d9b59c8262591890696",
           "sample_transaction_ids": [
             "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0007-8bff89bc8d",
+            "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0007-8bff89bc8d",
             "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0012-76fa58d548",
             "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0010-b766f7cad9",
-            "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0010-b766f7cad9",
-            "senate-ptr-b907f852-1e91-473b-ab7b-3b33cf57b58f-row-0177-d1793dd33a"
+            "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0010-b766f7cad9"
           ],
           "source_datasets": [
             "senate_ptr_transactions"
@@ -213299,7 +213299,7 @@
       },
       "normalized_name": "ishares russell 2000 etf",
       "organization_type": "fund",
-      "record_hash": "41e87d79d69c5b53ec81f98c550bf94ae2b33c86d1012e7843e00854230f0419",
+      "record_hash": "6495589031e8dbf96bb9d20d542171dd12d8ebce0fa560aaed6883be15962564",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -298003,28 +298003,6 @@
       "ticker": "SSMXF"
     },
     {
-      "id": "09591483-0243-53f7-9b87-7781fbb30e43",
-      "issue_type": "unresolved_asset_resolution",
-      "normalized_label": "VANGUARD GLOBAL EX U S REAL ESTATE ETF",
-      "observed_names": [
-        "Vanguard Global ex-U.S. Real Estate ETF"
-      ],
-      "occurrence_count": 4,
-      "record_hash": "b3a5cc7d78c47d251d34dd0772b19661f774f2069376d895cb84a01667cf0fb3",
-      "sample_transaction_ids": [
-        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0022-5827f5b64d",
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0013-9852e7435f",
-        "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0021-8d4b2b87b9",
-        "senate-ptr-e059c06a-1f17-4143-bdca-be82e73eba53-row-0008-dafc2e11b7"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "asset_resolution",
-      "source_record_id": "asset-resolution-b033f0d336454d5d"
-    },
-    {
       "id": "095af8d2-6870-53db-96a9-a592cdbe432b",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "PACER TRENDPILOT 100 ETF",
@@ -300076,29 +300054,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "SFTBF"
-    },
-    {
-      "id": "0cfd0a4b-68e5-5587-880a-f331ff6c5610",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "goldman sachs activebeta emerging markets equity e",
-      "observed_label": "Goldman Sachs ActiveBeta Emerging Markets Equity E",
-      "occurrence_count": 7,
-      "record_hash": "eb1f83e911bd4f5f303211c668ac37727c52d9ebe1ea35b2d31e03dbd79d09c8",
-      "sample_transaction_ids": [
-        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0010-0c0ecfcebb",
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0004-eac5119b7d",
-        "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0003-3e973ae0db",
-        "senate-ptr-a1c431fc-093e-4ace-8f0a-4f2ae481556d-row-0060-e6b924ab48",
-        "senate-ptr-bc6505f6-4219-4ce3-b146-a9faaabda324-row-0060-e6b924ab48",
-        "senate-ptr-c104f1ee-c957-4485-9807-e4798463c3b9-row-0006-4f66090f9e",
-        "senate-ptr-c417b7b2-e80f-477d-9647-c22bc8c1cd1b-row-0001-3d6a43de01"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "GEM"
     },
     {
       "evidence_record_id": "sec-issuer-alias:0000088205:SPXC",
@@ -307128,6 +307083,25 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "HMC"
+    },
+    {
+      "id": "19934131-8914-52e5-85ab-6480aaa954bf",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "ishares msci all country asia ex japan etf",
+      "observed_label": "iShares MSCI All Country Asia ex Japan ETF",
+      "occurrence_count": 3,
+      "record_hash": "1b0ce9bf73511804f0d006e772822adc48040e2df530dee414f3befdfbfe3dc8",
+      "sample_transaction_ids": [
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0005-4577bddcdf",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0005-4577bddcdf",
+        "senate-ptr-e69e4753-8d5b-485e-8c9f-3b8fedf24b80-row-0001-88c64ffe2c"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "AAXJ"
     },
     {
       "id": "199501a6-ed43-5694-a6f7-936a23f899d4",
@@ -318362,26 +318336,6 @@
       "ticker": "SIR"
     },
     {
-      "id": "2d2a2494-d47e-5bd8-9d14-d7333d2e8921",
-      "issue_type": "unresolved_asset_resolution",
-      "normalized_label": "ISHARES MSCI ALL COUNTRY ASIA EX JAPAN ETF",
-      "observed_names": [
-        "iShares MSCI All Country Asia ex Japan ETF"
-      ],
-      "occurrence_count": 2,
-      "record_hash": "ccdc5a1255c16e0ff4a4ab302ea0a2301452c732bdeef2ec1c8b2832b9168d76",
-      "sample_transaction_ids": [
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0005-4577bddcdf",
-        "senate-ptr-e69e4753-8d5b-485e-8c9f-3b8fedf24b80-row-0001-88c64ffe2c"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "asset_resolution",
-      "source_record_id": "asset-resolution-8465a54d736d0439"
-    },
-    {
       "id": "2d32b799-691e-5e90-8a51-9dde559f9ffb",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "kingspan group plc unsponsored adr kgspy st",
@@ -323751,24 +323705,6 @@
       "ticker": "MDT"
     },
     {
-      "id": "37f08393-bd37-5ef8-b024-29f85c372234",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "ishares msci all country asia ex japan etf",
-      "observed_label": "iShares MSCI All Country Asia ex Japan ETF",
-      "occurrence_count": 2,
-      "record_hash": "defd61c6bbfd6972e25da685d859c44d01b6992eb9f5c4a28977de9c1c8fc9b8",
-      "sample_transaction_ids": [
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0005-4577bddcdf",
-        "senate-ptr-e69e4753-8d5b-485e-8c9f-3b8fedf24b80-row-0001-88c64ffe2c"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "AAXJ"
-    },
-    {
       "evidence_record_id": "sec-issuer-alias:0000202058:LHX",
       "id": "380b56dd-e550-5809-93d8-d1b5359c2506",
       "issue_type": "unsupported_sec_alias_label",
@@ -324729,6 +324665,25 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "VST"
+    },
+    {
+      "id": "39b0b1a3-dac2-5dd4-b37e-01e384e0f938",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "new world fund inc class r 6",
+      "observed_label": "NEW WORLD FUND INC - Class R-6",
+      "occurrence_count": 3,
+      "record_hash": "de04ff639df4ae8be5b298d090ef323faca275320c988de399fc189dd6921aa9",
+      "sample_transaction_ids": [
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0010-b3ee29c7b8",
+        "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0013-58bd74fb7b",
+        "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0013-58bd74fb7b"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "RNWGX"
     },
     {
       "id": "39c0c7dd-cc27-5ff1-9dc1-ec114e4e85d5",
@@ -337281,6 +337236,27 @@
       "ticker": "KNOP"
     },
     {
+      "id": "4ff049ae-965c-5c23-8210-3892ab6454c5",
+      "issue_type": "unresolved_asset_resolution",
+      "normalized_label": "ISHARES MSCI ALL COUNTRY ASIA EX JAPAN ETF",
+      "observed_names": [
+        "iShares MSCI All Country Asia ex Japan ETF"
+      ],
+      "occurrence_count": 3,
+      "record_hash": "452c768db1582899d1376f82bfc419f8f9c2d59108a59ab38a84438e6d8d9f82",
+      "sample_transaction_ids": [
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0005-4577bddcdf",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0005-4577bddcdf",
+        "senate-ptr-e69e4753-8d5b-485e-8c9f-3b8fedf24b80-row-0001-88c64ffe2c"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "asset_resolution",
+      "source_record_id": "asset-resolution-8465a54d736d0439"
+    },
+    {
       "id": "4ffd1740-b7a7-57c0-bdf2-75fa73e07a4e",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "JANUS HEND VIT RESEARCH",
@@ -345562,25 +345538,6 @@
       "ticker": "HRS"
     },
     {
-      "id": "5e2f7c17-ce1a-5a82-8215-d7db0afa2294",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "first trust exchange traded fund viii ft energy in",
-      "observed_label": "First Trust Exchange-Traded Fund VIII FT Energy In",
-      "occurrence_count": 3,
-      "record_hash": "cd722b187578e47cc57c9d659e5fa8be8db7958829c85a70a39d4c069aa3b202",
-      "sample_transaction_ids": [
-        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0008-56cb8265dd",
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0001-734d78d576",
-        "senate-ptr-97a4172e-e2d9-4dea-9014-d8aa2134d628-row-0002-2db68795e2"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "EIPI"
-    },
-    {
       "id": "5e35e93f-6be8-573d-bcc2-3a763983ce56",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "GUGGENHEIM S P 500 EQUAL WEIGHT ETF NYSEARCA",
@@ -350752,6 +350709,27 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "AQN"
+    },
+    {
+      "id": "683e4f6c-2d75-56b8-99a0-4d81c6dc7e0d",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "vanguard global ex u s real estate etf",
+      "observed_label": "Vanguard Global ex-U.S. Real Estate ETF",
+      "occurrence_count": 5,
+      "record_hash": "fac1255076eacfc5d6f3af3862374fab70b077f8c591407280dd9fbc374ce31f",
+      "sample_transaction_ids": [
+        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0022-5827f5b64d",
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0013-9852e7435f",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0013-9852e7435f",
+        "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0021-8d4b2b87b9",
+        "senate-ptr-e059c06a-1f17-4143-bdca-be82e73eba53-row-0008-dafc2e11b7"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "VNQI"
     },
     {
       "id": "684514e4-edfb-50db-85b7-e032dbdab51b",
@@ -357636,6 +357614,29 @@
       "ticker": "ETP"
     },
     {
+      "id": "75640ce7-3ac1-546d-9136-5d00da485ca3",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "first trust global tactical commodity strategy fun",
+      "observed_label": "First Trust Global Tactical Commodity Strategy Fun",
+      "occurrence_count": 7,
+      "record_hash": "db4dbf3dc3c5ec1e09b9d3ae114a041cbba0d900e267d26d402c95a6024b32ab",
+      "sample_transaction_ids": [
+        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0009-36eb24ed30",
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0002-85bb891e35",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0002-85bb891e35",
+        "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0002-7da6a26e8b",
+        "senate-ptr-833ba1d7-3736-4a2c-a3be-c56a641a01fe-row-0003-bca8b41d36",
+        "senate-ptr-97a4172e-e2d9-4dea-9014-d8aa2134d628-row-0003-d96880625a",
+        "senate-ptr-b6f24083-8ed9-4368-b482-3d14155c1e9b-row-0004-f33275369c"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "FTGC"
+    },
+    {
       "id": "756d3ebe-0075-55b0-a18d-143dcc4fd1ea",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "global x robotics artificial intelligence etf",
@@ -363031,26 +363032,6 @@
       "ticker": "BABA"
     },
     {
-      "id": "8058557c-ccca-5709-b793-d0dca3173dc8",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "vanguard global ex u s real estate etf",
-      "observed_label": "Vanguard Global ex-U.S. Real Estate ETF",
-      "occurrence_count": 4,
-      "record_hash": "1502c355fb6f01cc0fa7ee84e22cb9fa7a8490065a0c20e83c21b1cb5a6748aa",
-      "sample_transaction_ids": [
-        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0022-5827f5b64d",
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0013-9852e7435f",
-        "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0021-8d4b2b87b9",
-        "senate-ptr-e059c06a-1f17-4143-bdca-be82e73eba53-row-0008-dafc2e11b7"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "VNQI"
-    },
-    {
       "id": "80596806-d46e-595b-8eaf-1d376607df5f",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "THE HARTFORD GROWTH OPPORTUNITIES FUND",
@@ -367817,6 +367798,30 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "WTW"
+    },
+    {
+      "id": "89416b61-1bcf-54dd-ac6b-77e4b42be60b",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "goldman sachs activebeta emerging markets equity e",
+      "observed_label": "Goldman Sachs ActiveBeta Emerging Markets Equity E",
+      "occurrence_count": 8,
+      "record_hash": "4fe313c9d8bba090790ccec594b64ac5b1f44d02ab598b9f5cbd8ef6fb9d53f3",
+      "sample_transaction_ids": [
+        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0010-0c0ecfcebb",
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0004-eac5119b7d",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0004-eac5119b7d",
+        "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0003-3e973ae0db",
+        "senate-ptr-a1c431fc-093e-4ace-8f0a-4f2ae481556d-row-0060-e6b924ab48",
+        "senate-ptr-bc6505f6-4219-4ce3-b146-a9faaabda324-row-0060-e6b924ab48",
+        "senate-ptr-c104f1ee-c957-4485-9807-e4798463c3b9-row-0006-4f66090f9e",
+        "senate-ptr-c417b7b2-e80f-477d-9647-c22bc8c1cd1b-row-0001-3d6a43de01"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "GEM"
     },
     {
       "evidence_record_id": "sec-issuer-alias:0001051470:CCI",
@@ -375711,6 +375716,26 @@
       "ticker": "PLD"
     },
     {
+      "id": "97cf1ed0-c5d4-5cf6-af4d-b3121ac87b29",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "first trust exchange traded fund viii ft energy in",
+      "observed_label": "First Trust Exchange-Traded Fund VIII FT Energy In",
+      "occurrence_count": 4,
+      "record_hash": "c029f0d3a730ff4a8b39df54b516f589f381c756b283554a3d19c0e6cdfbd5dc",
+      "sample_transaction_ids": [
+        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0008-56cb8265dd",
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0001-734d78d576",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0001-734d78d576",
+        "senate-ptr-97a4172e-e2d9-4dea-9014-d8aa2134d628-row-0002-2db68795e2"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "EIPI"
+    },
+    {
       "id": "97d28548-ce74-5f8b-ac10-337710829584",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "resona holdings inc osaka ordinary shares rsnhf st",
@@ -380762,28 +380787,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "MTH"
-    },
-    {
-      "id": "a1833eac-3f3c-5373-b1e2-24aeee17e213",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "first trust global tactical commodity strategy fun",
-      "observed_label": "First Trust Global Tactical Commodity Strategy Fun",
-      "occurrence_count": 6,
-      "record_hash": "e281a90b57a3b55a3d8dffcae51f47877cdb716d394ec0c710c9fc8f0dad3cb9",
-      "sample_transaction_ids": [
-        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0009-36eb24ed30",
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0002-85bb891e35",
-        "senate-ptr-59691760-24e4-47a9-bc8d-9888bce9660b-row-0002-7da6a26e8b",
-        "senate-ptr-833ba1d7-3736-4a2c-a3be-c56a641a01fe-row-0003-bca8b41d36",
-        "senate-ptr-97a4172e-e2d9-4dea-9014-d8aa2134d628-row-0003-d96880625a",
-        "senate-ptr-b6f24083-8ed9-4368-b482-3d14155c1e9b-row-0004-f33275369c"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "FTGC"
     },
     {
       "evidence_record_id": "sec-issuer-alias:0000947263:TD",
@@ -393242,24 +393245,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "FSTR"
-    },
-    {
-      "id": "b898485b-7691-563f-af90-672c8952df2d",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "new world fund inc class r 6",
-      "observed_label": "NEW WORLD FUND INC - Class R-6",
-      "occurrence_count": 2,
-      "record_hash": "98de8c6243f4bc4be00398e7de794d5aeba9cccb627da9d75bc06b9954c02524",
-      "sample_transaction_ids": [
-        "senate-ptr-727b4eb6-d8c7-4792-aa5b-c651c2d72f9c-row-0013-58bd74fb7b",
-        "senate-ptr-a9754ff5-901a-4877-b7be-a647bd361c52-row-0013-58bd74fb7b"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "RNWGX"
     },
     {
       "id": "b89d44d1-5372-598d-ae47-bab61e05b4a0",
@@ -406717,6 +406702,29 @@
       "ticker": "GOLD"
     },
     {
+      "id": "d1e3dc26-e801-56c5-ad30-c137e6a3bd40",
+      "issue_type": "unresolved_asset_resolution",
+      "normalized_label": "VANGUARD GLOBAL EX U S REAL ESTATE ETF",
+      "observed_names": [
+        "Vanguard Global ex-U.S. Real Estate ETF"
+      ],
+      "occurrence_count": 5,
+      "record_hash": "640b520227d98cfea0ffc1b3bf11e74ab4748b4b09dc54ea8cb3b6213f6cca3b",
+      "sample_transaction_ids": [
+        "senate-ptr-135ebfe9-099e-4d58-ba46-f739b90d61da-row-0022-5827f5b64d",
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0013-9852e7435f",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0013-9852e7435f",
+        "senate-ptr-59bccfcc-9400-4d3d-917f-ce22a0fd2feb-row-0021-8d4b2b87b9",
+        "senate-ptr-e059c06a-1f17-4143-bdca-be82e73eba53-row-0008-dafc2e11b7"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "asset_resolution",
+      "source_record_id": "asset-resolution-b033f0d336454d5d"
+    },
+    {
       "id": "d1e5ac7f-32a1-59ee-bf7f-40f120bd2790",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "altera corp nasdaq",
@@ -419284,6 +419292,24 @@
       "ticker": "SKX"
     },
     {
+      "id": "eb2205eb-bd0b-5fb5-b590-351626ae0ae9",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "tortoise north amer pipeline fund",
+      "observed_label": "Tortoise North Amer Pipeline Fund",
+      "occurrence_count": 2,
+      "record_hash": "8a3fde0fc02d999553294fde027b41d5c5e6e15f98aa0ad8f6f85aded4709daa",
+      "sample_transaction_ids": [
+        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0012-c695850a2c",
+        "senate-ptr-51455bcd-4966-4e77-b481-09897ada81ae-row-0012-c695850a2c"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "senate_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "TPYP"
+    },
+    {
       "id": "eb227e51-a0fc-5b9a-8d75-0b1333e653ed",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "marsh mclennan companies inc mmc st filing status new",
@@ -423923,23 +423949,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "COO"
-    },
-    {
-      "id": "f3c2cc7b-17fc-5ac7-8f54-0fa7834839c9",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "tortoise north amer pipeline fund",
-      "observed_label": "Tortoise North Amer Pipeline Fund",
-      "occurrence_count": 1,
-      "record_hash": "ae80fa8fd8bb46ab6f16866659e70a5f0cad767924f4e782dc7fba1b2a558975",
-      "sample_transaction_ids": [
-        "senate-ptr-3a779539-8451-49d2-8419-d3eb72c7922a-row-0012-c695850a2c"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "senate_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "TPYP"
     },
     {
       "id": "f3d4de47-2c94-577a-ae1a-f36d3f3a03ab",
@@ -431199,173 +431208,173 @@
   ],
   "source_snapshots": [
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/context/asset_resolution.json",
-      "record_hash": "c78e1a8d55a42e3b4c733afed1b3ff7d20d29bea826469378f107cb8451ca2d8",
+      "record_hash": "e4164d5d97107edc2e03953b0c5b1ce9a76e84fad95150b55158539397541dd7",
       "schema_version": "asset-resolution-context-v1",
-      "sha256": "e64b14afdf961d8fddf73bde33d70208d92035d7c56506b0abcc3706a39f11ec",
+      "sha256": "e01ba35767d544ce02d5cac9cee36c896cb5732d6448c27d9c2de22c08beba54",
       "source_id": "asset_resolution",
       "source_tier": "curated_parser_context"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/context/company_entity_reference.json",
-      "record_hash": "cf033e50348f5aa3979cdccfe144cdb25b965c3d80671e2c508757d9b7f4a81b",
+      "record_hash": "b592001983b25623f47a6bc0c23d7d46ac92a5e354b656f4fbb3962a3efb8d91",
       "schema_version": "company-entity-reference-v1",
       "sha256": "dac8161d784b5a41ab527a8d60f54dbc0997ffdca0e3cd2d7672d139e354095d",
       "source_id": "company_entity_reference",
       "source_tier": "curated_context"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "logical:combined-disclosure-labels",
-      "record_hash": "3dca08e346f4fecff7205490b769d997497153f8a737b939b5398e7d22020cb4",
+      "record_hash": "c034b885ea7196cebc371f9fedc06ff3e5fb4d9196c69bee7685c4a639cc47f8",
       "schema_version": "combined-disclosure-labels-v1",
-      "sha256": "721e3379d79fe3e8c465e22d43d4bc5bef46f605776ab911ab5f90699e2e2183",
+      "sha256": "053856039e04c0caea04d36ce0054744226259eb37a4c8aef7579decf8a6d2e9",
       "source_id": "disclosure_labels",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2015.json",
-      "record_hash": "b558dad9449ec3dd0facb859f4be2297096169b24ea6c160ef6c3f131134edba",
+      "record_hash": "cda33463a19b44b5c266bd8eedc6370ba25e25864e419979407d2d1bcb0a6e7f",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "f542157da310f54fc128e23378836f1d9c8fb9372fdc050e70d114681a346350",
+      "sha256": "98ccabda64fc8a65f729fe592e0038ddb843940551162b82b5a532cb2fb9126d",
       "source_id": "house_ptr_transactions:2015",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2016.json",
-      "record_hash": "6c0dbd4c2072f60f79930cdbbd4a2fe34b992369a3559177f6bd49ad012d7ca1",
+      "record_hash": "32a39895705527f61940420f299167ead80a870e3998565492c6863698d39b88",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "df51a8e7c0ee0052db48cf5560e654a6fe5540af3c1ae5e22e7c99d7ff323b3c",
+      "sha256": "a30c62d51bdfea90afade788b5028e451b7040e6c71b362e8c4c9f3457e3765e",
       "source_id": "house_ptr_transactions:2016",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2017.json",
-      "record_hash": "71ed231e7c1d6806a69a1b2afd2857df3b6fd1641ec6032c6bc3d63c67285350",
+      "record_hash": "98bbfe083c1cbde371880badc5d62c649af03a03a554e8f190c7142a09deff39",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "ca24cb7171948d08828a21f740693a692bea641656252e15f66583087ff9a2d4",
+      "sha256": "574c4e4da71f7fe0fca271dfd09d210370cceb88799d6e9cc74691c3e21bd88a",
       "source_id": "house_ptr_transactions:2017",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2018.json",
-      "record_hash": "211b58ea43a989954c05099ff5066432f4fc95e84d7accec2001cb5de2a2656f",
+      "record_hash": "78918506146139aafb0abace3c6e1c3af6126249bdbd955974faf35fd0923a52",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "af6a1a17cc1f47839eb722f5223faf11a71c76da4615931a5229e2a6b0bd0992",
+      "sha256": "27f0eb7bddd9aa45a9b9a56dc0a7fda3c1a05b407e44925f1c41e3f1a8dcc6c2",
       "source_id": "house_ptr_transactions:2018",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2019.json",
-      "record_hash": "2389bf2a2b99e7a533a210d51c3da55ec8b72f4f506382de10a56ac9604ef5d3",
+      "record_hash": "9605c1e5a02ade98fd2cdad1519771b40087cbe0d757748b8cd5466d16d8c09b",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "ae0f5ae97595930e808e9ccb3dc3252b46ca6a1c5405b77dfcc6fb6dcaa20d2b",
+      "sha256": "0995239055da8d07324025dabf87faa03b26bc7abe075d8ce6b7e8a1392c55f5",
       "source_id": "house_ptr_transactions:2019",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2020.json",
-      "record_hash": "24542345d949d27c549244e3ff7295f59d117db57afc37160089531b3ed7dea1",
+      "record_hash": "7f2a10cdf07c90e35eb626f69d3d3023d9d0711b15cc726acca772378ea40a01",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "61dd9af05ae7947f84865d3957685b2a68537b04ef6fde469d1e00f077e81f3c",
+      "sha256": "e8407caf1c5e2a6b6ba1fa281bfbbeffc6b04e1242e4f8aaf52412c70eb41fcd",
       "source_id": "house_ptr_transactions:2020",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2021.json",
-      "record_hash": "ae7c39ea52089b4e1aee05521054b706562ffc160e39eba05a786296554f98c9",
+      "record_hash": "97564ae8b9bd3bea5d460bc9e624d8dc1f69de111803cfbc47d13a9c59bdad99",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "2890162bdae970aacf9abe910572618e9614ed42e6ddf95edff2c85d3cfe2e4c",
+      "sha256": "128506c975ec78fb6fa3a4c8512f3eb0ec628054962bdd9c20855333d15f8531",
       "source_id": "house_ptr_transactions:2021",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2022.json",
-      "record_hash": "27f632bf62855b0954fb8b1a97b472309faa82523983e86a8243b3523bb98be1",
+      "record_hash": "38aef10b1d699def929add592995785f37e7ce08525271e67298dd61dda18244",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "8ea079567a3d50118aed7dd2612df6656528c3b478112486c08013f99913bdc2",
+      "sha256": "da2c0366d59ddf2cf4b80073e5845304ac8bba82dcf148bfc85e7dce1f3ce321",
       "source_id": "house_ptr_transactions:2022",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2023.json",
-      "record_hash": "0c2b67f7b369b433c60d3822d110f5224f98ff6dd06fd1d9aa376899705930d1",
+      "record_hash": "0db6714f6468e284f9698ba1b3e657a774b76e6dd20684f00cc07dd84629cb8e",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "af89f0d2eafb13675e8cab17cbd85be7df6c13d1d6adac4e5d6e1fc1ddbd4a50",
+      "sha256": "2b7ce15501932456e459fd5b05ccc630fac448692f218aaff242a7b5c07d710f",
       "source_id": "house_ptr_transactions:2023",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2024.json",
-      "record_hash": "9780374a425b1d5f041617e7bc6ece8cc2cf0cdec0d98f619b159b44d19cfdf8",
+      "record_hash": "56ce55210d59baa52b7963738ebddd4ca485e496b4b8a5b015d4b620a4d5b2f3",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "25834b6938c5cb304823a5bc6e093e2e66305fc88e510eebab591fee064143a9",
+      "sha256": "d96d04407bcdd0848bd03d54ab7c455807281532ebd7483865aa7d2465ecf75b",
       "source_id": "house_ptr_transactions:2024",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2025.json",
-      "record_hash": "88d4897995c6204735717213a43033591802be21dc1ffb750b79b8332a742d3e",
+      "record_hash": "63530b7fef9c4fc1484064a787c759474ce6e6e82da60a84bf99fdf87a5f9d4d",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "91a8827c5145d8999d7a027a7abda4d242e7ccdb8e01b30181bc594e5514db9b",
+      "sha256": "c3a6504e798400e377853f76219a1952531bab8ede160bc70ba74155d9f0a6c2",
       "source_id": "house_ptr_transactions:2025",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr/2026.json",
-      "record_hash": "6dc302af9f081212bb8dc8149b302a88885b0e1423aa800fb3cd161cebc10096",
+      "record_hash": "afc00f59aacfad3c649c2f17418fc37ae3386dfb393808cf441da74a4d308146",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "a1339f284e3f3413218613f5457326975249fb3b253ab2515b87c538aaf5c1f5",
+      "sha256": "818a4a40edbcf0611c549c082b580c986151e8cbba719cf145a7f155f33bf345",
       "source_id": "house_ptr_transactions:2026",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/house_ptr_transactions.json",
-      "record_hash": "2813f75d32a68fe126a4bd2ba3f33fb13b06d697c007d4850fb128a0a5b30dcb",
+      "record_hash": "a5556339b17cf56e9975407ed473743174f87816736c26762b1ceb29dd508f79",
       "schema_version": "house-ptr-transactions-manifest-v2",
-      "sha256": "a95f05aa22a4712f29f2ee49beb45885d30f3ee031c81bd2d9a81a48d0ccd809",
+      "sha256": "0e6a89f36d9f44e3de02ad680751db456bb32e8de28558da9f6d331d15c09755",
       "source_id": "house_ptr_transactions:index",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/context/market_prices.json",
-      "record_hash": "ee77c43b0aa7358e2c80046d11fe82c910fe1c88bc29ec3bdfa1296559564275",
+      "record_hash": "958751c4226c3629d37aba7a6deb08c5258a019cafe39300cee9a27f2fed65ab",
       "schema_version": null,
-      "sha256": "17ace7b4562b2a0c0fddd32a4d4400280cd1425fde5abcd2e013f27a06329ea9",
+      "sha256": "496646a7af4d864a4e5f9ffc3c4aa1df06282072d33c6e144b16c67140ee5343",
       "source_id": "market_prices",
       "source_tier": "market_data_provider"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "backend/app/services/market_prices.py#TICKER_HISTORY",
-      "record_hash": "98240f7ee1b431183bde3875eab7941db747f30907a73145a11d786af4ec141a",
+      "record_hash": "4158c436ae11abe139601c4093bb7a107082d4b3f746a2e79e21c4e8ce3014a6",
       "schema_version": "ticker-history-v1",
       "sha256": "2f9b2b07f8a786ac7d4a5627323ee6af92911676d7bcd35888c1fb6c17b7cf08",
       "source_id": "market_ticker_history",
       "source_tier": "source_checked_curated_reference"
     },
     {
-      "artifact_date": "2026-08-29",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/presidential_oge_transactions.json",
-      "record_hash": "b689815bcdf86ab1ec5c5c0af1ec0fec141653cf5a38877cbcd7153542cb8464",
+      "record_hash": "b2fbc25ec436a9112d20918cdfcb847d84874ea3210c8087188b9c9fa530d18f",
       "schema_version": "presidential-oge-transactions-v1",
-      "sha256": "3db28518ce70cf2154fe457bc1df17271c61d8d0aef7315d51db99ae5b070acf",
+      "sha256": "39814367d6badbd0ff0f33918d70abd4e75a93d3de690fbb03a420d552392fc3",
       "source_id": "presidential_oge_transactions",
       "source_tier": "official_parser_preview"
     },
@@ -431388,11 +431397,11 @@
       "source_tier": "official"
     },
     {
-      "artifact_date": "2026-08-23",
+      "artifact_date": "2026-08-30",
       "path": "data/disclosures/senate_ptr_transactions.json",
-      "record_hash": "76ab57fdb7a00487007c3664621281229042ce436d8bdfad5a0949195466034e",
+      "record_hash": "962831d7479762e706807cf20e959fc61f7352ab797501e3b50ce9d0a797fc7f",
       "schema_version": "senate-ptr-transactions-v1",
-      "sha256": "6355d7ef9001a254d3e03064feb3292970ea400ca01670acb40341cc5e3c32c4",
+      "sha256": "b04915a551f684aaf5f02f73eb9a66c86e682eb91d006b62a6bb462947e24815",
       "source_id": "senate_ptr_transactions",
       "source_tier": "official_parser_preview"
     }
@@ -431415,7 +431424,7 @@
     "sec_evidence_supported_symbol_count": 1087,
     "sector_count": 55,
     "ticker_history_count": 1194,
-    "unlinked_disclosure_label_occurrence_count": 29118
+    "unlinked_disclosure_label_occurrence_count": 29171
   },
   "ticker_histories": [
     {
