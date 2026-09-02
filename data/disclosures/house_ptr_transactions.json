@@ -1,6 +1,6 @@
 {
   "context_label": "Official House Clerk PTR parser previews. Every row remains review-gated and is not a reviewed public-production trade. Image-only filings are reported as OCR required.",
-  "generated_at": "2026-09-01",
+  "generated_at": "2026-09-02",
   "latest_batch_failures": [],
   "schema_version": "house-ptr-transactions-manifest-v2",
   "source": {
@@ -11,15 +11,15 @@
   },
   "summary": {
     "action_counts": {
-      "BUY": 27296,
-      "EXCHANGE": 542,
+      "BUY": 27297,
+      "EXCHANGE": 544,
       "SELL": 26287
     },
     "asset_class_counts": {
       "crypto": 95,
       "equity": 39558,
       "etf": 1268,
-      "fixed_income": 5971,
+      "fixed_income": 5974,
       "mutual_fund": 124,
       "option": 758,
       "unknown": 6351
@@ -36,21 +36,21 @@
       "2023": 457,
       "2024": 449,
       "2025": 497,
-      "2026": 354
+      "2026": 355
     },
     "document_status_counts": {
       "ocr_required": 1995,
-      "parser_preview": 5581
+      "parser_preview": 5582
     },
     "duplicate_candidate_group_count": 1124,
     "duplicate_candidate_transaction_count": 2398,
     "latest_batch_error_count": 0,
-    "latest_batch_selected_document_count": 0,
+    "latest_batch_selected_document_count": 1,
     "official_count": 298,
-    "parser_preview_transaction_count": 54125,
-    "processed_document_count": 7576,
+    "parser_preview_transaction_count": 54128,
+    "processed_document_count": 7577,
     "public_production_trade_count": 0,
-    "review_required_transaction_count": 54125,
+    "review_required_transaction_count": 54128,
     "withheld_unrecognized_amount_row_count": 192
   },
   "year_partitions": {
@@ -61,7 +61,7 @@
       "path": "data/disclosures/house_ptr/2015.json",
       "processed_document_count": 720,
       "public_production_trade_count": 0,
-      "sha256": "a4e9c19c669f164f0e2063f70eefd5346d15e6acb76ec4698d57af33c0d8b8b9"
+      "sha256": "ed41ee9a652604dfc0f50a3fdffe6eda914887a1ff71cb032f58a9ac95a03fbf"
     },
     "2016": {
       "bytes": 6080108,
@@ -70,7 +70,7 @@
       "path": "data/disclosures/house_ptr/2016.json",
       "processed_document_count": 765,
       "public_production_trade_count": 0,
-      "sha256": "0b4acb912c0ce3e951ac5250beaa68461125ce96f23124c32f45c50eef74237d"
+      "sha256": "af5b2a1315c1254d9b3cc1dd58ad07c6f0aefbf4ec5280bbe70332b642d593e6"
     },
     "2017": {
       "bytes": 6018841,
@@ -79,7 +79,7 @@
       "path": "data/disclosures/house_ptr/2017.json",
       "processed_document_count": 800,
       "public_production_trade_count": 0,
-      "sha256": "6882d9220eaf1a1f6a146fd26572f6d1ceab8f0c2d7bec36c5e2ea657e28da8c"
+      "sha256": "2bcf8dfc656e14e42239fc8152592b9412e855a00f261e9ce2d77716e252423e"
     },
     "2018": {
       "bytes": 6574108,
@@ -88,7 +88,7 @@
       "path": "data/disclosures/house_ptr/2018.json",
       "processed_document_count": 830,
       "public_production_trade_count": 0,
-      "sha256": "414971df6dfbbeb36294edaa13362a57e8d86066d46aea2f07370a32df218b7f"
+      "sha256": "9e9252704ca9d22939e6c095beaa13a40cd8642e67d273b2f0ca814ac7de44f4"
     },
     "2019": {
       "bytes": 7496624,
@@ -97,7 +97,7 @@
       "path": "data/disclosures/house_ptr/2019.json",
       "processed_document_count": 681,
       "public_production_trade_count": 0,
-      "sha256": "c9f326356b15f659742ac33ef857c7b91f555b3563fd51d589490be33ac54627"
+      "sha256": "b1d32d547ae7ddf0f9bac1b0b9984a0961afb3e345dbf2486c0440147619d984"
     },
     "2020": {
       "bytes": 9793319,
@@ -106,7 +106,7 @@
       "path": "data/disclosures/house_ptr/2020.json",
       "processed_document_count": 732,
       "public_production_trade_count": 0,
-      "sha256": "42cccae69466a71d3a7b68381d8ecdac2eb2cacc3d6848db5201d0cc279bd7de"
+      "sha256": "eb0873d3ae90f743d495ee53c1fb6feb8492b36d49ffddcad322158dda35e646"
     },
     "2021": {
       "bytes": 7312091,
@@ -115,7 +115,7 @@
       "path": "data/disclosures/house_ptr/2021.json",
       "processed_document_count": 668,
       "public_production_trade_count": 0,
-      "sha256": "3445112637fc569d8edb1387a641c8debac9f919c43400374bd06bdeaadc3bb7"
+      "sha256": "a9591f88f1a33d95366e86ec0cfd21808fdcd15d3ba308da3d2d772861786ab3"
     },
     "2022": {
       "bytes": 5202670,
@@ -124,7 +124,7 @@
       "path": "data/disclosures/house_ptr/2022.json",
       "processed_document_count": 623,
       "public_production_trade_count": 0,
-      "sha256": "c61a1d8b99dcb39ac92fc95819ff077fd419df53ec61279be01d6509efb418b0"
+      "sha256": "ea7158d80363f15dedefb78ed1851302f8389abe59b4cd3ab56ffb973df39c7e"
     },
     "2023": {
       "bytes": 5621080,
@@ -133,7 +133,7 @@
       "path": "data/disclosures/house_ptr/2023.json",
       "processed_document_count": 457,
       "public_production_trade_count": 0,
-      "sha256": "5ccca0a304672ba77b3ffd9f3f1dbb09a1ba0218791fe82064b1606e3cb5c390"
+      "sha256": "0ae48a5ca143936ca5df297d7b43863e3d564c179667805279985fe2be6f1555"
     },
     "2024": {
       "bytes": 3890270,
@@ -142,7 +142,7 @@
       "path": "data/disclosures/house_ptr/2024.json",
       "processed_document_count": 449,
       "public_production_trade_count": 0,
-      "sha256": "887fccd12905127e07f408fdcb910ef9664eea54c9ed9b8499d78093db956b64"
+      "sha256": "791c8987d049a9432e65118c39253b14324a4cf0e287fb226b0c96ec46637ab0"
     },
     "2025": {
       "bytes": 9627883,
@@ -151,16 +151,16 @@
       "path": "data/disclosures/house_ptr/2025.json",
       "processed_document_count": 497,
       "public_production_trade_count": 0,
-      "sha256": "5df4b9d4afaad45bffa8e146976f42c556122c26b121ee579582266651d942d2"
+      "sha256": "52c7351152ce80f827859d2cc70982aff349ca24aaecc431936e65d65c57e6d4"
     },
     "2026": {
-      "bytes": 4071826,
+      "bytes": 4078056,
       "official_count": 93,
-      "parser_preview_transaction_count": 2920,
+      "parser_preview_transaction_count": 2923,
       "path": "data/disclosures/house_ptr/2026.json",
-      "processed_document_count": 354,
+      "processed_document_count": 355,
       "public_production_trade_count": 0,
-      "sha256": "be0f2388d4332b1ee324dc30ff52471e6504091f70cc8aaf9c782424b4ecc46f"
+      "sha256": "5db5d0114b0f8bbb0e1fc938b49bfdfb7a65585985498d805a1dd5688011aa13"
     }
   }
 }

@@ -2,7 +2,7 @@
   "acquisition": {
     "minimum_request_interval_seconds": 1.0,
     "mode": "live_portal",
-    "retrieved_at": "2026-09-01T15:06:48+00:00",
+    "retrieved_at": "2026-09-02T14:40:34+00:00",
     "source_request_count": 32,
     "source_requests": [
       {
@@ -31,7 +31,7 @@
           "submitted_end_date": "12/31/2012 23:59:59",
           "submitted_start_date": "01/01/2012 00:00:00"
         },
-        "response_sha256": "efaeac8f7fa02353c6909596b7de5dcbc7631a357154968e0dae215b3381aa92",
+        "response_sha256": "62b312cedcfc98d0ee588bebe89bdd89870e548eddda8363ae2c9d3777742cff",
         "row_count": 60,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -91,7 +91,7 @@
           "submitted_end_date": "12/31/2013 23:59:59",
           "submitted_start_date": "01/01/2013 00:00:00"
         },
-        "response_sha256": "e5c08e616a4e389b5dcf42c5b4669c9773aab56843dac30fc526a568e2e31deb",
+        "response_sha256": "4d9e8b9efb020bf65ac7cdfe32bcabe130a637d263d75daeacce4d508f573cf0",
         "row_count": 69,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -241,7 +241,7 @@
           "submitted_end_date": "12/31/2016 23:59:59",
           "submitted_start_date": "01/01/2016 00:00:00"
         },
-        "response_sha256": "3f63d00a5038d598f9c85d44fe215f0e569f3b2e1205561c3033ebaa4ca2342d",
+        "response_sha256": "bbefda3e94cd56bf481ed21eddd93fc3a2d64c71c77144b5c1ee842eec4344aa",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -391,7 +391,7 @@
           "submitted_end_date": "12/31/2018 23:59:59",
           "submitted_start_date": "01/01/2018 00:00:00"
         },
-        "response_sha256": "a7a36d3ed4d119325a27ba4412ef37757b9ec88ebee1c58eb608830fdeb0e7b6",
+        "response_sha256": "fa998c674f46f80afe9222cd47625a2b47dfce0183d0e9b9ee61a77b98235451",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -481,7 +481,7 @@
           "submitted_end_date": "12/31/2019 23:59:59",
           "submitted_start_date": "01/01/2019 00:00:00"
         },
-        "response_sha256": "838c82fa2e9d95d32ede754926511d202564f51f914df3a7f89ab1432636997a",
+        "response_sha256": "e6aeee3313af58f09d9e85345807c6edaa307defcb35c46a499057fe697c70d6",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
@@ -906,10 +906,10 @@
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
       {
-        "byte_count": 20302,
+        "byte_count": 20299,
         "kind": "report_index_page",
-        "records_filtered": 122,
-        "records_total": 122,
+        "records_filtered": 123,
+        "records_total": 123,
         "request": {
           "filer_types": [
             1,
@@ -928,18 +928,18 @@
             11
           ],
           "start": 0,
-          "submitted_end_date": "09/01/2026 23:59:59",
+          "submitted_end_date": "09/02/2026 23:59:59",
           "submitted_start_date": "01/01/2026 00:00:00"
         },
-        "response_sha256": "b2783f2536fab225f0e85b1df121c4a7ff9474163fca075294def3dddd3c3023",
+        "response_sha256": "e5923a3580da7f4562f8016bab9d4c6b301048c0fe7550d0477ca421783e952a",
         "row_count": 100,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       },
       {
-        "byte_count": 4739,
+        "byte_count": 4932,
         "kind": "report_index_page",
-        "records_filtered": 122,
-        "records_total": 122,
+        "records_filtered": 123,
+        "records_total": 123,
         "request": {
           "filer_types": [
             1,
@@ -958,11 +958,11 @@
             11
           ],
           "start": 100,
-          "submitted_end_date": "09/01/2026 23:59:59",
+          "submitted_end_date": "09/02/2026 23:59:59",
           "submitted_start_date": "01/01/2026 00:00:00"
         },
-        "response_sha256": "43314d7cbf51275da84b681fcb5e5b0095f3501d8b9e5cae7d652c0195e0a135",
-        "row_count": 22,
+        "response_sha256": "e0176a586553ca61ec9fe39de8f5d894eed697e44a1123738f6c114585caca45",
+        "row_count": 23,
         "source_url": "https://efdsearch.senate.gov/search/report/data/"
       }
     ],
@@ -167204,9 +167204,81 @@
       "source_tier": "official",
       "source_url": "https://efdsearch.senate.gov/search/view/ptr/5a76ceb6-2d1d-4430-8a17-6512bcb402be/",
       "state": "DE"
+    },
+    {
+      "amendment_linkage_confidence": "not_applicable",
+      "amendment_reconciliation_action": "annotate_only",
+      "amendment_reconciliation_evidence": [],
+      "amendment_status": "original_or_standalone_filing",
+      "bioguide_id": "B001277",
+      "candidate_supersedes_document_id": null,
+      "congress_numbers": [
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119
+      ],
+      "document_family_id": "senate-family-cde68a01f144abe6139a",
+      "document_id": "senate-ptr-929216d5-5dbd-429c-858c-1e9332924627",
+      "filer_first_name": "RICHARD",
+      "filer_last_name": "BLUMENTHAL",
+      "filer_name": "RICHARD BLUMENTHAL",
+      "filing_date": "2026-08-31",
+      "filing_year": 2026,
+      "identity_candidates": [
+        {
+          "congress_numbers": [
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119
+          ],
+          "official_id": "congress:B001277",
+          "official_name": "Richard Blumenthal",
+          "reasons": [
+            "surname",
+            "first_name",
+            "senate_service_period"
+          ],
+          "score": 9
+        }
+      ],
+      "identity_resolution": "deterministic_match",
+      "is_amendment": false,
+      "match_reasons": [
+        "surname",
+        "first_name",
+        "senate_service_period"
+      ],
+      "match_score": 9,
+      "match_status": "matched",
+      "official_id": "congress:B001277",
+      "official_name": "Richard Blumenthal",
+      "portal_filer_description": "Senator",
+      "portal_report_title": "Periodic Transaction Report for 08/31/2026",
+      "public_production_trade": false,
+      "record_status": "official_senate_index",
+      "report_format": "paper_images",
+      "report_type": "periodic_transaction_report",
+      "review_required_before_public_trade": true,
+      "senate_report_uuid": "929216d5-5dbd-429c-858c-1e9332924627",
+      "source_id": "senate-public-financial-disclosure",
+      "source_index_url": "https://efdsearch.senate.gov/search/report/data/",
+      "source_record_preserved": true,
+      "source_tier": "official",
+      "source_url": "https://efdsearch.senate.gov/search/view/paper/929216d5-5dbd-429c-858c-1e9332924627/",
+      "state": "CT"
     }
   ],
-  "generated_at": "2026-09-01",
+  "generated_at": "2026-09-02",
   "roster_coverage": {
     "congresses": [
       111,
@@ -167248,7 +167320,7 @@
   "scope": {
     "coverage_mode": "all_111th_119th_senators",
     "document_scope": "Senator and former-Senator periodic transaction reports",
-    "query_end_date": "2026-09-01",
+    "query_end_date": "2026-09-02",
     "query_start_date": "2012-01-01",
     "roster_congress_end": 119,
     "roster_congress_start": 111,
@@ -167266,17 +167338,17 @@
   "summary": {
     "ambiguous_document_count": 0,
     "amendment_document_count": 222,
-    "document_count": 2407,
+    "document_count": 2408,
     "duplicate_source_row_count": 0,
-    "matched_document_count": 2104,
+    "matched_document_count": 2105,
     "public_production_trade_count": 0,
     "report_format_counts": {
       "electronic_html": 1803,
-      "paper_images": 604
+      "paper_images": 605
     },
     "review_required_before_public_trade": true,
     "selected_scope_excluded_row_count": 0,
-    "source_index_row_count": 2407,
+    "source_index_row_count": 2408,
     "unmatched_document_count": 303
   },
   "validation": {

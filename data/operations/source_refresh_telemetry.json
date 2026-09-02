@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41305,
+      "current_record_count": 41307,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "1377e06b1cc0efc3e9b21ef342af930e817f61e0c327ed0ff2185f59b3e20781",
+      "current_summary_sha256": "ad293ee265c315a53bd8f4c18145d38b0802702c78ce16e5b34ed599876a0fd1",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -17,9 +17,9 @@
       "baseline_schema_version": "house-ptr-transactions-manifest-v2",
       "baseline_summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba",
       "count_metric": "processed_document_count",
-      "current_record_count": 7576,
+      "current_record_count": 7577,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "6f0c2353822d7f9119f833b5198cf11f7d24bcb9f7fd5835f3451276c91488a4",
+      "current_summary_sha256": "e843172faf3e569700de72d9b4a86e6ba6a0acdee6d15275d16415ba43a40177",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -53,9 +53,9 @@
       "baseline_schema_version": "senate-disclosure-index-v1",
       "baseline_summary_sha256": "4a40fbb22294b0654143cf764e533980a8975decfab2dcbdab8a95e7ec283950",
       "count_metric": "document_count",
-      "current_record_count": 2407,
+      "current_record_count": 2408,
       "current_schema_version": "senate-disclosure-index-v1",
-      "current_summary_sha256": "17696753cc14c544ab0a80e8cd7644eea1d256279814e65ec16caa2dad206999",
+      "current_summary_sha256": "4f4c95d6537cd59ed63f580fc20652bfd0b7fee64ce199904519f2b9ac6a57ed",
       "path": "data/disclosures/senate_disclosure_index.json",
       "source_id": "senate-disclosure-index",
       "status": "changed"
@@ -73,7 +73,7 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-09-01",
+  "generated_at": "2026-09-02",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5039.0,
@@ -601,6 +601,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-09-01T15:00:10Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-09-02T14:45:42Z",
+        "duration_seconds": 642.0,
+        "failure_count": 0,
+        "run_id": "33642840973-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-09-02T14:35:00Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -828,8 +837,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 58,
-    "refresh_run_count": 58,
+    "measured_refresh_count": 59,
+    "refresh_run_count": 59,
     "source_failure_count": 36
   }
 }
