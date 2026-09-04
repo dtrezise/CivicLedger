@@ -1,25 +1,25 @@
 {
   "context_label": "Descriptive price context only. Windows are anchored to the first common market date on or after the reported trade date. Date proximity and benchmark-adjusted arithmetic do not establish causation, intent, knowledge, legality, ethics, market impact, or investment performance.",
   "coverage_diagnostics": {
-    "complete_calendar_window_count": 4376,
+    "complete_calendar_window_count": 4379,
     "coverage_reason_counts": {
       "complete_requested_windows": 4421,
-      "some_requested_windows_unavailable": 6
+      "some_requested_windows_unavailable": 8
     },
     "duplicate_reaction_ids": [],
-    "incomplete_calendar_window_count": 51,
+    "incomplete_calendar_window_count": 50,
     "missing_provider_provenance_count": 0,
-    "row_count": 4427,
+    "row_count": 4429,
     "status_counts": {
       "covered": 4421,
-      "partial": 6
+      "partial": 8
     },
     "symbol_year_partitions": {
       "AAPL:2014": {
         "bytes": 216125,
         "path": "trade_market_reactions/aapl/2014.json",
         "reaction_count": 18,
-        "sha256": "d6c4936b46ae38e99126205d9dacad667a20978e73c988b7f679dcefc54f4819",
+        "sha256": "e62b0fbdd5d40189a6d5bf81ece631c1093812571449d3b7e3f0d2d1b2ce327d",
         "symbol": "AAPL",
         "year": 2014
       },
@@ -27,7 +27,7 @@
         "bytes": 300008,
         "path": "trade_market_reactions/aapl/2015.json",
         "reaction_count": 25,
-        "sha256": "eac3f53bb81f31ea92900b7aaf21ebbc484d4bbc865d258e880c8c9e4eb29050",
+        "sha256": "59fb66474a4f9516d2e7c549e80cc4b6cf1926ab615931362301556c5b0b1484",
         "symbol": "AAPL",
         "year": 2015
       },
@@ -35,7 +35,7 @@
         "bytes": 636059,
         "path": "trade_market_reactions/aapl/2016.json",
         "reaction_count": 53,
-        "sha256": "f0fa43364773a90e6a7327caeeea0a8bcdf6f36ae283b7ced991f40fd96fac19",
+        "sha256": "37ffff42bb71f18e127dc51815b6a597538062770cadbe9bbaf4b1ec4bbcd7de",
         "symbol": "AAPL",
         "year": 2016
       },
@@ -43,7 +43,7 @@
         "bytes": 275917,
         "path": "trade_market_reactions/aapl/2017.json",
         "reaction_count": 23,
-        "sha256": "30d5864d511ea54377ea34ca21dbc22c2805d9593ddaa74922949b3cb2953780",
+        "sha256": "d791b95433a394a8282c19310ebe788678c133b3f2fc13d1c9aa88676d38402e",
         "symbol": "AAPL",
         "year": 2017
       },
@@ -51,7 +51,7 @@
         "bytes": 432023,
         "path": "trade_market_reactions/aapl/2018.json",
         "reaction_count": 36,
-        "sha256": "dd3b8245b4823dd5dcd2a826af828da1d0b6da8cebf7f32e835899274e4f0101",
+        "sha256": "e47fce2d520076f3eb79882810f30d420337fd3de6f6e2403eea86f5b41e5049",
         "symbol": "AAPL",
         "year": 2018
       },
@@ -59,7 +59,7 @@
         "bytes": 527477,
         "path": "trade_market_reactions/aapl/2019.json",
         "reaction_count": 44,
-        "sha256": "dfeda7e44f4754087c4af6e375348e14dc26835c1671d9972dbe61b2727e5f0e",
+        "sha256": "8f281fd9509d00ce2efe5a49f558f2f373fd2729d761045133b230d2beada09a",
         "symbol": "AAPL",
         "year": 2019
       },
@@ -67,7 +67,7 @@
         "bytes": 1176657,
         "path": "trade_market_reactions/aapl/2020.json",
         "reaction_count": 98,
-        "sha256": "1de8b3eac888b969e2398287e1f796216605b982c392017325f1597aeccd9ded",
+        "sha256": "b186ef99e41525def818b3fc6e45a66158bb9993ce3dd8a92567716973364609",
         "symbol": "AAPL",
         "year": 2020
       },
@@ -75,7 +75,7 @@
         "bytes": 684588,
         "path": "trade_market_reactions/aapl/2021.json",
         "reaction_count": 57,
-        "sha256": "ccaf010487a041d920b72b2bb4da9673d4e35e1de3b78fbb06a89e8a2a297dcb",
+        "sha256": "d4ca1d64e9e1729f12344d1b32575199e2934a4fc187792599f90ba1a3096ed1",
         "symbol": "AAPL",
         "year": 2021
       },
@@ -83,7 +83,7 @@
         "bytes": 467298,
         "path": "trade_market_reactions/aapl/2022.json",
         "reaction_count": 39,
-        "sha256": "496ef9c8ab7d7ea49c6e7e1f21122435dea6550eeb0686b9de017f01e232030a",
+        "sha256": "f465a09e70e8cd9399c857d1a41ed8fa284abf62a40000c4c1f08612e7b1132e",
         "symbol": "AAPL",
         "year": 2022
       },
@@ -91,7 +91,7 @@
         "bytes": 551135,
         "path": "trade_market_reactions/aapl/2023.json",
         "reaction_count": 46,
-        "sha256": "4439d6db3d52421d5392cf932e3481aea659087094c15e7d3e9d204020ea2184",
+        "sha256": "018b3013520d4105cfaf318cd1a3b1aae8168600564877b2b8704b53ba05b1b8",
         "symbol": "AAPL",
         "year": 2023
       },
@@ -99,7 +99,7 @@
         "bytes": 684033,
         "path": "trade_market_reactions/aapl/2024.json",
         "reaction_count": 57,
-        "sha256": "46af9becfd3d84d7632d2f7f4ae976b7a83bd18f0474db17ded75c69bba5bba4",
+        "sha256": "7a5ddc5e197c6c994eab056bc323a93bf4edd33796087436154a571dc416b0e3",
         "symbol": "AAPL",
         "year": 2024
       },
@@ -107,15 +107,15 @@
         "bytes": 1343962,
         "path": "trade_market_reactions/aapl/2025.json",
         "reaction_count": 112,
-        "sha256": "7aeacc3614f9df444dca787a508737decf133643208af7d97c88acbdc1d120dd",
+        "sha256": "b3d1a03753a34702fa80cd3727a4da5a331af3435c77596714b766ff6a996af7",
         "symbol": "AAPL",
         "year": 2025
       },
       "AAPL:2026": {
-        "bytes": 303238,
+        "bytes": 313351,
         "path": "trade_market_reactions/aapl/2026.json",
-        "reaction_count": 26,
-        "sha256": "da407d9ba9b220bcaae078bbbd3b17c2a9a9c60762b63184b93ef32dc9295a0a",
+        "reaction_count": 27,
+        "sha256": "e8564a1ae513216b3892500bf73154e8eec9a6508f98f73cfe4ba1b1a8e9513d",
         "symbol": "AAPL",
         "year": 2026
       },
@@ -123,7 +123,7 @@
         "bytes": 47815,
         "path": "trade_market_reactions/amzn/2014.json",
         "reaction_count": 4,
-        "sha256": "3de262c34e4cd93f6a0fde982087b2462f768058b3403388141fc0db4bc701e4",
+        "sha256": "65f252f420012d319ea3a1cb7206ea20d110d51d37ece0747c6a3e5449452c7e",
         "symbol": "AMZN",
         "year": 2014
       },
@@ -131,7 +131,7 @@
         "bytes": 83479,
         "path": "trade_market_reactions/amzn/2015.json",
         "reaction_count": 7,
-        "sha256": "14820e8a762ccfbc9ce39f1eb84cb9c462f03f38b91a95f6bf2329b4f52ddff0",
+        "sha256": "1389e93108aa187799c6f6dd36ecacbece9c51369ca30998bd1ab37549fc6a9e",
         "symbol": "AMZN",
         "year": 2015
       },
@@ -139,7 +139,7 @@
         "bytes": 154980,
         "path": "trade_market_reactions/amzn/2016.json",
         "reaction_count": 13,
-        "sha256": "dec805e66f33b4ff21622f9ea801ebeee84ee5e88a51dcdec517d489e2147651",
+        "sha256": "80f768d63ed26a737b52dc60df29519c7608982764c7d8af4852a5c32ce0b62c",
         "symbol": "AMZN",
         "year": 2016
       },
@@ -147,7 +147,7 @@
         "bytes": 190842,
         "path": "trade_market_reactions/amzn/2017.json",
         "reaction_count": 16,
-        "sha256": "11d68daebb7fd9d61f0e358b0316b62c4e6dd6679425f9d5c95efeceafdf08c3",
+        "sha256": "40381bbcd0523d0c9b866ef22516baff8ebc451e5ad15a330a0c508e91ead1eb",
         "symbol": "AMZN",
         "year": 2017
       },
@@ -155,7 +155,7 @@
         "bytes": 333860,
         "path": "trade_market_reactions/amzn/2018.json",
         "reaction_count": 28,
-        "sha256": "3c692c2226f9bea7b637c08c81dcd7ac5903caf098165ac6d476b7a8f93ee658",
+        "sha256": "c75d820dedfd4d6bc39f83cc843e6b5cb7a89b2dfaca21afd923f148a8ed97d0",
         "symbol": "AMZN",
         "year": 2018
       },
@@ -163,7 +163,7 @@
         "bytes": 286294,
         "path": "trade_market_reactions/amzn/2019.json",
         "reaction_count": 24,
-        "sha256": "3c5d9da2a9ae112bb777e298bb576d512407eeb8eb68237f549b4a36ebc79a81",
+        "sha256": "047d0af573ce273efd1e121d81d98d651d42fdfcc3c6feb6f778d3d25e0da56e",
         "symbol": "AMZN",
         "year": 2019
       },
@@ -171,7 +171,7 @@
         "bytes": 716340,
         "path": "trade_market_reactions/amzn/2020.json",
         "reaction_count": 60,
-        "sha256": "990f2f7c8904a2eb6402e680e921834683869d884891ad01d8d20cde236a019f",
+        "sha256": "0401ba0f487d7da03c653e5c506465bace4e48c0bc8b0e099347af2e9eef53a3",
         "symbol": "AMZN",
         "year": 2020
       },
@@ -179,7 +179,7 @@
         "bytes": 608247,
         "path": "trade_market_reactions/amzn/2021.json",
         "reaction_count": 51,
-        "sha256": "6f54fb83b4541d47e469b5cfcba1d1a07948ebc3606464d3f21f624f48b3b3c5",
+        "sha256": "99defc7453a53860b4843540aef8a24ab67b834e244678ff20b7ab3a7f3167e9",
         "symbol": "AMZN",
         "year": 2021
       },
@@ -187,7 +187,7 @@
         "bytes": 273390,
         "path": "trade_market_reactions/amzn/2022.json",
         "reaction_count": 23,
-        "sha256": "3a3dd724ecab751378687299e20e6f963d2665800eea01dc18587621c2f66d39",
+        "sha256": "1da438d7f8e41e76671a6f7b270c47fd7dc33706e9044c838d00d8f561902dff",
         "symbol": "AMZN",
         "year": 2022
       },
@@ -195,7 +195,7 @@
         "bytes": 237725,
         "path": "trade_market_reactions/amzn/2023.json",
         "reaction_count": 20,
-        "sha256": "9ab990f00427f7368cd91d5795287f297779684e7a189d5eb2b63749bca874a1",
+        "sha256": "b24ec80574171b229bf8479f031d7e5387178364d07ae744cb0948297162de0b",
         "symbol": "AMZN",
         "year": 2023
       },
@@ -203,7 +203,7 @@
         "bytes": 415362,
         "path": "trade_market_reactions/amzn/2024.json",
         "reaction_count": 35,
-        "sha256": "5655cd7229a32030db756ba26f93b025dfb82dfaaf2eb35577cc761bd20c2d93",
+        "sha256": "b767d7bf777fb63740386e1f8ea95b0ecb7e1eb26e57afac9fa478099309fbd5",
         "symbol": "AMZN",
         "year": 2024
       },
@@ -211,15 +211,15 @@
         "bytes": 1400767,
         "path": "trade_market_reactions/amzn/2025.json",
         "reaction_count": 118,
-        "sha256": "375f84fca99d235376e8536c3d4678d2a5f8784308ccdccf4a979a17e3ff162e",
+        "sha256": "1c29129879942b24323330c913019b24eb9ea67623d05ad32c199cf82c68c7cb",
         "symbol": "AMZN",
         "year": 2025
       },
       "AMZN:2026": {
-        "bytes": 293455,
+        "bytes": 294305,
         "path": "trade_market_reactions/amzn/2026.json",
         "reaction_count": 25,
-        "sha256": "60aca519ba5f292b961fd78ea80e634541bb04362f22a379557f68345f42e45f",
+        "sha256": "e522393a391c26ae66667da8a487ddc89df8b7f6ec2846577c9c00322292e882",
         "symbol": "AMZN",
         "year": 2026
       },
@@ -227,7 +227,7 @@
         "bytes": 12124,
         "path": "trade_market_reactions/bnd/2016.json",
         "reaction_count": 1,
-        "sha256": "163d5298dd7bd37046fed1626c9663dcfca890afeab129c2123057e4c681d8b9",
+        "sha256": "d53e931e3ef74a63ef798464d49650c534f1ef24bcabfd14586ef84d26775d49",
         "symbol": "BND",
         "year": 2016
       },
@@ -235,7 +235,7 @@
         "bytes": 23911,
         "path": "trade_market_reactions/bnd/2022.json",
         "reaction_count": 2,
-        "sha256": "65fbe33e841c994ddec9e7fd4dd0bc861a03c19e840869121d067e646df538af",
+        "sha256": "765701b62d5ef09de313b0efbf588506659b82dc1715e18b6b37500e70a6f946",
         "symbol": "BND",
         "year": 2022
       },
@@ -243,7 +243,7 @@
         "bytes": 36311,
         "path": "trade_market_reactions/dia/2015.json",
         "reaction_count": 3,
-        "sha256": "3647bb341a256b321448b0f877d116cec98fb85e5131891a853d24bb37930cf8",
+        "sha256": "95b17e2c85eae98661ef464e712b648df8831b7c964f2540cdcdca77a50afdcd",
         "symbol": "DIA",
         "year": 2015
       },
@@ -251,7 +251,7 @@
         "bytes": 36359,
         "path": "trade_market_reactions/dia/2016.json",
         "reaction_count": 3,
-        "sha256": "900add5907e94eead7c2dc419ea63a8fc78db04ee15aca2ed17a81f89baaf341",
+        "sha256": "3d3cf7326b8347af1a3a5899771b77933df827f2cc697c253646700934a81c21",
         "symbol": "DIA",
         "year": 2016
       },
@@ -259,7 +259,7 @@
         "bytes": 12184,
         "path": "trade_market_reactions/dia/2017.json",
         "reaction_count": 1,
-        "sha256": "7283712a60cc92bebed38f63fa57c50f062d5419549e15f18434c767ff616842",
+        "sha256": "66e5dc585c1cff37f650b3e34a78aceab72ee2aceb57118cb5e8edb60b97dad1",
         "symbol": "DIA",
         "year": 2017
       },
@@ -267,7 +267,7 @@
         "bytes": 108561,
         "path": "trade_market_reactions/dia/2018.json",
         "reaction_count": 9,
-        "sha256": "58a3070fc3c1c6c74c637868afeb3b6fbc8708335fd1702a694e12675278c2c7",
+        "sha256": "4c366f16b02d992555e380ad6213956e5a899d225c0cb1f906a203797e01ecaa",
         "symbol": "DIA",
         "year": 2018
       },
@@ -275,7 +275,7 @@
         "bytes": 60377,
         "path": "trade_market_reactions/dia/2019.json",
         "reaction_count": 5,
-        "sha256": "b02de1422a4d84bf375f02b053d603b5ea0ee1bc66753ac784b9828e8fd33807",
+        "sha256": "3897c23beaf3346be33ad75d0bb09436c0d3415e8822109594d57e1de73d602d",
         "symbol": "DIA",
         "year": 2019
       },
@@ -283,7 +283,7 @@
         "bytes": 241539,
         "path": "trade_market_reactions/dia/2020.json",
         "reaction_count": 20,
-        "sha256": "e907d99be261bd3bb670111be3437cb8b0fc57f57498278f59514723ca9cd163",
+        "sha256": "f603416dae84e55b6b349fb6b413dfabc7c5087ecc1d3181335640bf00e5d500",
         "symbol": "DIA",
         "year": 2020
       },
@@ -291,7 +291,7 @@
         "bytes": 24076,
         "path": "trade_market_reactions/dia/2025.json",
         "reaction_count": 2,
-        "sha256": "f7786e963b62ad87fb3783f753006de2bfab861b5a92262d7fbe3caba19d4260",
+        "sha256": "a878ce8c729e06d19c40aad9007be522b5b1ed46d9a3ecd7a3ef02f87b2183ef",
         "symbol": "DIA",
         "year": 2025
       },
@@ -299,7 +299,7 @@
         "bytes": 12165,
         "path": "trade_market_reactions/dia/2026.json",
         "reaction_count": 1,
-        "sha256": "9c5109db20dfc11eee1ca72c8b7d21d4d182fb34682aa777e891a8b1dc535100",
+        "sha256": "f2460475884c11c8d6bd45134ac15380c1c5d48196ccab933f10f3ce9ba08384",
         "symbol": "DIA",
         "year": 2026
       },
@@ -307,7 +307,7 @@
         "bytes": 60248,
         "path": "trade_market_reactions/googl/2014.json",
         "reaction_count": 5,
-        "sha256": "2e4ef7cf63bb035c3d6bd141959e17fe25626dfa3d0b6f1d50f67c703841ef85",
+        "sha256": "90307c131a90e18380d8c89b9854feb9342d93f0aae0b2acf1f149d423c31092",
         "symbol": "GOOGL",
         "year": 2014
       },
@@ -315,7 +315,7 @@
         "bytes": 36235,
         "path": "trade_market_reactions/googl/2016.json",
         "reaction_count": 3,
-        "sha256": "102f554f5a2856991af95298ea91fe761d41c908aeae5468236a17baa85efbd9",
+        "sha256": "05c161a78490cb41ce5e88e7f2f055a4e2a8e9d2f3d7211f02fb5e35cf08b9fb",
         "symbol": "GOOGL",
         "year": 2016
       },
@@ -323,7 +323,7 @@
         "bytes": 24181,
         "path": "trade_market_reactions/googl/2017.json",
         "reaction_count": 2,
-        "sha256": "ffbbda7e1784e1cd52bc64f4b4d744fa781e0b64632c0660e79ca7b473d91da9",
+        "sha256": "29335a61108fe75e6596e76729347b389a5d81a95056af73634d551d900cec41",
         "symbol": "GOOGL",
         "year": 2017
       },
@@ -331,7 +331,7 @@
         "bytes": 24239,
         "path": "trade_market_reactions/googl/2018.json",
         "reaction_count": 2,
-        "sha256": "d408c669d76aef180abe2017c4808cc61f0bde55356724cb57631f7f3ca1e240",
+        "sha256": "ea6e94a03ae3223d5fa78a5e1acf50ed72ad62d66049adfd3dc28554c8586695",
         "symbol": "GOOGL",
         "year": 2018
       },
@@ -339,7 +339,7 @@
         "bytes": 12137,
         "path": "trade_market_reactions/googl/2019.json",
         "reaction_count": 1,
-        "sha256": "d7b13fdf0a9b72fc008eb31396d3359b8e5bb1daf182a077bd48c6199731883d",
+        "sha256": "8c74211ed1bd4808b6979b8c1238d9b2d9ae4eb46b445d706033fba619260260",
         "symbol": "GOOGL",
         "year": 2019
       },
@@ -347,7 +347,7 @@
         "bytes": 48268,
         "path": "trade_market_reactions/googl/2020.json",
         "reaction_count": 4,
-        "sha256": "8bef1126129eb5121a2f19b8b76cd11f3bcc9d01995b3be6e25c7f03269dc73c",
+        "sha256": "dbc4fcfebd6bae8b8f66956dc026069c670320c9520702a30a7371df10f78fae",
         "symbol": "GOOGL",
         "year": 2020
       },
@@ -355,7 +355,7 @@
         "bytes": 24308,
         "path": "trade_market_reactions/googl/2021.json",
         "reaction_count": 2,
-        "sha256": "db49f719921de95864dd7fcb1d4e81bf050877477cffe4e869b146cd3874fd8c",
+        "sha256": "05b61a5b2cb2591a1b82bacf15d85f466a9251f0b5e0c92d3b61cd49859e11da",
         "symbol": "GOOGL",
         "year": 2021
       },
@@ -363,7 +363,7 @@
         "bytes": 132414,
         "path": "trade_market_reactions/googl/2022.json",
         "reaction_count": 11,
-        "sha256": "5a36fe712c38adf7de4c4a40d7eab6ec8e3ec0bce2e3966495f5a5f8b390fc13",
+        "sha256": "f1a0be9cf0cc4b2c21f0591d2056f78ab91f27621b136c47349faeaf16cfe52c",
         "symbol": "GOOGL",
         "year": 2022
       },
@@ -371,7 +371,7 @@
         "bytes": 216943,
         "path": "trade_market_reactions/googl/2023.json",
         "reaction_count": 18,
-        "sha256": "eea1d65fdcbfb568bfccd996c9e0f969899429e4a53cacd133cc00283d1f4698",
+        "sha256": "9f64462404c234a0c432424c7f13f028a2814102edc5f2f73bb8d1f40df8a04a",
         "symbol": "GOOGL",
         "year": 2023
       },
@@ -379,7 +379,7 @@
         "bytes": 240892,
         "path": "trade_market_reactions/googl/2024.json",
         "reaction_count": 20,
-        "sha256": "e7ad4515c6999303ee171abbe2f639247a675d5d568f293d797d9c86728aaa01",
+        "sha256": "454aeb679ccc7a2c5746040727d1bdabe69efbad4caa90f964d2ed204e826c38",
         "symbol": "GOOGL",
         "year": 2024
       },
@@ -387,15 +387,15 @@
         "bytes": 1275096,
         "path": "trade_market_reactions/googl/2025.json",
         "reaction_count": 106,
-        "sha256": "17c9ff0e1e8eda95c6f9edf945203465a264e3f33483c73998a41424b9c144d3",
+        "sha256": "827f7932d78d8762fe0653572e0e03917e31be0f60248d5c5c374ffdd8857656",
         "symbol": "GOOGL",
         "year": 2025
       },
       "GOOGL:2026": {
-        "bytes": 224025,
+        "bytes": 224884,
         "path": "trade_market_reactions/googl/2026.json",
         "reaction_count": 20,
-        "sha256": "51fc99ba4ff334dcb499bb4fcb0527990b806c22f8967c2d42cd5e155bbb7315",
+        "sha256": "42f5930f0c15143569955ee6016933c99f618ca4faf2a3c40afe5297d83cc3c0",
         "symbol": "GOOGL",
         "year": 2026
       },
@@ -403,7 +403,7 @@
         "bytes": 12083,
         "path": "trade_market_reactions/iwm/2015.json",
         "reaction_count": 1,
-        "sha256": "91d034d09f783543dd99c184b27868d7d5f019d89d261f922be3083af9735d30",
+        "sha256": "4024675227c44b689eee06f8d8383b4cd26b052f41de2f9159c7f3355c659b19",
         "symbol": "IWM",
         "year": 2015
       },
@@ -411,7 +411,7 @@
         "bytes": 36046,
         "path": "trade_market_reactions/iwm/2016.json",
         "reaction_count": 3,
-        "sha256": "f1942a245578878a7efc8677f03afefef49e07329ccc8fba4864f627c93555a2",
+        "sha256": "03b9fc48f1ec1c3ff5d19f97eb8f07d0aa90f11475184ea6db35dd6e9370821d",
         "symbol": "IWM",
         "year": 2016
       },
@@ -419,7 +419,7 @@
         "bytes": 36069,
         "path": "trade_market_reactions/iwm/2018.json",
         "reaction_count": 3,
-        "sha256": "cc4bfe38634823b7fb2c2972e7000aaef034e16606662dfc9d2da41807d03a5c",
+        "sha256": "585f49f1840d1b6ee5c6daadb62ee7bd962547b5fa52c24fee32b8c7953f94dd",
         "symbol": "IWM",
         "year": 2018
       },
@@ -427,7 +427,7 @@
         "bytes": 60182,
         "path": "trade_market_reactions/iwm/2019.json",
         "reaction_count": 5,
-        "sha256": "30098f38dfd089a014889e84c900349b7f537b9c3f454c8ded541dd59b4a32e5",
+        "sha256": "68556da63251cee2dc590719cdcf8272050e3347b24ec6b51ca82ee14a0c5a7a",
         "symbol": "IWM",
         "year": 2019
       },
@@ -435,7 +435,7 @@
         "bytes": 72174,
         "path": "trade_market_reactions/iwm/2020.json",
         "reaction_count": 6,
-        "sha256": "4d47ae7ac53dbdf67effa845e96800fc7ce2e5519f693201a4d40b3c183b3fd3",
+        "sha256": "9bf3b43151d3c276bb2c02aad3b654e9268a87911c003d697f86642e9500ecd1",
         "symbol": "IWM",
         "year": 2020
       },
@@ -443,7 +443,7 @@
         "bytes": 12088,
         "path": "trade_market_reactions/iwm/2022.json",
         "reaction_count": 1,
-        "sha256": "726df719a84788c1637db109fcb3b3be1fdb651a39e9b9da4e78164fcc67fb7d",
+        "sha256": "294de3f27640a1c97f01e81f0324ece8b5ff29cde5afe37381aa4e381375944c",
         "symbol": "IWM",
         "year": 2022
       },
@@ -451,7 +451,7 @@
         "bytes": 12131,
         "path": "trade_market_reactions/iwm/2024.json",
         "reaction_count": 1,
-        "sha256": "76030d69abf249d32bcf03d358a7f2e736ab2ccf1804c685784304f9f3918fd4",
+        "sha256": "d677eece174d9f011701dcce1d775551cdc3d06ead0652a45abd2e02f2633912",
         "symbol": "IWM",
         "year": 2024
       },
@@ -459,7 +459,7 @@
         "bytes": 36112,
         "path": "trade_market_reactions/iwm/2025.json",
         "reaction_count": 3,
-        "sha256": "d1f3d9f552cc1f055311bc6ecd7af1ef0b8f097847c02bc12b6c4c7cf235fd4c",
+        "sha256": "6409c57ea81b97a0dfa9023859936e3f2c98035b6740622603d2013b912fc2b9",
         "symbol": "IWM",
         "year": 2025
       },
@@ -467,7 +467,7 @@
         "bytes": 35997,
         "path": "trade_market_reactions/iwm/2026.json",
         "reaction_count": 3,
-        "sha256": "6a489c1b7fa9dd3ce0c356ac8435c9b8aa71445f45ce08edf748509ba8cb2748",
+        "sha256": "4586a958aa3ebe4d69a517ed6a3fe38d923fcadcde3215f219f9e7c00040724a",
         "symbol": "IWM",
         "year": 2026
       },
@@ -475,7 +475,7 @@
         "bytes": 36036,
         "path": "trade_market_reactions/jnj/2014.json",
         "reaction_count": 3,
-        "sha256": "1d34418034f837d48b8b36fd1e5eb183dffbb7405923667aa6b35cb5eb172374",
+        "sha256": "1d95b03454c7f16af27db485facb2578b67d60eec31d00b191114b4ba582cc78",
         "symbol": "JNJ",
         "year": 2014
       },
@@ -483,7 +483,7 @@
         "bytes": 431007,
         "path": "trade_market_reactions/jnj/2015.json",
         "reaction_count": 36,
-        "sha256": "1ee86d2b85f392dd3b27fe0bf7e4f5de6ef1bc43547fc7e8bf2764e815250db6",
+        "sha256": "2e43f51aac31c20e27e6910c98d31560d4d2824c30ddf7ae6daea4f1a2afd8e3",
         "symbol": "JNJ",
         "year": 2015
       },
@@ -491,7 +491,7 @@
         "bytes": 191695,
         "path": "trade_market_reactions/jnj/2016.json",
         "reaction_count": 16,
-        "sha256": "2095fc3d44cf1a13e0c2fc507274cce8355b5fd10b8b5a726e017149ce3e315e",
+        "sha256": "deadae0b43f6913d650e0ac5a9d6bd1a9c4c76158a866c7e22b3ab948bed5d23",
         "symbol": "JNJ",
         "year": 2016
       },
@@ -499,7 +499,7 @@
         "bytes": 347773,
         "path": "trade_market_reactions/jnj/2017.json",
         "reaction_count": 29,
-        "sha256": "831e2658af34dd07da7d44c51700e1fc76c99688b0c9a21dbff5f7df79949a77",
+        "sha256": "cdfab9528c62007ed929db2d4af4a0304759abd45e23d0152db05ed80608726a",
         "symbol": "JNJ",
         "year": 2017
       },
@@ -507,7 +507,7 @@
         "bytes": 287888,
         "path": "trade_market_reactions/jnj/2018.json",
         "reaction_count": 24,
-        "sha256": "508ede74fb47c2ea7fab6288393ca9017fd25f48b2df85770b3e558ecaf8a7a9",
+        "sha256": "517b0b7e8d8b4ddeaf1c9ab9461aeee6d5ff558d44dc7a41c109ef5fa88aee81",
         "symbol": "JNJ",
         "year": 2018
       },
@@ -515,7 +515,7 @@
         "bytes": 324107,
         "path": "trade_market_reactions/jnj/2019.json",
         "reaction_count": 27,
-        "sha256": "1546f0c7dc5a3a9d4f3780aa9ea3e0ca193bde385ecce89ae2a9abc6f5e437bc",
+        "sha256": "fddb45149a660565e55020d772e6545d08b4e60bb43733ccb5ffc04894ad79ef",
         "symbol": "JNJ",
         "year": 2019
       },
@@ -523,7 +523,7 @@
         "bytes": 300057,
         "path": "trade_market_reactions/jnj/2020.json",
         "reaction_count": 25,
-        "sha256": "cd460cea1549a95c53ebd2a246912dbac713b250d01f96e989b714974b104896",
+        "sha256": "88b665b0debbd66fd8ac3b1f79b1feed9b538efba9903dffa60d4fbc066f8c7b",
         "symbol": "JNJ",
         "year": 2020
       },
@@ -531,7 +531,7 @@
         "bytes": 252607,
         "path": "trade_market_reactions/jnj/2021.json",
         "reaction_count": 21,
-        "sha256": "038a2d30f393bb00dc2301f30d937db8f71dbdc2c0ea779fcb697d0e2de564c3",
+        "sha256": "280416a7acd5d6349f68d187217ebaaf3fba4f7fa33d167f61ce6ca277b4216c",
         "symbol": "JNJ",
         "year": 2021
       },
@@ -539,7 +539,7 @@
         "bytes": 299867,
         "path": "trade_market_reactions/jnj/2022.json",
         "reaction_count": 25,
-        "sha256": "80471e05bb582db156249eb45c8bfb3ac15d5419f96b6ca2189f9a12428e1630",
+        "sha256": "77a5fcffffb4eaee9807c7e5aa993306901c6959125d47c992986e2f40ba0552",
         "symbol": "JNJ",
         "year": 2022
       },
@@ -547,7 +547,7 @@
         "bytes": 348056,
         "path": "trade_market_reactions/jnj/2023.json",
         "reaction_count": 29,
-        "sha256": "0d8691c543d6709b51d9348880f5cca91bd1ddce753430053d84fe7ddbb3190d",
+        "sha256": "bbb0c8584e9865c9e5599a9d6f07d39fa38224f7c28e04d3c75587223a305c66",
         "symbol": "JNJ",
         "year": 2023
       },
@@ -555,7 +555,7 @@
         "bytes": 372031,
         "path": "trade_market_reactions/jnj/2024.json",
         "reaction_count": 31,
-        "sha256": "9746115f5ab64a7bdd0eb89384ad8221e7ff8641073b84aef4a9f629ca484362",
+        "sha256": "1422e5b69820aa1b329e21c57ba140fb6f6ed7b1d812ca012fbb6a5ab1f543f1",
         "symbol": "JNJ",
         "year": 2024
       },
@@ -563,7 +563,7 @@
         "bytes": 766918,
         "path": "trade_market_reactions/jnj/2025.json",
         "reaction_count": 64,
-        "sha256": "0ca3d89f7da28a950fa4ba802159cb2a42a62a4053e11a8a01dfbb80bf269d9b",
+        "sha256": "031866172a58e836b63f50c5381b01574c6b1b6f7349545afc7fa974b10802a7",
         "symbol": "JNJ",
         "year": 2025
       },
@@ -571,7 +571,7 @@
         "bytes": 153346,
         "path": "trade_market_reactions/jnj/2026.json",
         "reaction_count": 13,
-        "sha256": "13dd28910f38c7ff7b7514493faf3214be3dbb4bf1c4ef676306844c3d31f386",
+        "sha256": "4a0e3942078b931505d87b195797ce3d40696f950881e4b4db48d8be9dcf62d1",
         "symbol": "JNJ",
         "year": 2026
       },
@@ -579,7 +579,7 @@
         "bytes": 120400,
         "path": "trade_market_reactions/jpm/2014.json",
         "reaction_count": 10,
-        "sha256": "b597de15c4f74d2f281e3aa8e337120337ca511c39ed3ddd069c328aeafb3081",
+        "sha256": "0bdf21e8ce568efcaf84b38cee8c25bf5d9eab0991afab66fcbfdb0c8f4c586e",
         "symbol": "JPM",
         "year": 2014
       },
@@ -587,7 +587,7 @@
         "bytes": 167614,
         "path": "trade_market_reactions/jpm/2015.json",
         "reaction_count": 14,
-        "sha256": "6bfd23eedb8693d8f5ebb9b9655c4900f39fe3fd35a9c2ff8081d8cb53d6d14b",
+        "sha256": "11f1e3f8e99d422b7ff7ec5f307da07bae081b530b3ee8e78e203dbb429207a2",
         "symbol": "JPM",
         "year": 2015
       },
@@ -595,7 +595,7 @@
         "bytes": 167905,
         "path": "trade_market_reactions/jpm/2016.json",
         "reaction_count": 14,
-        "sha256": "b6eae3f40860d37420319c7f5acd88391f4cf4f9dfcd0a5e67f5229177a047ef",
+        "sha256": "d1423e47073d20d3903e3cab3fad115cfa7e11d086c0a4344042eb01135dffee",
         "symbol": "JPM",
         "year": 2016
       },
@@ -603,7 +603,7 @@
         "bytes": 287862,
         "path": "trade_market_reactions/jpm/2017.json",
         "reaction_count": 24,
-        "sha256": "8b8ee44cad1522ab0cadb47c6696767c9e178fa6b13aca7629acd3575a4f7eb4",
+        "sha256": "025a3d0ee7eddc387cd2b21aec522b5cc34eef2dea6151a67af9f2a4ee58fbde",
         "symbol": "JPM",
         "year": 2017
       },
@@ -611,7 +611,7 @@
         "bytes": 359669,
         "path": "trade_market_reactions/jpm/2018.json",
         "reaction_count": 30,
-        "sha256": "72451576b00a5443196c67edb3d7c52a8a422cc6a0face59c3ebd30d634d8fe7",
+        "sha256": "67b6a026d112e69db68647bb8605f82da8b9c2882c0bca4162abe20c5223e395",
         "symbol": "JPM",
         "year": 2018
       },
@@ -619,7 +619,7 @@
         "bytes": 227776,
         "path": "trade_market_reactions/jpm/2019.json",
         "reaction_count": 19,
-        "sha256": "85ba613d8c405b49cb024e1027720563a6fd2698cc5d3086ce6fc7d2cb508856",
+        "sha256": "f50cd95e88f4e8680374856b9b90e982e5d6174a4d0794d38b1aeed8382d2c5a",
         "symbol": "JPM",
         "year": 2019
       },
@@ -627,7 +627,7 @@
         "bytes": 492057,
         "path": "trade_market_reactions/jpm/2020.json",
         "reaction_count": 41,
-        "sha256": "638f3547cf1977d1480cf75d139517ed1205d73f729f8f8b1b875cdac0b6203d",
+        "sha256": "3ed8200d486d7b4ee5177f3101f9e3ebfc1ed6b962588a70f4aa441788fc2b1e",
         "symbol": "JPM",
         "year": 2020
       },
@@ -635,7 +635,7 @@
         "bytes": 240436,
         "path": "trade_market_reactions/jpm/2021.json",
         "reaction_count": 20,
-        "sha256": "16da0c5ab786373f87381f7eaaf078f6d7a68b90696e1132543978e9cd05faa7",
+        "sha256": "d755e4de6901334da10d3fbfe3f5db8d2fcd77cc2ec71f3794ba27efc18ad62a",
         "symbol": "JPM",
         "year": 2021
       },
@@ -643,7 +643,7 @@
         "bytes": 239719,
         "path": "trade_market_reactions/jpm/2022.json",
         "reaction_count": 20,
-        "sha256": "95207f5a18e12ea094f0b8c5bf6f9727e5480d0464ed7a03f7c4ca653631ed9f",
+        "sha256": "7510ae35118be68028de9fd6638aa746da40665b22d9bb7d4989d4bcfc4d1a8c",
         "symbol": "JPM",
         "year": 2022
       },
@@ -651,7 +651,7 @@
         "bytes": 335516,
         "path": "trade_market_reactions/jpm/2023.json",
         "reaction_count": 28,
-        "sha256": "5ba6d6296399e31d4597473a63b0ab17f1bcdf1e5270d839573987c35da6fe6d",
+        "sha256": "7ec5526567ad56611960e26042ecdd935203a92458ccf3c7c04fbd35bd77de01",
         "symbol": "JPM",
         "year": 2023
       },
@@ -659,7 +659,7 @@
         "bytes": 251599,
         "path": "trade_market_reactions/jpm/2024.json",
         "reaction_count": 21,
-        "sha256": "82d8f68b32f539213206f4f73309ae6d759963938dace5edd7ffabb215a35934",
+        "sha256": "e7128b00adabdd1692d76ce43c385e26450a8e7dc424b448c4c5fe94c29d467b",
         "symbol": "JPM",
         "year": 2024
       },
@@ -667,7 +667,7 @@
         "bytes": 957877,
         "path": "trade_market_reactions/jpm/2025.json",
         "reaction_count": 80,
-        "sha256": "c4c07c46c873346731313d5e05686cc3af525e948e937ad57bb6e694de31bf6d",
+        "sha256": "5262ec5348dace2e77b6499171346a4f6e1fbe0c372287f82008c05987e67b28",
         "symbol": "JPM",
         "year": 2025
       },
@@ -675,7 +675,7 @@
         "bytes": 106956,
         "path": "trade_market_reactions/jpm/2026.json",
         "reaction_count": 9,
-        "sha256": "6b677e7c02af6d134a8344ec2af8a82cca46c54c06008bfca81b3d0bd8f52551",
+        "sha256": "3201f11d729e5038fa33ca22f0d0829bc8e4d9c3abde5c55115a0c34588699ae",
         "symbol": "JPM",
         "year": 2026
       },
@@ -683,7 +683,7 @@
         "bytes": 195660,
         "path": "trade_market_reactions/meta/2014.json",
         "reaction_count": 16,
-        "sha256": "a427223919466d030d78fedf8635e2e41953c6ee8ea4a849957b642325affb9b",
+        "sha256": "697277db71ebf73b3a8b19dda53fe8bd1da1da56070d577058f81dea5253d1c0",
         "symbol": "META",
         "year": 2014
       },
@@ -691,7 +691,7 @@
         "bytes": 61447,
         "path": "trade_market_reactions/meta/2015.json",
         "reaction_count": 5,
-        "sha256": "09f348b8449749102b18805596bc6f1f222abe5e788369c11618639e31813f3b",
+        "sha256": "61247761eca862d2eaea7be30d989c8bbdc8f6b42a1a641abc97534e556a23a6",
         "symbol": "META",
         "year": 2015
       },
@@ -699,7 +699,7 @@
         "bytes": 269351,
         "path": "trade_market_reactions/meta/2016.json",
         "reaction_count": 22,
-        "sha256": "0e1f0196ed08d9c7cce3de2a936c98804ebd07ac501d21d8c65eb9f113033d45",
+        "sha256": "4e19c6ec75312418b25c4199fb035440f04b2ad9636ec525c4f60c04bdc2c307",
         "symbol": "META",
         "year": 2016
       },
@@ -707,7 +707,7 @@
         "bytes": 183913,
         "path": "trade_market_reactions/meta/2017.json",
         "reaction_count": 15,
-        "sha256": "819205a2bfdccf95e7b9a92b68c6e015486afcfbbcf790de3efa2d7b7dd60964",
+        "sha256": "fd170565cf03f1b86dfb72f3fede2832ee8ab77e075d59c3cb3bfbd1e63dd4d5",
         "symbol": "META",
         "year": 2017
       },
@@ -715,7 +715,7 @@
         "bytes": 355654,
         "path": "trade_market_reactions/meta/2018.json",
         "reaction_count": 29,
-        "sha256": "8341b7c087dd86d18f9e5dd82b2572bdacaec4221a9e3455a8c51cf6df512b62",
+        "sha256": "816ca008facf3bae15a24ebb878abab96d03dad29a2c8b45399c499db2e0a08f",
         "symbol": "META",
         "year": 2018
       },
@@ -723,7 +723,7 @@
         "bytes": 257232,
         "path": "trade_market_reactions/meta/2019.json",
         "reaction_count": 21,
-        "sha256": "ddc794cc51743b725839d0a721e201615217c9ba37a046b3440b33c5912028a1",
+        "sha256": "7e85011d45f6473b0ca2f7fb723eb49b448a0edc3597fd24d84997e623cb2e88",
         "symbol": "META",
         "year": 2019
       },
@@ -731,7 +731,7 @@
         "bytes": 453317,
         "path": "trade_market_reactions/meta/2020.json",
         "reaction_count": 37,
-        "sha256": "eb0134dcf817e6de216b28dc657f7038fcc39018ff6de6ad7f248cf8e12f4895",
+        "sha256": "3121af6fae3d71ead8b9cd7576cfed50a7e5500be2a15c90b0e22eec37f136c2",
         "symbol": "META",
         "year": 2020
       },
@@ -739,7 +739,7 @@
         "bytes": 416931,
         "path": "trade_market_reactions/meta/2021.json",
         "reaction_count": 34,
-        "sha256": "7d970f6a46aab09cb11f54687d4b14710f5756f460c9790381a977b5b1b843d1",
+        "sha256": "d913ef6902108f08f5e55c0b75ffe99ec44916a2c3fa5447a1cd8109c3a3f746",
         "symbol": "META",
         "year": 2021
       },
@@ -747,7 +747,7 @@
         "bytes": 330697,
         "path": "trade_market_reactions/meta/2022.json",
         "reaction_count": 27,
-        "sha256": "fbb95ac4ad0c36af38b11f57636b9dbe2ec24dc10c2003456d7beac49508f659",
+        "sha256": "a9be98988556fe46210540cd3a9079b5de3fa49fc0629c1a68065d8132936a2e",
         "symbol": "META",
         "year": 2022
       },
@@ -755,7 +755,7 @@
         "bytes": 244814,
         "path": "trade_market_reactions/meta/2023.json",
         "reaction_count": 20,
-        "sha256": "785b686d1dfeffdb16f1d2fd09e24b8cf7116f05db74682bcd118268cee159ef",
+        "sha256": "7e392f0a536640d71c99ca7be7a39589a357649b9e06705a183a83a90b3298ec",
         "symbol": "META",
         "year": 2023
       },
@@ -763,7 +763,7 @@
         "bytes": 244800,
         "path": "trade_market_reactions/meta/2024.json",
         "reaction_count": 20,
-        "sha256": "6f8fe66fd3bb48c69993ac2d2fe775fc15336a47248317768250243831cc3259",
+        "sha256": "13b84c661b39bdd3ab1eacb15356e6522a48e8531f514b55308f49476889da56",
         "symbol": "META",
         "year": 2024
       },
@@ -771,7 +771,7 @@
         "bytes": 1222643,
         "path": "trade_market_reactions/meta/2025.json",
         "reaction_count": 100,
-        "sha256": "95ca100466873f91b0ec6fd9076020d7c3d464aba6e63071f463e24788aac41c",
+        "sha256": "04b7d5bb0c9eae28bf9cd9afb34d942d852b5c92ad0043d7f5737eafc875638a",
         "symbol": "META",
         "year": 2025
       },
@@ -779,7 +779,7 @@
         "bytes": 180653,
         "path": "trade_market_reactions/meta/2026.json",
         "reaction_count": 15,
-        "sha256": "dcf2e424df26b22f60d966625bda6ad15909d566b4b43870d86366bc890e4e25",
+        "sha256": "0669eb536dd985f5738e037f26ef86c37576648e7976a05caeebfd30b23405a7",
         "symbol": "META",
         "year": 2026
       },
@@ -787,7 +787,7 @@
         "bytes": 84311,
         "path": "trade_market_reactions/msft/2014.json",
         "reaction_count": 7,
-        "sha256": "69a1546ee843477844c50d1c64873c20f523884912090e62dbdca078525868b1",
+        "sha256": "374d1dcc562e85ea7409c5f1e575ed5667ea8dcdb91de684abf23da2c7159b23",
         "symbol": "MSFT",
         "year": 2014
       },
@@ -795,7 +795,7 @@
         "bytes": 372191,
         "path": "trade_market_reactions/msft/2015.json",
         "reaction_count": 31,
-        "sha256": "66a7e3aedc3407d68ae69fa45bab302aaa78935ddb3d210d712afae5e2ba3bd5",
+        "sha256": "83bfee03bb5852b6acde6c0731af3c5833a7f55915be2d55b586aef0d3e622dc",
         "symbol": "MSFT",
         "year": 2015
       },
@@ -803,7 +803,7 @@
         "bytes": 876697,
         "path": "trade_market_reactions/msft/2016.json",
         "reaction_count": 73,
-        "sha256": "8b57ab9348e649bceef0e39f355dfc3d9c30e8d3fda1970f1d9340f58bc6d510",
+        "sha256": "679453b35a3ceabcb3fbcb4f1c954c02d980e687c5c8e3cdf1f443bf1732b8cf",
         "symbol": "MSFT",
         "year": 2016
       },
@@ -811,7 +811,7 @@
         "bytes": 467886,
         "path": "trade_market_reactions/msft/2017.json",
         "reaction_count": 39,
-        "sha256": "df0138c721456bfe75cfb1422ce05ef985e1e2d2386971a641f391c090878c33",
+        "sha256": "794866b577be7d0b32e3f80bfe8659c55076705a85cc7656f001a8fa57616f09",
         "symbol": "MSFT",
         "year": 2017
       },
@@ -819,7 +819,7 @@
         "bytes": 757374,
         "path": "trade_market_reactions/msft/2018.json",
         "reaction_count": 63,
-        "sha256": "88ae42382f303b6f3b89c8017e9ce0092399a65b64806db5503def6d0043bc16",
+        "sha256": "9a55439b0bb112ad80478e5ee59291fd9301c8532fd8dd6b7940ca1be3ded154",
         "symbol": "MSFT",
         "year": 2018
       },
@@ -827,7 +827,7 @@
         "bytes": 1144360,
         "path": "trade_market_reactions/msft/2019.json",
         "reaction_count": 95,
-        "sha256": "f451cc764aa05c2f42f9aafeaa7d11a5f66b696bf289b355abcb9ee2669b88e1",
+        "sha256": "ea16a6f83b2a0d4d47190fb00148733b0fcc80cf48b436a71a3100b4c42deefd",
         "symbol": "MSFT",
         "year": 2019
       },
@@ -835,7 +835,7 @@
         "bytes": 1675623,
         "path": "trade_market_reactions/msft/2020.json",
         "reaction_count": 139,
-        "sha256": "3da8d2f587418b70098ceedd25df8fad5946f6fda731ff666a39e2a06551b098",
+        "sha256": "9e0285b64e39291dcd7f50498a8e18a2105cff9a6aa4aed199cbb94f98237ee3",
         "symbol": "MSFT",
         "year": 2020
       },
@@ -843,7 +843,7 @@
         "bytes": 1336060,
         "path": "trade_market_reactions/msft/2021.json",
         "reaction_count": 111,
-        "sha256": "f8ada7bb8b6c683fd4e26fca2949adf93444283e339bd88564ccdb70ff5315e2",
+        "sha256": "9655c005e106ea22519ec9777aa9c5ac12020df8feeaa88c721ff5287d7b2fb3",
         "symbol": "MSFT",
         "year": 2021
       },
@@ -851,7 +851,7 @@
         "bytes": 696850,
         "path": "trade_market_reactions/msft/2022.json",
         "reaction_count": 58,
-        "sha256": "1dda1e2dc25a6af4cb888ee0ae4b689366a4001d83392f6feba2096f77618b07",
+        "sha256": "8bc1fda360d6dd3a33e161a649d40279cf5230ddad36f810056ce282cfa6fc22",
         "symbol": "MSFT",
         "year": 2022
       },
@@ -859,7 +859,7 @@
         "bytes": 1043418,
         "path": "trade_market_reactions/msft/2023.json",
         "reaction_count": 87,
-        "sha256": "ba94cc662f8c5e1beea38fd6b89c55a06e3834d32c19d1d91cda2bfe9619abc0",
+        "sha256": "01e938250096360c30ced81c76374c490b8cb69f3e17555d8db6ad9ccebae53c",
         "symbol": "MSFT",
         "year": 2023
       },
@@ -867,7 +867,7 @@
         "bytes": 1057486,
         "path": "trade_market_reactions/msft/2024.json",
         "reaction_count": 88,
-        "sha256": "b6345e389bd0f09c3b84cedb596ce108f0f660543205592a6bcc5732b1c27350",
+        "sha256": "2cea47bb91c41c163e75304e29b4d4cf2ee97c3052dfbf19c0b7f703449bf7a3",
         "symbol": "MSFT",
         "year": 2024
       },
@@ -875,7 +875,7 @@
         "bytes": 1803081,
         "path": "trade_market_reactions/msft/2025.json",
         "reaction_count": 150,
-        "sha256": "a84573f073295ab6883e3ebb7d38c2b900587c7283087354a3594ee9be93f1ec",
+        "sha256": "0b380632dc709d3e2d7a3e5d29d2f23966263327776829f7a69e0dd2ef36272b",
         "symbol": "MSFT",
         "year": 2025
       },
@@ -883,7 +883,7 @@
         "bytes": 588065,
         "path": "trade_market_reactions/msft/2026.json",
         "reaction_count": 50,
-        "sha256": "d40f7608d21fc2b0fb4112f67bf8396deaba5830bd927e8e978f66c34effadc8",
+        "sha256": "8de1bfd64e4e32dc2971f255ad98a3a023cbc449d483048856cf6f572928ba76",
         "symbol": "MSFT",
         "year": 2026
       },
@@ -891,7 +891,7 @@
         "bytes": 108017,
         "path": "trade_market_reactions/nvda/2016.json",
         "reaction_count": 9,
-        "sha256": "633f3c2e1d35ac8a694760db04de9bf5bb981817796e68b20744ee8c6d88f135",
+        "sha256": "47d871f00738809c18ff0c0e966896159eeba57a0039347d4cff32f47ecd2da2",
         "symbol": "NVDA",
         "year": 2016
       },
@@ -899,7 +899,7 @@
         "bytes": 95973,
         "path": "trade_market_reactions/nvda/2017.json",
         "reaction_count": 8,
-        "sha256": "9c1b158aa33313bc9f849c6a383f45bdb6b1b9d27c7c034799b9ed12c7838dda",
+        "sha256": "2cd55b86e531c3f05336d13c33cb466b7fa922b07352a69b0740eaff8d39b661",
         "symbol": "NVDA",
         "year": 2017
       },
@@ -907,7 +907,7 @@
         "bytes": 96029,
         "path": "trade_market_reactions/nvda/2018.json",
         "reaction_count": 8,
-        "sha256": "bb8e8a12843817fc39f659fbee7675bbe884ad339fd0152443b937cbbaee7886",
+        "sha256": "d1af1a550b05b86d232e328788e421b585c1f57a678e75f5a67832246550560d",
         "symbol": "NVDA",
         "year": 2018
       },
@@ -915,7 +915,7 @@
         "bytes": 203701,
         "path": "trade_market_reactions/nvda/2019.json",
         "reaction_count": 17,
-        "sha256": "142592b894c42bce41d13afb2abfa68d359893f10eaca959e4e2fcbc6249907b",
+        "sha256": "5e4d8da86350f35a2d1589b253650aeaaab6f07d3b42904c4b928e6fae9ff5d3",
         "symbol": "NVDA",
         "year": 2019
       },
@@ -923,7 +923,7 @@
         "bytes": 671451,
         "path": "trade_market_reactions/nvda/2020.json",
         "reaction_count": 56,
-        "sha256": "fe5668b4259e4f94ed1e820f1af80bd2d42bbe491959b1eeb9228708e3a59818",
+        "sha256": "84709ddf927016f9c90c30a68033c7147898ea33e4a1f116fb16eacdab271880",
         "symbol": "NVDA",
         "year": 2020
       },
@@ -931,7 +931,7 @@
         "bytes": 372383,
         "path": "trade_market_reactions/nvda/2021.json",
         "reaction_count": 31,
-        "sha256": "e11541e180c656cdf97829a52f7bcba12ade0a6deeea0407839a025ba5b8dd04",
+        "sha256": "08e729a9368e31b8c721cb10638ae4a7b037b73b1d839722dc2130acb1d9613d",
         "symbol": "NVDA",
         "year": 2021
       },
@@ -939,7 +939,7 @@
         "bytes": 323590,
         "path": "trade_market_reactions/nvda/2022.json",
         "reaction_count": 27,
-        "sha256": "8221071d79283b86ec78a66feff72ccd03627af2085918d65b7d5eb105eebc59",
+        "sha256": "ec3887726d5bef5f4f2013a063a71a19ae2179e698dc1cff0fdf7a4aea729dcf",
         "symbol": "NVDA",
         "year": 2022
       },
@@ -947,7 +947,7 @@
         "bytes": 526497,
         "path": "trade_market_reactions/nvda/2023.json",
         "reaction_count": 44,
-        "sha256": "85e2835228dc31dc9f0d74d43c153b8ab1aca355cc8e7a9cd1eb1bede3b8f8c6",
+        "sha256": "6828ad0e595721b421b13734251e254209e54e859c83022aaef3ca520bc7ef68",
         "symbol": "NVDA",
         "year": 2023
       },
@@ -955,7 +955,7 @@
         "bytes": 684603,
         "path": "trade_market_reactions/nvda/2024.json",
         "reaction_count": 57,
-        "sha256": "0b7bda79f958f5a5fb0bc8b7b10dbc79baa4aec24a0649db3985e5182b80487d",
+        "sha256": "42a1754183e37e12df8939cfe0694b53d3b7d15d8789561ad2e9e594397cee93",
         "symbol": "NVDA",
         "year": 2024
       },
@@ -963,15 +963,15 @@
         "bytes": 1380982,
         "path": "trade_market_reactions/nvda/2025.json",
         "reaction_count": 115,
-        "sha256": "ccd05060af20f4e06ef85e70c032cdb0e56da78d1a29577bb1392b5d56b1466a",
+        "sha256": "9bc4074789081d780f50f83cc3d6ae0ef1ae25600f3729da0b6f39dccfbb72b4",
         "symbol": "NVDA",
         "year": 2025
       },
       "NVDA:2026": {
-        "bytes": 343303,
+        "bytes": 352560,
         "path": "trade_market_reactions/nvda/2026.json",
-        "reaction_count": 29,
-        "sha256": "11d0bb177ab2f09d4855ebd32dceb46132a817cd19ebe6d3f98a1f2de8fe85fd",
+        "reaction_count": 30,
+        "sha256": "9f0abe349d8052f4b99fad9612d7d85585d543984a909ac1dea8b79d95f5397b",
         "symbol": "NVDA",
         "year": 2026
       },
@@ -979,7 +979,7 @@
         "bytes": 24019,
         "path": "trade_market_reactions/qqq/2014.json",
         "reaction_count": 2,
-        "sha256": "a0509382663529b17594d41f155b308c3f5383bfd9bd69571c636ff762d93c3a",
+        "sha256": "d26cb8e1217f3695d75e45b3d4d171c2a90996f2190e34d0d32e84547c15f1ca",
         "symbol": "QQQ",
         "year": 2014
       },
@@ -987,7 +987,7 @@
         "bytes": 47939,
         "path": "trade_market_reactions/qqq/2015.json",
         "reaction_count": 4,
-        "sha256": "401f23ac5ad8efae17c694194cdaf970659ca0e8ac45c6a146438f9f275ef690",
+        "sha256": "8f4ecdb8b05e676aaf2ebd500d49b67894850645e95553e324673a73808584b4",
         "symbol": "QQQ",
         "year": 2015
       },
@@ -995,7 +995,7 @@
         "bytes": 35931,
         "path": "trade_market_reactions/qqq/2016.json",
         "reaction_count": 3,
-        "sha256": "6c51d35154b7aad9709ffbf1cf86430c93bf5f328bbf3c08b7c61d1017604bd7",
+        "sha256": "f4f38bbff50c39a5be70aa20554d9f903a8f11bc6498531b8018d316ded9bbdb",
         "symbol": "QQQ",
         "year": 2016
       },
@@ -1003,7 +1003,7 @@
         "bytes": 12115,
         "path": "trade_market_reactions/qqq/2017.json",
         "reaction_count": 1,
-        "sha256": "21682c5aa5962811ea2adb078c57a47d359412ddee23907be47740cedad60262",
+        "sha256": "d32e4bc929089826f97ae361fbed6dae56b67fbe1f0dd8579a6efb2356846122",
         "symbol": "QQQ",
         "year": 2017
       },
@@ -1011,7 +1011,7 @@
         "bytes": 143875,
         "path": "trade_market_reactions/qqq/2018.json",
         "reaction_count": 12,
-        "sha256": "b851c799cd9658ca25bd93c59fc8c346402004f84c5246fd77728e51934f8462",
+        "sha256": "d2ffbc472aba38394d9838e6989384786bafb56a567fef9ce56db51b7af2291d",
         "symbol": "QQQ",
         "year": 2018
       },
@@ -1019,7 +1019,7 @@
         "bytes": 107926,
         "path": "trade_market_reactions/qqq/2019.json",
         "reaction_count": 9,
-        "sha256": "884e3fcabbe8b13eb20f1fe96c12d08a847cbee15ec9d4da4115fb8ed15d7e11",
+        "sha256": "d5330e286a75ebbbd86e1a41403185a54b0b5c8d209692494a1f9e8b51a1a315",
         "symbol": "QQQ",
         "year": 2019
       },
@@ -1027,7 +1027,7 @@
         "bytes": 36032,
         "path": "trade_market_reactions/qqq/2020.json",
         "reaction_count": 3,
-        "sha256": "8ef9817e0669bd017165e14b420a33c3870ca9eeba6a28182b5be2c3f2b14398",
+        "sha256": "c316d1282438ad4cfe5852763a586bc550ca15ca3709b4eb22ec4a53a92c7f37",
         "symbol": "QQQ",
         "year": 2020
       },
@@ -1035,7 +1035,7 @@
         "bytes": 24014,
         "path": "trade_market_reactions/qqq/2021.json",
         "reaction_count": 2,
-        "sha256": "91f3a1c1637f6d61038a1539c94b24a2b082613a3bda8d7a51baeab0bbca2b11",
+        "sha256": "a90105569bdef315614463a3fe647f81ea7a655506d5e0a5cd5c65bb370c68a8",
         "symbol": "QQQ",
         "year": 2021
       },
@@ -1043,7 +1043,7 @@
         "bytes": 24014,
         "path": "trade_market_reactions/qqq/2022.json",
         "reaction_count": 2,
-        "sha256": "523dc4c84a1516e4e5a713c4d4d076fbaa04d4cd28475036559d02d32b694def",
+        "sha256": "d0a5a42dd874efa15edde315b0a969eb776a7195bd3fe87e913affc7584416e9",
         "symbol": "QQQ",
         "year": 2022
       },
@@ -1051,7 +1051,7 @@
         "bytes": 47816,
         "path": "trade_market_reactions/qqq/2023.json",
         "reaction_count": 4,
-        "sha256": "a97e9f236980df15da0135d9a8631a7baf50727a3fffd5d3fb11045ac60dd157",
+        "sha256": "60eb7482574ff8cc6ae2ee6196163f6b544579d085cc2fe9b8cea04491873b28",
         "symbol": "QQQ",
         "year": 2023
       },
@@ -1059,7 +1059,7 @@
         "bytes": 12046,
         "path": "trade_market_reactions/qqq/2024.json",
         "reaction_count": 1,
-        "sha256": "cb893b3e1510ba9980bfd0c2d98cfac376b33450d8cdc47e4e6e65ea160c6279",
+        "sha256": "72e87f5b5a5b4325caaba099176aba7ce353872a408531c18a1ad9a341a67fc3",
         "symbol": "QQQ",
         "year": 2024
       },
@@ -1067,7 +1067,7 @@
         "bytes": 95519,
         "path": "trade_market_reactions/qqq/2025.json",
         "reaction_count": 8,
-        "sha256": "003b922eb431b4c772fcac900cd1af29c61c4f4141dfe9b25a180737b4702701",
+        "sha256": "341e67d393dd6a876caa43c05365b6cc903d3805b59635285c45cba412438aab",
         "symbol": "QQQ",
         "year": 2025
       },
@@ -1075,7 +1075,7 @@
         "bytes": 60039,
         "path": "trade_market_reactions/spy/2015.json",
         "reaction_count": 5,
-        "sha256": "54eabaa0b6a68aecf4e103c610ab7daf869402b6f01c97d737bc72b44cacc52b",
+        "sha256": "74f4bd4bb1c98adbdbcbe7338639508dca7a9cda6f882acc31431dd46f666037",
         "symbol": "SPY",
         "year": 2015
       },
@@ -1083,7 +1083,7 @@
         "bytes": 215839,
         "path": "trade_market_reactions/spy/2016.json",
         "reaction_count": 18,
-        "sha256": "a5ea7b94dfbc5aedb5dbd1a69f66923625522aae60ba6c4bee415a54aaf8aefd",
+        "sha256": "f0359215189c6473cbe57fe14d00defb8e75d89c9c5b0dc452de77e49d81afe0",
         "symbol": "SPY",
         "year": 2016
       },
@@ -1091,7 +1091,7 @@
         "bytes": 72102,
         "path": "trade_market_reactions/spy/2017.json",
         "reaction_count": 6,
-        "sha256": "f57d72a0ee2e335638dec5dbe95c6370c884f1795aac28356e7d018c9024f977",
+        "sha256": "7e39b34adc8120dd818ad4bd0b06f14c53ed10191e9fa1567386e0393b4e5ef0",
         "symbol": "SPY",
         "year": 2017
       },
@@ -1099,7 +1099,7 @@
         "bytes": 132023,
         "path": "trade_market_reactions/spy/2018.json",
         "reaction_count": 11,
-        "sha256": "b599abd799fc5d758a94c4918983a8ffda8cdc3581db608d9586d9f3e1ea6800",
+        "sha256": "74aadc695e9cb00e4a659a6317cb2f401b154887b600e7f2b5f53b1c18da7b9e",
         "symbol": "SPY",
         "year": 2018
       },
@@ -1107,7 +1107,7 @@
         "bytes": 155963,
         "path": "trade_market_reactions/spy/2019.json",
         "reaction_count": 13,
-        "sha256": "246c8b95d63912d403c95eb51fe18b166189d68ab4ee17929cd51bcf18b81dae",
+        "sha256": "48646b8936205fd8567e905725e8c106ab9fafd47b153c797e23d93af3b2971f",
         "symbol": "SPY",
         "year": 2019
       },
@@ -1115,7 +1115,7 @@
         "bytes": 168350,
         "path": "trade_market_reactions/spy/2020.json",
         "reaction_count": 14,
-        "sha256": "a4244222eb3cf410b456c961fee4aad568d676eb27c470199c55589841cbb880",
+        "sha256": "e3045cffe5eec48dfd218285d70fc936b36270ef449248562f0fbca3dc7de7c5",
         "symbol": "SPY",
         "year": 2020
       },
@@ -1123,7 +1123,7 @@
         "bytes": 36064,
         "path": "trade_market_reactions/spy/2021.json",
         "reaction_count": 3,
-        "sha256": "52bad3d2c851235abe24d77990441454194d853cd5749f699cc261a9dc53a6cb",
+        "sha256": "c89024cb31d0c9c02aee8a19a4b5b3b8313029283a7ca57ede932985a18d87c0",
         "symbol": "SPY",
         "year": 2021
       },
@@ -1131,7 +1131,7 @@
         "bytes": 71811,
         "path": "trade_market_reactions/spy/2022.json",
         "reaction_count": 6,
-        "sha256": "57c1ca8d3c2132757b58bc3af9684c707eca0c9b2c80dd58e55c3789fb6da177",
+        "sha256": "871b0924007321521a3e30c084b2e40b396e9a9d48858b7a72a74d440a176067",
         "symbol": "SPY",
         "year": 2022
       },
@@ -1139,7 +1139,7 @@
         "bytes": 35875,
         "path": "trade_market_reactions/spy/2023.json",
         "reaction_count": 3,
-        "sha256": "0582ebea96658a4d6ed390407698ee44a00d98c1bf04042d7e6d454487fc58ae",
+        "sha256": "da9983555de65a4f1bbf248d1d17ad815f394c6f7d2396aa4da417b510f1fae7",
         "symbol": "SPY",
         "year": 2023
       },
@@ -1147,7 +1147,7 @@
         "bytes": 59784,
         "path": "trade_market_reactions/spy/2024.json",
         "reaction_count": 5,
-        "sha256": "a12e7dac71d5b1ee812bff7be746eb4729312d1817d68e811345522d0e5c2297",
+        "sha256": "2c13ab97aeda4306af4967fc58a3856e06e3bd0447c83cb6aa23e7c12d0a4b49",
         "symbol": "SPY",
         "year": 2024
       },
@@ -1155,7 +1155,7 @@
         "bytes": 36054,
         "path": "trade_market_reactions/spy/2025.json",
         "reaction_count": 3,
-        "sha256": "7154b1223ef5486af23678639a676ba8bc5346cc8f62189fc12c76f7444f85d9",
+        "sha256": "432b3dc282701c07b86e18cd7771962f2ea8d45de063fad1f35467d9f1654e33",
         "symbol": "SPY",
         "year": 2025
       },
@@ -1163,7 +1163,7 @@
         "bytes": 91669,
         "path": "trade_market_reactions/spy/2026.json",
         "reaction_count": 8,
-        "sha256": "195898da565493930b70d06cf93d85af847a400785f62a0b311a45de769b46d5",
+        "sha256": "0c0458280f0a1b548320ce8fcdb77ce3b17cf0acd0a84908a571fe0ea97a5317",
         "symbol": "SPY",
         "year": 2026
       },
@@ -1171,7 +1171,7 @@
         "bytes": 12074,
         "path": "trade_market_reactions/tsla/2016.json",
         "reaction_count": 1,
-        "sha256": "673ea0268da322e09437408522ceebb55a7fc330168aeb3ba6da29e5d4134437",
+        "sha256": "d7f1b25cfd872c8e3830f0d95c832bf169591172113e3a76523690f89ad8a591",
         "symbol": "TSLA",
         "year": 2016
       },
@@ -1179,7 +1179,7 @@
         "bytes": 48072,
         "path": "trade_market_reactions/tsla/2017.json",
         "reaction_count": 4,
-        "sha256": "d3a11db5a48ad7e31ce94ac95aea8468760554756441ec348fb6f665de4ddb4f",
+        "sha256": "540d82ccc9442ad9d9ab2b2ab4af513b5dfbe7d614fecad121a9219cfb112a87",
         "symbol": "TSLA",
         "year": 2017
       },
@@ -1187,7 +1187,7 @@
         "bytes": 36086,
         "path": "trade_market_reactions/tsla/2018.json",
         "reaction_count": 3,
-        "sha256": "a72c291036c2519172536b6cfa9fb2006f746d67c48e4443cf781e8a86cab327",
+        "sha256": "a7fe5792675e958af29043e14de65957b817770e1614d92382c2709ecf6770e3",
         "symbol": "TSLA",
         "year": 2018
       },
@@ -1195,7 +1195,7 @@
         "bytes": 35940,
         "path": "trade_market_reactions/tsla/2019.json",
         "reaction_count": 3,
-        "sha256": "c26f3d0eb53a89ad9d676b42775891f4f4061883428f47a6fafddc3209e911b8",
+        "sha256": "37772a0dc94c185f19af5117a565eef1de237ea44b951272e5b70eb7f4e7d291",
         "symbol": "TSLA",
         "year": 2019
       },
@@ -1203,7 +1203,7 @@
         "bytes": 203885,
         "path": "trade_market_reactions/tsla/2020.json",
         "reaction_count": 17,
-        "sha256": "afb8b58ade78fbd112bf48193b06f64467306abe7ceff499a8073291b1298494",
+        "sha256": "d12a97d9242321b17ad79757df03646b9a1e4eff0288aa5da4f205d63bc4db43",
         "symbol": "TSLA",
         "year": 2020
       },
@@ -1211,7 +1211,7 @@
         "bytes": 216023,
         "path": "trade_market_reactions/tsla/2021.json",
         "reaction_count": 18,
-        "sha256": "a388b0732da7d245c7466afc9bdda97fe359a5928a1a93b333672b90c457d9ba",
+        "sha256": "19f835ef26e7ff77124f61d28447a62facf7de862d37b616b5ab3a13959b67e4",
         "symbol": "TSLA",
         "year": 2021
       },
@@ -1219,7 +1219,7 @@
         "bytes": 274073,
         "path": "trade_market_reactions/tsla/2022.json",
         "reaction_count": 23,
-        "sha256": "8e3ba0e8f955da2d6357ff4b366d9237904ccf8d4820755eaf93e8008b410f08",
+        "sha256": "61d281d5f99243513a1dd7feaed7a58b73c586fcce78b7df02a3d32e985c9f6a",
         "symbol": "TSLA",
         "year": 2022
       },
@@ -1227,7 +1227,7 @@
         "bytes": 272787,
         "path": "trade_market_reactions/tsla/2023.json",
         "reaction_count": 23,
-        "sha256": "ad1b6a22c96b123908df9bce74ee52ab55da48d545998b05c1753d68d982cdab",
+        "sha256": "196370bc72d2d8bcf42856814e6e310b3efe7ca4d909aa49b906e253075e6636",
         "symbol": "TSLA",
         "year": 2023
       },
@@ -1235,7 +1235,7 @@
         "bytes": 356047,
         "path": "trade_market_reactions/tsla/2024.json",
         "reaction_count": 30,
-        "sha256": "44c4ccadad655da1f4d9a1e7f3067846b2db6f29275cd6a20f612e86a1c3c7d1",
+        "sha256": "8466d4dc6069e42e486485d24cb74e8cb0ffd3e3a25f7832448e0d6f6433cc27",
         "symbol": "TSLA",
         "year": 2024
       },
@@ -1243,7 +1243,7 @@
         "bytes": 900952,
         "path": "trade_market_reactions/tsla/2025.json",
         "reaction_count": 76,
-        "sha256": "2ac132708377b31ad2e2dbf4fa84fff00adb69c60a024b7c32c60288af65682c",
+        "sha256": "c3517b63b88b93b44237cd7adae1054b9bd9fc96b5b25a040aace49253f3f7d4",
         "symbol": "TSLA",
         "year": 2025
       },
@@ -1251,7 +1251,7 @@
         "bytes": 71394,
         "path": "trade_market_reactions/tsla/2026.json",
         "reaction_count": 6,
-        "sha256": "3e8b50fb7099d7897c7c1c9c3a7c20f2fbc8f0b16b6c45b8370dfbebfadf5677",
+        "sha256": "75750e044a2d0521388a4c7cbece1713976da37149bcb4882020692e08369b91",
         "symbol": "TSLA",
         "year": 2026
       },
@@ -1259,7 +1259,7 @@
         "bytes": 107593,
         "path": "trade_market_reactions/v/2014.json",
         "reaction_count": 9,
-        "sha256": "c2e09295a4c948f53555b68a67992415dee2da618dc0998c775bb02f5ad94270",
+        "sha256": "2a2ba99c008ab4cc4930af29216fa48e2043f35eeb50f0c1e2c8c3d89f44e607",
         "symbol": "V",
         "year": 2014
       },
@@ -1267,7 +1267,7 @@
         "bytes": 166811,
         "path": "trade_market_reactions/v/2015.json",
         "reaction_count": 14,
-        "sha256": "4f31c51d9bb08c8b9e107e00dc7c6f2bc57c075172b94079e50f4627f15c375e",
+        "sha256": "b0b6dceb4ecef83da09e7c12acf88a1cba773c2f780c07f244e17668cac7d412",
         "symbol": "V",
         "year": 2015
       },
@@ -1275,7 +1275,7 @@
         "bytes": 143238,
         "path": "trade_market_reactions/v/2016.json",
         "reaction_count": 12,
-        "sha256": "f746e2c7ddf7dae69e6c752fe161eaeb0bb643916f4c72b4df810ec56819b1ea",
+        "sha256": "dd06a6dd988ca567d98ea30852d74be951c2055a8ccc84e2e0d39a1fe2cde98d",
         "symbol": "V",
         "year": 2016
       },
@@ -1283,7 +1283,7 @@
         "bytes": 131203,
         "path": "trade_market_reactions/v/2017.json",
         "reaction_count": 11,
-        "sha256": "65d0d041f073e524d81db1490405ac13dbfaf297cf87f5e4f9d9c6b0b5997418",
+        "sha256": "b82481e70e3e34262bbb95d1d96eecc450dbbd93246a0b7404ca09d3104dff62",
         "symbol": "V",
         "year": 2017
       },
@@ -1291,7 +1291,7 @@
         "bytes": 155475,
         "path": "trade_market_reactions/v/2018.json",
         "reaction_count": 13,
-        "sha256": "03d2dadb1a658c2cbbcab50ff6831c2205088626c676e49494c512c9b04eea70",
+        "sha256": "45a795d24ed7aa6536ca62e85088b57d6e2bf4a1ec438117a82223a05d8c7588",
         "symbol": "V",
         "year": 2018
       },
@@ -1299,7 +1299,7 @@
         "bytes": 263050,
         "path": "trade_market_reactions/v/2019.json",
         "reaction_count": 22,
-        "sha256": "e8d9363859014daf09b708a5674b8082258c862e3ba658185555aaf12e27efad",
+        "sha256": "3ce9ad00a3732ce00517f70d6856f1fa908048e42a7291b807a4b16e7da7a69a",
         "symbol": "V",
         "year": 2019
       },
@@ -1307,7 +1307,7 @@
         "bytes": 585685,
         "path": "trade_market_reactions/v/2020.json",
         "reaction_count": 49,
-        "sha256": "cd8436985932c075a2b38b4646e24b9802787a9b199dcfbbf857a74a9fc300e5",
+        "sha256": "3d09675ac81c024897b4df18adcef70d76709f6a06a7c0991db8eb8800b31895",
         "symbol": "V",
         "year": 2020
       },
@@ -1315,7 +1315,7 @@
         "bytes": 286929,
         "path": "trade_market_reactions/v/2021.json",
         "reaction_count": 24,
-        "sha256": "973975794f83e9db8202e4f6cf3e24e833b4d979c5bd6dc1b8c4b3acd04a401c",
+        "sha256": "35b5e524c7807be8fba69d2a9bda9470b39023c36e9555dc0e13eb30016c2109",
         "symbol": "V",
         "year": 2021
       },
@@ -1323,7 +1323,7 @@
         "bytes": 155001,
         "path": "trade_market_reactions/v/2022.json",
         "reaction_count": 13,
-        "sha256": "8c4e5a7362b480f42fd72206288f5164b82ee2dfe1caef4d9a72e9721aa8e895",
+        "sha256": "be7533493c1a51dccac5c608f6e61ce2a7184a797b7fcfca9b725474cf209e01",
         "symbol": "V",
         "year": 2022
       },
@@ -1331,7 +1331,7 @@
         "bytes": 155164,
         "path": "trade_market_reactions/v/2023.json",
         "reaction_count": 13,
-        "sha256": "5760d518b0d0185e35d02daff59c678da7bd274cc3c8210ed706d044c880cd34",
+        "sha256": "28dbbaf069103fd3cfa7098412557b7918c8f9750a62e863a43f6d677fa3f541",
         "symbol": "V",
         "year": 2023
       },
@@ -1339,7 +1339,7 @@
         "bytes": 166621,
         "path": "trade_market_reactions/v/2024.json",
         "reaction_count": 14,
-        "sha256": "1d9754663d4f1cdb489f44ebdc4ea9ecc772df4ba2087a5bbc6ba97e3a1568fe",
+        "sha256": "165f819cd056ec42750ba6f26aed0b0b38b666342f5c4010f3128945678230be",
         "symbol": "V",
         "year": 2024
       },
@@ -1347,7 +1347,7 @@
         "bytes": 904111,
         "path": "trade_market_reactions/v/2025.json",
         "reaction_count": 76,
-        "sha256": "ab6792fbc8873cbe41f07ef322df97885af692a961c3196fea5a1b291c6a5410",
+        "sha256": "2904c37e4ed80f5a94531cc43b50ac5003a7d35c8179c3ebb7146f236aa45f9d",
         "symbol": "V",
         "year": 2025
       },
@@ -1355,7 +1355,7 @@
         "bytes": 106307,
         "path": "trade_market_reactions/v/2026.json",
         "reaction_count": 9,
-        "sha256": "cdc796e3483d6e2137f49b312f11d67c515233fbc2c9acc0fb4863dfe6a965c2",
+        "sha256": "a2fbde3c6d8bd37b3c7941dd629403335a9a8f169a4e2b285b303806855c9bda",
         "symbol": "V",
         "year": 2026
       },
@@ -1363,7 +1363,7 @@
         "bytes": 36183,
         "path": "trade_market_reactions/vfiax/2009.json",
         "reaction_count": 3,
-        "sha256": "2df956745338d8f3e4fe64b7f90161571a2e4c2056515709d035a66be4d9341f",
+        "sha256": "7845c8c30d5500953e12b0cf9905b02c0d7561c7f57221a7568a36f5826b931d",
         "symbol": "VFIAX",
         "year": 2009
       },
@@ -1371,7 +1371,7 @@
         "bytes": 24295,
         "path": "trade_market_reactions/vfiax/2014.json",
         "reaction_count": 2,
-        "sha256": "610aacf9ed4d32d3bcb6e8f5c43defcbd6d2dc43b5157455b7a041bf744856c3",
+        "sha256": "d5fd85ca80685d97f41cc8b45d98a770a7d81fa350f05d1b2c528cf8dfeb4b48",
         "symbol": "VFIAX",
         "year": 2014
       },
@@ -1379,7 +1379,7 @@
         "bytes": 36050,
         "path": "trade_market_reactions/xle/2015.json",
         "reaction_count": 3,
-        "sha256": "d242e1fa592bbad71ee67d89e87d5f74f024acf76b60546359574b5be5ba46c8",
+        "sha256": "50a6f14cab9d216b148a360cb11707329d0cd7fe81bd91803ddb54351fd256fb",
         "symbol": "XLE",
         "year": 2015
       },
@@ -1387,7 +1387,7 @@
         "bytes": 12103,
         "path": "trade_market_reactions/xle/2016.json",
         "reaction_count": 1,
-        "sha256": "0f44233ab741fa5a783f503924c862fbe7648de3e5a6d30e0945130f03845828",
+        "sha256": "ddf63f0aee5eec776ffaff6c0d09c09ae622fcf4cf3a338f9cf99ca731138bfb",
         "symbol": "XLE",
         "year": 2016
       },
@@ -1395,7 +1395,7 @@
         "bytes": 59950,
         "path": "trade_market_reactions/xle/2018.json",
         "reaction_count": 5,
-        "sha256": "cdf99393c06084975541dae3be5a119ffd9145027ee1fb193dc1884429479943",
+        "sha256": "48bf865f0a6292a91c4d8643ceeb90e2c6b1c3e15b68408202663e16d29f681a",
         "symbol": "XLE",
         "year": 2018
       },
@@ -1403,7 +1403,7 @@
         "bytes": 35879,
         "path": "trade_market_reactions/xle/2022.json",
         "reaction_count": 3,
-        "sha256": "4e7786588405ef70f0c41bbd7641e8825c61fd41b81b0ab5c7bad658968adb35",
+        "sha256": "ea6fe970a694253af4fa149135a44d6f02b44f0ba903951c83c7944a05f072eb",
         "symbol": "XLE",
         "year": 2022
       },
@@ -1411,7 +1411,7 @@
         "bytes": 12018,
         "path": "trade_market_reactions/xle/2024.json",
         "reaction_count": 1,
-        "sha256": "6c41277c5484723837e0180d817951917bc7e60689cc17b6752cfd40d48308b7",
+        "sha256": "1a807922f7de56f76c1805b591324b485a4caa35431c0ba007c29a589ae50721",
         "symbol": "XLE",
         "year": 2024
       },
@@ -1419,7 +1419,7 @@
         "bytes": 12069,
         "path": "trade_market_reactions/xle/2026.json",
         "reaction_count": 1,
-        "sha256": "c50a10204580cd0b2852b9bec0e06c5edfb29e5f64b9c69ff5a8ee9e566efd23",
+        "sha256": "690d4978fb585263871859e55a859c18955f86cc3d6909ee721b2bb400f8ea82",
         "symbol": "XLE",
         "year": 2026
       },
@@ -1427,7 +1427,7 @@
         "bytes": 83837,
         "path": "trade_market_reactions/xlf/2017.json",
         "reaction_count": 7,
-        "sha256": "04eae765df9c73fa4de439874c41bb84fc0aae22e170ae65c22a2393e2b1e8a7",
+        "sha256": "1da2cdb7e21d7d4c719abe19e4cac3be14ec166d9c59b006d461a4b467f5067d",
         "symbol": "XLF",
         "year": 2017
       },
@@ -1435,7 +1435,7 @@
         "bytes": 119799,
         "path": "trade_market_reactions/xlf/2018.json",
         "reaction_count": 10,
-        "sha256": "692825621493e02f4c30b0d24e0a3101c7fa3cce157694f0cb2bf90779f728f2",
+        "sha256": "856e889af10621e4749898e3055399c99b4ce24a4ea2a89622655a2be1688b59",
         "symbol": "XLF",
         "year": 2018
       },
@@ -1443,7 +1443,7 @@
         "bytes": 12111,
         "path": "trade_market_reactions/xlf/2020.json",
         "reaction_count": 1,
-        "sha256": "656b4682a2a30a221840ee19d40f36c39c35158fa7f5111ab2937f859c59447e",
+        "sha256": "8d62dc19febdb626208198bcf6daa5de483ba6c654d49a9dddbb35a2f6b51da7",
         "symbol": "XLF",
         "year": 2020
       },
@@ -1451,7 +1451,7 @@
         "bytes": 35991,
         "path": "trade_market_reactions/xli/2016.json",
         "reaction_count": 3,
-        "sha256": "f62b452274b7c7f1159964dc4c3abfc29414e03040f8a8c20adaa9382d3cfe73",
+        "sha256": "8436b934dc3be6572910e5a1a356aaf5fe8cdd0a824b137a943d1b7fc1aa1bc0",
         "symbol": "XLI",
         "year": 2016
       },
@@ -1459,7 +1459,7 @@
         "bytes": 35999,
         "path": "trade_market_reactions/xli/2017.json",
         "reaction_count": 3,
-        "sha256": "3767d759f79494844ab07b797cf0e8c7e2f838150612913e12ba7319c47b548f",
+        "sha256": "35fdf1fd64a7b6a309d66dc2531579dabf84b3ae5bc642095e8d43a2966498d9",
         "symbol": "XLI",
         "year": 2017
       },
@@ -1467,7 +1467,7 @@
         "bytes": 12114,
         "path": "trade_market_reactions/xlk/2015.json",
         "reaction_count": 1,
-        "sha256": "661a06ded7897a314d4809538f3a66945714fd758d5f7822855bd8444d3a8097",
+        "sha256": "641cbd55a0d8d32133af96163ba8b0b31a92ab24162ddbc35fa1044167591893",
         "symbol": "XLK",
         "year": 2015
       },
@@ -1475,7 +1475,7 @@
         "bytes": 12115,
         "path": "trade_market_reactions/xlv/2015.json",
         "reaction_count": 1,
-        "sha256": "c8083c3bed137607b010cd39d7fdaa1e4fa1c907f8002b60248ce16c278b2f84",
+        "sha256": "79e80608f83c44ee053d8f40d9676267a97eab337f6e4c7f796a3d39e5ac6ffd",
         "symbol": "XLV",
         "year": 2015
       },
@@ -1483,7 +1483,7 @@
         "bytes": 12119,
         "path": "trade_market_reactions/xlv/2016.json",
         "reaction_count": 1,
-        "sha256": "5cebafac62996e66aceb78838f74c19a4ebcd1a396d54e13397a16adc5afe865",
+        "sha256": "b8322c3d702e8cbdbeaa5a0ef6dbc16175a991536fbc89f9f18248b7289736fa",
         "symbol": "XLV",
         "year": 2016
       },
@@ -1491,13 +1491,13 @@
         "bytes": 12130,
         "path": "trade_market_reactions/xlv/2020.json",
         "reaction_count": 1,
-        "sha256": "777ebbf51f6c9219cb438c5df0d0e4ddab9d5682f10ced3e292488e7704b93af",
+        "sha256": "8597fb10dfa607aa5ad4d4bc3ce0a002ec2b3e47285285016179b56f696311bc",
         "symbol": "XLV",
         "year": 2020
       }
     }
   },
-  "generated_at": "2026-09-03",
+  "generated_at": "2026-09-04",
   "methodology": {
     "anchor": "First common asset and benchmark market date on or after trade_date.",
     "benchmark_adjustment": "asset_return_pct minus benchmark_return_pct",
@@ -1571,7 +1571,7 @@
       "source_tier": "market_data_provider",
       "url": "https://www.tiingo.com/documentation/end-of-day"
     },
-    "market_prices_generated_at": "2026-09-03",
+    "market_prices_generated_at": "2026-09-04",
     "market_prices_path": "data/context/market_prices.json"
   },
   "storage": {
@@ -1583,7 +1583,7 @@
         "bytes": 216125,
         "path": "trade_market_reactions/aapl/2014.json",
         "reaction_count": 18,
-        "sha256": "d6c4936b46ae38e99126205d9dacad667a20978e73c988b7f679dcefc54f4819",
+        "sha256": "e62b0fbdd5d40189a6d5bf81ece631c1093812571449d3b7e3f0d2d1b2ce327d",
         "symbol": "AAPL",
         "year": 2014
       },
@@ -1591,7 +1591,7 @@
         "bytes": 300008,
         "path": "trade_market_reactions/aapl/2015.json",
         "reaction_count": 25,
-        "sha256": "eac3f53bb81f31ea92900b7aaf21ebbc484d4bbc865d258e880c8c9e4eb29050",
+        "sha256": "59fb66474a4f9516d2e7c549e80cc4b6cf1926ab615931362301556c5b0b1484",
         "symbol": "AAPL",
         "year": 2015
       },
@@ -1599,7 +1599,7 @@
         "bytes": 636059,
         "path": "trade_market_reactions/aapl/2016.json",
         "reaction_count": 53,
-        "sha256": "f0fa43364773a90e6a7327caeeea0a8bcdf6f36ae283b7ced991f40fd96fac19",
+        "sha256": "37ffff42bb71f18e127dc51815b6a597538062770cadbe9bbaf4b1ec4bbcd7de",
         "symbol": "AAPL",
         "year": 2016
       },
@@ -1607,7 +1607,7 @@
         "bytes": 275917,
         "path": "trade_market_reactions/aapl/2017.json",
         "reaction_count": 23,
-        "sha256": "30d5864d511ea54377ea34ca21dbc22c2805d9593ddaa74922949b3cb2953780",
+        "sha256": "d791b95433a394a8282c19310ebe788678c133b3f2fc13d1c9aa88676d38402e",
         "symbol": "AAPL",
         "year": 2017
       },
@@ -1615,7 +1615,7 @@
         "bytes": 432023,
         "path": "trade_market_reactions/aapl/2018.json",
         "reaction_count": 36,
-        "sha256": "dd3b8245b4823dd5dcd2a826af828da1d0b6da8cebf7f32e835899274e4f0101",
+        "sha256": "e47fce2d520076f3eb79882810f30d420337fd3de6f6e2403eea86f5b41e5049",
         "symbol": "AAPL",
         "year": 2018
       },
@@ -1623,7 +1623,7 @@
         "bytes": 527477,
         "path": "trade_market_reactions/aapl/2019.json",
         "reaction_count": 44,
-        "sha256": "dfeda7e44f4754087c4af6e375348e14dc26835c1671d9972dbe61b2727e5f0e",
+        "sha256": "8f281fd9509d00ce2efe5a49f558f2f373fd2729d761045133b230d2beada09a",
         "symbol": "AAPL",
         "year": 2019
       },
@@ -1631,7 +1631,7 @@
         "bytes": 1176657,
         "path": "trade_market_reactions/aapl/2020.json",
         "reaction_count": 98,
-        "sha256": "1de8b3eac888b969e2398287e1f796216605b982c392017325f1597aeccd9ded",
+        "sha256": "b186ef99e41525def818b3fc6e45a66158bb9993ce3dd8a92567716973364609",
         "symbol": "AAPL",
         "year": 2020
       },
@@ -1639,7 +1639,7 @@
         "bytes": 684588,
         "path": "trade_market_reactions/aapl/2021.json",
         "reaction_count": 57,
-        "sha256": "ccaf010487a041d920b72b2bb4da9673d4e35e1de3b78fbb06a89e8a2a297dcb",
+        "sha256": "d4ca1d64e9e1729f12344d1b32575199e2934a4fc187792599f90ba1a3096ed1",
         "symbol": "AAPL",
         "year": 2021
       },
@@ -1647,7 +1647,7 @@
         "bytes": 467298,
         "path": "trade_market_reactions/aapl/2022.json",
         "reaction_count": 39,
-        "sha256": "496ef9c8ab7d7ea49c6e7e1f21122435dea6550eeb0686b9de017f01e232030a",
+        "sha256": "f465a09e70e8cd9399c857d1a41ed8fa284abf62a40000c4c1f08612e7b1132e",
         "symbol": "AAPL",
         "year": 2022
       },
@@ -1655,7 +1655,7 @@
         "bytes": 551135,
         "path": "trade_market_reactions/aapl/2023.json",
         "reaction_count": 46,
-        "sha256": "4439d6db3d52421d5392cf932e3481aea659087094c15e7d3e9d204020ea2184",
+        "sha256": "018b3013520d4105cfaf318cd1a3b1aae8168600564877b2b8704b53ba05b1b8",
         "symbol": "AAPL",
         "year": 2023
       },
@@ -1663,7 +1663,7 @@
         "bytes": 684033,
         "path": "trade_market_reactions/aapl/2024.json",
         "reaction_count": 57,
-        "sha256": "46af9becfd3d84d7632d2f7f4ae976b7a83bd18f0474db17ded75c69bba5bba4",
+        "sha256": "7a5ddc5e197c6c994eab056bc323a93bf4edd33796087436154a571dc416b0e3",
         "symbol": "AAPL",
         "year": 2024
       },
@@ -1671,15 +1671,15 @@
         "bytes": 1343962,
         "path": "trade_market_reactions/aapl/2025.json",
         "reaction_count": 112,
-        "sha256": "7aeacc3614f9df444dca787a508737decf133643208af7d97c88acbdc1d120dd",
+        "sha256": "b3d1a03753a34702fa80cd3727a4da5a331af3435c77596714b766ff6a996af7",
         "symbol": "AAPL",
         "year": 2025
       },
       "AAPL:2026": {
-        "bytes": 303238,
+        "bytes": 313351,
         "path": "trade_market_reactions/aapl/2026.json",
-        "reaction_count": 26,
-        "sha256": "da407d9ba9b220bcaae078bbbd3b17c2a9a9c60762b63184b93ef32dc9295a0a",
+        "reaction_count": 27,
+        "sha256": "e8564a1ae513216b3892500bf73154e8eec9a6508f98f73cfe4ba1b1a8e9513d",
         "symbol": "AAPL",
         "year": 2026
       },
@@ -1687,7 +1687,7 @@
         "bytes": 47815,
         "path": "trade_market_reactions/amzn/2014.json",
         "reaction_count": 4,
-        "sha256": "3de262c34e4cd93f6a0fde982087b2462f768058b3403388141fc0db4bc701e4",
+        "sha256": "65f252f420012d319ea3a1cb7206ea20d110d51d37ece0747c6a3e5449452c7e",
         "symbol": "AMZN",
         "year": 2014
       },
@@ -1695,7 +1695,7 @@
         "bytes": 83479,
         "path": "trade_market_reactions/amzn/2015.json",
         "reaction_count": 7,
-        "sha256": "14820e8a762ccfbc9ce39f1eb84cb9c462f03f38b91a95f6bf2329b4f52ddff0",
+        "sha256": "1389e93108aa187799c6f6dd36ecacbece9c51369ca30998bd1ab37549fc6a9e",
         "symbol": "AMZN",
         "year": 2015
       },
@@ -1703,7 +1703,7 @@
         "bytes": 154980,
         "path": "trade_market_reactions/amzn/2016.json",
         "reaction_count": 13,
-        "sha256": "dec805e66f33b4ff21622f9ea801ebeee84ee5e88a51dcdec517d489e2147651",
+        "sha256": "80f768d63ed26a737b52dc60df29519c7608982764c7d8af4852a5c32ce0b62c",
         "symbol": "AMZN",
         "year": 2016
       },
@@ -1711,7 +1711,7 @@
         "bytes": 190842,
         "path": "trade_market_reactions/amzn/2017.json",
         "reaction_count": 16,
-        "sha256": "11d68daebb7fd9d61f0e358b0316b62c4e6dd6679425f9d5c95efeceafdf08c3",
+        "sha256": "40381bbcd0523d0c9b866ef22516baff8ebc451e5ad15a330a0c508e91ead1eb",
         "symbol": "AMZN",
         "year": 2017
       },
@@ -1719,7 +1719,7 @@
         "bytes": 333860,
         "path": "trade_market_reactions/amzn/2018.json",
         "reaction_count": 28,
-        "sha256": "3c692c2226f9bea7b637c08c81dcd7ac5903caf098165ac6d476b7a8f93ee658",
+        "sha256": "c75d820dedfd4d6bc39f83cc843e6b5cb7a89b2dfaca21afd923f148a8ed97d0",
         "symbol": "AMZN",
         "year": 2018
       },
@@ -1727,7 +1727,7 @@
         "bytes": 286294,
         "path": "trade_market_reactions/amzn/2019.json",
         "reaction_count": 24,
-        "sha256": "3c5d9da2a9ae112bb777e298bb576d512407eeb8eb68237f549b4a36ebc79a81",
+        "sha256": "047d0af573ce273efd1e121d81d98d651d42fdfcc3c6feb6f778d3d25e0da56e",
         "symbol": "AMZN",
         "year": 2019
       },
@@ -1735,7 +1735,7 @@
         "bytes": 716340,
         "path": "trade_market_reactions/amzn/2020.json",
         "reaction_count": 60,
-        "sha256": "990f2f7c8904a2eb6402e680e921834683869d884891ad01d8d20cde236a019f",
+        "sha256": "0401ba0f487d7da03c653e5c506465bace4e48c0bc8b0e099347af2e9eef53a3",
         "symbol": "AMZN",
         "year": 2020
       },
@@ -1743,7 +1743,7 @@
         "bytes": 608247,
         "path": "trade_market_reactions/amzn/2021.json",
         "reaction_count": 51,
-        "sha256": "6f54fb83b4541d47e469b5cfcba1d1a07948ebc3606464d3f21f624f48b3b3c5",
+        "sha256": "99defc7453a53860b4843540aef8a24ab67b834e244678ff20b7ab3a7f3167e9",
         "symbol": "AMZN",
         "year": 2021
       },
@@ -1751,7 +1751,7 @@
         "bytes": 273390,
         "path": "trade_market_reactions/amzn/2022.json",
         "reaction_count": 23,
-        "sha256": "3a3dd724ecab751378687299e20e6f963d2665800eea01dc18587621c2f66d39",
+        "sha256": "1da438d7f8e41e76671a6f7b270c47fd7dc33706e9044c838d00d8f561902dff",
         "symbol": "AMZN",
         "year": 2022
       },
@@ -1759,7 +1759,7 @@
         "bytes": 237725,
         "path": "trade_market_reactions/amzn/2023.json",
         "reaction_count": 20,
-        "sha256": "9ab990f00427f7368cd91d5795287f297779684e7a189d5eb2b63749bca874a1",
+        "sha256": "b24ec80574171b229bf8479f031d7e5387178364d07ae744cb0948297162de0b",
         "symbol": "AMZN",
         "year": 2023
       },
@@ -1767,7 +1767,7 @@
         "bytes": 415362,
         "path": "trade_market_reactions/amzn/2024.json",
         "reaction_count": 35,
-        "sha256": "5655cd7229a32030db756ba26f93b025dfb82dfaaf2eb35577cc761bd20c2d93",
+        "sha256": "b767d7bf777fb63740386e1f8ea95b0ecb7e1eb26e57afac9fa478099309fbd5",
         "symbol": "AMZN",
         "year": 2024
       },
@@ -1775,15 +1775,15 @@
         "bytes": 1400767,
         "path": "trade_market_reactions/amzn/2025.json",
         "reaction_count": 118,
-        "sha256": "375f84fca99d235376e8536c3d4678d2a5f8784308ccdccf4a979a17e3ff162e",
+        "sha256": "1c29129879942b24323330c913019b24eb9ea67623d05ad32c199cf82c68c7cb",
         "symbol": "AMZN",
         "year": 2025
       },
       "AMZN:2026": {
-        "bytes": 293455,
+        "bytes": 294305,
         "path": "trade_market_reactions/amzn/2026.json",
         "reaction_count": 25,
-        "sha256": "60aca519ba5f292b961fd78ea80e634541bb04362f22a379557f68345f42e45f",
+        "sha256": "e522393a391c26ae66667da8a487ddc89df8b7f6ec2846577c9c00322292e882",
         "symbol": "AMZN",
         "year": 2026
       },
@@ -1791,7 +1791,7 @@
         "bytes": 12124,
         "path": "trade_market_reactions/bnd/2016.json",
         "reaction_count": 1,
-        "sha256": "163d5298dd7bd37046fed1626c9663dcfca890afeab129c2123057e4c681d8b9",
+        "sha256": "d53e931e3ef74a63ef798464d49650c534f1ef24bcabfd14586ef84d26775d49",
         "symbol": "BND",
         "year": 2016
       },
@@ -1799,7 +1799,7 @@
         "bytes": 23911,
         "path": "trade_market_reactions/bnd/2022.json",
         "reaction_count": 2,
-        "sha256": "65fbe33e841c994ddec9e7fd4dd0bc861a03c19e840869121d067e646df538af",
+        "sha256": "765701b62d5ef09de313b0efbf588506659b82dc1715e18b6b37500e70a6f946",
         "symbol": "BND",
         "year": 2022
       },
@@ -1807,7 +1807,7 @@
         "bytes": 36311,
         "path": "trade_market_reactions/dia/2015.json",
         "reaction_count": 3,
-        "sha256": "3647bb341a256b321448b0f877d116cec98fb85e5131891a853d24bb37930cf8",
+        "sha256": "95b17e2c85eae98661ef464e712b648df8831b7c964f2540cdcdca77a50afdcd",
         "symbol": "DIA",
         "year": 2015
       },
@@ -1815,7 +1815,7 @@
         "bytes": 36359,
         "path": "trade_market_reactions/dia/2016.json",
         "reaction_count": 3,
-        "sha256": "900add5907e94eead7c2dc419ea63a8fc78db04ee15aca2ed17a81f89baaf341",
+        "sha256": "3d3cf7326b8347af1a3a5899771b77933df827f2cc697c253646700934a81c21",
         "symbol": "DIA",
         "year": 2016
       },
@@ -1823,7 +1823,7 @@
         "bytes": 12184,
         "path": "trade_market_reactions/dia/2017.json",
         "reaction_count": 1,
-        "sha256": "7283712a60cc92bebed38f63fa57c50f062d5419549e15f18434c767ff616842",
+        "sha256": "66e5dc585c1cff37f650b3e34a78aceab72ee2aceb57118cb5e8edb60b97dad1",
         "symbol": "DIA",
         "year": 2017
       },
@@ -1831,7 +1831,7 @@
         "bytes": 108561,
         "path": "trade_market_reactions/dia/2018.json",
         "reaction_count": 9,
-        "sha256": "58a3070fc3c1c6c74c637868afeb3b6fbc8708335fd1702a694e12675278c2c7",
+        "sha256": "4c366f16b02d992555e380ad6213956e5a899d225c0cb1f906a203797e01ecaa",
         "symbol": "DIA",
         "year": 2018
       },
@@ -1839,7 +1839,7 @@
         "bytes": 60377,
         "path": "trade_market_reactions/dia/2019.json",
         "reaction_count": 5,
-        "sha256": "b02de1422a4d84bf375f02b053d603b5ea0ee1bc66753ac784b9828e8fd33807",
+        "sha256": "3897c23beaf3346be33ad75d0bb09436c0d3415e8822109594d57e1de73d602d",
         "symbol": "DIA",
         "year": 2019
       },
@@ -1847,7 +1847,7 @@
         "bytes": 241539,
         "path": "trade_market_reactions/dia/2020.json",
         "reaction_count": 20,
-        "sha256": "e907d99be261bd3bb670111be3437cb8b0fc57f57498278f59514723ca9cd163",
+        "sha256": "f603416dae84e55b6b349fb6b413dfabc7c5087ecc1d3181335640bf00e5d500",
         "symbol": "DIA",
         "year": 2020
       },
@@ -1855,7 +1855,7 @@
         "bytes": 24076,
         "path": "trade_market_reactions/dia/2025.json",
         "reaction_count": 2,
-        "sha256": "f7786e963b62ad87fb3783f753006de2bfab861b5a92262d7fbe3caba19d4260",
+        "sha256": "a878ce8c729e06d19c40aad9007be522b5b1ed46d9a3ecd7a3ef02f87b2183ef",
         "symbol": "DIA",
         "year": 2025
       },
@@ -1863,7 +1863,7 @@
         "bytes": 12165,
         "path": "trade_market_reactions/dia/2026.json",
         "reaction_count": 1,
-        "sha256": "9c5109db20dfc11eee1ca72c8b7d21d4d182fb34682aa777e891a8b1dc535100",
+        "sha256": "f2460475884c11c8d6bd45134ac15380c1c5d48196ccab933f10f3ce9ba08384",
         "symbol": "DIA",
         "year": 2026
       },
@@ -1871,7 +1871,7 @@
         "bytes": 60248,
         "path": "trade_market_reactions/googl/2014.json",
         "reaction_count": 5,
-        "sha256": "2e4ef7cf63bb035c3d6bd141959e17fe25626dfa3d0b6f1d50f67c703841ef85",
+        "sha256": "90307c131a90e18380d8c89b9854feb9342d93f0aae0b2acf1f149d423c31092",
         "symbol": "GOOGL",
         "year": 2014
       },
@@ -1879,7 +1879,7 @@
         "bytes": 36235,
         "path": "trade_market_reactions/googl/2016.json",
         "reaction_count": 3,
-        "sha256": "102f554f5a2856991af95298ea91fe761d41c908aeae5468236a17baa85efbd9",
+        "sha256": "05c161a78490cb41ce5e88e7f2f055a4e2a8e9d2f3d7211f02fb5e35cf08b9fb",
         "symbol": "GOOGL",
         "year": 2016
       },
@@ -1887,7 +1887,7 @@
         "bytes": 24181,
         "path": "trade_market_reactions/googl/2017.json",
         "reaction_count": 2,
-        "sha256": "ffbbda7e1784e1cd52bc64f4b4d744fa781e0b64632c0660e79ca7b473d91da9",
+        "sha256": "29335a61108fe75e6596e76729347b389a5d81a95056af73634d551d900cec41",
         "symbol": "GOOGL",
         "year": 2017
       },
@@ -1895,7 +1895,7 @@
         "bytes": 24239,
         "path": "trade_market_reactions/googl/2018.json",
         "reaction_count": 2,
-        "sha256": "d408c669d76aef180abe2017c4808cc61f0bde55356724cb57631f7f3ca1e240",
+        "sha256": "ea6e94a03ae3223d5fa78a5e1acf50ed72ad62d66049adfd3dc28554c8586695",
         "symbol": "GOOGL",
         "year": 2018
       },
@@ -1903,7 +1903,7 @@
         "bytes": 12137,
         "path": "trade_market_reactions/googl/2019.json",
         "reaction_count": 1,
-        "sha256": "d7b13fdf0a9b72fc008eb31396d3359b8e5bb1daf182a077bd48c6199731883d",
+        "sha256": "8c74211ed1bd4808b6979b8c1238d9b2d9ae4eb46b445d706033fba619260260",
         "symbol": "GOOGL",
         "year": 2019
       },
@@ -1911,7 +1911,7 @@
         "bytes": 48268,
         "path": "trade_market_reactions/googl/2020.json",
         "reaction_count": 4,
-        "sha256": "8bef1126129eb5121a2f19b8b76cd11f3bcc9d01995b3be6e25c7f03269dc73c",
+        "sha256": "dbc4fcfebd6bae8b8f66956dc026069c670320c9520702a30a7371df10f78fae",
         "symbol": "GOOGL",
         "year": 2020
       },
@@ -1919,7 +1919,7 @@
         "bytes": 24308,
         "path": "trade_market_reactions/googl/2021.json",
         "reaction_count": 2,
-        "sha256": "db49f719921de95864dd7fcb1d4e81bf050877477cffe4e869b146cd3874fd8c",
+        "sha256": "05b61a5b2cb2591a1b82bacf15d85f466a9251f0b5e0c92d3b61cd49859e11da",
         "symbol": "GOOGL",
         "year": 2021
       },
@@ -1927,7 +1927,7 @@
         "bytes": 132414,
         "path": "trade_market_reactions/googl/2022.json",
         "reaction_count": 11,
-        "sha256": "5a36fe712c38adf7de4c4a40d7eab6ec8e3ec0bce2e3966495f5a5f8b390fc13",
+        "sha256": "f1a0be9cf0cc4b2c21f0591d2056f78ab91f27621b136c47349faeaf16cfe52c",
         "symbol": "GOOGL",
         "year": 2022
       },
@@ -1935,7 +1935,7 @@
         "bytes": 216943,
         "path": "trade_market_reactions/googl/2023.json",
         "reaction_count": 18,
-        "sha256": "eea1d65fdcbfb568bfccd996c9e0f969899429e4a53cacd133cc00283d1f4698",
+        "sha256": "9f64462404c234a0c432424c7f13f028a2814102edc5f2f73bb8d1f40df8a04a",
         "symbol": "GOOGL",
         "year": 2023
       },
@@ -1943,7 +1943,7 @@
         "bytes": 240892,
         "path": "trade_market_reactions/googl/2024.json",
         "reaction_count": 20,
-        "sha256": "e7ad4515c6999303ee171abbe2f639247a675d5d568f293d797d9c86728aaa01",
+        "sha256": "454aeb679ccc7a2c5746040727d1bdabe69efbad4caa90f964d2ed204e826c38",
         "symbol": "GOOGL",
         "year": 2024
       },
@@ -1951,15 +1951,15 @@
         "bytes": 1275096,
         "path": "trade_market_reactions/googl/2025.json",
         "reaction_count": 106,
-        "sha256": "17c9ff0e1e8eda95c6f9edf945203465a264e3f33483c73998a41424b9c144d3",
+        "sha256": "827f7932d78d8762fe0653572e0e03917e31be0f60248d5c5c374ffdd8857656",
         "symbol": "GOOGL",
         "year": 2025
       },
       "GOOGL:2026": {
-        "bytes": 224025,
+        "bytes": 224884,
         "path": "trade_market_reactions/googl/2026.json",
         "reaction_count": 20,
-        "sha256": "51fc99ba4ff334dcb499bb4fcb0527990b806c22f8967c2d42cd5e155bbb7315",
+        "sha256": "42f5930f0c15143569955ee6016933c99f618ca4faf2a3c40afe5297d83cc3c0",
         "symbol": "GOOGL",
         "year": 2026
       },
@@ -1967,7 +1967,7 @@
         "bytes": 12083,
         "path": "trade_market_reactions/iwm/2015.json",
         "reaction_count": 1,
-        "sha256": "91d034d09f783543dd99c184b27868d7d5f019d89d261f922be3083af9735d30",
+        "sha256": "4024675227c44b689eee06f8d8383b4cd26b052f41de2f9159c7f3355c659b19",
         "symbol": "IWM",
         "year": 2015
       },
@@ -1975,7 +1975,7 @@
         "bytes": 36046,
         "path": "trade_market_reactions/iwm/2016.json",
         "reaction_count": 3,
-        "sha256": "f1942a245578878a7efc8677f03afefef49e07329ccc8fba4864f627c93555a2",
+        "sha256": "03b9fc48f1ec1c3ff5d19f97eb8f07d0aa90f11475184ea6db35dd6e9370821d",
         "symbol": "IWM",
         "year": 2016
       },
@@ -1983,7 +1983,7 @@
         "bytes": 36069,
         "path": "trade_market_reactions/iwm/2018.json",
         "reaction_count": 3,
-        "sha256": "cc4bfe38634823b7fb2c2972e7000aaef034e16606662dfc9d2da41807d03a5c",
+        "sha256": "585f49f1840d1b6ee5c6daadb62ee7bd962547b5fa52c24fee32b8c7953f94dd",
         "symbol": "IWM",
         "year": 2018
       },
@@ -1991,7 +1991,7 @@
         "bytes": 60182,
         "path": "trade_market_reactions/iwm/2019.json",
         "reaction_count": 5,
-        "sha256": "30098f38dfd089a014889e84c900349b7f537b9c3f454c8ded541dd59b4a32e5",
+        "sha256": "68556da63251cee2dc590719cdcf8272050e3347b24ec6b51ca82ee14a0c5a7a",
         "symbol": "IWM",
         "year": 2019
       },
@@ -1999,7 +1999,7 @@
         "bytes": 72174,
         "path": "trade_market_reactions/iwm/2020.json",
         "reaction_count": 6,
-        "sha256": "4d47ae7ac53dbdf67effa845e96800fc7ce2e5519f693201a4d40b3c183b3fd3",
+        "sha256": "9bf3b43151d3c276bb2c02aad3b654e9268a87911c003d697f86642e9500ecd1",
         "symbol": "IWM",
         "year": 2020
       },
@@ -2007,7 +2007,7 @@
         "bytes": 12088,
         "path": "trade_market_reactions/iwm/2022.json",
         "reaction_count": 1,
-        "sha256": "726df719a84788c1637db109fcb3b3be1fdb651a39e9b9da4e78164fcc67fb7d",
+        "sha256": "294de3f27640a1c97f01e81f0324ece8b5ff29cde5afe37381aa4e381375944c",
         "symbol": "IWM",
         "year": 2022
       },
@@ -2015,7 +2015,7 @@
         "bytes": 12131,
         "path": "trade_market_reactions/iwm/2024.json",
         "reaction_count": 1,
-        "sha256": "76030d69abf249d32bcf03d358a7f2e736ab2ccf1804c685784304f9f3918fd4",
+        "sha256": "d677eece174d9f011701dcce1d775551cdc3d06ead0652a45abd2e02f2633912",
         "symbol": "IWM",
         "year": 2024
       },
@@ -2023,7 +2023,7 @@
         "bytes": 36112,
         "path": "trade_market_reactions/iwm/2025.json",
         "reaction_count": 3,
-        "sha256": "d1f3d9f552cc1f055311bc6ecd7af1ef0b8f097847c02bc12b6c4c7cf235fd4c",
+        "sha256": "6409c57ea81b97a0dfa9023859936e3f2c98035b6740622603d2013b912fc2b9",
         "symbol": "IWM",
         "year": 2025
       },
@@ -2031,7 +2031,7 @@
         "bytes": 35997,
         "path": "trade_market_reactions/iwm/2026.json",
         "reaction_count": 3,
-        "sha256": "6a489c1b7fa9dd3ce0c356ac8435c9b8aa71445f45ce08edf748509ba8cb2748",
+        "sha256": "4586a958aa3ebe4d69a517ed6a3fe38d923fcadcde3215f219f9e7c00040724a",
         "symbol": "IWM",
         "year": 2026
       },
@@ -2039,7 +2039,7 @@
         "bytes": 36036,
         "path": "trade_market_reactions/jnj/2014.json",
         "reaction_count": 3,
-        "sha256": "1d34418034f837d48b8b36fd1e5eb183dffbb7405923667aa6b35cb5eb172374",
+        "sha256": "1d95b03454c7f16af27db485facb2578b67d60eec31d00b191114b4ba582cc78",
         "symbol": "JNJ",
         "year": 2014
       },
@@ -2047,7 +2047,7 @@
         "bytes": 431007,
         "path": "trade_market_reactions/jnj/2015.json",
         "reaction_count": 36,
-        "sha256": "1ee86d2b85f392dd3b27fe0bf7e4f5de6ef1bc43547fc7e8bf2764e815250db6",
+        "sha256": "2e43f51aac31c20e27e6910c98d31560d4d2824c30ddf7ae6daea4f1a2afd8e3",
         "symbol": "JNJ",
         "year": 2015
       },
@@ -2055,7 +2055,7 @@
         "bytes": 191695,
         "path": "trade_market_reactions/jnj/2016.json",
         "reaction_count": 16,
-        "sha256": "2095fc3d44cf1a13e0c2fc507274cce8355b5fd10b8b5a726e017149ce3e315e",
+        "sha256": "deadae0b43f6913d650e0ac5a9d6bd1a9c4c76158a866c7e22b3ab948bed5d23",
         "symbol": "JNJ",
         "year": 2016
       },
@@ -2063,7 +2063,7 @@
         "bytes": 347773,
         "path": "trade_market_reactions/jnj/2017.json",
         "reaction_count": 29,
-        "sha256": "831e2658af34dd07da7d44c51700e1fc76c99688b0c9a21dbff5f7df79949a77",
+        "sha256": "cdfab9528c62007ed929db2d4af4a0304759abd45e23d0152db05ed80608726a",
         "symbol": "JNJ",
         "year": 2017
       },
@@ -2071,7 +2071,7 @@
         "bytes": 287888,
         "path": "trade_market_reactions/jnj/2018.json",
         "reaction_count": 24,
-        "sha256": "508ede74fb47c2ea7fab6288393ca9017fd25f48b2df85770b3e558ecaf8a7a9",
+        "sha256": "517b0b7e8d8b4ddeaf1c9ab9461aeee6d5ff558d44dc7a41c109ef5fa88aee81",
         "symbol": "JNJ",
         "year": 2018
       },
@@ -2079,7 +2079,7 @@
         "bytes": 324107,
         "path": "trade_market_reactions/jnj/2019.json",
         "reaction_count": 27,
-        "sha256": "1546f0c7dc5a3a9d4f3780aa9ea3e0ca193bde385ecce89ae2a9abc6f5e437bc",
+        "sha256": "fddb45149a660565e55020d772e6545d08b4e60bb43733ccb5ffc04894ad79ef",
         "symbol": "JNJ",
         "year": 2019
       },
@@ -2087,7 +2087,7 @@
         "bytes": 300057,
         "path": "trade_market_reactions/jnj/2020.json",
         "reaction_count": 25,
-        "sha256": "cd460cea1549a95c53ebd2a246912dbac713b250d01f96e989b714974b104896",
+        "sha256": "88b665b0debbd66fd8ac3b1f79b1feed9b538efba9903dffa60d4fbc066f8c7b",
         "symbol": "JNJ",
         "year": 2020
       },
@@ -2095,7 +2095,7 @@
         "bytes": 252607,
         "path": "trade_market_reactions/jnj/2021.json",
         "reaction_count": 21,
-        "sha256": "038a2d30f393bb00dc2301f30d937db8f71dbdc2c0ea779fcb697d0e2de564c3",
+        "sha256": "280416a7acd5d6349f68d187217ebaaf3fba4f7fa33d167f61ce6ca277b4216c",
         "symbol": "JNJ",
         "year": 2021
       },
@@ -2103,7 +2103,7 @@
         "bytes": 299867,
         "path": "trade_market_reactions/jnj/2022.json",
         "reaction_count": 25,
-        "sha256": "80471e05bb582db156249eb45c8bfb3ac15d5419f96b6ca2189f9a12428e1630",
+        "sha256": "77a5fcffffb4eaee9807c7e5aa993306901c6959125d47c992986e2f40ba0552",
         "symbol": "JNJ",
         "year": 2022
       },
@@ -2111,7 +2111,7 @@
         "bytes": 348056,
         "path": "trade_market_reactions/jnj/2023.json",
         "reaction_count": 29,
-        "sha256": "0d8691c543d6709b51d9348880f5cca91bd1ddce753430053d84fe7ddbb3190d",
+        "sha256": "bbb0c8584e9865c9e5599a9d6f07d39fa38224f7c28e04d3c75587223a305c66",
         "symbol": "JNJ",
         "year": 2023
       },
@@ -2119,7 +2119,7 @@
         "bytes": 372031,
         "path": "trade_market_reactions/jnj/2024.json",
         "reaction_count": 31,
-        "sha256": "9746115f5ab64a7bdd0eb89384ad8221e7ff8641073b84aef4a9f629ca484362",
+        "sha256": "1422e5b69820aa1b329e21c57ba140fb6f6ed7b1d812ca012fbb6a5ab1f543f1",
         "symbol": "JNJ",
         "year": 2024
       },
@@ -2127,7 +2127,7 @@
         "bytes": 766918,
         "path": "trade_market_reactions/jnj/2025.json",
         "reaction_count": 64,
-        "sha256": "0ca3d89f7da28a950fa4ba802159cb2a42a62a4053e11a8a01dfbb80bf269d9b",
+        "sha256": "031866172a58e836b63f50c5381b01574c6b1b6f7349545afc7fa974b10802a7",
         "symbol": "JNJ",
         "year": 2025
       },
@@ -2135,7 +2135,7 @@
         "bytes": 153346,
         "path": "trade_market_reactions/jnj/2026.json",
         "reaction_count": 13,
-        "sha256": "13dd28910f38c7ff7b7514493faf3214be3dbb4bf1c4ef676306844c3d31f386",
+        "sha256": "4a0e3942078b931505d87b195797ce3d40696f950881e4b4db48d8be9dcf62d1",
         "symbol": "JNJ",
         "year": 2026
       },
@@ -2143,7 +2143,7 @@
         "bytes": 120400,
         "path": "trade_market_reactions/jpm/2014.json",
         "reaction_count": 10,
-        "sha256": "b597de15c4f74d2f281e3aa8e337120337ca511c39ed3ddd069c328aeafb3081",
+        "sha256": "0bdf21e8ce568efcaf84b38cee8c25bf5d9eab0991afab66fcbfdb0c8f4c586e",
         "symbol": "JPM",
         "year": 2014
       },
@@ -2151,7 +2151,7 @@
         "bytes": 167614,
         "path": "trade_market_reactions/jpm/2015.json",
         "reaction_count": 14,
-        "sha256": "6bfd23eedb8693d8f5ebb9b9655c4900f39fe3fd35a9c2ff8081d8cb53d6d14b",
+        "sha256": "11f1e3f8e99d422b7ff7ec5f307da07bae081b530b3ee8e78e203dbb429207a2",
         "symbol": "JPM",
         "year": 2015
       },
@@ -2159,7 +2159,7 @@
         "bytes": 167905,
         "path": "trade_market_reactions/jpm/2016.json",
         "reaction_count": 14,
-        "sha256": "b6eae3f40860d37420319c7f5acd88391f4cf4f9dfcd0a5e67f5229177a047ef",
+        "sha256": "d1423e47073d20d3903e3cab3fad115cfa7e11d086c0a4344042eb01135dffee",
         "symbol": "JPM",
         "year": 2016
       },
@@ -2167,7 +2167,7 @@
         "bytes": 287862,
         "path": "trade_market_reactions/jpm/2017.json",
         "reaction_count": 24,
-        "sha256": "8b8ee44cad1522ab0cadb47c6696767c9e178fa6b13aca7629acd3575a4f7eb4",
+        "sha256": "025a3d0ee7eddc387cd2b21aec522b5cc34eef2dea6151a67af9f2a4ee58fbde",
         "symbol": "JPM",
         "year": 2017
       },
@@ -2175,7 +2175,7 @@
         "bytes": 359669,
         "path": "trade_market_reactions/jpm/2018.json",
         "reaction_count": 30,
-        "sha256": "72451576b00a5443196c67edb3d7c52a8a422cc6a0face59c3ebd30d634d8fe7",
+        "sha256": "67b6a026d112e69db68647bb8605f82da8b9c2882c0bca4162abe20c5223e395",
         "symbol": "JPM",
         "year": 2018
       },
@@ -2183,7 +2183,7 @@
         "bytes": 227776,
         "path": "trade_market_reactions/jpm/2019.json",
         "reaction_count": 19,
-        "sha256": "85ba613d8c405b49cb024e1027720563a6fd2698cc5d3086ce6fc7d2cb508856",
+        "sha256": "f50cd95e88f4e8680374856b9b90e982e5d6174a4d0794d38b1aeed8382d2c5a",
         "symbol": "JPM",
         "year": 2019
       },
@@ -2191,7 +2191,7 @@
         "bytes": 492057,
         "path": "trade_market_reactions/jpm/2020.json",
         "reaction_count": 41,
-        "sha256": "638f3547cf1977d1480cf75d139517ed1205d73f729f8f8b1b875cdac0b6203d",
+        "sha256": "3ed8200d486d7b4ee5177f3101f9e3ebfc1ed6b962588a70f4aa441788fc2b1e",
         "symbol": "JPM",
         "year": 2020
       },
@@ -2199,7 +2199,7 @@
         "bytes": 240436,
         "path": "trade_market_reactions/jpm/2021.json",
         "reaction_count": 20,
-        "sha256": "16da0c5ab786373f87381f7eaaf078f6d7a68b90696e1132543978e9cd05faa7",
+        "sha256": "d755e4de6901334da10d3fbfe3f5db8d2fcd77cc2ec71f3794ba27efc18ad62a",
         "symbol": "JPM",
         "year": 2021
       },
@@ -2207,7 +2207,7 @@
         "bytes": 239719,
         "path": "trade_market_reactions/jpm/2022.json",
         "reaction_count": 20,
-        "sha256": "95207f5a18e12ea094f0b8c5bf6f9727e5480d0464ed7a03f7c4ca653631ed9f",
+        "sha256": "7510ae35118be68028de9fd6638aa746da40665b22d9bb7d4989d4bcfc4d1a8c",
         "symbol": "JPM",
         "year": 2022
       },
@@ -2215,7 +2215,7 @@
         "bytes": 335516,
         "path": "trade_market_reactions/jpm/2023.json",
         "reaction_count": 28,
-        "sha256": "5ba6d6296399e31d4597473a63b0ab17f1bcdf1e5270d839573987c35da6fe6d",
+        "sha256": "7ec5526567ad56611960e26042ecdd935203a92458ccf3c7c04fbd35bd77de01",
         "symbol": "JPM",
         "year": 2023
       },
@@ -2223,7 +2223,7 @@
         "bytes": 251599,
         "path": "trade_market_reactions/jpm/2024.json",
         "reaction_count": 21,
-        "sha256": "82d8f68b32f539213206f4f73309ae6d759963938dace5edd7ffabb215a35934",
+        "sha256": "e7128b00adabdd1692d76ce43c385e26450a8e7dc424b448c4c5fe94c29d467b",
         "symbol": "JPM",
         "year": 2024
       },
@@ -2231,7 +2231,7 @@
         "bytes": 957877,
         "path": "trade_market_reactions/jpm/2025.json",
         "reaction_count": 80,
-        "sha256": "c4c07c46c873346731313d5e05686cc3af525e948e937ad57bb6e694de31bf6d",
+        "sha256": "5262ec5348dace2e77b6499171346a4f6e1fbe0c372287f82008c05987e67b28",
         "symbol": "JPM",
         "year": 2025
       },
@@ -2239,7 +2239,7 @@
         "bytes": 106956,
         "path": "trade_market_reactions/jpm/2026.json",
         "reaction_count": 9,
-        "sha256": "6b677e7c02af6d134a8344ec2af8a82cca46c54c06008bfca81b3d0bd8f52551",
+        "sha256": "3201f11d729e5038fa33ca22f0d0829bc8e4d9c3abde5c55115a0c34588699ae",
         "symbol": "JPM",
         "year": 2026
       },
@@ -2247,7 +2247,7 @@
         "bytes": 195660,
         "path": "trade_market_reactions/meta/2014.json",
         "reaction_count": 16,
-        "sha256": "a427223919466d030d78fedf8635e2e41953c6ee8ea4a849957b642325affb9b",
+        "sha256": "697277db71ebf73b3a8b19dda53fe8bd1da1da56070d577058f81dea5253d1c0",
         "symbol": "META",
         "year": 2014
       },
@@ -2255,7 +2255,7 @@
         "bytes": 61447,
         "path": "trade_market_reactions/meta/2015.json",
         "reaction_count": 5,
-        "sha256": "09f348b8449749102b18805596bc6f1f222abe5e788369c11618639e31813f3b",
+        "sha256": "61247761eca862d2eaea7be30d989c8bbdc8f6b42a1a641abc97534e556a23a6",
         "symbol": "META",
         "year": 2015
       },
@@ -2263,7 +2263,7 @@
         "bytes": 269351,
         "path": "trade_market_reactions/meta/2016.json",
         "reaction_count": 22,
-        "sha256": "0e1f0196ed08d9c7cce3de2a936c98804ebd07ac501d21d8c65eb9f113033d45",
+        "sha256": "4e19c6ec75312418b25c4199fb035440f04b2ad9636ec525c4f60c04bdc2c307",
         "symbol": "META",
         "year": 2016
       },
@@ -2271,7 +2271,7 @@
         "bytes": 183913,
         "path": "trade_market_reactions/meta/2017.json",
         "reaction_count": 15,
-        "sha256": "819205a2bfdccf95e7b9a92b68c6e015486afcfbbcf790de3efa2d7b7dd60964",
+        "sha256": "fd170565cf03f1b86dfb72f3fede2832ee8ab77e075d59c3cb3bfbd1e63dd4d5",
         "symbol": "META",
         "year": 2017
       },
@@ -2279,7 +2279,7 @@
         "bytes": 355654,
         "path": "trade_market_reactions/meta/2018.json",
         "reaction_count": 29,
-        "sha256": "8341b7c087dd86d18f9e5dd82b2572bdacaec4221a9e3455a8c51cf6df512b62",
+        "sha256": "816ca008facf3bae15a24ebb878abab96d03dad29a2c8b45399c499db2e0a08f",
         "symbol": "META",
         "year": 2018
       },
@@ -2287,7 +2287,7 @@
         "bytes": 257232,
         "path": "trade_market_reactions/meta/2019.json",
         "reaction_count": 21,
-        "sha256": "ddc794cc51743b725839d0a721e201615217c9ba37a046b3440b33c5912028a1",
+        "sha256": "7e85011d45f6473b0ca2f7fb723eb49b448a0edc3597fd24d84997e623cb2e88",
         "symbol": "META",
         "year": 2019
       },
@@ -2295,7 +2295,7 @@
         "bytes": 453317,
         "path": "trade_market_reactions/meta/2020.json",
         "reaction_count": 37,
-        "sha256": "eb0134dcf817e6de216b28dc657f7038fcc39018ff6de6ad7f248cf8e12f4895",
+        "sha256": "3121af6fae3d71ead8b9cd7576cfed50a7e5500be2a15c90b0e22eec37f136c2",
         "symbol": "META",
         "year": 2020
       },
@@ -2303,7 +2303,7 @@
         "bytes": 416931,
         "path": "trade_market_reactions/meta/2021.json",
         "reaction_count": 34,
-        "sha256": "7d970f6a46aab09cb11f54687d4b14710f5756f460c9790381a977b5b1b843d1",
+        "sha256": "d913ef6902108f08f5e55c0b75ffe99ec44916a2c3fa5447a1cd8109c3a3f746",
         "symbol": "META",
         "year": 2021
       },
@@ -2311,7 +2311,7 @@
         "bytes": 330697,
         "path": "trade_market_reactions/meta/2022.json",
         "reaction_count": 27,
-        "sha256": "fbb95ac4ad0c36af38b11f57636b9dbe2ec24dc10c2003456d7beac49508f659",
+        "sha256": "a9be98988556fe46210540cd3a9079b5de3fa49fc0629c1a68065d8132936a2e",
         "symbol": "META",
         "year": 2022
       },
@@ -2319,7 +2319,7 @@
         "bytes": 244814,
         "path": "trade_market_reactions/meta/2023.json",
         "reaction_count": 20,
-        "sha256": "785b686d1dfeffdb16f1d2fd09e24b8cf7116f05db74682bcd118268cee159ef",
+        "sha256": "7e392f0a536640d71c99ca7be7a39589a357649b9e06705a183a83a90b3298ec",
         "symbol": "META",
         "year": 2023
       },
@@ -2327,7 +2327,7 @@
         "bytes": 244800,
         "path": "trade_market_reactions/meta/2024.json",
         "reaction_count": 20,
-        "sha256": "6f8fe66fd3bb48c69993ac2d2fe775fc15336a47248317768250243831cc3259",
+        "sha256": "13b84c661b39bdd3ab1eacb15356e6522a48e8531f514b55308f49476889da56",
         "symbol": "META",
         "year": 2024
       },
@@ -2335,7 +2335,7 @@
         "bytes": 1222643,
         "path": "trade_market_reactions/meta/2025.json",
         "reaction_count": 100,
-        "sha256": "95ca100466873f91b0ec6fd9076020d7c3d464aba6e63071f463e24788aac41c",
+        "sha256": "04b7d5bb0c9eae28bf9cd9afb34d942d852b5c92ad0043d7f5737eafc875638a",
         "symbol": "META",
         "year": 2025
       },
@@ -2343,7 +2343,7 @@
         "bytes": 180653,
         "path": "trade_market_reactions/meta/2026.json",
         "reaction_count": 15,
-        "sha256": "dcf2e424df26b22f60d966625bda6ad15909d566b4b43870d86366bc890e4e25",
+        "sha256": "0669eb536dd985f5738e037f26ef86c37576648e7976a05caeebfd30b23405a7",
         "symbol": "META",
         "year": 2026
       },
@@ -2351,7 +2351,7 @@
         "bytes": 84311,
         "path": "trade_market_reactions/msft/2014.json",
         "reaction_count": 7,
-        "sha256": "69a1546ee843477844c50d1c64873c20f523884912090e62dbdca078525868b1",
+        "sha256": "374d1dcc562e85ea7409c5f1e575ed5667ea8dcdb91de684abf23da2c7159b23",
         "symbol": "MSFT",
         "year": 2014
       },
@@ -2359,7 +2359,7 @@
         "bytes": 372191,
         "path": "trade_market_reactions/msft/2015.json",
         "reaction_count": 31,
-        "sha256": "66a7e3aedc3407d68ae69fa45bab302aaa78935ddb3d210d712afae5e2ba3bd5",
+        "sha256": "83bfee03bb5852b6acde6c0731af3c5833a7f55915be2d55b586aef0d3e622dc",
         "symbol": "MSFT",
         "year": 2015
       },
@@ -2367,7 +2367,7 @@
         "bytes": 876697,
         "path": "trade_market_reactions/msft/2016.json",
         "reaction_count": 73,
-        "sha256": "8b57ab9348e649bceef0e39f355dfc3d9c30e8d3fda1970f1d9340f58bc6d510",
+        "sha256": "679453b35a3ceabcb3fbcb4f1c954c02d980e687c5c8e3cdf1f443bf1732b8cf",
         "symbol": "MSFT",
         "year": 2016
       },
@@ -2375,7 +2375,7 @@
         "bytes": 467886,
         "path": "trade_market_reactions/msft/2017.json",
         "reaction_count": 39,
-        "sha256": "df0138c721456bfe75cfb1422ce05ef985e1e2d2386971a641f391c090878c33",
+        "sha256": "794866b577be7d0b32e3f80bfe8659c55076705a85cc7656f001a8fa57616f09",
         "symbol": "MSFT",
         "year": 2017
       },
@@ -2383,7 +2383,7 @@
         "bytes": 757374,
         "path": "trade_market_reactions/msft/2018.json",
         "reaction_count": 63,
-        "sha256": "88ae42382f303b6f3b89c8017e9ce0092399a65b64806db5503def6d0043bc16",
+        "sha256": "9a55439b0bb112ad80478e5ee59291fd9301c8532fd8dd6b7940ca1be3ded154",
         "symbol": "MSFT",
         "year": 2018
       },
@@ -2391,7 +2391,7 @@
         "bytes": 1144360,
         "path": "trade_market_reactions/msft/2019.json",
         "reaction_count": 95,
-        "sha256": "f451cc764aa05c2f42f9aafeaa7d11a5f66b696bf289b355abcb9ee2669b88e1",
+        "sha256": "ea16a6f83b2a0d4d47190fb00148733b0fcc80cf48b436a71a3100b4c42deefd",
         "symbol": "MSFT",
         "year": 2019
       },
@@ -2399,7 +2399,7 @@
         "bytes": 1675623,
         "path": "trade_market_reactions/msft/2020.json",
         "reaction_count": 139,
-        "sha256": "3da8d2f587418b70098ceedd25df8fad5946f6fda731ff666a39e2a06551b098",
+        "sha256": "9e0285b64e39291dcd7f50498a8e18a2105cff9a6aa4aed199cbb94f98237ee3",
         "symbol": "MSFT",
         "year": 2020
       },
@@ -2407,7 +2407,7 @@
         "bytes": 1336060,
         "path": "trade_market_reactions/msft/2021.json",
         "reaction_count": 111,
-        "sha256": "f8ada7bb8b6c683fd4e26fca2949adf93444283e339bd88564ccdb70ff5315e2",
+        "sha256": "9655c005e106ea22519ec9777aa9c5ac12020df8feeaa88c721ff5287d7b2fb3",
         "symbol": "MSFT",
         "year": 2021
       },
@@ -2415,7 +2415,7 @@
         "bytes": 696850,
         "path": "trade_market_reactions/msft/2022.json",
         "reaction_count": 58,
-        "sha256": "1dda1e2dc25a6af4cb888ee0ae4b689366a4001d83392f6feba2096f77618b07",
+        "sha256": "8bc1fda360d6dd3a33e161a649d40279cf5230ddad36f810056ce282cfa6fc22",
         "symbol": "MSFT",
         "year": 2022
       },
@@ -2423,7 +2423,7 @@
         "bytes": 1043418,
         "path": "trade_market_reactions/msft/2023.json",
         "reaction_count": 87,
-        "sha256": "ba94cc662f8c5e1beea38fd6b89c55a06e3834d32c19d1d91cda2bfe9619abc0",
+        "sha256": "01e938250096360c30ced81c76374c490b8cb69f3e17555d8db6ad9ccebae53c",
         "symbol": "MSFT",
         "year": 2023
       },
@@ -2431,7 +2431,7 @@
         "bytes": 1057486,
         "path": "trade_market_reactions/msft/2024.json",
         "reaction_count": 88,
-        "sha256": "b6345e389bd0f09c3b84cedb596ce108f0f660543205592a6bcc5732b1c27350",
+        "sha256": "2cea47bb91c41c163e75304e29b4d4cf2ee97c3052dfbf19c0b7f703449bf7a3",
         "symbol": "MSFT",
         "year": 2024
       },
@@ -2439,7 +2439,7 @@
         "bytes": 1803081,
         "path": "trade_market_reactions/msft/2025.json",
         "reaction_count": 150,
-        "sha256": "a84573f073295ab6883e3ebb7d38c2b900587c7283087354a3594ee9be93f1ec",
+        "sha256": "0b380632dc709d3e2d7a3e5d29d2f23966263327776829f7a69e0dd2ef36272b",
         "symbol": "MSFT",
         "year": 2025
       },
@@ -2447,7 +2447,7 @@
         "bytes": 588065,
         "path": "trade_market_reactions/msft/2026.json",
         "reaction_count": 50,
-        "sha256": "d40f7608d21fc2b0fb4112f67bf8396deaba5830bd927e8e978f66c34effadc8",
+        "sha256": "8de1bfd64e4e32dc2971f255ad98a3a023cbc449d483048856cf6f572928ba76",
         "symbol": "MSFT",
         "year": 2026
       },
@@ -2455,7 +2455,7 @@
         "bytes": 108017,
         "path": "trade_market_reactions/nvda/2016.json",
         "reaction_count": 9,
-        "sha256": "633f3c2e1d35ac8a694760db04de9bf5bb981817796e68b20744ee8c6d88f135",
+        "sha256": "47d871f00738809c18ff0c0e966896159eeba57a0039347d4cff32f47ecd2da2",
         "symbol": "NVDA",
         "year": 2016
       },
@@ -2463,7 +2463,7 @@
         "bytes": 95973,
         "path": "trade_market_reactions/nvda/2017.json",
         "reaction_count": 8,
-        "sha256": "9c1b158aa33313bc9f849c6a383f45bdb6b1b9d27c7c034799b9ed12c7838dda",
+        "sha256": "2cd55b86e531c3f05336d13c33cb466b7fa922b07352a69b0740eaff8d39b661",
         "symbol": "NVDA",
         "year": 2017
       },
@@ -2471,7 +2471,7 @@
         "bytes": 96029,
         "path": "trade_market_reactions/nvda/2018.json",
         "reaction_count": 8,
-        "sha256": "bb8e8a12843817fc39f659fbee7675bbe884ad339fd0152443b937cbbaee7886",
+        "sha256": "d1af1a550b05b86d232e328788e421b585c1f57a678e75f5a67832246550560d",
         "symbol": "NVDA",
         "year": 2018
       },
@@ -2479,7 +2479,7 @@
         "bytes": 203701,
         "path": "trade_market_reactions/nvda/2019.json",
         "reaction_count": 17,
-        "sha256": "142592b894c42bce41d13afb2abfa68d359893f10eaca959e4e2fcbc6249907b",
+        "sha256": "5e4d8da86350f35a2d1589b253650aeaaab6f07d3b42904c4b928e6fae9ff5d3",
         "symbol": "NVDA",
         "year": 2019
       },
@@ -2487,7 +2487,7 @@
         "bytes": 671451,
         "path": "trade_market_reactions/nvda/2020.json",
         "reaction_count": 56,
-        "sha256": "fe5668b4259e4f94ed1e820f1af80bd2d42bbe491959b1eeb9228708e3a59818",
+        "sha256": "84709ddf927016f9c90c30a68033c7147898ea33e4a1f116fb16eacdab271880",
         "symbol": "NVDA",
         "year": 2020
       },
@@ -2495,7 +2495,7 @@
         "bytes": 372383,
         "path": "trade_market_reactions/nvda/2021.json",
         "reaction_count": 31,
-        "sha256": "e11541e180c656cdf97829a52f7bcba12ade0a6deeea0407839a025ba5b8dd04",
+        "sha256": "08e729a9368e31b8c721cb10638ae4a7b037b73b1d839722dc2130acb1d9613d",
         "symbol": "NVDA",
         "year": 2021
       },
@@ -2503,7 +2503,7 @@
         "bytes": 323590,
         "path": "trade_market_reactions/nvda/2022.json",
         "reaction_count": 27,
-        "sha256": "8221071d79283b86ec78a66feff72ccd03627af2085918d65b7d5eb105eebc59",
+        "sha256": "ec3887726d5bef5f4f2013a063a71a19ae2179e698dc1cff0fdf7a4aea729dcf",
         "symbol": "NVDA",
         "year": 2022
       },
@@ -2511,7 +2511,7 @@
         "bytes": 526497,
         "path": "trade_market_reactions/nvda/2023.json",
         "reaction_count": 44,
-        "sha256": "85e2835228dc31dc9f0d74d43c153b8ab1aca355cc8e7a9cd1eb1bede3b8f8c6",
+        "sha256": "6828ad0e595721b421b13734251e254209e54e859c83022aaef3ca520bc7ef68",
         "symbol": "NVDA",
         "year": 2023
       },
@@ -2519,7 +2519,7 @@
         "bytes": 684603,
         "path": "trade_market_reactions/nvda/2024.json",
         "reaction_count": 57,
-        "sha256": "0b7bda79f958f5a5fb0bc8b7b10dbc79baa4aec24a0649db3985e5182b80487d",
+        "sha256": "42a1754183e37e12df8939cfe0694b53d3b7d15d8789561ad2e9e594397cee93",
         "symbol": "NVDA",
         "year": 2024
       },
@@ -2527,15 +2527,15 @@
         "bytes": 1380982,
         "path": "trade_market_reactions/nvda/2025.json",
         "reaction_count": 115,
-        "sha256": "ccd05060af20f4e06ef85e70c032cdb0e56da78d1a29577bb1392b5d56b1466a",
+        "sha256": "9bc4074789081d780f50f83cc3d6ae0ef1ae25600f3729da0b6f39dccfbb72b4",
         "symbol": "NVDA",
         "year": 2025
       },
       "NVDA:2026": {
-        "bytes": 343303,
+        "bytes": 352560,
         "path": "trade_market_reactions/nvda/2026.json",
-        "reaction_count": 29,
-        "sha256": "11d0bb177ab2f09d4855ebd32dceb46132a817cd19ebe6d3f98a1f2de8fe85fd",
+        "reaction_count": 30,
+        "sha256": "9f0abe349d8052f4b99fad9612d7d85585d543984a909ac1dea8b79d95f5397b",
         "symbol": "NVDA",
         "year": 2026
       },
@@ -2543,7 +2543,7 @@
         "bytes": 24019,
         "path": "trade_market_reactions/qqq/2014.json",
         "reaction_count": 2,
-        "sha256": "a0509382663529b17594d41f155b308c3f5383bfd9bd69571c636ff762d93c3a",
+        "sha256": "d26cb8e1217f3695d75e45b3d4d171c2a90996f2190e34d0d32e84547c15f1ca",
         "symbol": "QQQ",
         "year": 2014
       },
@@ -2551,7 +2551,7 @@
         "bytes": 47939,
         "path": "trade_market_reactions/qqq/2015.json",
         "reaction_count": 4,
-        "sha256": "401f23ac5ad8efae17c694194cdaf970659ca0e8ac45c6a146438f9f275ef690",
+        "sha256": "8f4ecdb8b05e676aaf2ebd500d49b67894850645e95553e324673a73808584b4",
         "symbol": "QQQ",
         "year": 2015
       },
@@ -2559,7 +2559,7 @@
         "bytes": 35931,
         "path": "trade_market_reactions/qqq/2016.json",
         "reaction_count": 3,
-        "sha256": "6c51d35154b7aad9709ffbf1cf86430c93bf5f328bbf3c08b7c61d1017604bd7",
+        "sha256": "f4f38bbff50c39a5be70aa20554d9f903a8f11bc6498531b8018d316ded9bbdb",
         "symbol": "QQQ",
         "year": 2016
       },
@@ -2567,7 +2567,7 @@
         "bytes": 12115,
         "path": "trade_market_reactions/qqq/2017.json",
         "reaction_count": 1,
-        "sha256": "21682c5aa5962811ea2adb078c57a47d359412ddee23907be47740cedad60262",
+        "sha256": "d32e4bc929089826f97ae361fbed6dae56b67fbe1f0dd8579a6efb2356846122",
         "symbol": "QQQ",
         "year": 2017
       },
@@ -2575,7 +2575,7 @@
         "bytes": 143875,
         "path": "trade_market_reactions/qqq/2018.json",
         "reaction_count": 12,
-        "sha256": "b851c799cd9658ca25bd93c59fc8c346402004f84c5246fd77728e51934f8462",
+        "sha256": "d2ffbc472aba38394d9838e6989384786bafb56a567fef9ce56db51b7af2291d",
         "symbol": "QQQ",
         "year": 2018
       },
@@ -2583,7 +2583,7 @@
         "bytes": 107926,
         "path": "trade_market_reactions/qqq/2019.json",
         "reaction_count": 9,
-        "sha256": "884e3fcabbe8b13eb20f1fe96c12d08a847cbee15ec9d4da4115fb8ed15d7e11",
+        "sha256": "d5330e286a75ebbbd86e1a41403185a54b0b5c8d209692494a1f9e8b51a1a315",
         "symbol": "QQQ",
         "year": 2019
       },
@@ -2591,7 +2591,7 @@
         "bytes": 36032,
         "path": "trade_market_reactions/qqq/2020.json",
         "reaction_count": 3,
-        "sha256": "8ef9817e0669bd017165e14b420a33c3870ca9eeba6a28182b5be2c3f2b14398",
+        "sha256": "c316d1282438ad4cfe5852763a586bc550ca15ca3709b4eb22ec4a53a92c7f37",
         "symbol": "QQQ",
         "year": 2020
       },
@@ -2599,7 +2599,7 @@
         "bytes": 24014,
         "path": "trade_market_reactions/qqq/2021.json",
         "reaction_count": 2,
-        "sha256": "91f3a1c1637f6d61038a1539c94b24a2b082613a3bda8d7a51baeab0bbca2b11",
+        "sha256": "a90105569bdef315614463a3fe647f81ea7a655506d5e0a5cd5c65bb370c68a8",
         "symbol": "QQQ",
         "year": 2021
       },
@@ -2607,7 +2607,7 @@
         "bytes": 24014,
         "path": "trade_market_reactions/qqq/2022.json",
         "reaction_count": 2,
-        "sha256": "523dc4c84a1516e4e5a713c4d4d076fbaa04d4cd28475036559d02d32b694def",
+        "sha256": "d0a5a42dd874efa15edde315b0a969eb776a7195bd3fe87e913affc7584416e9",
         "symbol": "QQQ",
         "year": 2022
       },
@@ -2615,7 +2615,7 @@
         "bytes": 47816,
         "path": "trade_market_reactions/qqq/2023.json",
         "reaction_count": 4,
-        "sha256": "a97e9f236980df15da0135d9a8631a7baf50727a3fffd5d3fb11045ac60dd157",
+        "sha256": "60eb7482574ff8cc6ae2ee6196163f6b544579d085cc2fe9b8cea04491873b28",
         "symbol": "QQQ",
         "year": 2023
       },
@@ -2623,7 +2623,7 @@
         "bytes": 12046,
         "path": "trade_market_reactions/qqq/2024.json",
         "reaction_count": 1,
-        "sha256": "cb893b3e1510ba9980bfd0c2d98cfac376b33450d8cdc47e4e6e65ea160c6279",
+        "sha256": "72e87f5b5a5b4325caaba099176aba7ce353872a408531c18a1ad9a341a67fc3",
         "symbol": "QQQ",
         "year": 2024
       },
@@ -2631,7 +2631,7 @@
         "bytes": 95519,
         "path": "trade_market_reactions/qqq/2025.json",
         "reaction_count": 8,
-        "sha256": "003b922eb431b4c772fcac900cd1af29c61c4f4141dfe9b25a180737b4702701",
+        "sha256": "341e67d393dd6a876caa43c05365b6cc903d3805b59635285c45cba412438aab",
         "symbol": "QQQ",
         "year": 2025
       },
@@ -2639,7 +2639,7 @@
         "bytes": 60039,
         "path": "trade_market_reactions/spy/2015.json",
         "reaction_count": 5,
-        "sha256": "54eabaa0b6a68aecf4e103c610ab7daf869402b6f01c97d737bc72b44cacc52b",
+        "sha256": "74f4bd4bb1c98adbdbcbe7338639508dca7a9cda6f882acc31431dd46f666037",
         "symbol": "SPY",
         "year": 2015
       },
@@ -2647,7 +2647,7 @@
         "bytes": 215839,
         "path": "trade_market_reactions/spy/2016.json",
         "reaction_count": 18,
-        "sha256": "a5ea7b94dfbc5aedb5dbd1a69f66923625522aae60ba6c4bee415a54aaf8aefd",
+        "sha256": "f0359215189c6473cbe57fe14d00defb8e75d89c9c5b0dc452de77e49d81afe0",
         "symbol": "SPY",
         "year": 2016
       },
@@ -2655,7 +2655,7 @@
         "bytes": 72102,
         "path": "trade_market_reactions/spy/2017.json",
         "reaction_count": 6,
-        "sha256": "f57d72a0ee2e335638dec5dbe95c6370c884f1795aac28356e7d018c9024f977",
+        "sha256": "7e39b34adc8120dd818ad4bd0b06f14c53ed10191e9fa1567386e0393b4e5ef0",
         "symbol": "SPY",
         "year": 2017
       },
@@ -2663,7 +2663,7 @@
         "bytes": 132023,
         "path": "trade_market_reactions/spy/2018.json",
         "reaction_count": 11,
-        "sha256": "b599abd799fc5d758a94c4918983a8ffda8cdc3581db608d9586d9f3e1ea6800",
+        "sha256": "74aadc695e9cb00e4a659a6317cb2f401b154887b600e7f2b5f53b1c18da7b9e",
         "symbol": "SPY",
         "year": 2018
       },
@@ -2671,7 +2671,7 @@
         "bytes": 155963,
         "path": "trade_market_reactions/spy/2019.json",
         "reaction_count": 13,
-        "sha256": "246c8b95d63912d403c95eb51fe18b166189d68ab4ee17929cd51bcf18b81dae",
+        "sha256": "48646b8936205fd8567e905725e8c106ab9fafd47b153c797e23d93af3b2971f",
         "symbol": "SPY",
         "year": 2019
       },
@@ -2679,7 +2679,7 @@
         "bytes": 168350,
         "path": "trade_market_reactions/spy/2020.json",
         "reaction_count": 14,
-        "sha256": "a4244222eb3cf410b456c961fee4aad568d676eb27c470199c55589841cbb880",
+        "sha256": "e3045cffe5eec48dfd218285d70fc936b36270ef449248562f0fbca3dc7de7c5",
         "symbol": "SPY",
         "year": 2020
       },
@@ -2687,7 +2687,7 @@
         "bytes": 36064,
         "path": "trade_market_reactions/spy/2021.json",
         "reaction_count": 3,
-        "sha256": "52bad3d2c851235abe24d77990441454194d853cd5749f699cc261a9dc53a6cb",
+        "sha256": "c89024cb31d0c9c02aee8a19a4b5b3b8313029283a7ca57ede932985a18d87c0",
         "symbol": "SPY",
         "year": 2021
       },
@@ -2695,7 +2695,7 @@
         "bytes": 71811,
         "path": "trade_market_reactions/spy/2022.json",
         "reaction_count": 6,
-        "sha256": "57c1ca8d3c2132757b58bc3af9684c707eca0c9b2c80dd58e55c3789fb6da177",
+        "sha256": "871b0924007321521a3e30c084b2e40b396e9a9d48858b7a72a74d440a176067",
         "symbol": "SPY",
         "year": 2022
       },
@@ -2703,7 +2703,7 @@
         "bytes": 35875,
         "path": "trade_market_reactions/spy/2023.json",
         "reaction_count": 3,
-        "sha256": "0582ebea96658a4d6ed390407698ee44a00d98c1bf04042d7e6d454487fc58ae",
+        "sha256": "da9983555de65a4f1bbf248d1d17ad815f394c6f7d2396aa4da417b510f1fae7",
         "symbol": "SPY",
         "year": 2023
       },
@@ -2711,7 +2711,7 @@
         "bytes": 59784,
         "path": "trade_market_reactions/spy/2024.json",
         "reaction_count": 5,
-        "sha256": "a12e7dac71d5b1ee812bff7be746eb4729312d1817d68e811345522d0e5c2297",
+        "sha256": "2c13ab97aeda4306af4967fc58a3856e06e3bd0447c83cb6aa23e7c12d0a4b49",
         "symbol": "SPY",
         "year": 2024
       },
@@ -2719,7 +2719,7 @@
         "bytes": 36054,
         "path": "trade_market_reactions/spy/2025.json",
         "reaction_count": 3,
-        "sha256": "7154b1223ef5486af23678639a676ba8bc5346cc8f62189fc12c76f7444f85d9",
+        "sha256": "432b3dc282701c07b86e18cd7771962f2ea8d45de063fad1f35467d9f1654e33",
         "symbol": "SPY",
         "year": 2025
       },
@@ -2727,7 +2727,7 @@
         "bytes": 91669,
         "path": "trade_market_reactions/spy/2026.json",
         "reaction_count": 8,
-        "sha256": "195898da565493930b70d06cf93d85af847a400785f62a0b311a45de769b46d5",
+        "sha256": "0c0458280f0a1b548320ce8fcdb77ce3b17cf0acd0a84908a571fe0ea97a5317",
         "symbol": "SPY",
         "year": 2026
       },
@@ -2735,7 +2735,7 @@
         "bytes": 12074,
         "path": "trade_market_reactions/tsla/2016.json",
         "reaction_count": 1,
-        "sha256": "673ea0268da322e09437408522ceebb55a7fc330168aeb3ba6da29e5d4134437",
+        "sha256": "d7f1b25cfd872c8e3830f0d95c832bf169591172113e3a76523690f89ad8a591",
         "symbol": "TSLA",
         "year": 2016
       },
@@ -2743,7 +2743,7 @@
         "bytes": 48072,
         "path": "trade_market_reactions/tsla/2017.json",
         "reaction_count": 4,
-        "sha256": "d3a11db5a48ad7e31ce94ac95aea8468760554756441ec348fb6f665de4ddb4f",
+        "sha256": "540d82ccc9442ad9d9ab2b2ab4af513b5dfbe7d614fecad121a9219cfb112a87",
         "symbol": "TSLA",
         "year": 2017
       },
@@ -2751,7 +2751,7 @@
         "bytes": 36086,
         "path": "trade_market_reactions/tsla/2018.json",
         "reaction_count": 3,
-        "sha256": "a72c291036c2519172536b6cfa9fb2006f746d67c48e4443cf781e8a86cab327",
+        "sha256": "a7fe5792675e958af29043e14de65957b817770e1614d92382c2709ecf6770e3",
         "symbol": "TSLA",
         "year": 2018
       },
@@ -2759,7 +2759,7 @@
         "bytes": 35940,
         "path": "trade_market_reactions/tsla/2019.json",
         "reaction_count": 3,
-        "sha256": "c26f3d0eb53a89ad9d676b42775891f4f4061883428f47a6fafddc3209e911b8",
+        "sha256": "37772a0dc94c185f19af5117a565eef1de237ea44b951272e5b70eb7f4e7d291",
         "symbol": "TSLA",
         "year": 2019
       },
@@ -2767,7 +2767,7 @@
         "bytes": 203885,
         "path": "trade_market_reactions/tsla/2020.json",
         "reaction_count": 17,
-        "sha256": "afb8b58ade78fbd112bf48193b06f64467306abe7ceff499a8073291b1298494",
+        "sha256": "d12a97d9242321b17ad79757df03646b9a1e4eff0288aa5da4f205d63bc4db43",
         "symbol": "TSLA",
         "year": 2020
       },
@@ -2775,7 +2775,7 @@
         "bytes": 216023,
         "path": "trade_market_reactions/tsla/2021.json",
         "reaction_count": 18,
-        "sha256": "a388b0732da7d245c7466afc9bdda97fe359a5928a1a93b333672b90c457d9ba",
+        "sha256": "19f835ef26e7ff77124f61d28447a62facf7de862d37b616b5ab3a13959b67e4",
         "symbol": "TSLA",
         "year": 2021
       },
@@ -2783,7 +2783,7 @@
         "bytes": 274073,
         "path": "trade_market_reactions/tsla/2022.json",
         "reaction_count": 23,
-        "sha256": "8e3ba0e8f955da2d6357ff4b366d9237904ccf8d4820755eaf93e8008b410f08",
+        "sha256": "61d281d5f99243513a1dd7feaed7a58b73c586fcce78b7df02a3d32e985c9f6a",
         "symbol": "TSLA",
         "year": 2022
       },
@@ -2791,7 +2791,7 @@
         "bytes": 272787,
         "path": "trade_market_reactions/tsla/2023.json",
         "reaction_count": 23,
-        "sha256": "ad1b6a22c96b123908df9bce74ee52ab55da48d545998b05c1753d68d982cdab",
+        "sha256": "196370bc72d2d8bcf42856814e6e310b3efe7ca4d909aa49b906e253075e6636",
         "symbol": "TSLA",
         "year": 2023
       },
@@ -2799,7 +2799,7 @@
         "bytes": 356047,
         "path": "trade_market_reactions/tsla/2024.json",
         "reaction_count": 30,
-        "sha256": "44c4ccadad655da1f4d9a1e7f3067846b2db6f29275cd6a20f612e86a1c3c7d1",
+        "sha256": "8466d4dc6069e42e486485d24cb74e8cb0ffd3e3a25f7832448e0d6f6433cc27",
         "symbol": "TSLA",
         "year": 2024
       },
@@ -2807,7 +2807,7 @@
         "bytes": 900952,
         "path": "trade_market_reactions/tsla/2025.json",
         "reaction_count": 76,
-        "sha256": "2ac132708377b31ad2e2dbf4fa84fff00adb69c60a024b7c32c60288af65682c",
+        "sha256": "c3517b63b88b93b44237cd7adae1054b9bd9fc96b5b25a040aace49253f3f7d4",
         "symbol": "TSLA",
         "year": 2025
       },
@@ -2815,7 +2815,7 @@
         "bytes": 71394,
         "path": "trade_market_reactions/tsla/2026.json",
         "reaction_count": 6,
-        "sha256": "3e8b50fb7099d7897c7c1c9c3a7c20f2fbc8f0b16b6c45b8370dfbebfadf5677",
+        "sha256": "75750e044a2d0521388a4c7cbece1713976da37149bcb4882020692e08369b91",
         "symbol": "TSLA",
         "year": 2026
       },
@@ -2823,7 +2823,7 @@
         "bytes": 107593,
         "path": "trade_market_reactions/v/2014.json",
         "reaction_count": 9,
-        "sha256": "c2e09295a4c948f53555b68a67992415dee2da618dc0998c775bb02f5ad94270",
+        "sha256": "2a2ba99c008ab4cc4930af29216fa48e2043f35eeb50f0c1e2c8c3d89f44e607",
         "symbol": "V",
         "year": 2014
       },
@@ -2831,7 +2831,7 @@
         "bytes": 166811,
         "path": "trade_market_reactions/v/2015.json",
         "reaction_count": 14,
-        "sha256": "4f31c51d9bb08c8b9e107e00dc7c6f2bc57c075172b94079e50f4627f15c375e",
+        "sha256": "b0b6dceb4ecef83da09e7c12acf88a1cba773c2f780c07f244e17668cac7d412",
         "symbol": "V",
         "year": 2015
       },
@@ -2839,7 +2839,7 @@
         "bytes": 143238,
         "path": "trade_market_reactions/v/2016.json",
         "reaction_count": 12,
-        "sha256": "f746e2c7ddf7dae69e6c752fe161eaeb0bb643916f4c72b4df810ec56819b1ea",
+        "sha256": "dd06a6dd988ca567d98ea30852d74be951c2055a8ccc84e2e0d39a1fe2cde98d",
         "symbol": "V",
         "year": 2016
       },
@@ -2847,7 +2847,7 @@
         "bytes": 131203,
         "path": "trade_market_reactions/v/2017.json",
         "reaction_count": 11,
-        "sha256": "65d0d041f073e524d81db1490405ac13dbfaf297cf87f5e4f9d9c6b0b5997418",
+        "sha256": "b82481e70e3e34262bbb95d1d96eecc450dbbd93246a0b7404ca09d3104dff62",
         "symbol": "V",
         "year": 2017
       },
@@ -2855,7 +2855,7 @@
         "bytes": 155475,
         "path": "trade_market_reactions/v/2018.json",
         "reaction_count": 13,
-        "sha256": "03d2dadb1a658c2cbbcab50ff6831c2205088626c676e49494c512c9b04eea70",
+        "sha256": "45a795d24ed7aa6536ca62e85088b57d6e2bf4a1ec438117a82223a05d8c7588",
         "symbol": "V",
         "year": 2018
       },
@@ -2863,7 +2863,7 @@
         "bytes": 263050,
         "path": "trade_market_reactions/v/2019.json",
         "reaction_count": 22,
-        "sha256": "e8d9363859014daf09b708a5674b8082258c862e3ba658185555aaf12e27efad",
+        "sha256": "3ce9ad00a3732ce00517f70d6856f1fa908048e42a7291b807a4b16e7da7a69a",
         "symbol": "V",
         "year": 2019
       },
@@ -2871,7 +2871,7 @@
         "bytes": 585685,
         "path": "trade_market_reactions/v/2020.json",
         "reaction_count": 49,
-        "sha256": "cd8436985932c075a2b38b4646e24b9802787a9b199dcfbbf857a74a9fc300e5",
+        "sha256": "3d09675ac81c024897b4df18adcef70d76709f6a06a7c0991db8eb8800b31895",
         "symbol": "V",
         "year": 2020
       },
@@ -2879,7 +2879,7 @@
         "bytes": 286929,
         "path": "trade_market_reactions/v/2021.json",
         "reaction_count": 24,
-        "sha256": "973975794f83e9db8202e4f6cf3e24e833b4d979c5bd6dc1b8c4b3acd04a401c",
+        "sha256": "35b5e524c7807be8fba69d2a9bda9470b39023c36e9555dc0e13eb30016c2109",
         "symbol": "V",
         "year": 2021
       },
@@ -2887,7 +2887,7 @@
         "bytes": 155001,
         "path": "trade_market_reactions/v/2022.json",
         "reaction_count": 13,
-        "sha256": "8c4e5a7362b480f42fd72206288f5164b82ee2dfe1caef4d9a72e9721aa8e895",
+        "sha256": "be7533493c1a51dccac5c608f6e61ce2a7184a797b7fcfca9b725474cf209e01",
         "symbol": "V",
         "year": 2022
       },
@@ -2895,7 +2895,7 @@
         "bytes": 155164,
         "path": "trade_market_reactions/v/2023.json",
         "reaction_count": 13,
-        "sha256": "5760d518b0d0185e35d02daff59c678da7bd274cc3c8210ed706d044c880cd34",
+        "sha256": "28dbbaf069103fd3cfa7098412557b7918c8f9750a62e863a43f6d677fa3f541",
         "symbol": "V",
         "year": 2023
       },
@@ -2903,7 +2903,7 @@
         "bytes": 166621,
         "path": "trade_market_reactions/v/2024.json",
         "reaction_count": 14,
-        "sha256": "1d9754663d4f1cdb489f44ebdc4ea9ecc772df4ba2087a5bbc6ba97e3a1568fe",
+        "sha256": "165f819cd056ec42750ba6f26aed0b0b38b666342f5c4010f3128945678230be",
         "symbol": "V",
         "year": 2024
       },
@@ -2911,7 +2911,7 @@
         "bytes": 904111,
         "path": "trade_market_reactions/v/2025.json",
         "reaction_count": 76,
-        "sha256": "ab6792fbc8873cbe41f07ef322df97885af692a961c3196fea5a1b291c6a5410",
+        "sha256": "2904c37e4ed80f5a94531cc43b50ac5003a7d35c8179c3ebb7146f236aa45f9d",
         "symbol": "V",
         "year": 2025
       },
@@ -2919,7 +2919,7 @@
         "bytes": 106307,
         "path": "trade_market_reactions/v/2026.json",
         "reaction_count": 9,
-        "sha256": "cdc796e3483d6e2137f49b312f11d67c515233fbc2c9acc0fb4863dfe6a965c2",
+        "sha256": "a2fbde3c6d8bd37b3c7941dd629403335a9a8f169a4e2b285b303806855c9bda",
         "symbol": "V",
         "year": 2026
       },
@@ -2927,7 +2927,7 @@
         "bytes": 36183,
         "path": "trade_market_reactions/vfiax/2009.json",
         "reaction_count": 3,
-        "sha256": "2df956745338d8f3e4fe64b7f90161571a2e4c2056515709d035a66be4d9341f",
+        "sha256": "7845c8c30d5500953e12b0cf9905b02c0d7561c7f57221a7568a36f5826b931d",
         "symbol": "VFIAX",
         "year": 2009
       },
@@ -2935,7 +2935,7 @@
         "bytes": 24295,
         "path": "trade_market_reactions/vfiax/2014.json",
         "reaction_count": 2,
-        "sha256": "610aacf9ed4d32d3bcb6e8f5c43defcbd6d2dc43b5157455b7a041bf744856c3",
+        "sha256": "d5fd85ca80685d97f41cc8b45d98a770a7d81fa350f05d1b2c528cf8dfeb4b48",
         "symbol": "VFIAX",
         "year": 2014
       },
@@ -2943,7 +2943,7 @@
         "bytes": 36050,
         "path": "trade_market_reactions/xle/2015.json",
         "reaction_count": 3,
-        "sha256": "d242e1fa592bbad71ee67d89e87d5f74f024acf76b60546359574b5be5ba46c8",
+        "sha256": "50a6f14cab9d216b148a360cb11707329d0cd7fe81bd91803ddb54351fd256fb",
         "symbol": "XLE",
         "year": 2015
       },
@@ -2951,7 +2951,7 @@
         "bytes": 12103,
         "path": "trade_market_reactions/xle/2016.json",
         "reaction_count": 1,
-        "sha256": "0f44233ab741fa5a783f503924c862fbe7648de3e5a6d30e0945130f03845828",
+        "sha256": "ddf63f0aee5eec776ffaff6c0d09c09ae622fcf4cf3a338f9cf99ca731138bfb",
         "symbol": "XLE",
         "year": 2016
       },
@@ -2959,7 +2959,7 @@
         "bytes": 59950,
         "path": "trade_market_reactions/xle/2018.json",
         "reaction_count": 5,
-        "sha256": "cdf99393c06084975541dae3be5a119ffd9145027ee1fb193dc1884429479943",
+        "sha256": "48bf865f0a6292a91c4d8643ceeb90e2c6b1c3e15b68408202663e16d29f681a",
         "symbol": "XLE",
         "year": 2018
       },
@@ -2967,7 +2967,7 @@
         "bytes": 35879,
         "path": "trade_market_reactions/xle/2022.json",
         "reaction_count": 3,
-        "sha256": "4e7786588405ef70f0c41bbd7641e8825c61fd41b81b0ab5c7bad658968adb35",
+        "sha256": "ea6fe970a694253af4fa149135a44d6f02b44f0ba903951c83c7944a05f072eb",
         "symbol": "XLE",
         "year": 2022
       },
@@ -2975,7 +2975,7 @@
         "bytes": 12018,
         "path": "trade_market_reactions/xle/2024.json",
         "reaction_count": 1,
-        "sha256": "6c41277c5484723837e0180d817951917bc7e60689cc17b6752cfd40d48308b7",
+        "sha256": "1a807922f7de56f76c1805b591324b485a4caa35431c0ba007c29a589ae50721",
         "symbol": "XLE",
         "year": 2024
       },
@@ -2983,7 +2983,7 @@
         "bytes": 12069,
         "path": "trade_market_reactions/xle/2026.json",
         "reaction_count": 1,
-        "sha256": "c50a10204580cd0b2852b9bec0e06c5edfb29e5f64b9c69ff5a8ee9e566efd23",
+        "sha256": "690d4978fb585263871859e55a859c18955f86cc3d6909ee721b2bb400f8ea82",
         "symbol": "XLE",
         "year": 2026
       },
@@ -2991,7 +2991,7 @@
         "bytes": 83837,
         "path": "trade_market_reactions/xlf/2017.json",
         "reaction_count": 7,
-        "sha256": "04eae765df9c73fa4de439874c41bb84fc0aae22e170ae65c22a2393e2b1e8a7",
+        "sha256": "1da2cdb7e21d7d4c719abe19e4cac3be14ec166d9c59b006d461a4b467f5067d",
         "symbol": "XLF",
         "year": 2017
       },
@@ -2999,7 +2999,7 @@
         "bytes": 119799,
         "path": "trade_market_reactions/xlf/2018.json",
         "reaction_count": 10,
-        "sha256": "692825621493e02f4c30b0d24e0a3101c7fa3cce157694f0cb2bf90779f728f2",
+        "sha256": "856e889af10621e4749898e3055399c99b4ce24a4ea2a89622655a2be1688b59",
         "symbol": "XLF",
         "year": 2018
       },
@@ -3007,7 +3007,7 @@
         "bytes": 12111,
         "path": "trade_market_reactions/xlf/2020.json",
         "reaction_count": 1,
-        "sha256": "656b4682a2a30a221840ee19d40f36c39c35158fa7f5111ab2937f859c59447e",
+        "sha256": "8d62dc19febdb626208198bcf6daa5de483ba6c654d49a9dddbb35a2f6b51da7",
         "symbol": "XLF",
         "year": 2020
       },
@@ -3015,7 +3015,7 @@
         "bytes": 35991,
         "path": "trade_market_reactions/xli/2016.json",
         "reaction_count": 3,
-        "sha256": "f62b452274b7c7f1159964dc4c3abfc29414e03040f8a8c20adaa9382d3cfe73",
+        "sha256": "8436b934dc3be6572910e5a1a356aaf5fe8cdd0a824b137a943d1b7fc1aa1bc0",
         "symbol": "XLI",
         "year": 2016
       },
@@ -3023,7 +3023,7 @@
         "bytes": 35999,
         "path": "trade_market_reactions/xli/2017.json",
         "reaction_count": 3,
-        "sha256": "3767d759f79494844ab07b797cf0e8c7e2f838150612913e12ba7319c47b548f",
+        "sha256": "35fdf1fd64a7b6a309d66dc2531579dabf84b3ae5bc642095e8d43a2966498d9",
         "symbol": "XLI",
         "year": 2017
       },
@@ -3031,7 +3031,7 @@
         "bytes": 12114,
         "path": "trade_market_reactions/xlk/2015.json",
         "reaction_count": 1,
-        "sha256": "661a06ded7897a314d4809538f3a66945714fd758d5f7822855bd8444d3a8097",
+        "sha256": "641cbd55a0d8d32133af96163ba8b0b31a92ab24162ddbc35fa1044167591893",
         "symbol": "XLK",
         "year": 2015
       },
@@ -3039,7 +3039,7 @@
         "bytes": 12115,
         "path": "trade_market_reactions/xlv/2015.json",
         "reaction_count": 1,
-        "sha256": "c8083c3bed137607b010cd39d7fdaa1e4fa1c907f8002b60248ce16c278b2f84",
+        "sha256": "79e80608f83c44ee053d8f40d9676267a97eab337f6e4c7f796a3d39e5ac6ffd",
         "symbol": "XLV",
         "year": 2015
       },
@@ -3047,7 +3047,7 @@
         "bytes": 12119,
         "path": "trade_market_reactions/xlv/2016.json",
         "reaction_count": 1,
-        "sha256": "5cebafac62996e66aceb78838f74c19a4ebcd1a396d54e13397a16adc5afe865",
+        "sha256": "b8322c3d702e8cbdbeaa5a0ef6dbc16175a991536fbc89f9f18248b7289736fa",
         "symbol": "XLV",
         "year": 2016
       },
@@ -3055,31 +3055,31 @@
         "bytes": 12130,
         "path": "trade_market_reactions/xlv/2020.json",
         "reaction_count": 1,
-        "sha256": "777ebbf51f6c9219cb438c5df0d0e4ddab9d5682f10ced3e292488e7704b93af",
+        "sha256": "8597fb10dfa607aa5ad4d4bc3ce0a002ec2b3e47285285016179b56f696311bc",
         "symbol": "XLV",
         "year": 2020
       }
     },
-    "reaction_count": 4427
+    "reaction_count": 4429
   },
   "summary": {
-    "complete_calendar_window_count": 4376,
+    "complete_calendar_window_count": 4379,
     "covered_row_count": 4421,
     "distinct_asset_symbol_count": 21,
     "distinct_benchmark_symbol_count": 10,
     "duplicate_reaction_id_count": 0,
-    "market_context_row_count": 4427,
+    "market_context_row_count": 4429,
     "missing_provider_provenance_count": 0,
-    "partial_row_count": 6,
-    "review_required_context_row_count": 4427,
+    "partial_row_count": 8,
+    "review_required_context_row_count": 4429,
     "skip_counts_by_reason": {
       "missing_asset_series": 807,
-      "missing_market_reference": 40612,
+      "missing_market_reference": 40614,
       "missing_or_invalid_disclosed_ticker": 28211,
       "ticker_history_outside_effective_range": 4,
       "unresolved_target_asset": 1422
     },
-    "skipped_transaction_count": 71056,
-    "source_transaction_count": 75483
+    "skipped_transaction_count": 71058,
+    "source_transaction_count": 75487
   }
 }
