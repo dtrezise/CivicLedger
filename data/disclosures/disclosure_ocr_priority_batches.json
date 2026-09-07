@@ -1,10 +1,34 @@
 {
   "batches": [
     {
-      "backlog_document_count": 1995,
-      "batch_id": "house-ocr-highest-confidence-2026-09-06",
+      "backlog_document_count": 1996,
+      "batch_id": "house-ocr-highest-confidence-2026-09-07",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [
+        {
+          "chamber": "House",
+          "document_id": "house-ptr-2026-9116328",
+          "eligibility_checks": {
+            "filer_identity_deterministically_matched": true,
+            "official_source_url": true,
+            "source_file_sha256_present": true,
+            "source_page_count_present": true
+          },
+          "eligible_for_ocr_batch": true,
+          "filing_date": "2026-09-04",
+          "ocr_content_present": false,
+          "official_id": "congress:K000389",
+          "official_name": "Ro Khanna",
+          "priority_score": 100,
+          "priority_tier": "highest_confidence",
+          "processing_status": "metadata_prioritized_ocr_not_run",
+          "source_byte_count": 569775,
+          "source_file_sha256": "2b8a3cebc4a69f509593496502f0821ebac60359a37fd2e7908d0ddf1fbd3526",
+          "source_id": "house-financial-disclosure",
+          "source_page_count": 18,
+          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116328.pdf",
+          "transaction_rows_created": 0
+        },
         {
           "chamber": "House",
           "document_id": "house-ptr-2026-9116311",
@@ -1180,47 +1204,23 @@
           "source_page_count": 2,
           "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221237.pdf",
           "transaction_rows_created": 0
-        },
-        {
-          "chamber": "House",
-          "document_id": "house-ptr-2025-8221238",
-          "eligibility_checks": {
-            "filer_identity_deterministically_matched": true,
-            "official_source_url": true,
-            "source_file_sha256_present": true,
-            "source_page_count_present": true
-          },
-          "eligible_for_ocr_batch": true,
-          "filing_date": "2025-11-14",
-          "ocr_content_present": false,
-          "official_id": "congress:S001172",
-          "official_name": "Adrian Smith",
-          "priority_score": 100,
-          "priority_tier": "highest_confidence",
-          "processing_status": "metadata_prioritized_ocr_not_run",
-          "source_byte_count": 26349,
-          "source_file_sha256": "733ca370b1988f5478d9b8eb958ac1092f6ad7aa37e839994eecba2f0af6ffae",
-          "source_id": "house-financial-disclosure",
-          "source_page_count": 1,
-          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221238.pdf",
-          "transaction_rows_created": 0
         }
       ],
       "chamber": "House",
-      "eligible_document_count": 1995,
+      "eligible_document_count": 1996,
       "priority_tier_counts": {
-        "highest_confidence": 1995
+        "highest_confidence": 1996
       },
       "processing_boundary": "metadata_only_no_ocr_content_generated",
-      "remaining_eligible_document_count": 1945,
+      "remaining_eligible_document_count": 1946,
       "selected_document_count": 50,
-      "selected_document_id_sha256": "ab07ecf9f4f3c0f4c6fa682d4034b0af70cc8392e0cd032876b674792ade1ede",
-      "selected_source_byte_count": 9995712,
-      "selected_source_page_count": 391
+      "selected_document_id_sha256": "ff769ce3c29fc3acd0d5ab424c3e650d4c3ce900b8f3a84a68219b975c31862e",
+      "selected_source_byte_count": 10539138,
+      "selected_source_page_count": 408
     },
     {
       "backlog_document_count": 587,
-      "batch_id": "senate-ocr-highest-confidence-2026-09-06",
+      "batch_id": "senate-ocr-highest-confidence-2026-09-07",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [],
       "chamber": "Senate",
@@ -1237,7 +1237,7 @@
     }
   ],
   "context_label": "Deterministic metadata-only priority batches for official image disclosures. No OCR text or transaction content is inferred or fabricated.",
-  "generated_at": "2026-09-06",
+  "generated_at": "2026-09-07",
   "priority_policy": {
     "batch_size_per_chamber": 50,
     "house_evidence": [
@@ -1261,12 +1261,12 @@
   },
   "schema_version": "disclosure-ocr-priority-batches-v1",
   "summary": {
-    "backlog_document_count": 2582,
-    "eligible_document_count": 1995,
+    "backlog_document_count": 2583,
+    "eligible_document_count": 1996,
     "ocr_content_record_count": 0,
     "selected_document_count": 50,
-    "selected_source_byte_count": 9995712,
-    "selected_source_page_count": 391,
+    "selected_source_byte_count": 10539138,
+    "selected_source_page_count": 408,
     "transaction_rows_created": 0
   }
 }

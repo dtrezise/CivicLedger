@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-09-06",
+  "artifact_date": "2026-09-07",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "285be8aeaf40eb2a6d98516427b1b26d03e0d0837f6d22e2e480f9daffef2f13",
+  "dataset_hash": "4e36c98aae6c6bfbc65fe126aacc1de6508187f9c63c880c29786833c13b15e9",
   "gaps": [
     {
       "available_classified_record_count": 4765,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 523,
+      "selected_record_count": 522,
       "status": "declared_scope_limit"
     },
     {
@@ -57347,27 +57347,6 @@
       "title": "NVIDIA CORP filed 8-K"
     },
     {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2022-06-07",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-117-s-2533",
-      "law_number": "117-135",
-      "official_urls": [
-        "https://www.congress.gov/bill/117th-congress/senate-bill/2533"
-      ],
-      "primary_url": "https://www.congress.gov/bill/117th-congress/senate-bill/2533",
-      "source_event_id": "congress-law-117-s-2533",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "Making Advances in Mammography and Medical Options for Veterans Act"
-    },
-    {
       "accession_number": "0000753308-22-000042",
       "category": "issuer_filings",
       "cik": "0000753308",
@@ -104700,7 +104679,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "dd51f58890172f4514247928fd3eb37b05852fcd05ff280a6aab604afdef0e15",
+      "sha256": "a0071dcb2ff32de67a515981180a03d4edee32a8f67c890c8d96d8c6dd054545",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104720,13 +104699,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4144,
+    "record_count": 4143,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 521,
+      "congress": 520,
       "courts": 344,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4144
+    "record_with_official_url_count": 4143
   }
 }

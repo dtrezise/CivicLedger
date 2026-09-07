@@ -1,7 +1,7 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-09-06",
+  "generated_at": "2026-09-07",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
     {
@@ -37,39 +37,6 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221237.pdf",
       "transaction_rows_created": 0,
       "word_count": 426
-    },
-    {
-      "chamber": "House",
-      "character_count": 1550,
-      "document_id": "house-ptr-2025-8221238",
-      "field_label_confidence": {
-        "amount": 0.5849,
-        "asset": 0.5849,
-        "notification_date": 0.5849,
-        "owner": 0.0,
-        "transaction_date": 0.5849,
-        "transaction_type": 0.5849
-      },
-      "filing_date": "2025-11-14",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8333,
-      "mean_ocr_confidence": 0.5849,
-      "mean_page_quality_score": 72.32,
-      "mean_review_quality_score": 0.7232,
-      "minimum_page_quality_score": 72.32,
-      "official_id": "congress:S001172",
-      "official_name": "Adrian Smith",
-      "page_count": 1,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 1
-      },
-      "processing_status": "ocr_low_quality_review_required",
-      "readable_page_count": 0,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221238.json",
-      "result_sha256": "1b16324a8f011d7d78f7ed2d710816c502463e5106b9bd64f4dc8b51303e983e",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221238.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 331
     },
     {
       "chamber": "House",
@@ -1674,6 +1641,40 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116311.pdf",
       "transaction_rows_created": 0,
       "word_count": 227
+    },
+    {
+      "chamber": "House",
+      "character_count": 31382,
+      "document_id": "house-ptr-2026-9116328",
+      "field_label_confidence": {
+        "amount": 0.1332,
+        "asset": 0.1459,
+        "notification_date": 0.0212,
+        "owner": 0.0,
+        "transaction_date": 0.1332,
+        "transaction_type": 0.1191
+      },
+      "filing_date": "2026-09-04",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.82,
+      "mean_ocr_confidence": 0.4916,
+      "mean_page_quality_score": 47.43,
+      "mean_review_quality_score": 0.4743,
+      "minimum_page_quality_score": 31.69,
+      "official_id": "congress:K000389",
+      "official_name": "Ro Khanna",
+      "page_count": 18,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 17,
+        "usable_ocr_review_required": 1
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116328.json",
+      "result_sha256": "781719990e8e23c155ed9251d270371f7ace3975b5b70c03839bc8d3e644a668",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116328.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 5978
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1690,18 +1691,18 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 843914,
-    "ocr_word_count": 101644,
+    "ocr_character_count": 873746,
+    "ocr_word_count": 107291,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 1,
-      "low_quality_ocr_review_required": 354,
-      "usable_ocr_review_required": 36
+      "low_quality_ocr_review_required": 370,
+      "usable_ocr_review_required": 37
     },
-    "processed_page_count": 391,
+    "processed_page_count": 408,
     "processing_status_counts": {
       "ocr_complete_review_required": 14,
-      "ocr_low_quality_review_required": 15,
-      "ocr_partial_review_required": 21
+      "ocr_low_quality_review_required": 14,
+      "ocr_partial_review_required": 22
     },
     "quality_dimensions": [
       "page_ocr_confidence",
@@ -1709,7 +1710,7 @@
       "field_label_confidence",
       "document_review_quality_score"
     ],
-    "readable_page_count": 37,
+    "readable_page_count": 38,
     "transaction_rows_created": 0
   }
 }
