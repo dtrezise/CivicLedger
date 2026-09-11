@@ -17400,7 +17400,7 @@
       "observed_names": [
         "RSP ETF [OT] L: US D: RSP ETF"
       ],
-      "occurrence_count": 2,
+      "occurrence_count": 3,
       "resolution_status": "resolved",
       "sector": "Broad Market",
       "sectors": [
@@ -17415,7 +17415,8 @@
       "ticker_history_status": "passthrough_no_history",
       "transaction_ids": [
         "house-ptr-2025-20030641-row-0010",
-        "house-ptr-2025-20030641-row-0011"
+        "house-ptr-2025-20030641-row-0011",
+        "house-ptr-2026-20035410-row-0001"
       ]
     },
     {
@@ -26141,13 +26142,13 @@
     "duplicate_transaction_ids": [],
     "historical_symbol_change_count": 0,
     "match_method_counts": {
-      "curated_explicit_symbol": 672,
+      "curated_explicit_symbol": 673,
       "curated_normalized_name": 264,
       "unresolved": 1422
     },
     "missing_effective_date_count": 0,
-    "record_count": 2358,
-    "resolved_count": 936,
+    "record_count": 2359,
+    "resolved_count": 937,
     "source_year_counts": {
       "house_ptr_transactions:2014": 5,
       "house_ptr_transactions:2015": 195,
@@ -26161,7 +26162,7 @@
       "house_ptr_transactions:2023": 30,
       "house_ptr_transactions:2024": 32,
       "house_ptr_transactions:2025": 89,
-      "house_ptr_transactions:2026": 10,
+      "house_ptr_transactions:2026": 11,
       "presidential_oge_transactions:2009": 6,
       "presidential_oge_transactions:2014": 8,
       "presidential_oge_transactions:2019": 53,
@@ -26187,7 +26188,7 @@
     "stale_or_invalid_mapping_transaction_ids": [],
     "unresolved_count": 1422
   },
-  "generated_at": "2026-09-10",
+  "generated_at": "2026-09-11",
   "methodology": {
     "fuzzy_matching": false,
     "matching": "Exact curated aliases after conservative punctuation, ownership-note, and disclosure-suffix normalization; otherwise one explicit known symbol token.",
@@ -26214,17 +26215,17 @@
     "duplicate_transaction_id_count": 0,
     "historical_symbol_change_count": 0,
     "missing_effective_date_count": 0,
-    "resolved_transaction_count": 936,
+    "resolved_transaction_count": 937,
     "resolved_transaction_counts_by_asset_class": {
       "529_portfolio": 4,
-      "etf": 895,
+      "etf": 896,
       "mutual_fund": 37
     },
     "resolved_unique_asset_count": 107,
-    "review_required_transaction_count": 2358,
-    "source_transaction_count": 75571,
+    "review_required_transaction_count": 2359,
+    "source_transaction_count": 75662,
     "stale_or_invalid_mapping_count": 0,
-    "target_transaction_count": 2358,
+    "target_transaction_count": 2359,
     "unique_asset_name_count": 657,
     "unresolved_transaction_count": 1422,
     "unresolved_unique_asset_count": 550
@@ -101199,6 +101200,39 @@
       "ticker_history_status": "passthrough_no_history",
       "trade_date": "2026-07-23",
       "transaction_id": "senate-ptr-4a558db2-e492-4e8f-8a28-7b703a5c8e08-row-0004-a6416bcd95"
+    },
+    {
+      "asset_class": "etf",
+      "asset_display_name": "RSP ETF [OT] L: US D: RSP ETF",
+      "benchmark_symbol": "SPY",
+      "canonical_name": "Invesco S&P 500 Equal Weight ETF",
+      "disclosed_asset_class": "etf",
+      "disclosed_ticker": null,
+      "document_id": "house-ptr-2026-20035410",
+      "fund_family": "Invesco",
+      "identifier": "RSP",
+      "identifier_type": "ticker",
+      "issuer_name": "Invesco S&P 500 Equal Weight ETF",
+      "market_symbol": "RSP",
+      "match_method": "curated_explicit_symbol",
+      "matched_value": "RSP",
+      "normalized_name": "RSP ETF L US D RSP ETF",
+      "official_id": "congress:G000603",
+      "public_production_trade": false,
+      "resolution_status": "resolved",
+      "review_required_before_public_trade": true,
+      "sector": "Broad Market",
+      "sectors": [
+        "Broad Market"
+      ],
+      "source_dataset": "house_ptr_transactions",
+      "source_record_status": "official_house_parser_preview_not_promoted",
+      "symbol": "RSP",
+      "ticker_history_effective_date": "2026-08-13",
+      "ticker_history_mapping": null,
+      "ticker_history_status": "passthrough_no_history",
+      "trade_date": "2026-08-13",
+      "transaction_id": "house-ptr-2026-20035410-row-0001"
     }
   ]
 }
