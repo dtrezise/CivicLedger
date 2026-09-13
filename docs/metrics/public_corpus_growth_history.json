@@ -280,6 +280,62 @@
         },
         "total_bytes": 147501217
       }
+    },
+    {
+      "delta_from_previous_week": {
+        "declared_artifact_count": 0,
+        "public_artifact_bytes": 236141,
+        "query_partition_count": 0,
+        "static_asset_bytes": 236144,
+        "static_asset_count": 0
+      },
+      "iso_week": "2026-W37",
+      "observed_on": "2026-09-13",
+      "public_artifacts": {
+        "declared_artifact_count": 418,
+        "groups": {
+          "bootstrap": {
+            "artifact_count": 7,
+            "total_bytes": 5746518
+          },
+          "events": {
+            "artifact_count": 18,
+            "total_bytes": 6022805
+          },
+          "market": {
+            "artifact_count": 28,
+            "total_bytes": 29900863
+          },
+          "roles": {
+            "artifact_count": 3,
+            "total_bytes": 3364238
+          },
+          "timelines": {
+            "artifact_count": 362,
+            "total_bytes": 99920695
+          }
+        },
+        "largest_artifact": {
+          "bytes": 4537250,
+          "group": "timelines",
+          "path": "partitions/timelines/exec-donald-j-trump.json"
+        },
+        "query_partition_count": 411,
+        "query_partition_total_bytes": 139208601,
+        "total_bytes": 144955119
+      },
+      "source": {
+        "dataset_version": "seed-v1",
+        "manifest_sha256": "dbeb505172ceae227ff76a5ae33d61795a236c2eee75b840aaa372a857257bb6"
+      },
+      "static_assets": {
+        "asset_count": 434,
+        "largest_asset": {
+          "bytes": 4537250,
+          "path": "data/partitions/timelines/exec-donald-j-trump.json"
+        },
+        "total_bytes": 147737361
+      }
     }
   ]
 }

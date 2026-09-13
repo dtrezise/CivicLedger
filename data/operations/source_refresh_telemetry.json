@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41586,
+      "current_record_count": 48242,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "6b7e7762d6d2b91e623c2b1ad70cf3d53633406b23bcf60d047f3e38ffbe1589",
+      "current_summary_sha256": "6cdd7ee5afc9db9ba2240482b7c0921064d5786ba13cd8f07c9c66faf7182784",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -19,7 +19,7 @@
       "count_metric": "processed_document_count",
       "current_record_count": 7591,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "63ddda85162f7e39db16ef805f6b640218e7fab30bcc7423c992c17ff4b54d27",
+      "current_summary_sha256": "7d3038f7d0fa0f92451b69020682f83a2a1cc76a03281826bd9925aa38e5e8d4",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -65,20 +65,20 @@
       "baseline_schema_version": "senate-ptr-transactions-v1",
       "baseline_summary_sha256": "e2a147747d619b486b576a154b69062baeb3b73e3051d64c0e3e9a66128ffdbd",
       "count_metric": "processed_document_count",
-      "current_record_count": 2106,
+      "current_record_count": 2110,
       "current_schema_version": "senate-ptr-transactions-v1",
-      "current_summary_sha256": "3aeccedfa56cb0a21fc9bc539bc705beb22c413b7393c355474610c716fb7210",
+      "current_summary_sha256": "b46cac04d4ad15302c94cd48523b881df33fcc23bf5a30fdd2e7f4e21136d5df",
       "path": "data/disclosures/senate_ptr_transactions.json",
       "source_id": "senate-ptr-transactions",
       "status": "changed"
     }
   ],
-  "generated_at": "2026-09-12",
+  "generated_at": "2026-09-13",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
-    "maximum": 5039.0,
+    "maximum": 5085.0,
     "p50": 737.0,
-    "p95": 4617.0,
+    "p95": 4751.0,
     "runs": [
       {
         "completed_at": "2026-07-13T01:59:24Z",
@@ -700,6 +700,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-09-12T13:40:10Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-09-13T15:54:37Z",
+        "duration_seconds": 5085.0,
+        "failure_count": 0,
+        "run_id": "34762758255-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-09-13T14:29:52Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -927,8 +936,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 69,
-    "refresh_run_count": 69,
+    "measured_refresh_count": 70,
+    "refresh_run_count": 70,
     "source_failure_count": 36
   }
 }
