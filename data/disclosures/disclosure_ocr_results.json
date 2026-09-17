@@ -1,43 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-09-16",
+  "generated_at": "2026-09-17",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 2039,
-      "document_id": "house-ptr-2025-8221237",
-      "field_label_confidence": {
-        "amount": 0.6309,
-        "asset": 0.6309,
-        "notification_date": 0.4596,
-        "owner": 0.0,
-        "transaction_date": 0.6309,
-        "transaction_type": 0.5167
-      },
-      "filing_date": "2025-11-14",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8095,
-      "mean_ocr_confidence": 0.6309,
-      "mean_page_quality_score": 66.5,
-      "mean_review_quality_score": 0.665,
-      "minimum_page_quality_score": 58.42,
-      "official_id": "congress:F000459",
-      "official_name": "Charles J. \"Chuck\" Fleischmann",
-      "page_count": 2,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 1,
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_partial_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221237.json",
-      "result_sha256": "da79b60610eb3829482d77ca725cc17cad5552ab2376e7c9bbb7ad3802d7ae60",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221237.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 426
-    },
     {
       "chamber": "House",
       "character_count": 45817,
@@ -1675,6 +1641,39 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116328.pdf",
       "transaction_rows_created": 0,
       "word_count": 5978
+    },
+    {
+      "chamber": "House",
+      "character_count": 1694,
+      "document_id": "house-ptr-2026-9116331",
+      "field_label_confidence": {
+        "amount": 0.5189,
+        "asset": 0.5189,
+        "notification_date": 0.2542,
+        "owner": 0.0,
+        "transaction_date": 0.4306,
+        "transaction_type": 0.4306
+      },
+      "filing_date": "2026-09-11",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.7578,
+      "mean_ocr_confidence": 0.5189,
+      "mean_page_quality_score": 54.94,
+      "mean_review_quality_score": 0.5494,
+      "minimum_page_quality_score": 45.34,
+      "official_id": "congress:H001086",
+      "official_name": "Diana Harshbarger",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 2
+      },
+      "processing_status": "ocr_low_quality_review_required",
+      "readable_page_count": 0,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116331.json",
+      "result_sha256": "ed9866b194ecf0aab14b6111bd79481cd870fa0807f0b1a63b2d69b245f0b674",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116331.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 340
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1691,18 +1690,18 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 873746,
-    "ocr_word_count": 107291,
+    "ocr_character_count": 873401,
+    "ocr_word_count": 107205,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 1,
-      "low_quality_ocr_review_required": 370,
-      "usable_ocr_review_required": 37
+      "low_quality_ocr_review_required": 371,
+      "usable_ocr_review_required": 36
     },
     "processed_page_count": 408,
     "processing_status_counts": {
       "ocr_complete_review_required": 14,
-      "ocr_low_quality_review_required": 14,
-      "ocr_partial_review_required": 22
+      "ocr_low_quality_review_required": 15,
+      "ocr_partial_review_required": 21
     },
     "quality_dimensions": [
       "page_ocr_confidence",
@@ -1710,7 +1709,7 @@
       "field_label_confidence",
       "document_review_quality_score"
     ],
-    "readable_page_count": 38,
+    "readable_page_count": 37,
     "transaction_rows_created": 0
   }
 }

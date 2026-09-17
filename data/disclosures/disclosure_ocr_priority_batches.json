@@ -1,10 +1,34 @@
 {
   "batches": [
     {
-      "backlog_document_count": 1996,
-      "batch_id": "house-ocr-highest-confidence-2026-09-16",
+      "backlog_document_count": 1997,
+      "batch_id": "house-ocr-highest-confidence-2026-09-17",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [
+        {
+          "chamber": "House",
+          "document_id": "house-ptr-2026-9116331",
+          "eligibility_checks": {
+            "filer_identity_deterministically_matched": true,
+            "official_source_url": true,
+            "source_file_sha256_present": true,
+            "source_page_count_present": true
+          },
+          "eligible_for_ocr_batch": true,
+          "filing_date": "2026-09-11",
+          "ocr_content_present": false,
+          "official_id": "congress:H001086",
+          "official_name": "Diana Harshbarger",
+          "priority_score": 100,
+          "priority_tier": "highest_confidence",
+          "processing_status": "metadata_prioritized_ocr_not_run",
+          "source_byte_count": 33662,
+          "source_file_sha256": "58cefce89a3fe84a5d4893337e79b4bc9add769d02fac1869403456afd5a4343",
+          "source_id": "house-financial-disclosure",
+          "source_page_count": 2,
+          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116331.pdf",
+          "transaction_rows_created": 0
+        },
         {
           "chamber": "House",
           "document_id": "house-ptr-2026-9116328",
@@ -1180,47 +1204,23 @@
           "source_page_count": 24,
           "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221264.pdf",
           "transaction_rows_created": 0
-        },
-        {
-          "chamber": "House",
-          "document_id": "house-ptr-2025-8221237",
-          "eligibility_checks": {
-            "filer_identity_deterministically_matched": true,
-            "official_source_url": true,
-            "source_file_sha256_present": true,
-            "source_page_count_present": true
-          },
-          "eligible_for_ocr_batch": true,
-          "filing_date": "2025-11-14",
-          "ocr_content_present": false,
-          "official_id": "congress:F000459",
-          "official_name": "Charles J. \"Chuck\" Fleischmann",
-          "priority_score": 100,
-          "priority_tier": "highest_confidence",
-          "processing_status": "metadata_prioritized_ocr_not_run",
-          "source_byte_count": 46710,
-          "source_file_sha256": "52f077dc7a3fdef9a747738e4dd6669350b05a957ee49bec217736d6e1db5866",
-          "source_id": "house-financial-disclosure",
-          "source_page_count": 2,
-          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221237.pdf",
-          "transaction_rows_created": 0
         }
       ],
       "chamber": "House",
-      "eligible_document_count": 1996,
+      "eligible_document_count": 1997,
       "priority_tier_counts": {
-        "highest_confidence": 1996
+        "highest_confidence": 1997
       },
       "processing_boundary": "metadata_only_no_ocr_content_generated",
-      "remaining_eligible_document_count": 1946,
+      "remaining_eligible_document_count": 1947,
       "selected_document_count": 50,
-      "selected_document_id_sha256": "ff769ce3c29fc3acd0d5ab424c3e650d4c3ce900b8f3a84a68219b975c31862e",
-      "selected_source_byte_count": 10539138,
+      "selected_document_id_sha256": "d3a94e9ecd3af1b6666737d0769ece5ffad2049c5c45e3b5ed511a7e7e815bac",
+      "selected_source_byte_count": 10526090,
       "selected_source_page_count": 408
     },
     {
       "backlog_document_count": 587,
-      "batch_id": "senate-ocr-highest-confidence-2026-09-16",
+      "batch_id": "senate-ocr-highest-confidence-2026-09-17",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [],
       "chamber": "Senate",
@@ -1237,7 +1237,7 @@
     }
   ],
   "context_label": "Deterministic metadata-only priority batches for official image disclosures. No OCR text or transaction content is inferred or fabricated.",
-  "generated_at": "2026-09-16",
+  "generated_at": "2026-09-17",
   "priority_policy": {
     "batch_size_per_chamber": 50,
     "house_evidence": [
@@ -1261,11 +1261,11 @@
   },
   "schema_version": "disclosure-ocr-priority-batches-v1",
   "summary": {
-    "backlog_document_count": 2583,
-    "eligible_document_count": 1996,
+    "backlog_document_count": 2584,
+    "eligible_document_count": 1997,
     "ocr_content_record_count": 0,
     "selected_document_count": 50,
-    "selected_source_byte_count": 10539138,
+    "selected_source_byte_count": 10526090,
     "selected_source_page_count": 408,
     "transaction_rows_created": 0
   }
