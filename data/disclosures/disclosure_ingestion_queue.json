@@ -25872,6 +25872,35 @@
       "branch": "Judicial",
       "chamber": null,
       "congress_number": null,
+      "court": "U.S. District Court for the Northern District of Texas",
+      "district": null,
+      "expected_forms": [
+        "Judicial Financial Disclosure Report",
+        "AO 10-T Periodic Transaction Report"
+      ],
+      "full_name": "Kasdin Miller Mitchell",
+      "indexed_document_count": 0,
+      "office": "Judge, U.S. District Court for the Northern District of Texas",
+      "official_id": "fjc:kasdin-miller-mitchell",
+      "presidential_term": "trump-47",
+      "priority": "high_current_official",
+      "promotion_status": "raw_document_required",
+      "queue_id": "judicial-financial-disclosure:fjc:kasdin-miller-mitchell:trump-47:article_iii_judge",
+      "retrieval_mode": "official_judicial_acknowledged_request",
+      "review_required": true,
+      "role_category": "article_iii_judge",
+      "role_title": "Judge, U.S. District Court for the Northern District of Texas",
+      "source_id": "judicial-financial-disclosure",
+      "source_status": "metadata_only_requester_governed",
+      "source_url": "https://www.fjc.gov/sites/default/files/history/federal-judicial-service.csv",
+      "state": null
+    },
+    {
+      "absence_inference_allowed": false,
+      "agency": null,
+      "branch": "Judicial",
+      "chamber": null,
+      "congress_number": null,
       "court": "U.S. District Court for the District of Montana",
       "district": null,
       "expected_forms": [
@@ -171157,12 +171186,12 @@
       "state": "CA"
     }
   ],
-  "generated_at": "2026-09-17",
+  "generated_at": "2026-09-18",
   "schema_version": "disclosure-ingestion-queue-v2",
   "summary": {
     "counts_by_branch": {
       "Executive": 74,
-      "Judicial": 839,
+      "Judicial": 840,
       "Legislative": 4990
     },
     "counts_by_congress": {
@@ -171177,13 +171206,13 @@
       "119": 555
     },
     "counts_by_priority": {
-      "high_current_official": 1356,
+      "high_current_official": 1357,
       "historical_backfill": 4544,
       "presidential_baseline": 3
     },
     "counts_by_source": {
       "house-financial-disclosure": 4061,
-      "judicial-financial-disclosure": 839,
+      "judicial-financial-disclosure": 840,
       "oge-individual-disclosures": 74,
       "senate-public-financial-disclosure": 929
     },
@@ -171191,11 +171220,11 @@
       "biden-46": 1369,
       "obama-44": 2559,
       "trump-45": 1364,
-      "trump-47": 611
+      "trump-47": 612
     },
-    "current_or_current_term_queue_item_count": 1356,
+    "current_or_current_term_queue_item_count": 1357,
     "indexed_document_reference_count": 30,
-    "queue_item_count": 5903,
-    "unique_official_count": 2168
+    "queue_item_count": 5904,
+    "unique_official_count": 2169
   }
 }

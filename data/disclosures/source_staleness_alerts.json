@@ -9,7 +9,7 @@
       "status": "open"
     },
     {
-      "affected_count": 799,
+      "affected_count": 800,
       "alert_id": "judicial-financial-disclosure:current-raw-documents-missing",
       "message": "Current official/current-term queue has no archived raw disclosure documents yet.",
       "severity": "warning",
@@ -41,7 +41,7 @@
       "status": "open"
     },
     {
-      "affected_count": 2168,
+      "affected_count": 2169,
       "alert_id": "public-official-roster:freshness",
       "message": "Public official roster generated 0 day(s) ago.",
       "severity": "info",
@@ -66,14 +66,14 @@
     }
   ],
   "context_label": "Scheduled stale-source alerts for current officials and live source lanes. Warnings identify work queues; they are not allegations or trade findings.",
-  "generated_at": "2026-09-17",
+  "generated_at": "2026-09-18",
   "schema_version": "source-staleness-alerts-v1",
   "summary": {
     "alert_count": 8,
-    "current_queue_item_count": 1356,
+    "current_queue_item_count": 1357,
     "data_drift_count": 6,
     "high_alert_count": 0,
-    "measured_refresh_count": 73,
+    "measured_refresh_count": 74,
     "open_warning_count": 6,
     "reviewed_public_trade_count": 0,
     "source_failure_count": 36

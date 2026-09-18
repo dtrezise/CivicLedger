@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41391,
+      "current_record_count": 41398,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "346a0daeebe734e96025cebae0bc597660b0e74b120a9fcb819e2e7a3b0c42c0",
+      "current_summary_sha256": "5e5a5d35bb31f7e38514566a60bdd2b345b18c7e688fe984ac7e2973fd15cb12",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -19,7 +19,7 @@
       "count_metric": "processed_document_count",
       "current_record_count": 7599,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "4cc3de6718b07002bee4a67186799e55a4190e2d0f2557940830cd9bfb51fa91",
+      "current_summary_sha256": "d660f1296543a2c76ae5d56cc1c9aa16e3afe59ce89b33b01859317ad00eb249",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -31,7 +31,7 @@
       "count_metric": "indexed_document_count",
       "current_record_count": 0,
       "current_schema_version": "judicial-disclosure-manifest-v1",
-      "current_summary_sha256": "7ebd3f130524a074574f0aa8ad071c0b4df5623e81e6eab36f57a9c0e5ca7310",
+      "current_summary_sha256": "c1c09d5c555ccd2ffeee0c92f49b9ddc932afdf2f0e987127b47f7be2375a542",
       "path": "data/disclosures/judicial_disclosure_manifest.json",
       "source_id": "judicial-disclosure-manifest",
       "status": "changed"
@@ -73,11 +73,11 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-09-17",
+  "generated_at": "2026-09-18",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
-    "p50": 733.0,
+    "p50": 737.0,
     "p95": 4751.0,
     "runs": [
       {
@@ -745,6 +745,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-09-17T15:07:06Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-09-18T14:47:19Z",
+        "duration_seconds": 771.0,
+        "failure_count": 0,
+        "run_id": "35356905903-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-09-18T14:34:28Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -972,8 +981,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 74,
-    "refresh_run_count": 74,
+    "measured_refresh_count": 75,
+    "refresh_run_count": 75,
     "source_failure_count": 36
   }
 }
