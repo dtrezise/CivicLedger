@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-09-19",
+  "artifact_date": "2026-09-20",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "8bb51a57b15c0e4eea3510eb95235afe969f3e430543f1a0bf3e5dc9315973a7",
+  "dataset_hash": "67ead66f51c98c7f6015306cd9463521ebbda19334182c59b10bc77938ac9c2b",
   "gaps": [
     {
       "available_classified_record_count": 4769,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 522,
+      "selected_record_count": 523,
       "status": "declared_scope_limit"
     },
     {
@@ -11243,27 +11243,6 @@
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
     },
     {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2013-05-01",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1246",
-      "law_number": "113-8",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
-      "source_event_id": "congress-law-113-hr-1246",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "District of Columbia Chief Financial Officer Vacancy Act"
-    },
-    {
       "agency_names": [
         "Fish and Wildlife Service",
         "Interior Department"
@@ -13052,6 +13031,27 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "Alaska Native Tribal Health Consortium Land Transfer Act"
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2013-12-26",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-767",
+      "law_number": "113-69",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/767"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/767",
+      "source_event_id": "congress-law-113-hr-767",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "To amend the Energy Policy Act of 2005 to modify the Pilot Project offices of the Federal Permit Streamlining Pilot Project."
     },
     {
       "accession_number": "0001193125-13-487759",
@@ -104700,7 +104700,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "ab9ad393124d9bb5f21439241c7cd1da9bd2f8caf44e3cd6e1740341fe96d2ed",
+      "sha256": "5cae92e7cf31e5e8f39bb6098801cb5fa452a9686162da0e23b562ef978bd763",
       "source_id": "federal_events",
       "source_tier": "official"
     },
