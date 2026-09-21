@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-09-20",
+  "artifact_date": "2026-09-21",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "67ead66f51c98c7f6015306cd9463521ebbda19334182c59b10bc77938ac9c2b",
+  "dataset_hash": "07bcc2fe796b52942e8ced094edb67d3db5052832199467bf555e783f4c9e704",
   "gaps": [
     {
       "available_classified_record_count": 4769,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 523,
+      "selected_record_count": 521,
       "status": "declared_scope_limit"
     },
     {
@@ -11243,6 +11243,27 @@
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
     },
     {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2013-05-01",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-1246",
+      "law_number": "113-8",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
+      "source_event_id": "congress-law-113-hr-1246",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "District of Columbia Chief Financial Officer Vacancy Act"
+    },
+    {
       "agency_names": [
         "Fish and Wildlife Service",
         "Interior Department"
@@ -12029,27 +12050,6 @@
       "source_record_sha256": "fd4c13183d58f13712eeb8f330b58522282391dc4e817cf21988191fe4d0a12d",
       "source_tier": "official",
       "title": "Regulation of Fuels and Fuel Additives: Additional Qualifying Renewable Fuel Pathways Under the Renewable Fuel Standard Program; Final Rule Approving Renewable Fuel Pathways for Giant Reed (Arundo Donax) and Napier Grass (Pennisetum Purpureum)"
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2013-07-12",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1151",
-      "law_number": "113-17",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1151"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1151",
-      "source_event_id": "congress-law-113-hr-1151",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes."
     },
     {
       "agency_names": [],
@@ -14900,27 +14900,6 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "To provide for the approval of the Amendment to the Agreement Between the Government of the United States of America and the Government of the United Kingdom of Great Britain and Northern Ireland for Cooperation on the Uses of Atomic Energy for Mutual Defense Purposes."
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2014-12-18",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1204",
-      "law_number": "113-238",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1204"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1204",
-      "source_event_id": "congress-law-113-hr-1204",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "Aviation Security Stakeholder Participation Act of 2014"
     },
     {
       "agency_names": [],
@@ -104700,7 +104679,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "5cae92e7cf31e5e8f39bb6098801cb5fa452a9686162da0e23b562ef978bd763",
+      "sha256": "949e5815f9315f6abd962d59e42c8cd2ed9ba5f178141e8bd6fd251662f211df",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104720,13 +104699,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4144,
+    "record_count": 4143,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 521,
+      "congress": 520,
       "courts": 344,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4144
+    "record_with_official_url_count": 4143
   }
 }
