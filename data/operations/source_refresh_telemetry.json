@@ -19,7 +19,7 @@
       "count_metric": "processed_document_count",
       "current_record_count": 7616,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "b4687a7610142d44361c1e1d35c24c2bfc82fe33a48d0af405f084bd55b94ed3",
+      "current_summary_sha256": "6373c0c1779d377382ea1066fc377dcebe685e318bfe10242bd1c60127f66cf2",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -817,6 +817,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-10-07T16:02:55Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-10-07T16:34:20Z",
+        "duration_seconds": 506.0,
+        "failure_count": 0,
+        "run_id": "37651858556-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-10-07T16:25:54Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1044,8 +1053,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 82,
-    "refresh_run_count": 82,
+    "measured_refresh_count": 83,
+    "refresh_run_count": 83,
     "source_failure_count": 36
   }
 }
