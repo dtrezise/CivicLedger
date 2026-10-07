@@ -826,6 +826,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-10-07T16:25:54Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-10-07T17:48:25Z",
+        "duration_seconds": 1206.0,
+        "failure_count": 0,
+        "run_id": "37659218415-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-10-07T17:28:19Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1053,8 +1062,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 83,
-    "refresh_run_count": 83,
+    "measured_refresh_count": 84,
+    "refresh_run_count": 84,
     "source_failure_count": 36
   }
 }

@@ -1,7 +1,7 @@
 {
   "artifact_date": "2026-10-07",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "cf6acc4753e3841e8c1604d6e3ca3408bb4f582deb1e424a3739b1abb1044daf",
+  "dataset_hash": "58a44121849c034404808e17871e00642d17dc2bb2a05491df7e56190ba90774",
   "gaps": [
     {
       "available_classified_record_count": 4775,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 524,
+      "selected_record_count": 523,
       "status": "declared_scope_limit"
     },
     {
@@ -12056,27 +12056,6 @@
       "category": "congress",
       "context_only": true,
       "correlation_asserted": false,
-      "date": "2013-07-12",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1151",
-      "law_number": "113-17",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1151"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1151",
-      "source_event_id": "congress-law-113-hr-1151",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes."
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
       "date": "2013-07-18",
       "docket_ids": [],
       "event_type": "legislation",
@@ -14921,27 +14900,6 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "To provide for the approval of the Amendment to the Agreement Between the Government of the United States of America and the Government of the United Kingdom of Great Britain and Northern Ireland for Cooperation on the Uses of Atomic Energy for Mutual Defense Purposes."
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2014-12-18",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1204",
-      "law_number": "113-238",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1204"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1204",
-      "source_event_id": "congress-law-113-hr-1204",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "Aviation Security Stakeholder Participation Act of 2014"
     },
     {
       "agency_names": [],
@@ -30523,10 +30481,10 @@
       "id": "primary-source:courts:scotus-2018-6-17-773",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/18pdf/17-773_4h25.pdf",
+        "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/18"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/18pdf/17-773_4h25.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
       "source_event_id": "scotus-2018-6-17-773",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -30637,10 +30595,10 @@
       "id": "primary-source:courts:scotus-2018-9-17-340",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/18pdf/17-340_o7kq.pdf",
+        "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/18"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/18pdf/17-340_o7kq.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
       "source_event_id": "scotus-2018-9-17-340",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -104808,7 +104766,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "73c7270b459d25a29f6b73e5b97b77d93b1957d58c4d8dc7ae38517af2566430",
+      "sha256": "383a6db5e7e51a1d5de099412ec8c23d853ade9103cd97d31bfa72f0ea261b89",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104828,13 +104786,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4149,
+    "record_count": 4147,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 524,
+      "congress": 522,
       "courts": 346,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4149
+    "record_with_official_url_count": 4147
   }
 }
