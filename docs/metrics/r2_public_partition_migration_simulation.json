@@ -2,19 +2,19 @@
   "activation_assessment": {
     "gates": {
       "asset_count": {
-        "current": 435,
+        "current": 436,
         "rationale": "Provides an early review point below the Workers Static Assets asset-count hard limit.",
         "threshold": 15000,
         "triggered_now": false
       },
       "individual_asset_bytes": {
-        "current": 4537251,
+        "current": 4537252,
         "rationale": "Provides an early review point below the Workers Static Assets per-file hard limit.",
         "threshold": 20971520,
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 147960709,
+        "current": 148139293,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -25,7 +25,7 @@
   },
   "candidate_partitions": [
     {
-      "bytes": 4537251,
+      "bytes": 4537252,
       "group": "timelines",
       "key": "exec:donald-j-trump",
       "path": "data/partitions/timelines/exec-donald-j-trump.json",
@@ -33,7 +33,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3167057,
+      "bytes": 3167055,
       "group": "timelines",
       "key": "congress:P000612",
       "path": "data/partitions/timelines/congress-p000612.json",
@@ -41,7 +41,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3143058,
+      "bytes": 3142955,
       "group": "timelines",
       "key": "congress:G000583",
       "path": "data/partitions/timelines/congress-g000583.json",
@@ -73,7 +73,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2116623,
+      "bytes": 2116572,
       "group": "timelines",
       "key": "congress:W000802",
       "path": "data/partitions/timelines/congress-w000802.json",
@@ -82,42 +82,42 @@
     }
   ],
   "current_static_footprint": {
-    "asset_count": 435,
+    "asset_count": 436,
     "largest_asset": {
-      "bytes": 4537251,
+      "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 147960709
+    "total_bytes": 148139293
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6025586
+      "total_bytes": 6028255
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 29961592
+      "total_bytes": 30014717
     },
     "roles": {
       "candidate_bytes": 2668211,
       "candidate_count": 1,
       "partition_count": 3,
-      "total_bytes": 3365772
+      "total_bytes": 3366547
     },
     "timelines": {
-      "candidate_bytes": 18569671,
+      "candidate_bytes": 18569516,
       "candidate_count": 6,
-      "partition_count": 362,
-      "total_bytes": 100063158
+      "partition_count": 363,
+      "total_bytes": 100182408
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2402071,
+      "bytes": 2403336,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -135,10 +135,10 @@
     }
   },
   "projected_static_footprint_if_candidates_moved": {
-    "asset_count": 428,
-    "bytes_removed": 21237882,
+    "asset_count": 429,
+    "bytes_removed": 21237727,
     "candidate_count": 7,
-    "remaining_total_bytes": 126722827
+    "remaining_total_bytes": 126901566
   },
   "safety": {
     "activates_r2": false,
@@ -150,7 +150,7 @@
   "schema_version": "civicledger-r2-migration-simulation-v1",
   "source": {
     "dataset_version": "seed-v1",
-    "evaluated_query_partition_count": 411,
-    "manifest_sha256": "973678bb77c182e4033295c9d5dfda8a918049d8babcc956581bd3ed49019ee0"
+    "evaluated_query_partition_count": 412,
+    "manifest_sha256": "95ef7f57df43258dcb9b2a29c33ef8fe942afa025287d3c45a2e9ada35e4f281"
   }
 }

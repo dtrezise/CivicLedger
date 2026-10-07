@@ -275,7 +275,6 @@ jobs:
           PYTHONPATH: backend
         run: pytest -q backend/tests
       - name: Record weekly public-corpus growth and R2 simulation
-        if: ${{ github.event_name == 'workflow_dispatch' || env.DEEP_REFRESH == 'true' }}
         run: |
           python scripts/report_public_corpus_growth.py
           python scripts/simulate_r2_public_partition_migration.py
