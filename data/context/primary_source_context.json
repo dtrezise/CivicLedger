@@ -1,10 +1,10 @@
 {
-  "artifact_date": "2026-09-24",
+  "artifact_date": "2026-10-07",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "c34ea3d961b4b18fce7d0f109f36de68dbe34f62368beca437fd6138521ea810",
+  "dataset_hash": "87e31b4da9cb6dd1d439f4120317686b7c89cf9e7b74976aadeac108871b3067",
   "gaps": [
     {
-      "available_classified_record_count": 4769,
+      "available_classified_record_count": 4775,
       "category": "agencies",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:agencies-bounded-selection",
@@ -12,7 +12,7 @@
       "status": "declared_scope_limit"
     },
     {
-      "available_record_count": 2833,
+      "available_record_count": 2840,
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
@@ -52508,10 +52508,10 @@
       "id": "primary-source:courts:scotus-2021-4-21-463",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/21pdf/595us1r4_0861.pdf",
+        "https://www.supremecourt.gov/opinions/21pdf/21-463_new_8o6b.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/21"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/21pdf/595us1r4_0861.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/21pdf/21-463_new_8o6b.pdf",
       "source_event_id": "scotus-2021-4-21-463",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -52989,10 +52989,10 @@
       "id": "primary-source:courts:scotus-2021-6-20-480",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/21pdf/595us1r6_ihdk.pdf",
+        "https://www.supremecourt.gov/opinions/21pdf/20-480_b97c.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/21"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/21pdf/595us1r6_ihdk.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/21pdf/20-480_b97c.pdf",
       "source_event_id": "scotus-2021-6-20-480",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -101482,32 +101482,6 @@
       "title": "NVIDIA CORP filed 8-K"
     },
     {
-      "agency_names": [
-        "Energy Department"
-      ],
-      "category": "agencies",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2026-04-28",
-      "docket_ids": [
-        "EERE-2025-BT-STD-0010"
-      ],
-      "event_type": "agency_rule",
-      "id": "primary-source:agencies:federal-register-agency-2026-08201",
-      "law_number": null,
-      "official_urls": [
-        "https://www.federalregister.gov/documents/2026/04/28/2026-08201/energy-conservation-program-exempt-power-supplies-under-the-eps-service-parts-act-of-2014",
-        "https://www.govinfo.gov/content/pkg/FR-2026-04-28/pdf/2026-08201.pdf"
-      ],
-      "primary_url": "https://www.federalregister.gov/documents/2026/04/28/2026-08201/energy-conservation-program-exempt-power-supplies-under-the-eps-service-parts-act-of-2014",
-      "source_event_id": "federal-register-agency-2026-08201",
-      "source_name": "Federal Register",
-      "source_record_id": "federal-register:2026-08201",
-      "source_record_sha256": "10866bb0c13933dc9c7d32fd8080c2e780e6a7db56b42f9180e816a43a17bb15",
-      "source_tier": "official",
-      "title": "Energy Conservation Program: Exempt Power Supplies Under the EPS Service Parts Act of 2014"
-    },
-    {
       "accession_number": "0001193125-26-191457",
       "category": "issuer_filings",
       "cik": "0000789019",
@@ -104776,6 +104750,55 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "Doug LaMalfa Federal Disaster Tax Relief Certainty Act"
+    },
+    {
+      "agency_names": [],
+      "category": "courts",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2026-09-25",
+      "docket_ids": [],
+      "event_type": "court_decision",
+      "id": "primary-source:courts:scotus-2025-72-26a308",
+      "law_number": null,
+      "official_urls": [
+        "https://www.supremecourt.gov/opinions/25pdf/26a308_pok0.pdf",
+        "https://www.supremecourt.gov/opinions/slipopinion/25"
+      ],
+      "primary_url": "https://www.supremecourt.gov/opinions/25pdf/26a308_pok0.pdf",
+      "source_event_id": "scotus-2025-72-26a308",
+      "source_name": "Supreme Court of the United States",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "Department of Homeland Security v. League of Women Voters"
+    },
+    {
+      "agency_names": [
+        "Centers for Medicare & Medicaid Services",
+        "Health and Human Services Department"
+      ],
+      "category": "agencies",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2026-10-02",
+      "docket_ids": [
+        "CMS-5545-F"
+      ],
+      "event_type": "agency_rule",
+      "id": "primary-source:agencies:federal-register-agency-2026-20281",
+      "law_number": null,
+      "official_urls": [
+        "https://www.federalregister.gov/documents/2026/10/02/2026-20281/global-benchmark-for-efficient-drug-pricing-globe-model",
+        "https://www.govinfo.gov/content/pkg/FR-2026-10-02/pdf/2026-20281.pdf"
+      ],
+      "primary_url": "https://www.federalregister.gov/documents/2026/10/02/2026-20281/global-benchmark-for-efficient-drug-pricing-globe-model",
+      "source_event_id": "federal-register-agency-2026-20281",
+      "source_name": "Federal Register",
+      "source_record_id": "federal-register:2026-20281",
+      "source_record_sha256": "21cbcc7339d4b16443044d837b57ce65af16648c2eb9744c4a0b6358614959b3",
+      "source_tier": "official",
+      "title": "Global Benchmark for Efficient Drug Pricing (GLOBE) Model"
     }
   ],
   "schema_version": "primary-source-context-v1",
@@ -104785,7 +104808,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "57839ec2fd6efcbc0b8ec10d3d4b027072dad1c13887e20b0d75881ee1005757",
+      "sha256": "6c54402bb162143edddf1c64fb4cffb21d36d5042b89b7ab11259b0579f2ac3f",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104805,13 +104828,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4148,
+    "record_count": 4149,
     "record_counts_by_category": {
       "agencies": 580,
       "congress": 524,
-      "courts": 345,
+      "courts": 346,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4148
+    "record_with_official_url_count": 4149
   }
 }

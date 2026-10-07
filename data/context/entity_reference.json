@@ -27442,8 +27442,8 @@
     }
   ],
   "context_label": "Canonical entity reference compiled from source-backed CivicLedger context. Unresolved or ambiguous labels are retained for review; no identifier, ownership relationship, or effective date is inferred.",
-  "dataset_hash": "59c4df8c6ef3f362bc3fd368adc5f50f0f65ace74b776c42c3fee40b09c670ef",
-  "generated_at": "2026-09-24",
+  "dataset_hash": "e8bd081389cf59e6a877c6e98aafbbbe1bb8ad0b37e25a02fdaaad48189bfa8d",
+  "generated_at": "2026-10-07",
   "methodology": {
     "identity_resolution": "Deterministic exact matching on SEC CIK, source entity ID, unique supported ticker, or exact normalized issuer name. Fuzzy matching is disabled.",
     "quality_policy": "Unsupported and multiply matched labels remain review issues and do not create links.",
@@ -73598,7 +73598,7 @@
           "confidence": 1.0,
           "id": "7f6e7736-cd34-513e-87cb-2b84309186f9",
           "normalized_alias": "johnson johnson common stock jnj st d automatic reinvestment of",
-          "occurrence_count": 3,
+          "occurrence_count": 4,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -73606,11 +73606,12 @@
               "source_record_id": "house-ptr-2026-20033713-row-0004"
             }
           ],
-          "record_hash": "f20d2f2e31a141f2a2838a30696c5c57abfcae2a1e75dfe7c2aec70c5a965781",
+          "record_hash": "98aec585bfa8c2321273263f7b2fbc4ae2f81f691f2db0f979696cc3cdf73b71",
           "sample_transaction_ids": [
             "house-ptr-2026-20033713-row-0004",
             "house-ptr-2026-20034292-row-0003",
-            "house-ptr-2026-20034923-row-0003"
+            "house-ptr-2026-20034923-row-0003",
+            "house-ptr-2026-20035580-row-0003"
           ],
           "source_datasets": [
             "house_ptr_transactions"
@@ -74529,7 +74530,7 @@
       },
       "normalized_name": "johnson johnson",
       "organization_type": "company",
-      "record_hash": "8d0b7ccc0959c13d253cb7e75978b4e92dd6d2aea6b6782fbe8a4b01aee0db3a",
+      "record_hash": "0260f47b974399b3b4335c42588bf1d3e5acd6c44d9a725e16c22f9a207167b0",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -77382,7 +77383,7 @@
           "confidence": 1.0,
           "id": "5f407fd5-29ad-5ee8-8a41-745bbd21ee62",
           "normalized_alias": "apple inc common stock aapl st",
-          "occurrence_count": 114,
+          "occurrence_count": 116,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -77390,7 +77391,7 @@
               "source_record_id": "house-ptr-2024-20024375-row-0001"
             }
           ],
-          "record_hash": "3653549180b6771d6cc3ba9a746afe97d622be4fb85f87c91cfbe167a0450e0e",
+          "record_hash": "f02d34e19a4b9558d63152f377dcdd560538aaa2b4a28db7795e05e1b69b116b",
           "sample_transaction_ids": [
             "house-ptr-2024-20024375-row-0001",
             "house-ptr-2024-20024461-row-0008",
@@ -78749,7 +78750,7 @@
       },
       "normalized_name": "apple inc",
       "organization_type": "company",
-      "record_hash": "240856c53cb500e909f5fc63c8b19d45e9777617a4e9fb3531f8e5672053e394",
+      "record_hash": "db57fa71e88a7a5bea49db86ca193696f12e217b2833a9add512368d4ad2179d",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -184080,7 +184081,7 @@
           "confidence": 1.0,
           "id": "c3df700e-a9ad-5e8f-b845-b19005181e07",
           "normalized_alias": "microsoft corporation common stock msft st",
-          "occurrence_count": 161,
+          "occurrence_count": 162,
           "provenance": [
             {
               "source_field": "asset_display_name",
@@ -184088,7 +184089,7 @@
               "source_record_id": "house-ptr-2024-20024375-row-0003"
             }
           ],
-          "record_hash": "dbc80476fc677e4ca355ec93595fe9422709522c9ea0fb1b9413c5f26eddc428",
+          "record_hash": "af792729cce191e5b2b7e5221c5e08f6afd65524450b1c7883c6bc758a84dcc2",
           "sample_transaction_ids": [
             "house-ptr-2024-20024375-row-0003",
             "house-ptr-2024-20024461-row-0023",
@@ -185079,7 +185080,7 @@
       },
       "normalized_name": "microsoft corporation",
       "organization_type": "company",
-      "record_hash": "94a4cf5ed55a9853b8448a11047f725b9abbf4099baf512a5b75c8a6a9a6a5e3",
+      "record_hash": "240409da346f31124a2d80158c2c3c66d4c9a49ac08c28b38a75e2e12bcf56e8",
       "sector_assignments": [
         {
           "confidence": 0.9,
@@ -309844,6 +309845,23 @@
       "ticker": "RCRUY"
     },
     {
+      "id": "1e947bc8-b042-5892-81aa-b62bc0bd6ae4",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "eaton vance corporation eaton vance tax managed buy write opportunities fund common shares of beneficial interest etv st",
+      "observed_label": "Eaton Vance Corporation Eaton Vance Tax-Managed Buy-Write Opportunities Fund Common Shares of Beneficial Interest (ETV) [ST]",
+      "occurrence_count": 1,
+      "record_hash": "44f99ba6bed2ce153e22c615222ac8a272a95c38414932f9527433acb9156b98",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035491-row-0031"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "ETV"
+    },
+    {
       "id": "1e9b2d0f-e569-5ab5-a28c-073d699c694c",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "itv plc unsponsored adr itvpy st filing status new subholding of twp parametric core int l",
@@ -316208,32 +316226,6 @@
       "ticker": "PDM"
     },
     {
-      "id": "2904c533-723c-530b-ac2d-c4e8bd871dcd",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "wells fargo company common stock wfc st",
-      "observed_label": "Wells Fargo & Company Common Stock (WFC) [ST]",
-      "occurrence_count": 18,
-      "record_hash": "4a2a234734fccb5da5ad5069633913078c364337ed9bf106eb97781accb32ead",
-      "sample_transaction_ids": [
-        "house-ptr-2024-20025719-row-0147",
-        "house-ptr-2024-20025799-row-0122",
-        "house-ptr-2025-20026756-row-0011",
-        "house-ptr-2025-20027936-row-0048",
-        "house-ptr-2025-20029038-row-0111",
-        "house-ptr-2025-20030387-row-0287",
-        "house-ptr-2025-20030551-row-0013",
-        "house-ptr-2025-20032066-row-0060",
-        "house-ptr-2025-20032070-row-0227",
-        "house-ptr-2025-20032070-row-0228"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "WFC"
-    },
-    {
       "id": "290cbb0c-eeff-5eb2-9d4f-dd0b2db97977",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "athenahealth inc athn st filing status new subholding of riverbridge managed account",
@@ -317027,6 +317019,26 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "CAH"
+    },
+    {
+      "id": "2aae6272-8a6e-50e8-b0cf-17614dd87689",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "marsh common stock mrsh st",
+      "observed_label": "Marsh Common Stock (MRSH) [ST]",
+      "occurrence_count": 4,
+      "record_hash": "530a36f7be797c9982bc1825feeffc54217de62fc46b7823065ab31d7d471f05",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035326-row-0017",
+        "house-ptr-2026-20035491-row-0059",
+        "house-ptr-2026-20035491-row-0060",
+        "house-ptr-2026-20035491-row-0061"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "MRSH"
     },
     {
       "id": "2ab7bda6-d514-5d8c-a54f-950b587b4404",
@@ -319073,6 +319085,26 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "BBL"
+    },
+    {
+      "id": "2e76d645-5e99-53db-8354-c4ea123a6368",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "exxonmobil holdings corporation common stock xom st",
+      "observed_label": "ExxonMobil Holdings Corporation Common Stock (XOM) [ST]",
+      "occurrence_count": 4,
+      "record_hash": "b14bd91ec57e75c3bfae10975942cd39023a613672b7cbe5568ea5e3e3c26071",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035047-row-0002",
+        "house-ptr-2026-20035130-row-0004",
+        "house-ptr-2026-20035130-row-0005",
+        "house-ptr-2026-20035491-row-0034"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "XOM"
     },
     {
       "id": "2e7c2a8e-d465-5a92-bc85-ee96198febf9",
@@ -324909,25 +324941,6 @@
       ],
       "source_id": "asset_resolution",
       "source_record_id": "asset-resolution-09c964ea0fa67fa4"
-    },
-    {
-      "id": "39de2c30-e84c-503e-9b3a-ad31e539f84c",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "progress software corporation common stock prgs st",
-      "observed_label": "Progress Software Corporation - Common Stock (PRGS) [ST]",
-      "occurrence_count": 3,
-      "record_hash": "0b520275b2afd9b745356847c5a58dcd4fe47a4f100323eaadddd696c6d49b02",
-      "sample_transaction_ids": [
-        "house-ptr-2025-20030891-row-0522",
-        "house-ptr-2025-20030891-row-0523",
-        "house-ptr-2026-20034262-row-0012"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "PRGS"
     },
     {
       "evidence_record_id": "sec-issuer-alias:0000026780:DAN",
@@ -336358,6 +336371,24 @@
       "ticker": "ISNPY"
     },
     {
+      "id": "4e0c8397-1ffa-5744-a126-7f4b4d1f64cd",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "virtus artificial intelligence technology opportunities fund common shares of beneficial interest aio st",
+      "observed_label": "Virtus Artificial Intelligence & Technology Opportunities Fund Common Shares of Beneficial Interest (AIO) [ST]",
+      "occurrence_count": 2,
+      "record_hash": "2adc8c04e7485118de476b1f862ecc25d277a8ef08d02583c5439a4ad1527e35",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035491-row-0095",
+        "house-ptr-2026-20035491-row-0096"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "AIO"
+    },
+    {
       "id": "4e0e552b-ba5a-51ab-8f77-e197a03b6ab5",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "tencent music entertainment group american depositary shares each representing two class a ordinary shares tme st",
@@ -339253,6 +339284,26 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "FEI"
+    },
+    {
+      "id": "536f65aa-07c2-5d49-9a0e-1b4a7f60550c",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "progress software corporation common stock prgs st",
+      "observed_label": "Progress Software Corporation - Common Stock (PRGS) [ST]",
+      "occurrence_count": 4,
+      "record_hash": "fb046af228c0bfec21ffa5fe1cf1f6786f74da4275e5e6e54649d0d528478625",
+      "sample_transaction_ids": [
+        "house-ptr-2025-20030891-row-0522",
+        "house-ptr-2025-20030891-row-0523",
+        "house-ptr-2026-20034262-row-0012",
+        "house-ptr-2026-20035491-row-0079"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "PRGS"
     },
     {
       "id": "5376bf5f-3bb4-5156-a4e0-68bc741fe39a",
@@ -345401,23 +345452,6 @@
       "ticker": "VGR"
     },
     {
-      "id": "5ddc3830-7799-52c1-9bce-38d307feb3c5",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "marsh common stock mrsh st",
-      "observed_label": "Marsh Common Stock (MRSH) [ST]",
-      "occurrence_count": 1,
-      "record_hash": "3ee480afcd7b34d422ddc3f64e66e2bb770c6ca4e141731c0afd925eb50f81b5",
-      "sample_transaction_ids": [
-        "house-ptr-2026-20035326-row-0017"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "MRSH"
-    },
-    {
       "id": "5df1624d-26c8-57d8-9af7-5b164878cc6e",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "td ameritrade holding corporation amtd filing status new subholding of sp m81 merrill lynch",
@@ -347561,6 +347595,27 @@
       "ticker": "USMV"
     },
     {
+      "evidence_record_id": "sec-issuer-alias:0000354950:HD",
+      "id": "61b8ac08-f91e-541c-98ba-2211a3f9c199",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "home depot inc hd st d automatic reinvestment of",
+      "observed_label": "Home Depot, Inc. (HD) [ST] D: Automatic reinvestment of",
+      "occurrence_count": 4,
+      "record_hash": "728bb3b6f9aa337d144c7f2e090ebfb8b04b03e7d44594b7ae7ed0e3d0036137",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20033713-row-0002",
+        "house-ptr-2026-20034292-row-0001",
+        "house-ptr-2026-20034923-row-0001",
+        "house-ptr-2026-20035580-row-0001"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "HD"
+    },
+    {
       "evidence_record_id": "sec-issuer-alias:0000033213:EQT",
       "id": "61d24d67-ed95-5c60-8083-9afba7870212",
       "issue_type": "unsupported_sec_alias_label",
@@ -347650,32 +347705,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "HTA"
-    },
-    {
-      "id": "61fe8f12-2b6b-514d-8928-7cd8413ab740",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "lowe s companies inc common stock low st",
-      "observed_label": "Lowe's Companies, Inc. Common Stock (LOW) [ST]",
-      "occurrence_count": 22,
-      "record_hash": "e38b9b0e779967b0512d295b9ad45ae868159e0da63c779e9b7bb5a3fa661a77",
-      "sample_transaction_ids": [
-        "house-ptr-2024-20024461-row-0021",
-        "house-ptr-2024-20025119-row-0008",
-        "house-ptr-2024-20025207-row-0014",
-        "house-ptr-2024-20025419-row-0064",
-        "house-ptr-2024-20025419-row-0065",
-        "house-ptr-2024-20025680-row-0010",
-        "house-ptr-2024-20025712-row-0037",
-        "house-ptr-2024-20025804-row-0018",
-        "house-ptr-2025-20024346-row-0072",
-        "house-ptr-2025-20027879-row-0037"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "LOW"
     },
     {
       "id": "62015677-a2cd-56b9-91ac-4935b16baae6",
@@ -361274,6 +361303,24 @@
       "ticker": "PYPLV"
     },
     {
+      "evidence_record_id": "sec-issuer-alias:0001944013:CR",
+      "id": "7c4ba82f-f8dc-5dad-9919-c2161e92f1f6",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "crane company common stock cr st",
+      "observed_label": "Crane Company Common Stock (CR) [ST]",
+      "occurrence_count": 1,
+      "record_hash": "caa6ad3770b8994a95da81ef154166a67d70e00feb369314ec43981073d96f02",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035491-row-0019"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "CR"
+    },
+    {
       "evidence_record_id": "sec-issuer-alias:0001666700:DD",
       "id": "7c6233fe-c1a6-5cff-aeb1-d9c2b6176bc5",
       "issue_type": "unsupported_sec_alias_label",
@@ -365781,6 +365828,32 @@
       "ticker": "EVV"
     },
     {
+      "id": "850185cc-00e1-53ab-9a77-9adce6f17ebf",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "lowe s companies inc common stock low st",
+      "observed_label": "Lowe's Companies, Inc. Common Stock (LOW) [ST]",
+      "occurrence_count": 23,
+      "record_hash": "4f5221cd3076b713100248898f707c33e7fa35010cad0513060162b83327dfdf",
+      "sample_transaction_ids": [
+        "house-ptr-2024-20024461-row-0021",
+        "house-ptr-2024-20025119-row-0008",
+        "house-ptr-2024-20025207-row-0014",
+        "house-ptr-2024-20025419-row-0064",
+        "house-ptr-2024-20025419-row-0065",
+        "house-ptr-2024-20025680-row-0010",
+        "house-ptr-2024-20025712-row-0037",
+        "house-ptr-2024-20025804-row-0018",
+        "house-ptr-2025-20024346-row-0072",
+        "house-ptr-2025-20027879-row-0037"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "LOW"
+    },
+    {
       "id": "8502c3ee-58dc-5f0b-9589-d1c45f659b37",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "wisdomtree international smallcap dividend fund",
@@ -368666,26 +368739,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "ACE"
-    },
-    {
-      "evidence_record_id": "sec-issuer-alias:0000079879:PPG",
-      "id": "8a470e51-8ed8-5d9b-bf60-b35d46597cc8",
-      "issue_type": "unsupported_sec_alias_label",
-      "normalized_label": "ppg industries inc common stock ppg st d automatic reinvestment of",
-      "observed_label": "PPG Industries, Inc. Common Stock (PPG) [ST] D: Automatic reinvestment of",
-      "occurrence_count": 3,
-      "record_hash": "42f427bdd3eec269663ce4803b8882a9129aa049ad7ec71171d6baa49fe2293a",
-      "sample_transaction_ids": [
-        "house-ptr-2026-20033713-row-0005",
-        "house-ptr-2026-20034292-row-0004",
-        "house-ptr-2026-20034923-row-0004"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "PPG"
     },
     {
       "id": "8a4fe73d-0685-51ce-b97a-fb8d2fef4508",
@@ -380230,6 +380283,23 @@
       "ticker": "PHM"
     },
     {
+      "id": "9fceeb86-bce0-54bc-8fc7-772aa18be199",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "brookfield real assets income fund inc common stock ra st",
+      "observed_label": "Brookfield Real Assets Income Fund Inc. Common Stock (RA) [ST]",
+      "occurrence_count": 1,
+      "record_hash": "56c7609601eb2e55a466274fbab3badd6ad6ea328b99afe88ae86055e0cf7f62",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035491-row-0010"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "RA"
+    },
+    {
       "id": "9fcf7381-67df-5055-b10d-5d99109449b2",
       "issue_type": "unresolved_asset_resolution",
       "normalized_label": "GUGGENHEIM VIF ALL CAP VALUE",
@@ -381842,6 +381912,23 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "COIN"
+    },
+    {
+      "id": "a2ac3823-7d3a-5c81-a49d-853e5434d96a",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "crane nxt co common stock cxt st",
+      "observed_label": "Crane NXT, Co. Common Stock (CXT) [ST]",
+      "occurrence_count": 1,
+      "record_hash": "db5456a2737b83a8d8a3e697d54e4cb542c2d4d7d2042407eaf918244fcdfd42",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20035491-row-0020"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "CXT"
     },
     {
       "id": "a2af57a0-beb8-5168-9536-29d351a31435",
@@ -387115,26 +387202,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "ATKR"
-    },
-    {
-      "evidence_record_id": "sec-issuer-alias:0000354950:HD",
-      "id": "ace41f2f-ca7e-5843-babc-dc31a1f4c4b5",
-      "issue_type": "unsupported_sec_alias_label",
-      "normalized_label": "home depot inc hd st d automatic reinvestment of",
-      "observed_label": "Home Depot, Inc. (HD) [ST] D: Automatic reinvestment of",
-      "occurrence_count": 3,
-      "record_hash": "2e1219e44da0653e98113daa3f2dd111fb2959231c775cfe020b5ce0d70c4df1",
-      "sample_transaction_ids": [
-        "house-ptr-2026-20033713-row-0002",
-        "house-ptr-2026-20034292-row-0001",
-        "house-ptr-2026-20034923-row-0001"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "HD"
     },
     {
       "id": "ace48ce2-045d-580c-8eb5-85479d824885",
@@ -393934,6 +394001,32 @@
       "ticker": "SPH"
     },
     {
+      "id": "b9881e66-600d-5c64-8073-7ed52d9d9800",
+      "issue_type": "unresolved_disclosed_ticker",
+      "normalized_label": "wells fargo company common stock wfc st",
+      "observed_label": "Wells Fargo & Company Common Stock (WFC) [ST]",
+      "occurrence_count": 19,
+      "record_hash": "55b34a357afe5a9a2b2c34fba5b0490884bd78623fd6a24bacd60ca65d145e9d",
+      "sample_transaction_ids": [
+        "house-ptr-2024-20025719-row-0147",
+        "house-ptr-2024-20025799-row-0122",
+        "house-ptr-2025-20026756-row-0011",
+        "house-ptr-2025-20027936-row-0048",
+        "house-ptr-2025-20029038-row-0111",
+        "house-ptr-2025-20030387-row-0287",
+        "house-ptr-2025-20030551-row-0013",
+        "house-ptr-2025-20032066-row-0060",
+        "house-ptr-2025-20032070-row-0227",
+        "house-ptr-2025-20032070-row-0228"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "WFC"
+    },
+    {
       "evidence_record_id": "sec-issuer-alias:0000820027:AMP",
       "id": "b98ad0fb-f16d-5498-b94e-e4894dd09a9f",
       "issue_type": "unsupported_sec_alias_label",
@@ -399840,25 +399933,6 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "CTRL"
-    },
-    {
-      "id": "c526d74a-725f-5bc2-a131-e6edc91ce1af",
-      "issue_type": "unresolved_disclosed_ticker",
-      "normalized_label": "exxonmobil holdings corporation common stock xom st",
-      "observed_label": "ExxonMobil Holdings Corporation Common Stock (XOM) [ST]",
-      "occurrence_count": 3,
-      "record_hash": "e9ea32b9b8e8fe0970d2b769393a9a2844d49b73beaab18f515a0520f65f4042",
-      "sample_transaction_ids": [
-        "house-ptr-2026-20035047-row-0002",
-        "house-ptr-2026-20035130-row-0004",
-        "house-ptr-2026-20035130-row-0005"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "XOM"
     },
     {
       "id": "c53298eb-7bf2-502d-bb27-a0ebe2d3c9a3",
@@ -409337,6 +409411,27 @@
       "source_record_id": "asset-resolution-9da5b5d6bbc88d13"
     },
     {
+      "evidence_record_id": "sec-issuer-alias:0000051143:IBM",
+      "id": "d69bb773-4000-5d43-8d10-9d18d6b19250",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "international business machines corporation common stock ibm st d automatic reinvestment of",
+      "observed_label": "International Business Machines Corporation Common Stock (IBM) [ST] D: Automatic reinvestment of",
+      "occurrence_count": 4,
+      "record_hash": "f2ee413d080d81ad3c7a94f0f6af8e602567913881783af0fc9cd5d5802c6a8a",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20033713-row-0003",
+        "house-ptr-2026-20034292-row-0002",
+        "house-ptr-2026-20034923-row-0002",
+        "house-ptr-2026-20035580-row-0002"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "IBM"
+    },
+    {
       "id": "d69c490b-9234-5713-8e3b-d1a940c53df7",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "healthcare realty trust incorporated hr st filing status new",
@@ -415259,6 +415354,27 @@
       ],
       "source_id": "disclosure_labels",
       "ticker": "GILD"
+    },
+    {
+      "evidence_record_id": "sec-issuer-alias:0000079879:PPG",
+      "id": "e275907a-9f4a-55ad-b176-f5c6f2520a27",
+      "issue_type": "unsupported_sec_alias_label",
+      "normalized_label": "ppg industries inc common stock ppg st d automatic reinvestment of",
+      "observed_label": "PPG Industries, Inc. Common Stock (PPG) [ST] D: Automatic reinvestment of",
+      "occurrence_count": 4,
+      "record_hash": "133ffa7ef7c7645240bf31762767a5b6f5b4ed9ec71ec473a0eaaf2d0a205fa8",
+      "sample_transaction_ids": [
+        "house-ptr-2026-20033713-row-0005",
+        "house-ptr-2026-20034292-row-0004",
+        "house-ptr-2026-20034923-row-0004",
+        "house-ptr-2026-20035580-row-0004"
+      ],
+      "severity": "review",
+      "source_datasets": [
+        "house_ptr_transactions"
+      ],
+      "source_id": "disclosure_labels",
+      "ticker": "PPG"
     },
     {
       "id": "e28a782e-243a-59c0-8e43-33c4bd1679d4",
@@ -424731,26 +424847,6 @@
       "ticker": "HDELY"
     },
     {
-      "evidence_record_id": "sec-issuer-alias:0000051143:IBM",
-      "id": "f48cdaba-6d35-510e-9e49-2d911ff140e0",
-      "issue_type": "unsupported_sec_alias_label",
-      "normalized_label": "international business machines corporation common stock ibm st d automatic reinvestment of",
-      "observed_label": "International Business Machines Corporation Common Stock (IBM) [ST] D: Automatic reinvestment of",
-      "occurrence_count": 3,
-      "record_hash": "5a440a7b8c1f35999a5e9ec72d76cb3fb7c5974886051796ae7c957dbd8328a2",
-      "sample_transaction_ids": [
-        "house-ptr-2026-20033713-row-0003",
-        "house-ptr-2026-20034292-row-0002",
-        "house-ptr-2026-20034923-row-0002"
-      ],
-      "severity": "review",
-      "source_datasets": [
-        "house_ptr_transactions"
-      ],
-      "source_id": "disclosure_labels",
-      "ticker": "IBM"
-    },
-    {
       "id": "f49489f2-8349-5cb9-b40f-39c860608f3e",
       "issue_type": "unresolved_disclosed_ticker",
       "normalized_label": "mednax inc md filing status new subholding of merrill lynch investment description total sale of stock 4 25 2017",
@@ -431673,173 +431769,173 @@
   ],
   "source_snapshots": [
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/context/asset_resolution.json",
-      "record_hash": "273426ef06f90e5bf26a966d4602abffc7d38e592381d80f0c90e652ddae7957",
+      "record_hash": "0f1910e9e958e2ccde59e6d6c6184325f0b97ebc8545be23509445c0f1df0119",
       "schema_version": "asset-resolution-context-v1",
-      "sha256": "0dae53025e573b53a60c037bbf51ab29dd5934a7a1623a1a1af0bcf7f18700c0",
+      "sha256": "e0464ae973a08dd20f4b1e431068fb8917bd9436b3e831a5bedd1baee3ea1637",
       "source_id": "asset_resolution",
       "source_tier": "curated_parser_context"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/context/company_entity_reference.json",
-      "record_hash": "b939429503f6abff2eabfdcab02efca44dbf1da9cab7b0653d5c3bc3660729d5",
+      "record_hash": "968597c6eeb2388eefee9d37615af00ede41d6d72cfbb7c9eaa5dd0b0bf0e22c",
       "schema_version": "company-entity-reference-v1",
       "sha256": "dac8161d784b5a41ab527a8d60f54dbc0997ffdca0e3cd2d7672d139e354095d",
       "source_id": "company_entity_reference",
       "source_tier": "curated_context"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "logical:combined-disclosure-labels",
-      "record_hash": "e88b8d559a2217e295fe9c711d00f14b4bd7fc65ced38a408cbf5392ad397f6f",
+      "record_hash": "6b7762721ce7744a0769ac10aedf00e187fe1ec25544af748483b4d28d00eeb2",
       "schema_version": "combined-disclosure-labels-v1",
-      "sha256": "57de2e14bbc057ae3d62fc566b36d1e912d36f50034736da4c87263778eef687",
+      "sha256": "328c928563e45a05863403cd61b220a220cb0d57c8d18aa5b767e7e6d039f5cf",
       "source_id": "disclosure_labels",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2015.json",
-      "record_hash": "e6213b76c7d86342f4d53008673193ec9f5bb2891822fefae7db446667d492cd",
+      "record_hash": "0f3eb09d7161b6a50fed660f08d6298f977f45044491dbd28cd516b6ccbcfc22",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "960984564d54f34470a1334cd5ded7b211cc42a1732ed81f41d295af7cef6454",
+      "sha256": "3bfdfa6d39bd563ff7ce235dd3530a2ec94a1a1261b4c51ce533e23a468f1782",
       "source_id": "house_ptr_transactions:2015",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2016.json",
-      "record_hash": "6cfa80954aec9fc9d205999d56589aa14cbb305a0bf30d776d2008e9a1b9b0fd",
+      "record_hash": "3d5e2ee553f4be79fa743f1755f11025c788f20815faf965a6ab43ad88964626",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "edfd0f245d4819162c37f370caf4d562bd9965e8b34f24656d9d85ef80d5f556",
+      "sha256": "aa493cf27321cb928a7a51e6bb2e3dcb91aa80f02784638609ed4c10a5525873",
       "source_id": "house_ptr_transactions:2016",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2017.json",
-      "record_hash": "d7009ddeb7eaf5eea1ac12165510d02442404eaa132a155e7a9a51c3c4ebe6fb",
+      "record_hash": "0a5a34291b9dcdd8bc9c116c29f72600fbb6ba38335e5eba7e4d3fcaaee107c3",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "f1ea4c8f53f3c392fee8147810f853db472d540a98175dc2796e04719980176e",
+      "sha256": "fe2065a41a6d1bb5e62c076f60deea4f3b6b12f673afc2d96cc131bd11814a43",
       "source_id": "house_ptr_transactions:2017",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2018.json",
-      "record_hash": "fb3f6d212e49d25500b6786bdaf3ae069f93188cd855022d394f8bb4d2a37d34",
+      "record_hash": "e0e099d31954593085ab8b14fa2b1d4cd7df8770bf4a44dd68cfe9cd7b56dc2c",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "22938bb13e969ae1711a55dceb09f9f1425c0e51d0fe6f2b7daca5ae9d6e48f2",
+      "sha256": "fb0992f7e542de8c64d7aa8b8209e5e8d33cada85660145eff4f22c17268273d",
       "source_id": "house_ptr_transactions:2018",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2019.json",
-      "record_hash": "cd01d674231d35afe1f2f5501b2af5637cbedc94d682a2d20c516b09b4887a5f",
+      "record_hash": "102900fbe5d38998913f80b04d450747f22c5de0ba13beb39fb7869c71e42383",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "1312742d6c4443c46380718b5a3d99da5b2ae16158c234bb68ae91da9d1a784f",
+      "sha256": "2f54afdecd8af69ee9bc0b07d99d138896c93a59c3b84c52d38daa4f77c80c30",
       "source_id": "house_ptr_transactions:2019",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2020.json",
-      "record_hash": "79158897191bdf4661ec899e22cfbbeb0293f8aca820643958fff16c89dcc943",
+      "record_hash": "f46cb5025bac0e2acc917f9710f313bb2c1782bb3a75550f4769e01cc7bb4841",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "8c8ca76d6095235a8fc4e7f035446b0c1397ae59b5191e0d2d768bf6b2befcd1",
+      "sha256": "6c97b373e6d88d690a6f568237281218682a7764175225afa5787626ba340bab",
       "source_id": "house_ptr_transactions:2020",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2021.json",
-      "record_hash": "bf748d1b368a6f17241943c90fd668f193c28cf959e8e523be54e0e9c2b1f906",
+      "record_hash": "2dcdc6394fae2472bbc458b75be5e0c41698a9c98482c0c4d4ebdfb48dcccc46",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "54a4d01e5a3799eccf1c76a8e3656bd4cc465463f6e0cd2e7522708277716a16",
+      "sha256": "b3128aacc577e7113a415f328f1473f4246cb755a81b8043612f7a1c97d195cd",
       "source_id": "house_ptr_transactions:2021",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2022.json",
-      "record_hash": "cd60f6ffc36408788a2eab417d23defd7e8076044ccf7bb7313b759de379eb36",
+      "record_hash": "71e192aad6a4f6b61f13146a63227f558e9c23ee43bd8a9f84d3ff6678e4fd05",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "141bdeb63cfb88fc0e3a0e6ede274ec5c79507f10b05f5184f9879caabd892ad",
+      "sha256": "1cf210d3fadef033938d8460fe9b8d44919e152a634a70422b25cfb3d070ff5c",
       "source_id": "house_ptr_transactions:2022",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2023.json",
-      "record_hash": "f76dea39bc15cdde7312de7890828d61c28baf87703700b93a36724f10182c1c",
+      "record_hash": "fd92019f2d38cbe4fd6dfc29204bcfda348ad5b63b9bac3d1317d62f5676aa97",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "7126c446fcf8d9b4f00ae0cde56a992f5f2e672aeb69bad64d91f789a7c2e06e",
+      "sha256": "4056e1af34bf4e602de062afeaf18a4695021a854dfeafa44dd54f96823e19a4",
       "source_id": "house_ptr_transactions:2023",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2024.json",
-      "record_hash": "ef9d1b759ccad4a41f2232a972a56d1a4d83196e0017ee2419c5981ba56d1da6",
+      "record_hash": "c14c040ab15748446ca9b4010e32d38e097a0ce30db6dc997b2599e4295bdfde",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "763b57eac8adad67acfeb4bda628f51e1fc5473e82627f27c39bb9e00931ae7d",
+      "sha256": "f358071edd430fdec6927fcaaaeeb1924eef0486c8c14800f2941c3665e99852",
       "source_id": "house_ptr_transactions:2024",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2025.json",
-      "record_hash": "cb6bf71c384da19aad1c3f6b889c6cddfbcf4f76add1d07703afd79cbda037e9",
+      "record_hash": "f09041720ee79eeb72b7a7d182258aff290adbc998ac2a199f2895f98bd0b3c9",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "afda3f0fe622894d1a7cc277319793c99bf891b5cf1b016aa794c43d80114119",
+      "sha256": "d4573277f9f5133d0d82dde383dc6f7e26d3922c225a37656ea9e9cec7431742",
       "source_id": "house_ptr_transactions:2025",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr/2026.json",
-      "record_hash": "4610ab156efa840673ba5f0e0ae8af2ad200aed4c88da0646809e9dac9f914ba",
+      "record_hash": "de67fbc76aa18e6e3274668e1cbb64b1d0779f0d4b2a7b2a3fc95947a0e1e76a",
       "schema_version": "house-ptr-year-partition-v1",
-      "sha256": "33c308f5d845697d18f280b609c83a14470b5c0c6d6fc2d7aef384da41c10791",
+      "sha256": "2d4c992443777e72c1b2b6d2ae1519eba2dce83bb3500059fdc948c15a85b618",
       "source_id": "house_ptr_transactions:2026",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/house_ptr_transactions.json",
-      "record_hash": "0d3997116862362977d7dfb7ed676cc79974ed0d13c9d7633e54018803b92f44",
+      "record_hash": "b7f4b47c6b70e131b1baf0b9b8c322dbd627f0ee0f64f4c32d19be8915ab368c",
       "schema_version": "house-ptr-transactions-manifest-v2",
-      "sha256": "d1924d2f5cbe7d34d76c8991e41dd2cac4312bc0f422ae083380f8b1bbdf6333",
+      "sha256": "86e1a29ded245ef1f9d3775e37373424c9a60ecc63a7e1e6d8f2b9d441cac617",
       "source_id": "house_ptr_transactions:index",
       "source_tier": "official_parser_preview"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/context/market_prices.json",
-      "record_hash": "1611c0745322c2da8b07fc73cabe3a371d083aabde1d9250395d1a4606d81fb0",
+      "record_hash": "dc0efcfcf3b246c38f687114a595c86babfc1099bfad20d439521ceb1c8c8fd0",
       "schema_version": null,
-      "sha256": "13d773fe736d28165828fc8e1a596a2180fea517f15827e772b7f26381e21ab8",
+      "sha256": "1177edd22483f11e106f8f5663487a70bbfd2a6b8fd8749a06386c2eade097b9",
       "source_id": "market_prices",
       "source_tier": "market_data_provider"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "backend/app/services/market_prices.py#TICKER_HISTORY",
-      "record_hash": "16ca62182eadccd391c96b9b987f2af854fa696e0d191b9789fe8b2784fbc193",
+      "record_hash": "7e3e6894e9ff5942523ef20b2af419813fe7a3e29e45d592dc6ee82b5b8671b4",
       "schema_version": "ticker-history-v1",
       "sha256": "2f9b2b07f8a786ac7d4a5627323ee6af92911676d7bcd35888c1fb6c17b7cf08",
       "source_id": "market_ticker_history",
       "source_tier": "source_checked_curated_reference"
     },
     {
-      "artifact_date": "2026-09-24",
+      "artifact_date": "2026-10-07",
       "path": "data/disclosures/presidential_oge_transactions.json",
-      "record_hash": "aabe15aafbeb45a6ad7f3d9c6fd354b4a246de9dad123c071d958548bea8634b",
+      "record_hash": "7ac2a02186a3c993249b8e9cb63de6cf7af050b804b720f584bbff188487c46a",
       "schema_version": "presidential-oge-transactions-v1",
-      "sha256": "66570db04a03bff591af8b8e989cacb27ee712cdfb57b80ac5a8607bfe38e284",
+      "sha256": "d2ea1de597447f5be6c3b845cc230cd5dc82f1b2608c1ce5ebd61141c06bdeda",
       "source_id": "presidential_oge_transactions",
       "source_tier": "official_parser_preview"
     },
@@ -431879,17 +431975,17 @@
     "identifier_count": 1096,
     "issuer_count": 1152,
     "organization_count": 1154,
-    "quality_issue_count": 7436,
+    "quality_issue_count": 7441,
     "quality_issue_counts": {
       "unresolved_asset_resolution": 545,
-      "unresolved_disclosed_ticker": 5488,
-      "unsupported_sec_alias_label": 1403
+      "unresolved_disclosed_ticker": 5492,
+      "unsupported_sec_alias_label": 1404
     },
     "relationship_count": 0,
     "sec_evidence_supported_symbol_count": 1087,
     "sector_count": 55,
     "ticker_history_count": 1194,
-    "unlinked_disclosure_label_occurrence_count": 29213
+    "unlinked_disclosure_label_occurrence_count": 29236
   },
   "ticker_histories": [
     {

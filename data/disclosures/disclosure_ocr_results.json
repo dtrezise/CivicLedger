@@ -1,43 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-09-24",
+  "generated_at": "2026-10-07",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 45817,
-      "document_id": "house-ptr-2025-8221264",
-      "field_label_confidence": {
-        "amount": 0.2143,
-        "asset": 0.3315,
-        "notification_date": 0.0471,
-        "owner": 0.0,
-        "transaction_date": 0.2143,
-        "transaction_type": 0.2072
-      },
-      "filing_date": "2025-12-08",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8035,
-      "mean_ocr_confidence": 0.4892,
-      "mean_page_quality_score": 51.66,
-      "mean_review_quality_score": 0.5166,
-      "minimum_page_quality_score": 34.23,
-      "official_id": "congress:K000389",
-      "official_name": "Ro Khanna",
-      "page_count": 24,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 23,
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_partial_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221264.json",
-      "result_sha256": "b6f2fe852b43de69f67b66be0727b300141e2d6439b05ab8d03c0dfff175a048",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221264.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 7517
-    },
     {
       "chamber": "House",
       "character_count": 15208,
@@ -1674,6 +1640,39 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116331.pdf",
       "transaction_rows_created": 0,
       "word_count": 340
+    },
+    {
+      "chamber": "House",
+      "character_count": 1188,
+      "document_id": "house-ptr-2026-9116342",
+      "field_label_confidence": {
+        "amount": 0.7521,
+        "asset": 0.7521,
+        "notification_date": 0.7521,
+        "owner": 0.0,
+        "transaction_date": 0.7521,
+        "transaction_type": 0.7521
+      },
+      "filing_date": "2026-09-23",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.8333,
+      "mean_ocr_confidence": 0.7521,
+      "mean_page_quality_score": 74.32,
+      "mean_review_quality_score": 0.7432,
+      "minimum_page_quality_score": 74.32,
+      "official_id": "congress:R000395",
+      "official_name": "Harold Rogers",
+      "page_count": 1,
+      "page_review_status_counts": {
+        "usable_ocr_review_required": 1
+      },
+      "processing_status": "ocr_complete_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116342.json",
+      "result_sha256": "bfe96c89d7452a53e835fb80bf5fbddad769587eb678548380c9cb83c314f916",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116342.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 223
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1690,18 +1689,18 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 873401,
-    "ocr_word_count": 107205,
+    "ocr_character_count": 828772,
+    "ocr_word_count": 99911,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 1,
-      "low_quality_ocr_review_required": 371,
+      "low_quality_ocr_review_required": 348,
       "usable_ocr_review_required": 36
     },
-    "processed_page_count": 408,
+    "processed_page_count": 385,
     "processing_status_counts": {
-      "ocr_complete_review_required": 14,
+      "ocr_complete_review_required": 15,
       "ocr_low_quality_review_required": 15,
-      "ocr_partial_review_required": 21
+      "ocr_partial_review_required": 20
     },
     "quality_dimensions": [
       "page_ocr_confidence",
