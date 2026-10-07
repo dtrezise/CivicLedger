@@ -59,3 +59,20 @@ def test_preview_rehearsal_selects_target_without_executing_rollback(tmp_path):
     assert report["rollback_executed"] is False
     assert "deploy --dry-run" in report["dry_run_command"]
     assert "rollback-rehearsal" in report["dry_run_command"]
+
+
+def test_public_refresh_status_uses_neutral_failure_language():
+    module = load_script("write_refresh_status.py")
+    report = module.build_status(
+        "failure",
+        run_id="123-1",
+        run_url="https://example.test/runs/123",
+        commit="abc123",
+        generated_at="2026-10-07T12:00:00Z",
+    )
+
+    assert report["status"] == "failure"
+    assert report["healthy"] is False
+    assert "last validated dataset" in report["message"]
+    assert "completeness" in report["interpretation_boundary"]
+    assert report["generated_at"] == "2026-10-07T12:00:00Z"

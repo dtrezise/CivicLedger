@@ -52,6 +52,7 @@ const eventCategoryLabels = {
 const state = {
   manifest: null,
   release: null,
+  refreshStatus: null,
   overview: null,
   coverage: null,
   officials: [],
@@ -65,6 +66,7 @@ const state = {
   selectedIds: [],
   selectedTimelines: [],
   mode: "career",
+  evidenceFilter: "reviewed",
   assetFilter: "",
   eventTierFilter: "focused",
   eventWindowDays: 180,
@@ -232,6 +234,22 @@ function renderFreshnessStatus() {
   return freshness;
 }
 
+function renderRefreshStatus() {
+  const status = state.refreshStatus;
+  const target = $("refreshStatus");
+  if (!status) {
+    target.hidden = true;
+    return { healthy: null, label: "Refresh health unavailable" };
+  }
+  const known = status.status !== "unknown";
+  const healthy = status.status === "success";
+  target.hidden = false;
+  target.className = `refresh-status ${healthy ? "success" : known ? "warning" : "unknown"}`;
+  target.innerHTML = `<strong>${escapeHtml(status.headline || "Daily refresh status")}</strong><span>${escapeHtml(status.message || "Refresh health is unavailable.")}</span>`;
+  $("headerStatus").classList.toggle("warning", known && !healthy);
+  return { healthy: known ? healthy : null, label: status.headline || "Daily refresh status" };
+}
+
 function renderLoadFailure(error) {
   const code = error?.code || "DATA_UNAVAILABLE";
   const resource = error?.resource || "Unknown required resource";
@@ -298,6 +316,11 @@ function parseUrlState() {
     : [...(state.timelineIndex.default_official_ids || [])].slice(0, 4);
   const mode = params.get("mode");
   state.mode = ["career", "calendar", "event"].includes(mode) ? mode : "career";
+  const evidence = params.get("evidence");
+  state.evidenceFilter = ["reviewed", "preview", "all"].includes(evidence) ? evidence : "reviewed";
+  if (!evidence && !(state.overview?.summary?.reviewed_public_trade_count > 0)) {
+    state.evidenceFilter = "preview";
+  }
   state.activeEventId = state.eventMap.has(params.get("event")) ? params.get("event") : "";
   if (state.mode === "event" && !state.activeEventId) state.mode = "career";
   state.assetFilter = params.get("asset") || "";
@@ -329,6 +352,7 @@ function syncUrl() {
   const params = new URLSearchParams();
   if (state.selectedIds.length) params.set("officials", state.selectedIds.join(","));
   params.set("mode", state.mode);
+  if (state.evidenceFilter !== "reviewed") params.set("evidence", state.evidenceFilter);
   if (state.assetFilter) params.set("asset", state.assetFilter);
   if (state.activeEventId) params.set("event", state.activeEventId);
   if (state.eventTierFilter !== "focused") params.set("context", state.eventTierFilter);
@@ -356,15 +380,17 @@ async function loadData() {
     setHeaderStatus("Loading dataset");
     $("loadFailure").hidden = true;
     state.manifest = await fetchJson("./data/manifest.json");
-    const [overview, officials, coverage, events, timelineIndex, release] = await Promise.all([
+    const [overview, officials, coverage, events, timelineIndex, release, refreshStatus] = await Promise.all([
       fetchJson(state.manifest.files.overview),
       fetchJson(state.manifest.files.officials_index),
       fetchJson(state.manifest.files.coverage),
       fetchJson(state.manifest.files.events),
       fetchJson(state.manifest.files.timeline_index),
       fetchJson("./release.json").catch(() => null),
+      fetchJson("./refresh-status.json").catch(() => null),
     ]);
     state.release = release;
+    state.refreshStatus = refreshStatus;
     state.overview = overview;
     state.coverage = coverage;
     state.officials = officials.officials || [];
@@ -390,7 +416,13 @@ async function loadData() {
       renderWorkbench();
     }
     const freshness = renderFreshnessStatus();
-    setHeaderStatus(`Dataset ${state.overview.dataset_version} - ${freshness.label}`, true);
+    const refresh = renderRefreshStatus();
+    const healthy = refresh.healthy !== false && !["aging", "stale", "unknown"].includes(freshness.className);
+    const statusLabel = refresh.healthy === false
+      ? "Last refresh failed - validated snapshot retained"
+      : `Dataset ${state.overview.dataset_version} - ${freshness.label}`;
+    setHeaderStatus(statusLabel, healthy);
+    $("headerStatus").classList.toggle("warning", !healthy);
   } catch (error) {
     console.error(error);
     setHeaderStatus("Dataset unavailable");
@@ -401,6 +433,7 @@ async function loadData() {
 }
 
 function initializeControls() {
+  $("evidenceFilter").value = state.evidenceFilter;
   $("eventSearch").value = selectedEvent()?.label || "";
   $("eventTierFilter").value = state.eventTierFilter;
   $("eventWindowFilter").value = String(state.eventWindowDays);
@@ -803,6 +836,14 @@ function bindControls() {
     state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     renderWorkbench();
   });
+  $("evidenceFilter").addEventListener("change", () => {
+    state.evidenceFilter = $("evidenceFilter").value;
+    state.selectedTradeId = "";
+    state.zoomPercent = null;
+    state.brushPercent = null;
+    state.transactionRenderLimit = state.compactLayout ? 50 : 100;
+    renderWorkbench();
+  });
   $("eventTierFilter").addEventListener("change", () => {
     state.eventTierFilter = $("eventTierFilter").value;
     renderWorkbench();
@@ -838,6 +879,7 @@ function bindControls() {
   });
   $("resetViewButton").addEventListener("click", () => {
     state.mode = "career";
+    state.evidenceFilter = state.overview?.summary?.reviewed_public_trade_count > 0 ? "reviewed" : "preview";
     state.assetFilter = "";
     state.eventTierFilter = "focused";
     state.eventWindowDays = 180;
@@ -850,6 +892,7 @@ function bindControls() {
     state.hiddenEventCategories.clear();
     state.transactionRenderLimit = state.compactLayout ? 50 : 100;
     $("eventSearch").value = "";
+    $("evidenceFilter").value = state.evidenceFilter;
     $("eventTierFilter").value = "focused";
     $("eventWindowFilter").value = "180";
     $("clusterDensity").value = "80";
@@ -903,6 +946,7 @@ function bindControls() {
   window.addEventListener("popstate", async () => {
     parseUrlState();
     setRosterFilterControls();
+    $("evidenceFilter").value = state.evidenceFilter;
     $("eventSearch").value = selectedEvent()?.label || "";
     $("eventTierFilter").value = state.eventTierFilter;
     $("eventWindowFilter").value = String(state.eventWindowDays);
@@ -1008,7 +1052,7 @@ function renderOfficialResults() {
         .map((official, index) => {
           const selected = state.selectedIds.includes(official.id);
           const timeline = timelineSummary(official.id);
-          const stateLabel = selected ? "Selected" : timeline?.trade_count ? `${timeline.trade_count} records` : "No trade rows";
+          const stateLabel = selected ? "Selected" : timeline?.trade_count ? `${timeline.trade_count} records` : "No rows in current coverage";
           return `
             <button class="search-result${index === state.activeOfficialResultIndex ? " active" : ""}" id="official-option-${index}" type="button" role="option" data-official-id="${escapeHtml(official.id)}" aria-selected="${selected}">
               <span>
@@ -1304,6 +1348,12 @@ function tradeMatchesAsset(trade) {
   return kind === "ticker" ? trade.ticker === value : trade.asset_class === value;
 }
 
+function tradeMatchesEvidence(trade) {
+  if (state.evidenceFilter === "all") return true;
+  const reviewed = trade.public_production_trade === true;
+  return state.evidenceFilter === "reviewed" ? reviewed : !reviewed;
+}
+
 function tradeInModeWindow(trade) {
   if (state.mode !== "event") return true;
   const event = selectedEvent();
@@ -1312,7 +1362,9 @@ function tradeInModeWindow(trade) {
 }
 
 function filteredTrades(official) {
-  return (official.trades || []).filter((trade) => tradeMatchesAsset(trade) && tradeInModeWindow(trade));
+  return (official.trades || []).filter(
+    (trade) => tradeMatchesEvidence(trade) && tradeMatchesAsset(trade) && tradeInModeWindow(trade)
+  );
 }
 
 function eventMatchesAsset(event) {
@@ -1846,6 +1898,11 @@ function renderTransactions() {
   const shownLabel = rows.length > visibleRows.length ? `${numberFormat.format(visibleRows.length)} of ` : "";
   const selectionLabel = state.brushPercent ? ` selected of ${numberFormat.format(unselectedRows)} in view` : " in view";
   $("transactionCount").textContent = `${shownLabel}${numberFormat.format(rows.length)} record${rows.length === 1 ? "" : "s"}${selectionLabel}`;
+  const emptyMessage = state.evidenceFilter === "reviewed"
+    ? "No human-reviewed public records match this view. Preview records may exist."
+    : state.evidenceFilter === "preview"
+      ? "No machine-extracted preview records match this view. This does not establish that no reportable transaction occurred."
+      : "No transaction rows match this view. This does not establish that no reportable transaction occurred.";
   $("transactionRows").innerHTML = rows.length
     ? visibleRows
         .map((trade) => {
@@ -1863,7 +1920,7 @@ function renderTransactions() {
             </tr>`;
         })
         .join("")
-    : '<tr><td colspan="8" class="empty-state">No transaction records match this view.</td></tr>';
+    : `<tr><td colspan="8" class="empty-state">${escapeHtml(emptyMessage)}</td></tr>`;
   $("transactionActions").hidden = visibleRows.length >= rows.length;
   $("showMoreTransactionsButton").textContent = `Show ${numberFormat.format(Math.min(state.compactLayout ? 50 : 100, rows.length - visibleRows.length))} more records`;
   updateBrushControls();
@@ -2241,9 +2298,10 @@ function renderDatasetStatus() {
       : "no historical-news candidates in this build";
   $("dataNotice").innerHTML = `
     <strong>Current record boundary</strong>
-    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}. Context coverage: ${numberFormat.format(summary.primary_source_context_record_count || 0)} official primary-source records, including ${numberFormat.format(summary.sec_filing_event_count || 0)} SEC filing events; ${escapeHtml(newsStatus)}.</span>`;
+    <span>${escapeHtml(state.overview.disclaimer)} Reviewed public production trades: ${numberFormat.format(summary.reviewed_public_trade_count || 0)}. The default view uses ${summary.reviewed_public_trade_count > 0 ? "reviewed" : "machine-extracted preview"} records. Context coverage: ${numberFormat.format(summary.primary_source_context_record_count || 0)} official primary-source records, including ${numberFormat.format(summary.sec_filing_event_count || 0)} SEC filing events; ${escapeHtml(newsStatus)}.</span>`;
   $("footerDataset").textContent = `Dataset ${state.overview.dataset_version} / generated ${state.overview.generated_at}`;
   renderFreshnessStatus();
+  renderRefreshStatus();
   renderReleaseMetadata();
 
   const metrics = [

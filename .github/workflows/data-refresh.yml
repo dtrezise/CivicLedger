@@ -1,6 +1,15 @@
 name: Refresh Live Context Data
 
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/data-refresh.yml"
+      - "backend/app/services/**"
+      - "scripts/build_*.py"
+      - "scripts/check_source_freshness.py"
+      - "scripts/evaluate_event_ranking.py"
+      - "scripts/write_refresh_status.py"
   schedule:
     - cron: "23 10 * * *"
   workflow_dispatch:
@@ -30,8 +39,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Install backend dependencies
-        run: python -m pip install -e ./backend
       - name: Start refresh telemetry clock and select refresh depth
         env:
           REQUESTED_DEEP_REFRESH: ${{ inputs.deep_sources || false }}
@@ -42,6 +49,14 @@ jobs:
             deep_refresh=true
           fi
           echo "DEEP_REFRESH=$deep_refresh" >> "$GITHUB_ENV"
+      - name: Install backend and test dependencies
+        run: python -m pip install -e './backend[test]'
+      - name: Run refresh preflight
+        env:
+          PYTHONPATH: backend
+        run: |
+          python -m compileall -q backend/app scripts
+          python scripts/evaluate_event_ranking.py --output "$RUNNER_TEMP/event-ranking-preflight.json"
       - name: Verify required secrets are configured
         env:
           CONGRESS_GOV_API_KEY: ${{ secrets.CONGRESS_GOV_API_KEY }}
@@ -238,6 +253,8 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/build_pages_dataset.py
+      - name: Rebuild empirical human-review queues
+        run: python scripts/build_empirical_review_queues.py
       - name: Check source freshness
         run: python scripts/check_source_freshness.py
       - name: Validate public release contract
@@ -251,6 +268,10 @@ jobs:
           python scripts/check_release_determinism.py
           python scripts/build_release_checksum_inventory.py
           python scripts/build_release_checksum_inventory.py --check
+      - name: Validate refreshed data and application contracts
+        env:
+          PYTHONPATH: backend
+        run: pytest -q backend/tests
       - name: Record weekly public-corpus growth and R2 simulation
         if: ${{ github.event_name == 'workflow_dispatch' || env.DEEP_REFRESH == 'true' }}
         run: |
@@ -265,14 +286,19 @@ jobs:
           --started-at "$REFRESH_STARTED_AT"
           --completed-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           --status success
+      - name: Record successful public refresh health
+        run: >-
+          python scripts/write_refresh_status.py
+          --status success
+          --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
       - name: Commit refreshed generated data
         run: |
-          if git diff --quiet -- data pages-site/data pages-site/release-checksums.json docs/metrics/public_corpus_growth_history.json docs/metrics/r2_public_partition_migration_simulation.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
+          if git diff --quiet -- data pages-site/data pages-site/refresh-status.json pages-site/release-checksums.json docs/metrics/public_corpus_growth_history.json docs/metrics/r2_public_partition_migration_simulation.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json; then
             echo "No generated data changes to commit."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data pages-site/data pages-site/release-checksums.json docs/metrics/public_corpus_growth_history.json docs/metrics/r2_public_partition_migration_simulation.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json
+            git add data pages-site/data pages-site/refresh-status.json pages-site/release-checksums.json docs/metrics/public_corpus_growth_history.json docs/metrics/r2_public_partition_migration_simulation.json backend/tests/fixtures/parsers/oge_public_sample_fixture.json
             generated_base=$(git rev-parse HEAD)
             git commit -m "Refresh live context data"
             target_branch="${GITHUB_REF_NAME:-main}"
@@ -303,10 +329,6 @@ jobs:
               exit 1
             fi
           fi
-      - name: Write deployed Pages release metadata
-        run: >-
-          python scripts/write_release_metadata.py
-          --commit "$(git rev-parse HEAD)"
       - name: Record failed refresh telemetry
         if: ${{ failure() }}
         env:
@@ -327,6 +349,47 @@ jobs:
             data/operations/source_refresh_runs.json
             data/operations/source_refresh_telemetry.json
           retention-days: 30
+
+  publish:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    needs: refresh
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Write public release and refresh health metadata
+        env:
+          REFRESH_RESULT: ${{ needs.refresh.result }}
+        run: |
+          python scripts/write_release_metadata.py --commit "$(git rev-parse HEAD)"
+          python scripts/write_refresh_status.py \
+            --status "$REFRESH_RESULT" \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)"
+      - name: Validate publishable static snapshot
+        run: |
+          python scripts/check_public_release_dataset.py
+          python scripts/check_release_static_contract.py
+          python scripts/check_release_links.py
+      - name: Summarize refresh outcome
+        env:
+          REFRESH_RESULT: ${{ needs.refresh.result }}
+        run: |
+          {
+            echo "## CivicLedger daily refresh"
+            echo
+            echo "Refresh result: **$REFRESH_RESULT**"
+            if [ "$REFRESH_RESULT" = "success" ]; then
+              echo "Publishing the newly validated dataset."
+            else
+              echo "Publishing the last validated dataset with a visible freshness warning."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/configure-pages@v6
         with:
           enablement: true
@@ -335,11 +398,12 @@ jobs:
           path: pages-site
 
   deploy:
+    if: ${{ always() && needs.publish.result == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: refresh
+    needs: publish
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5

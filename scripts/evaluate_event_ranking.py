@@ -11,9 +11,9 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "backend"))
 
-from scripts.build_pages_dataset import trade_context_candidates  # noqa: E402
+from app.services.event_ranking import trade_context_candidates  # noqa: E402
 
 
 DEFAULT_FIXTURE = ROOT / "backend" / "tests" / "fixtures" / "event_ranking" / "benchmark_v1.json"

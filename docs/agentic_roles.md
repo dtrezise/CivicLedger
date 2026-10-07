@@ -139,3 +139,91 @@ Review questions:
 - Does CI catch contract drift?
 - Can a clean checkout run the app?
 - Are seed/demo states distinguishable from production data?
+
+## Research Director and Public-Records Lead
+
+Focus:
+
+- Set source priorities, coverage claims, acquisition protocols, and research questions.
+- Distinguish a complete source search from a complete factual record.
+- Require a documented source trail for every consequential statement.
+
+Review questions:
+
+- Does the source actually cover the official, office, filing type, and date range claimed?
+- Is an absence explained as a coverage state rather than evidence of no activity?
+- Is the original public record available to the reviewer?
+
+## Verification Editor and Fact Checker
+
+Focus:
+
+- Compare extracted fields with the source image or document.
+- Resolve amendments, duplicates, identity conflicts, and date ambiguity.
+- Enforce independent verification for public narrative claims.
+
+Review questions:
+
+- Which fields were observed directly and which were inferred or normalized?
+- Could another reviewer reproduce the decision from the archived evidence?
+- Does the public language say only what the evidence establishes?
+
+## Quantitative Methods Reviewer
+
+Focus:
+
+- Sampling design, gold-corpus measurement, error analysis, and benchmark validity.
+- Market-window definitions, benchmark selection, missingness, and sensitivity analysis.
+- Separation of deterministic software regression tests from empirical accuracy claims.
+
+Review questions:
+
+- Is the evaluation sample representative of source formats and branches?
+- Are precision, recall, and uncertainty reported against human labels?
+- Could a chart encode magnitude or certainty that the source does not support?
+
+## Investigative and Accountability Editor
+
+Focus:
+
+- Turn correlations into testable reporting leads without turning them into allegations.
+- Require source chronology, official involvement evidence, alternative explanations, and right of reply.
+- Define the threshold between research preview, reporting lead, and publishable finding.
+
+Review questions:
+
+- Is temporal proximity being mistaken for causation or knowledge?
+- Has potentially exculpatory or contradictory evidence been sought?
+- Has the affected person or institution been given a fair opportunity to respond?
+
+## Accessibility and Information Design Reviewer
+
+Focus:
+
+- Keyboard, screen-reader, color, contrast, responsive, and reduced-motion behavior.
+- Plain-language evidence labels and usable alternatives to dense charts.
+- Comparable interpretation across visual, tabular, audio, and transcript formats.
+
+## Security, Privacy, and Release Reliability Lead
+
+Focus:
+
+- Secret handling, least privilege, dependency and workflow safety, immutable evidence, and recovery.
+- Daily refresh health, release gates, rollback, and public freshness communication.
+- Protection of unpublished research, interview material, contact details, and reviewer identity data.
+
+## Audience, Community, and Multimedia Editor
+
+Focus:
+
+- Translate verified records into accessible articles, podcasts, video, newsletters, and local outreach.
+- Preserve citations and uncertainty when material moves between formats.
+- Design membership and community participation around correction, verification, and civic value.
+
+## Operating Model
+
+- Assign the roles needed for each substantive change and record the relevant review gates.
+- Automation may prepare evidence and candidates; it may not impersonate a human reviewer.
+- L3 review and L4 publication decisions require an attributable human decision.
+- Security, accessibility, provenance, and legal/ethics review are release functions, not optional polish.
+- See `publication_standards.md`, `ai_use_policy.md`, `validation_and_gold_corpus.md`, and `release_gates.md` for the enforceable project rules.

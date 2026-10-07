@@ -4,13 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#17212b" />
-    <title>CivicLedger Federal Trade Explorer</title>
+    <title>CivicLedger Federal Disclosure Research Preview</title>
     <meta
       name="description"
       content="Compare source-linked federal financial disclosure activity with market and government event context."
     />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link data-static-asset="styles" rel="stylesheet" href="./assets/styles.2d7f9bced4b9.css" integrity="sha384-2CGsX1q+qlrRvZ+Yi38LPKWxtV75yjDUCy+i07LwtfG4o3G3pA7KFmXVO6X6ns/w">
+    <link data-static-asset="styles" rel="stylesheet" href="./assets/styles.6ddab4bfbdb8.css" integrity="sha384-9wmVgLoG8MckVmGtXH112IECKestZPsCA8AGNu8xPcAXJE4rgOR+8uBSnOU2ov7i">
     <script
       data-static-asset="echarts"
       defer
@@ -18,7 +18,7 @@
       integrity="sha384-pPi0zxBAoDu6+JXW/C68UZLvBUUtU+7zonhif43rqj7pxsGyqyqzcian2Rj37Rss"
       crossorigin="anonymous"
     ></script>
-    <script data-static-asset="app" defer src="./assets/app.da4441cf7e32.js" integrity="sha384-NzgHs7vyHSS1aWoevClaoRp6WG9BJbh7BrlZCMQGYX2Xpt0AIwFthXGXbn4RF5yX"></script>
+    <script data-static-asset="app" defer src="./assets/app.f184c7efc950.js" integrity="sha384-Q9c98L5IeGO/+kOnWyCrgZnxaYsUEuEhDR9g3GF9HM1M4wnYPqTaEB3SXuE6Q/Og"></script>
   </head>
   <body>
     <a class="skip-link" href="#explorerControls">Skip to comparison controls</a>
@@ -27,13 +27,14 @@
         <span class="brand-mark" aria-hidden="true">CL</span>
         <span>
           <strong>CivicLedger</strong>
-          <small>Federal Trade Explorer</small>
+          <small>Federal Disclosure Research Preview</small>
         </span>
       </a>
       <nav class="site-nav" aria-label="Primary navigation">
         <a class="active" href="#explorer">Explorer</a>
-        <a href="#data-status">Data Status</a>
-        <a href="#methodology">Methodology</a>
+        <a href="#data-status">Coverage</a>
+        <a href="#methodology">Methods</a>
+        <a href="#standards">Standards</a>
       </nav>
       <div class="header-status" id="headerStatus" aria-live="polite">
         <span class="status-dot"></span>
@@ -45,8 +46,8 @@
       <section class="explorer-band" id="explorer">
         <div class="section-intro explorer-intro">
           <div>
-            <p class="eyebrow">Source-linked disclosure research</p>
-            <h1>Compare federal officials across trades, service, and events</h1>
+            <p class="eyebrow">Source-linked public-record research</p>
+            <h1>Explore reported federal trades with visible evidence boundaries</h1>
           </div>
           <p>
             Presidents form the default baseline. Add officials from any branch, zoom into reported
@@ -54,7 +55,21 @@
           </p>
         </div>
 
+        <aside class="research-preview-banner" aria-labelledby="previewTitle">
+          <div>
+            <p class="eyebrow">Evidence state</p>
+            <h2 id="previewTitle">Research Preview</h2>
+          </div>
+          <p>
+            Most transaction rows are machine-extracted candidates awaiting human verification.
+            Use the linked source evidence. A missing row is not evidence that an official made no
+            reportable transaction.
+          </p>
+          <a href="#standards">Read the publication standard</a>
+        </aside>
+
         <div class="data-notice" id="dataNotice" role="status"></div>
+        <div class="refresh-status" id="refreshStatus" role="status" aria-live="polite" hidden></div>
         <div class="freshness-status" id="datasetFreshness" role="status" aria-live="polite" hidden></div>
         <section class="load-failure" id="loadFailure" role="alert" aria-labelledby="loadFailureTitle" hidden>
           <p class="eyebrow">Data connection</p>
@@ -148,6 +163,14 @@
             <button id="calendarModeButton" type="button" data-mode="calendar">Calendar</button>
             <button id="eventModeButton" type="button" data-mode="event" disabled title="Select an event first">Event</button>
           </div>
+          <label>
+            <span>Evidence state</span>
+            <select id="evidenceFilter">
+              <option value="reviewed">Reviewed public records</option>
+              <option value="preview">Research preview records</option>
+              <option value="all">All record states</option>
+            </select>
+          </label>
           <label>
             <span>Transactions</span>
             <select id="assetFilter">
@@ -296,7 +319,7 @@
         <div class="section-intro">
           <div>
             <p class="eyebrow">Coverage and provenance</p>
-            <h2>Data Status</h2>
+            <h2>Coverage</h2>
           </div>
           <p>
             Roster breadth is not the same as transaction coverage. These measures keep official roles,
@@ -334,6 +357,42 @@
             <h3>Record states</h3>
             <p>Fixture, parser preview, reviewed, and production records remain distinct throughout the interface and exported data.</p>
           </article>
+          <article>
+            <h3>No negative inference</h3>
+            <p>No matching row can mean no filing, no reportable transaction, incomplete acquisition, extraction limits, or an unreviewed source. It never proves inactivity.</p>
+          </article>
+          <article>
+            <h3>AI boundary</h3>
+            <p>Automation can retrieve, extract, rank, and summarize candidates. It cannot verify intent, knowledge, causation, ethics violations, or misconduct.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="methodology-band" id="standards">
+        <div class="section-intro">
+          <div>
+            <p class="eyebrow">Publication controls</p>
+            <h2>Evidence and Editorial Standards</h2>
+          </div>
+          <p>Public records stay visibly separated by verification state, and consequential claims require human review of the underlying source.</p>
+        </div>
+        <div class="methodology-grid standards-grid">
+          <article><span class="evidence-level">L0</span><h3>Discovered</h3><p>A source or filing is known to exist, but the document or transaction has not been acquired.</p></article>
+          <article><span class="evidence-level">L1</span><h3>Acquired</h3><p>The source file is archived with provenance and integrity metadata.</p></article>
+          <article><span class="evidence-level">L2</span><h3>Extracted</h3><p>A parser or OCR process produced candidate fields that still require human verification.</p></article>
+          <article><span class="evidence-level">L3</span><h3>Reviewed</h3><p>A reviewer compared the structured record with the source and recorded the decision.</p></article>
+          <article><span class="evidence-level">L4</span><h3>Publication ready</h3><p>The record passed source, review, correction, and release checks for public use.</p></article>
+          <article><h3>Correlation, not accusation</h3><p>Event proximity is a research lead. CivicLedger does not infer motive, privileged knowledge, illegality, or causation from timing alone.</p></article>
+        </div>
+      </section>
+
+      <section class="methodology-band" id="corrections">
+        <div class="section-intro">
+          <div>
+            <p class="eyebrow">Accountability</p>
+            <h2>Corrections and Right of Reply</h2>
+          </div>
+          <p>Material corrections should preserve the prior record, identify the source of the change, and appear in the next validated release. A public correction intake channel is required before editorial publication.</p>
         </div>
       </section>
     </main>
@@ -342,7 +401,7 @@
       <strong>CivicLedger</strong>
       <span id="footerDataset">Loading dataset metadata</span>
       <span id="footerRelease">Loading release metadata</span>
-      <span>No legal, ethics, causation, intent, or investment conclusion is made.</span>
+      <span>Research preview. No legal, ethics, causation, intent, or investment conclusion is made.</span>
     </footer>
   </body>
 </html>

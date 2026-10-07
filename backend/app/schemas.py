@@ -10,6 +10,8 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 # ---- People ----
 
 class PersonSummary(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     person_id: UUID
     full_name: str
     branch: str
@@ -21,10 +23,6 @@ class PersonSummary(BaseModel):
     court: Optional[str] = None
     service_start: date
     service_end: Optional[date] = None
-
-    class Config:
-        from_attributes = True
-
 
 class PersonDetail(PersonSummary):
     district: Optional[str] = None
@@ -139,6 +137,8 @@ class TimelineResponse(BaseModel):
 # ---- Trades ----
 
 class TradeRow(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     person_id: UUID
     filing_id: UUID
@@ -155,10 +155,6 @@ class TradeRow(BaseModel):
     disclosure_lag_days: int
     parsing_confidence: Optional[Decimal] = None
     asset_match_confidence: Optional[Decimal] = None
-
-    class Config:
-        from_attributes = True
-
 
 class TradeListResponse(BaseModel):
     items: list[TradeRow]
@@ -181,6 +177,8 @@ class TradeDetail(TradeRow):
 # ---- Filings ----
 
 class FilingDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     person_id: UUID
     filing_type: str
@@ -194,11 +192,9 @@ class FilingDetail(BaseModel):
     provenance_complete: bool
     created_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
-
-
 class RawDocumentDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     ingestion_run_id: UUID
     source_url: str
@@ -212,10 +208,6 @@ class RawDocumentDetail(BaseModel):
     provenance_complete: bool
     source_metadata: dict
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
 
 # ---- Market ----
 
@@ -267,6 +259,8 @@ class ShareCardCreateResponse(BaseModel):
 
 
 class ShareCardDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     scope: str
     person_id: UUID
@@ -281,10 +275,6 @@ class ShareCardDetail(BaseModel):
     methodology_version: str
     render_url: Optional[str] = None
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
 
 # ---- Meta ----
 
@@ -344,6 +334,8 @@ class SourceCompletenessResponse(BaseModel):
 
 
 class ParserArtifactItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     source_id: str
     raw_document_id: UUID
@@ -356,10 +348,6 @@ class ParserArtifactItem(BaseModel):
     parser_output: dict
     confidence: Optional[Decimal] = None
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
 
 class ParserArtifactListResponse(BaseModel):
     items: list[ParserArtifactItem]
@@ -728,6 +716,8 @@ class ReviewerTelemetryResponse(BaseModel):
 
 
 class IngestionRunItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     source_name: str
     source_url: Optional[str] = None
@@ -738,10 +728,6 @@ class IngestionRunItem(BaseModel):
     parser_version: str
     notes: Optional[str] = None
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
 
 class IngestionRunListResponse(BaseModel):
     items: list[IngestionRunItem]

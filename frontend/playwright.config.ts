@@ -4,6 +4,8 @@ const liveProductionSmoke = Boolean(
   process.env.LIVE_PRODUCTION_SMOKE &&
     (process.env.PRODUCTION_BASE_URL || process.env.CIVICLEDGER_PRODUCTION_URL)
 );
+const localPort = process.env.CIVICLEDGER_TEST_PORT || "4173";
+const localBaseUrl = `http://127.0.0.1:${localPort}`;
 
 export default defineConfig({
   testDir: "./tests/pages",
@@ -15,15 +17,15 @@ export default defineConfig({
   use: {
     baseURL: liveProductionSmoke
       ? process.env.PRODUCTION_BASE_URL || process.env.CIVICLEDGER_PRODUCTION_URL
-      : "http://127.0.0.1:4173",
+      : localBaseUrl,
     trace: "retain-on-failure",
   },
   webServer: liveProductionSmoke
     ? undefined
     : {
-        command: "python3 -m http.server 4173 --directory ../pages-site",
-        url: "http://127.0.0.1:4173",
-        reuseExistingServer: !process.env.CI,
+        command: `python3 -m http.server ${localPort} --directory ../pages-site`,
+        url: localBaseUrl,
+        reuseExistingServer: false,
         timeout: 30_000,
       },
   projects: [

@@ -17,7 +17,7 @@ DATA = SITE / "data"
 MANIFEST = DATA / "manifest.json"
 
 SHELL_BUDGETS = {
-    "index.html": 20_000,
+    "index.html": 22_000,
     "styles.css": 40_000,
     "app.js": 100_000,
     "favicon.svg": 10_000,

@@ -255,6 +255,37 @@ main {
   letter-spacing: 0.08em;
 }
 
+.research-preview-banner {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.35fr) minmax(360px, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  margin: 0 0 18px;
+  padding: 16px 18px;
+  color: #4f3b17;
+  background: #fff8e8;
+  border: 1px solid #dec783;
+  border-left: 5px solid var(--gold);
+  border-radius: 6px;
+}
+
+.research-preview-banner h2,
+.research-preview-banner p {
+  margin: 0;
+}
+
+.research-preview-banner h2 {
+  font-size: 20px;
+}
+
+.research-preview-banner a {
+  color: #69470f;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-underline-offset: 3px;
+}
+
 .data-notice {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -273,7 +304,8 @@ main {
   color: var(--green);
 }
 
-.freshness-status {
+.freshness-status,
+.refresh-status {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 12px;
@@ -284,6 +316,24 @@ main {
   background: #f4f8f6;
   border-left: 4px solid var(--green);
   font-size: 12px;
+}
+
+.refresh-status.success {
+  color: #365148;
+  background: #f4f8f6;
+  border-left-color: var(--green);
+}
+
+.refresh-status.warning {
+  color: #6d3033;
+  background: #fff0f0;
+  border-left-color: var(--red);
+}
+
+.refresh-status.unknown {
+  color: #654d20;
+  background: #fff8e8;
+  border-left-color: var(--gold);
 }
 
 .freshness-status.aging,
@@ -300,6 +350,7 @@ main {
 }
 
 .freshness-status[hidden],
+.refresh-status[hidden],
 .load-failure[hidden] {
   display: none;
 }
@@ -458,7 +509,7 @@ main {
 }
 
 .toolbar {
-  grid-template-columns: auto minmax(180px, 1fr) minmax(220px, 1.25fr) minmax(180px, 1fr) 140px 110px;
+  grid-template-columns: auto minmax(170px, 1fr) minmax(170px, 1fr) minmax(220px, 1.2fr) minmax(170px, 1fr) 130px 105px;
   border-top: 0;
   border-radius: 0 0 7px 7px;
 }
@@ -1421,6 +1472,18 @@ select,
   padding: 16px;
 }
 
+.standards-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.evidence-level {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .methodology-grid p {
   margin-top: 8px;
   font-size: 13px;
@@ -1544,16 +1607,27 @@ footer a:focus-visible {
     display: block;
   }
 
+  .research-preview-banner {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .research-preview-banner a {
+    white-space: normal;
+  }
+
   .data-notice strong {
     display: block;
     margin-bottom: 6px;
   }
 
-  .freshness-status {
+  .freshness-status,
+  .refresh-status {
     display: block;
   }
 
-  .freshness-status strong {
+  .freshness-status strong,
+  .refresh-status strong {
     display: block;
     margin-bottom: 3px;
   }

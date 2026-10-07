@@ -15,13 +15,14 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "pages-site"
 OUTPUT = SITE / "release-checksums.json"
 DYNAMIC_RELEASE_METADATA = SITE / "release.json"
+DYNAMIC_REFRESH_STATUS = SITE / "refresh-status.json"
 
 
 def inventory() -> dict:
     manifest = json.loads((SITE / "data" / "manifest.json").read_text())
     files = []
     for path in deployable_files(SITE):
-        if path in {OUTPUT, DYNAMIC_RELEASE_METADATA}:
+        if path in {OUTPUT, DYNAMIC_RELEASE_METADATA, DYNAMIC_REFRESH_STATUS}:
             continue
         payload = path.read_bytes()
         files.append(

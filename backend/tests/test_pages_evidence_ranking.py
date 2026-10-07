@@ -8,8 +8,8 @@ sys.path.insert(0, str(ROOT))
 from scripts.build_pages_dataset import (  # noqa: E402
     compact_timeline_official,
     official_involvement_index,
-    trade_context_candidates,
 )
+from app.services.event_ranking import trade_context_candidates  # noqa: E402
 
 
 def test_candidate_ranking_exposes_neutral_score_components():

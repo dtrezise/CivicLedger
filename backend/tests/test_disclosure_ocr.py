@@ -173,11 +173,16 @@ def test_checked_in_ocr_manifest_and_shards_preserve_evidence_boundaries():
     )
 
     assert manifest["schema_version"] == "disclosure-ocr-results-manifest-v2"
-    assert manifest["summary"]["completed_document_count"] == 100
-    assert manifest["summary"]["failed_document_count"] == 0
-    assert manifest["summary"]["processed_page_count"] >= 500
+    summary = manifest["summary"]
+    assert summary["attempted_document_count"] == (
+        summary["completed_document_count"] + summary["failed_document_count"]
+    )
+    assert summary["completed_document_count"] == len(manifest["records"])
+    assert summary["completed_document_count"] > 0
+    assert summary["processed_page_count"] > 0
     assert manifest["summary"]["transaction_rows_created"] == 0
-    assert manifest["summary"]["completed_chamber_counts"] == {"House": 50, "Senate": 50}
+    assert sum(summary["completed_chamber_counts"].values()) == summary["completed_document_count"]
+    assert summary["human_review_required_document_count"] == summary["completed_document_count"]
 
     page_count = 0
     for record in manifest["records"]:

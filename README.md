@@ -6,28 +6,28 @@ Federal public financial disclosure tracker. View reporting timelines, disclosur
 > roster, official-source document indexes and parser previews, official civic
 > events, and production market context. Development fixtures are excluded from
 > public timelines. No parser preview is a reviewed public-production trade.
-> CivicLedger does not make legal, ethics, causation, insider-trading, or
+> **The public explorer is a research preview.** CivicLedger does not make legal, ethics, causation, insider-trading, or
 > investment conclusions.
 
 ## Public Data Coverage
 
-- 2,159 federal officials and 5,914 dated roles across all three branches.
+- 2,169 federal officials and 5,925 dated roles across all three branches.
 - 111th-119th Congress coverage with Bioguide-keyed House and Senate service records.
-- 7,501 matched House periodic transaction reports from 2015-present.
-- 53,673 House parser-preview transactions for 295 officials; 1,983 image-only reports remain in the OCR queue.
+- 7,606 processed House periodic transaction reports from 2015-present.
+- 54,457 House parser-preview transactions for 298 officials; 1,997 reports remain in the OCR queue.
 - 15,056 official House legacy index rows for 2009-2014, including 3,131 PTR documents from 2012-2013; their transaction tables remain unparsed and the official 2014 bulk index is explicitly incomplete.
-- 2,103 Senate PTRs indexed from 2012-present; 1,820 matched reports were acquired for 65 senators, yielding 10,882 structured parser-preview transactions while 551 paper-image reports remain review work.
+- 2,416 Senate PTRs indexed from 2012-present; 2,112 matched reports yielded 14,164 structured parser-preview transactions for 66 senators.
 - 19 presidential OGE documents and 7,182 source rows: 15 in-service Obama rows, 13 Biden rows, and 7,151 Trump rows across both terms. Six Obama reports and four Biden reports explicitly state no reportable transactions.
-- 1,709 official federal events, including legislation, executive orders, 344 selected court decisions, funding actions, and significant Federal Register rules and notices; enriched with 745 official roll calls and 222,030 sourced official-event relationships.
+- 1,719 source-ingested federal events plus macro and issuer context; enriched with 748 official roll calls and 223,452 sourced official-event relationships.
 - 648 official GovInfo United States Reports decisions for 2009-2016 with citations, decision dates, dockets, source hashes, and Supreme Court bound-volume links.
 - 2,699 official SEC filing-context events from 60 dynamically selected issuer requests, backed by 6,380 accepted ticker and issuer aliases; unavailable requests remain declared gaps and inclusion does not assert transaction relevance.
 - 4,143 bounded official primary-source context records across agencies, Congress, courts, and issuer filings, with all known scope gaps declared in the artifact.
-- 10,730 immutable official-source snapshots and 222,030 sourced official-event relationships support reproducible evidence review.
+- 10,741 immutable official-source snapshots and 223,452 sourced official-event relationships support reproducible evidence review.
 - 902 conservatively resolved fund/ETF/529 transaction identities and 4,264 neutral pre/post market-reaction contexts with 7-, 30-, and 90-day windows, stored in 185 hash-verified symbol-year shards.
-- OCR evidence now covers the first 100 prioritized House and Senate documents: 611 pages, 148,047 words, page-level layout and quality scores, 100 human-review requirements, and zero generated transactions.
+- OCR evidence currently covers 50 prioritized House documents across 408 pages, with page-level layout and quality scores, 50 human-review requirements, and zero generated transactions. Batch composition is operational state, not a fixed release promise.
 - 169 Senate amendments are reconciled non-destructively: 22 evidence-supported candidate predecessors, 103 ambiguous records, 44 without an identified predecessor, and zero suppressed source filings.
 - A versioned trade-event ranking regression benchmark enforces minimum precision and recall while explicitly disclaiming causation or investigative accuracy.
-- 91,092 equity/ETF market points, 14,215 crypto points, and 9,955 FRED observations backfilled to 2009 or provider inception.
+- 92,184 equity/ETF market points, 14,215 crypto points, and 9,955 FRED observations backfilled to 2009 or provider inception.
 - Zero reviewed public-production trades. Every visible transaction remains a source-linked, review-gated parser preview.
 
 ## Prerequisites
@@ -86,6 +86,12 @@ On first startup the backend automatically seeds the database with:
 | `docs/r2_public_data_architecture.md` | Prepared large-corpus R2 design and activation gates; no resources active |
 | `docs/data_model.md` | Current and next data model |
 | `docs/provenance_policy.md` | Source, fixture, correction, and share-card rules |
+| `docs/publication_standards.md` | Evidence ladder, claims, fairness, and public-use rules |
+| `docs/ai_use_policy.md` | Allowed and prohibited AI roles |
+| `docs/validation_and_gold_corpus.md` | Empirical validation design and measurement boundaries |
+| `docs/current_events_update_policy.md` | Daily and weekly refresh scope and failure behavior |
+| `docs/corrections_and_right_of_reply.md` | Correction audit and fairness procedure |
+| `docs/release_gates.md` | Automated, human, and stop-condition gates |
 | `docs/official_sources.md` | Official legislative, executive, and judicial source intake plan |
 | `docs/roadmap.md` | Stabilization and phased build plan |
 | `docs/release_readiness_120_steps.md` | 120-step release execution program |

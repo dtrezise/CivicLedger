@@ -67,6 +67,7 @@ def validate_static_contract() -> dict[str, int]:
         "eventSearch": ("input", "focus"),
         "eventResults": ("click",),
         "selectedOfficials": ("click",),
+        "evidenceFilter": ("change",),
         "assetFilter": ("change",),
         "eventTierFilter": ("change",),
         "eventWindowFilter": ("change",),
@@ -92,7 +93,7 @@ def validate_static_contract() -> dict[str, int]:
 
     parsed_params = set(re.findall(r'params\.get\("([a-z]+)"\)', javascript))
     written_params = set(re.findall(r'params\.set\("([a-z]+)"', javascript))
-    core_params = {"officials", "mode", "asset", "event", "context", "window"}
+    core_params = {"officials", "mode", "evidence", "asset", "event", "context", "window"}
     roster_params = {"branch", "chamber", "state", "district", "party", "service", "office"}
     required_params = core_params | roster_params | {"zoom"}
     require(required_params <= parsed_params, f"URL parser is missing hooks: {sorted(required_params - parsed_params)}")
@@ -118,6 +119,8 @@ def validate_static_contract() -> dict[str, int]:
     require("try {" in javascript and "catch (error)" in javascript, "Dataset bootstrap needs a visible failure path")
     require("fetch(path, { cache: \"no-store\" })" in javascript, "Generated data fetches must avoid stale browser caches")
     require("renderFreshnessStatus" in javascript and "Stale dataset warning" in javascript, "Dataset freshness warning is missing")
+    require("renderRefreshStatus" in javascript and "refresh-status.json" in javascript, "Daily refresh health status is missing")
+    require("tradeMatchesEvidence" in javascript and "No human-reviewed public records" in javascript, "Evidence-state filtering and no-data boundary are missing")
     require("renderLoadFailure" in javascript and "DataLoadError" in javascript, "Structured loading failure state is missing")
 
     return {
