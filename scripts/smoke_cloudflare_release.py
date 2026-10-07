@@ -78,7 +78,10 @@ def validate(args: argparse.Namespace) -> dict:
         checks.append({"path": path, "status": status, "bytes": len(body)})
 
     html = responses["/"][0].decode("utf-8")
-    require("CivicLedger Federal Trade Explorer" in html, "Root HTML does not contain the expected title")
+    require(
+        "CivicLedger Federal Disclosure Research Preview" in html,
+        "Root HTML does not contain the expected research-preview title",
+    )
     asset_parser = AssetParser()
     asset_parser.feed(html)
     require(len(asset_parser.runtime_assets) == 3, f"Expected three hashed runtime assets, found {asset_parser.runtime_assets}")
