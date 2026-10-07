@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import json
 import sys
@@ -32,6 +33,37 @@ def test_parity_checks_identity_inventory_and_all_files(monkeypatch):
     report = module.validate("https://pages.example", "https://cloudflare.example", include_files=False)
     assert report["status"] == "passed"
     assert report["file_count"] == 1
+
+
+def test_parity_does_not_fetch_host_control_files(monkeypatch):
+    module = load_script("verify_pages_cloudflare_parity.py")
+    public_body = b"public asset"
+    records = [
+        {"path": "index.html", "bytes": len(public_body), "sha256": hashlib.sha256(public_body).hexdigest()},
+        {"path": ".nojekyll", "bytes": 1, "sha256": "0" * 64},
+        {"path": "_headers", "bytes": 1, "sha256": "1" * 64},
+    ]
+    metadata = {
+        "release.json": {"dataset_version": "d1", "methodology_version": "m1", "commit": "abc"},
+        "data/manifest.json": {"dataset_version": "d1", "methodology_version": "m1"},
+        "release-checksums.json": {"files": records},
+        "index.html": public_body,
+    }
+    fetched: list[str] = []
+
+    def fake_fetch(base, path, timeout=30):
+        fetched.append(path)
+        assert path not in module.HOST_CONTROL_PATHS
+        value = metadata[path]
+        return value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
+
+    monkeypatch.setattr(module, "fetch", fake_fetch)
+    report = module.validate("https://pages.example", "https://cloudflare.example")
+
+    assert report["declared_file_count"] == 3
+    assert report["file_count"] == 1
+    assert report["excluded_control_files"] == [".nojekyll", "_headers"]
+    assert fetched.count("index.html") == 2
 
 
 def test_rollback_recommendation_requires_post_deploy_failure_and_prior_target():

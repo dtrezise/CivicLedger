@@ -14,6 +14,7 @@ from urllib.parse import urljoin
 
 
 DEFAULT_PATHS = ("release.json", "data/manifest.json", "release-checksums.json")
+HOST_CONTROL_PATHS = frozenset({".nojekyll", "_headers"})
 
 
 class ParityError(RuntimeError):
@@ -91,7 +92,8 @@ def validate(pages_url: str, cloudflare_url: str, *, include_files: bool = True)
     cloudflare_records = checksum_records(cloudflare_checksums)
     if pages_records != cloudflare_records:
         raise ParityError("Release file inventories or declared checksums differ")
-    paths = sorted(pages_records)
+    excluded_control_files = sorted(set(pages_records) & HOST_CONTROL_PATHS)
+    paths = sorted(set(pages_records) - HOST_CONTROL_PATHS)
 
     mismatches: list[str] = []
     if include_files:
@@ -110,6 +112,8 @@ def validate(pages_url: str, cloudflare_url: str, *, include_files: bool = True)
     return {
         "cloudflare_url": cloudflare_url,
         "dataset_version": pages_manifest.get("dataset_version"),
+        "declared_file_count": len(pages_records),
+        "excluded_control_files": excluded_control_files,
         "file_count": len(paths),
         "pages_url": pages_url,
         "schema_version": "civicledger-pages-cloudflare-parity-v1",
