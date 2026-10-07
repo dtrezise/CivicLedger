@@ -5,7 +5,9 @@ on:
     branches: ["main"]
     paths:
       - ".github/workflows/data-refresh.yml"
+      - "backend/app/config.py"
       - "backend/app/services/**"
+      - "backend/pyproject.toml"
       - "scripts/build_*.py"
       - "scripts/check_source_freshness.py"
       - "scripts/evaluate_event_ranking.py"

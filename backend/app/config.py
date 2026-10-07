@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     DATABASE_URL: str = "postgresql+asyncpg://civicledger:civicledger@db:5432/civicledger"
-    DATABASE_URL_SYNC: str = "postgresql://civicledger:civicledger@db:5432/civicledger"
+    DATABASE_URL_SYNC: str = "postgresql+psycopg2://civicledger:civicledger@db:5432/civicledger"
     CORS_ORIGINS: str = '["http://localhost:3000"]'
     METHODOLOGY_VERSION: str = "1.0.0"
     DATASET_VERSION: str = "seed-v1"

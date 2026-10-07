@@ -23,7 +23,7 @@ services:
       - "${BACKEND_PORT:-8000}:8000"
     environment:
       DATABASE_URL: postgresql+asyncpg://civicledger:civicledger@db:5432/civicledger
-      DATABASE_URL_SYNC: postgresql://civicledger:civicledger@db:5432/civicledger
+      DATABASE_URL_SYNC: postgresql+psycopg2://civicledger:civicledger@db:5432/civicledger
       CORS_ORIGINS: '["http://localhost:3000"]'
       CONGRESS_GOV_API_KEY: ${CONGRESS_GOV_API_KEY:-}
       FRED_API_KEY: ${FRED_API_KEY:-}

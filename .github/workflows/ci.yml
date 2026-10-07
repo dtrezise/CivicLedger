@@ -112,7 +112,7 @@ jobs:
         run: python -m pip install -e ".[test]"
       - name: Run migrations
         env:
-          DATABASE_URL_SYNC: postgresql://civicledger:civicledger@localhost:5432/civicledger
+          DATABASE_URL_SYNC: postgresql+psycopg2://civicledger:civicledger@localhost:5432/civicledger
           DATABASE_URL: postgresql+asyncpg://civicledger:civicledger@localhost:5432/civicledger
         run: alembic upgrade head
 
