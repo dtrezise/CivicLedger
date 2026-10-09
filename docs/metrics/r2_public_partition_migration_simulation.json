@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148148223,
+        "current": 148206005,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -41,7 +41,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3142955,
+      "bytes": 3149961,
       "group": "timelines",
       "key": "congress:G000583",
       "path": "data/partitions/timelines/congress-g000583.json",
@@ -87,20 +87,20 @@
       "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148148223
+    "total_bytes": 148206005
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6026235
+      "total_bytes": 6029884
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30020098
+      "total_bytes": 30025467
     },
     "roles": {
       "candidate_bytes": 2668211,
@@ -109,10 +109,10 @@
       "total_bytes": 3366547
     },
     "timelines": {
-      "candidate_bytes": 18569516,
+      "candidate_bytes": 18576522,
       "candidate_count": 6,
       "partition_count": 363,
-      "total_bytes": 100188445
+      "total_bytes": 100236371
     }
   },
   "large_bootstrap_artifacts_kept_static": [
@@ -136,9 +136,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 429,
-    "bytes_removed": 21237727,
+    "bytes_removed": 21244733,
     "candidate_count": 7,
-    "remaining_total_bytes": 126910496
+    "remaining_total_bytes": 126961272
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 412,
-    "manifest_sha256": "f116b9e19982276b6e4625d0bd43d2d2819b46512f5137065a92907187f755b3"
+    "manifest_sha256": "6f5cff35a20c7fac2ce4a98fb6d6e1adb48a2b0ac8fa072f3e0fa32dff3d4f7c"
   }
 }

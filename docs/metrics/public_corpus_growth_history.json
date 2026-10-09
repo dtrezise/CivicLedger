@@ -452,27 +452,27 @@
     {
       "delta_from_previous_week": {
         "declared_artifact_count": 1,
-        "public_artifact_bytes": 187089,
+        "public_artifact_bytes": 244871,
         "query_partition_count": 1,
-        "static_asset_bytes": 187514,
+        "static_asset_bytes": 245296,
         "static_asset_count": 1
       },
       "iso_week": "2026-W41",
-      "observed_on": "2026-10-08",
+      "observed_on": "2026-10-09",
       "public_artifacts": {
         "declared_artifact_count": 419,
         "groups": {
           "bootstrap": {
             "artifact_count": 7,
-            "total_bytes": 5751305
+            "total_bytes": 5752143
           },
           "events": {
             "artifact_count": 18,
-            "total_bytes": 6026235
+            "total_bytes": 6029884
           },
           "market": {
             "artifact_count": 28,
-            "total_bytes": 30020098
+            "total_bytes": 30025467
           },
           "roles": {
             "artifact_count": 3,
@@ -480,7 +480,7 @@
           },
           "timelines": {
             "artifact_count": 363,
-            "total_bytes": 100188445
+            "total_bytes": 100236371
           }
         },
         "largest_artifact": {
@@ -489,12 +489,12 @@
           "path": "partitions/timelines/exec-donald-j-trump.json"
         },
         "query_partition_count": 412,
-        "query_partition_total_bytes": 139601325,
-        "total_bytes": 145352630
+        "query_partition_total_bytes": 139658269,
+        "total_bytes": 145410412
       },
       "source": {
         "dataset_version": "seed-v1",
-        "manifest_sha256": "f116b9e19982276b6e4625d0bd43d2d2819b46512f5137065a92907187f755b3"
+        "manifest_sha256": "6f5cff35a20c7fac2ce4a98fb6d6e1adb48a2b0ac8fa072f3e0fa32dff3d4f7c"
       },
       "static_assets": {
         "asset_count": 436,
@@ -502,7 +502,7 @@
           "bytes": 4537252,
           "path": "data/partitions/timelines/exec-donald-j-trump.json"
         },
-        "total_bytes": 148148223
+        "total_bytes": 148206005
       }
     }
   ]
