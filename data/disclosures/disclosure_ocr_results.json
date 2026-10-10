@@ -1,43 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-10-09",
+  "generated_at": "2026-10-10",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 28614,
-      "document_id": "house-ptr-2025-8221285",
-      "field_label_confidence": {
-        "amount": 0.2032,
-        "asset": 0.4665,
-        "notification_date": 0.0461,
-        "owner": 0.0,
-        "transaction_date": 0.2159,
-        "transaction_type": 0.1968
-      },
-      "filing_date": "2026-01-06",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.81,
-      "mean_ocr_confidence": 0.4999,
-      "mean_page_quality_score": 53.55,
-      "mean_review_quality_score": 0.5355,
-      "minimum_page_quality_score": 40.26,
-      "official_id": "congress:K000389",
-      "official_name": "Ro Khanna",
-      "page_count": 21,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 20,
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_partial_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221285.json",
-      "result_sha256": "6f4365673dcc2b11ce2262a56606aedcfed03bcf2e0b589f94a70b2393994196",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221285.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 5847
-    },
     {
       "chamber": "House",
       "character_count": 6266,
@@ -1674,6 +1640,40 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116357.pdf",
       "transaction_rows_created": 0,
       "word_count": 362
+    },
+    {
+      "chamber": "House",
+      "character_count": 61810,
+      "document_id": "house-ptr-2026-9116376",
+      "field_label_confidence": {
+        "amount": 0.1154,
+        "asset": 0.1647,
+        "notification_date": 0.0274,
+        "owner": 0.0134,
+        "transaction_date": 0.1154,
+        "transaction_type": 0.1154
+      },
+      "filing_date": "2026-10-07",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.8163,
+      "mean_ocr_confidence": 0.4454,
+      "mean_page_quality_score": 44.85,
+      "mean_review_quality_score": 0.4485,
+      "minimum_page_quality_score": 27.1,
+      "official_id": "congress:K000389",
+      "official_name": "Ro Khanna",
+      "page_count": 31,
+      "page_review_status_counts": {
+        "high_quality_ocr_review_required": 1,
+        "low_quality_ocr_review_required": 30
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116376.json",
+      "result_sha256": "b8cfb5031faf033083e7fcef670509bd58007092f64434dd421544f1b134da02",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116376.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 9081
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1690,14 +1690,14 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 818115,
-    "ocr_word_count": 100131,
+    "ocr_character_count": 851311,
+    "ocr_word_count": 103365,
     "page_review_status_counts": {
-      "high_quality_ocr_review_required": 1,
-      "low_quality_ocr_review_required": 350,
-      "usable_ocr_review_required": 36
+      "high_quality_ocr_review_required": 2,
+      "low_quality_ocr_review_required": 360,
+      "usable_ocr_review_required": 35
     },
-    "processed_page_count": 387,
+    "processed_page_count": 397,
     "processing_status_counts": {
       "ocr_complete_review_required": 14,
       "ocr_low_quality_review_required": 15,
