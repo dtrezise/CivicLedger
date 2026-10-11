@@ -19,7 +19,7 @@
       "count_metric": "processed_document_count",
       "current_record_count": 7622,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "738a9958d209cf70fa010ae1cbdb077ce32f6a56e88212732b4745b941b1763d",
+      "current_summary_sha256": "4b4c84864fa4cd032b3e93c974861aa27d73a9f6631ec84abda4e0cf53380469",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -65,20 +65,20 @@
       "baseline_schema_version": "senate-ptr-transactions-v1",
       "baseline_summary_sha256": "e2a147747d619b486b576a154b69062baeb3b73e3051d64c0e3e9a66128ffdbd",
       "count_metric": "processed_document_count",
-      "current_record_count": 2110,
+      "current_record_count": 2116,
       "current_schema_version": "senate-ptr-transactions-v1",
-      "current_summary_sha256": "b46cac04d4ad15302c94cd48523b881df33fcc23bf5a30fdd2e7f4e21136d5df",
+      "current_summary_sha256": "786b5876b635b52c581cb76b2c63674ff211ca6949485914b33f3e3e218bed6d",
       "path": "data/disclosures/senate_ptr_transactions.json",
       "source_id": "senate-ptr-transactions",
       "status": "changed"
     }
   ],
-  "generated_at": "2026-10-10",
+  "generated_at": "2026-10-11",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
     "p50": 737.0,
-    "p95": 4617.0,
+    "p95": 4751.0,
     "runs": [
       {
         "completed_at": "2026-07-13T01:59:24Z",
@@ -862,6 +862,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-10-10T15:54:33Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-10-11T17:46:29Z",
+        "duration_seconds": 5043.0,
+        "failure_count": 0,
+        "run_id": "38155102201-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-10-11T16:22:26Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1089,8 +1098,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 87,
-    "refresh_run_count": 87,
+    "measured_refresh_count": 88,
+    "refresh_run_count": 88,
     "source_failure_count": 36
   }
 }

@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148211389,
+        "current": 148302456,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -73,7 +73,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2116572,
+      "bytes": 2135606,
       "group": "timelines",
       "key": "congress:W000802",
       "path": "data/partitions/timelines/congress-w000802.json",
@@ -87,14 +87,14 @@
       "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148211389
+    "total_bytes": 148302456
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6029856
+      "total_bytes": 6029058
     },
     "market": {
       "candidate_bytes": 0,
@@ -109,10 +109,10 @@
       "total_bytes": 3366547
     },
     "timelines": {
-      "candidate_bytes": 18576522,
+      "candidate_bytes": 18595556,
       "candidate_count": 6,
       "partition_count": 363,
-      "total_bytes": 100236371
+      "total_bytes": 100328357
     }
   },
   "large_bootstrap_artifacts_kept_static": [
@@ -136,9 +136,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 429,
-    "bytes_removed": 21244733,
+    "bytes_removed": 21263767,
     "candidate_count": 7,
-    "remaining_total_bytes": 126966656
+    "remaining_total_bytes": 127038689
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 412,
-    "manifest_sha256": "ecefd230ccb05b7e5320fecebfe031f0e4e3504940b25d44c2d15dd3a3d174dc"
+    "manifest_sha256": "d619161758f6decd052dcb4c433baee4769163fa2d4c4673fcf3f7b920e16821"
   }
 }
