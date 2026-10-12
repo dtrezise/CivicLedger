@@ -196,7 +196,7 @@
     "summary": {
       "crypto_trade_count": 125,
       "default_official_count": 3,
-      "event_count": 6110,
+      "event_count": 6109,
       "house_ptr_document_count": 7622,
       "house_ptr_out_of_service_trade_count": 13,
       "house_ptr_parser_preview_transaction_count": 54622,
@@ -211,7 +211,7 @@
       "senate_ptr_parser_preview_transaction_count": 14210,
       "senate_ptr_timeline_transaction_count": 14209,
       "trade_cluster_count": 3473,
-      "trade_context_candidate_count": 22846,
+      "trade_context_candidate_count": 22845,
       "trade_count": 75997
     },
     "trade_context_methodology": {
@@ -252,7 +252,7 @@
   "disclosure_pipeline": {
     "amendment_reconciliation": {
       "context_label": "Document-level amendment reconciliation retains every official filing. Links are annotations supported by explicit source fields, official report dates, and transaction signatures when available; no source record is overwritten.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "reconciliation_policy": {
         "automatic_trade_suppression_allowed": false,
         "destructive_merge_allowed": false,
@@ -285,7 +285,7 @@
         },
         "linked_candidate_count": 30,
         "report_date_evidence_link_count": 9,
-        "source_document_count": 10044,
+        "source_document_count": 10176,
         "source_record_preserved_count": 222,
         "status_counts": {
           "ambiguous_predecessor_candidates": 147,
@@ -327,7 +327,7 @@
         {
           "archived_raw_document_count": 0,
           "branch": "Legislative",
-          "indexed_document_count": 10044,
+          "indexed_document_count": 10176,
           "official_count": 1268,
           "open_alert_count": 32,
           "parser_preview_transaction_count": 68832,
@@ -339,7 +339,7 @@
         }
       ],
       "context_label": "Completeness dashboard tracks source-backed role scope, queued source searches, raw archived documents, and reviewed public trade rows by branch, term, and source.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "rows": [
         {
           "archived_raw_document_count": 1,
@@ -558,7 +558,7 @@
           "source_archived_raw_document_count": 0,
           "source_id": "house-financial-disclosure",
           "source_image_or_ocr_backlog_count": 2002,
-          "source_indexed_document_count": 7624,
+          "source_indexed_document_count": 7756,
           "source_metadata_official_count": 299,
           "source_ocr_evidence_document_count": 50,
           "source_ocr_evidence_page_count": 397,
@@ -608,7 +608,7 @@
           "source_archived_raw_document_count": 0,
           "source_id": "house-financial-disclosure",
           "source_image_or_ocr_backlog_count": 2002,
-          "source_indexed_document_count": 7624,
+          "source_indexed_document_count": 7756,
           "source_metadata_official_count": 299,
           "source_ocr_evidence_document_count": 50,
           "source_ocr_evidence_page_count": 397,
@@ -658,7 +658,7 @@
           "source_archived_raw_document_count": 0,
           "source_id": "house-financial-disclosure",
           "source_image_or_ocr_backlog_count": 2002,
-          "source_indexed_document_count": 7624,
+          "source_indexed_document_count": 7756,
           "source_metadata_official_count": 299,
           "source_ocr_evidence_document_count": 50,
           "source_ocr_evidence_page_count": 397,
@@ -708,7 +708,7 @@
           "source_archived_raw_document_count": 0,
           "source_id": "house-financial-disclosure",
           "source_image_or_ocr_backlog_count": 2002,
-          "source_indexed_document_count": 7624,
+          "source_indexed_document_count": 7756,
           "source_metadata_official_count": 299,
           "source_ocr_evidence_document_count": 50,
           "source_ocr_evidence_page_count": 397,
@@ -762,7 +762,7 @@
         "source_coverage": {
           "house-financial-disclosure": {
             "image_or_ocr_backlog_count": 2002,
-            "indexed_document_count": 7624,
+            "indexed_document_count": 7756,
             "metadata_official_count": 299,
             "ocr_evidence_document_count": 50,
             "ocr_evidence_page_count": 397,
@@ -797,7 +797,7 @@
     },
     "ingestion_queue": {
       "context_label": "Branch-aware queue for raw disclosure retrieval and review. Queue rows are not trade records; public trade rows require raw document archive, parser output, and reviewer promotion.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "schema_version": "disclosure-ingestion-queue-v2",
       "summary": {
         "counts_by_branch": {
@@ -841,7 +841,7 @@
     },
     "ocr_priority_batches": {
       "context_label": "Deterministic metadata-only priority batches for official image disclosures. No OCR text or transaction content is inferred or fabricated.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "priority_policy": {
         "batch_size_per_chamber": 50,
         "house_evidence": [
@@ -876,7 +876,7 @@
     },
     "ocr_results": {
       "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "ocr_engine": "tesseract 5.3.4",
       "schema_version": "disclosure-ocr-results-manifest-v2",
       "summary": {
@@ -2319,7 +2319,7 @@
         }
       ],
       "context_label": "Production trade promotion gate. Rows appear only after official source provenance, hashes, parser quality, identity, and explicit human review evidence all pass.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "production_ready_raw_documents": [],
       "public_trade_rows": [],
       "schema_version": "production-trade-promotions-v1",
@@ -2386,7 +2386,7 @@
             }
           ],
           "retrieval_mode": "direct_public_sample",
-          "retrieved_at": "2026-10-11T17:42:28+00:00",
+          "retrieved_at": "2026-10-12T19:58:49+00:00",
           "review_required_before_public_trade": true,
           "source_id": "oge-individual-disclosures",
           "source_status": "downloadable_public_sample",
@@ -2530,7 +2530,7 @@
           "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
         }
       ],
-      "generated_at": "2026-10-11T17:42:29+00:00",
+      "generated_at": "2026-10-12T19:58:50+00:00",
       "schema_version": "raw-document-archive-index-v1",
       "summary": {
         "archived_document_count": 1,
@@ -2546,7 +2546,7 @@
         {
           "access_acknowledgement_required": false,
           "access_mode": "public_portal",
-          "batch_id": "house-financial-disclosure:first-pass:2026-10-11",
+          "batch_id": "house-financial-disclosure:first-pass:2026-10-12",
           "batch_status": "ready_for_official_source_search",
           "branch": "Legislative",
           "candidate_count": 24,
@@ -3296,7 +3296,7 @@
               "state": "MO"
             }
           ],
-          "generated_at": "2026-10-11",
+          "generated_at": "2026-10-12",
           "instruction": "Use House Clerk disclosure search for the named member and current Congress, then archive raw PDF before parsing.",
           "review_required_before_public_trade": true,
           "rights_note": "The House search page states statutory restrictions on use of financial disclosure information and notes redaction of certain personally identifiable information. CivicLedger must preserve this notice before ingesting or exporting records.",
@@ -3309,7 +3309,7 @@
         {
           "access_acknowledgement_required": true,
           "access_mode": "public_portal_acknowledged",
-          "batch_id": "senate-public-financial-disclosure:first-pass:2026-10-11",
+          "batch_id": "senate-public-financial-disclosure:first-pass:2026-10-12",
           "batch_status": "blocked_pending_human_access_acknowledgement",
           "branch": "Legislative",
           "candidate_count": 24,
@@ -4035,7 +4035,7 @@
               "state": "AK"
             }
           ],
-          "generated_at": "2026-10-11",
+          "generated_at": "2026-10-12",
           "instruction": "After source terms are acknowledged, search the Senate public disclosure system for the named senator and archive raw reports before parsing.",
           "review_required_before_public_trade": true,
           "rights_note": "The Senate public disclosure page identifies the Senate Public Financial Disclosure Database as the public search entry point and describes STOCK Act transaction reporting for Senators and senior staff.",
@@ -4048,7 +4048,7 @@
         {
           "access_acknowledgement_required": true,
           "access_mode": "direct_public_document_or_acknowledged_portal",
-          "batch_id": "oge-individual-disclosures:first-pass:2026-10-11",
+          "batch_id": "oge-individual-disclosures:first-pass:2026-10-12",
           "batch_status": "blocked_pending_human_access_acknowledgement",
           "branch": "Executive",
           "candidate_count": 24,
@@ -4736,7 +4736,7 @@
               "state": null
             }
           ],
-          "generated_at": "2026-10-11",
+          "generated_at": "2026-10-12",
           "instruction": "Search OGE individual disclosures by official name; archive released 278e or 278-T files before parser review.",
           "review_required_before_public_trade": true,
           "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
@@ -4749,7 +4749,7 @@
         {
           "access_acknowledgement_required": true,
           "access_mode": "public_portal_acknowledged",
-          "batch_id": "judicial-financial-disclosure:first-pass:2026-10-11",
+          "batch_id": "judicial-financial-disclosure:first-pass:2026-10-12",
           "batch_status": "blocked_pending_human_access_acknowledgement",
           "branch": "Judicial",
           "candidate_count": 24,
@@ -5451,7 +5451,7 @@
               "state": null
             }
           ],
-          "generated_at": "2026-10-11",
+          "generated_at": "2026-10-12",
           "instruction": "After judiciary access terms are acknowledged, request/search JEFS records by judge name and court before parser review.",
           "review_required_before_public_trade": true,
           "rights_note": "The judicial database requires requester information and acknowledgement of statutory access and use restrictions. CivicLedger must not automate around those access requirements.",
@@ -5463,7 +5463,7 @@
         }
       ],
       "context_label": "First-pass retrieval batches select real source-backed officials from the disclosure queue. They do not bypass official access acknowledgements and do not create public trade rows.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "schema_version": "disclosure-retrieval-batches-v1",
       "summary": {
         "batch_count": 4,
@@ -5477,7 +5477,7 @@
     },
     "reviewed_promotions": {
       "context_label": "Systematic parser-preview evidence review. A row is promoted only when official-source, hash, identity, parser-quality, and explicit human review criteria all pass.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "promotions": [],
       "schema_version": "reviewed-disclosure-promotions-v2",
       "summary": {
@@ -5575,14 +5575,14 @@
         }
       ],
       "context_label": "Scheduled stale-source alerts for current officials and live source lanes. Warnings identify work queues; they are not allegations or trade findings.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "schema_version": "source-staleness-alerts-v1",
       "summary": {
         "alert_count": 8,
         "current_queue_item_count": 1358,
         "data_drift_count": 6,
         "high_alert_count": 0,
-        "measured_refresh_count": 87,
+        "measured_refresh_count": 88,
         "open_warning_count": 6,
         "reviewed_public_trade_count": 0,
         "source_failure_count": 36
@@ -5597,7 +5597,7 @@
       "review_required_before_public_trade": true,
       "sections_kept_semantically_separate": true
     },
-    "generated_at": "2026-10-11",
+    "generated_at": "2026-10-12",
     "interpretation_boundary": "Roster coverage and an empty document list do not establish that an official filed no report or made no reportable transaction.",
     "schema_version": "executive-oge-disclosure-manifest-v1",
     "source": {
@@ -5618,10 +5618,10 @@
       "role_count": 77
     }
   },
-  "generated_at": "2026-10-11",
+  "generated_at": "2026-10-12",
   "house_disclosures": {
     "index": {
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "schema_version": "house-disclosure-index-v1",
       "scope": {
         "document_scope": "Member periodic transaction reports indexed by the House Clerk",
@@ -5637,34 +5637,32 @@
       "summary": {
         "ambiguous_member_ptr_document_count": 0,
         "filing_type_counts": {
-          "A": 4275,
+          "A": 3572,
           "B": 25,
-          "C": 9619,
-          "D": 2145,
-          "E": 87,
-          "F": 10,
-          "G": 61,
-          "H": 346,
-          "N": 17,
-          "O": 14954,
-          "P": 7688,
-          "R": 4,
-          "T": 1326,
-          "W": 1040,
-          "X": 6827
+          "C": 10410,
+          "D": 2379,
+          "E": 40,
+          "G": 56,
+          "H": 396,
+          "O": 8159,
+          "P": 8404,
+          "R": 3,
+          "T": 630,
+          "W": 1149,
+          "X": 6313
         },
-        "matched_member_ptr_document_count": 7622,
-        "member_ptr_document_count": 7624,
+        "matched_member_ptr_document_count": 7754,
+        "member_ptr_document_count": 7756,
         "public_production_trade_count": 0,
         "review_required_before_public_trade": true,
         "source_index_count": 18,
-        "source_index_row_count": 48424,
+        "source_index_row_count": 41536,
         "unmatched_member_ptr_document_count": 2
       }
     },
     "transactions_manifest": {
       "context_label": "Official House Clerk PTR parser previews. Every row remains review-gated and is not a reviewed public-production trade. Image-only filings are reported as OCR required.",
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "latest_batch_failures": [],
       "schema_version": "house-ptr-transactions-manifest-v2",
       "source": {
@@ -5725,7 +5723,7 @@
           "path": "data/disclosures/house_ptr/2015.json",
           "processed_document_count": 720,
           "public_production_trade_count": 0,
-          "sha256": "ad4f64f27b379a3ce2359e79412163892ed8ff614d64047c5a10b1c50aa40014"
+          "sha256": "bb6a8a2d276daf8100c2da9654ba8c35b91bd618003402bd71d9a444d3b6123b"
         },
         "2016": {
           "bytes": 6080108,
@@ -5734,7 +5732,7 @@
           "path": "data/disclosures/house_ptr/2016.json",
           "processed_document_count": 765,
           "public_production_trade_count": 0,
-          "sha256": "3a0328f7f7c0ee99cf269e59343f235dbb64f32f91822e6d6a36c71a85c474e6"
+          "sha256": "ea60156f1780365f93ffb9aa899cbbb0ca8fa65ece238ba2928c26d66c0a8e4f"
         },
         "2017": {
           "bytes": 6018841,
@@ -5743,7 +5741,7 @@
           "path": "data/disclosures/house_ptr/2017.json",
           "processed_document_count": 800,
           "public_production_trade_count": 0,
-          "sha256": "f2808ef76ec65be8007c3e4ff408234fe4471f2e02d7c18bdb281b43add7ee71"
+          "sha256": "6c87f2141fb86f00e5a3fe685bab0c74cda4005899967ca9aeafddadf455c8bb"
         },
         "2018": {
           "bytes": 6574108,
@@ -5752,7 +5750,7 @@
           "path": "data/disclosures/house_ptr/2018.json",
           "processed_document_count": 830,
           "public_production_trade_count": 0,
-          "sha256": "ae9297b08c8c8853dcda36ea338aea164635e99b675023772f2c914531d0bbba"
+          "sha256": "b307d642615ee55d95e3a5a6429464b3c30b58e6045b1d15236213df1e6b7ed0"
         },
         "2019": {
           "bytes": 7496624,
@@ -5761,7 +5759,7 @@
           "path": "data/disclosures/house_ptr/2019.json",
           "processed_document_count": 681,
           "public_production_trade_count": 0,
-          "sha256": "459211c28ef1f05c3f28201364ddbd59b484f1737e47f7121ef2466500b69f35"
+          "sha256": "484f923b40717ca3d35028b655ecf0dd4934f292f01b34a6a6b1e54020d5d292"
         },
         "2020": {
           "bytes": 9793319,
@@ -5770,7 +5768,7 @@
           "path": "data/disclosures/house_ptr/2020.json",
           "processed_document_count": 732,
           "public_production_trade_count": 0,
-          "sha256": "adfe351a2574e5fbf43652b5dc1e4a708871c976be54ec06cbec19eafddf0add"
+          "sha256": "a684477a3a64c5a768c2269867339e0affbf2612a519b6cee59f020b442061be"
         },
         "2021": {
           "bytes": 7312091,
@@ -5779,7 +5777,7 @@
           "path": "data/disclosures/house_ptr/2021.json",
           "processed_document_count": 668,
           "public_production_trade_count": 0,
-          "sha256": "795fe596a2f089d401d8e8bfc073c4f59d33ccdc6f1722dc37e0823468bf8ac6"
+          "sha256": "f2fe0bf542b5a837ccf5699f813d3ad85e35c623f3846d6f31a503f8ba8dac2d"
         },
         "2022": {
           "bytes": 5202670,
@@ -5788,7 +5786,7 @@
           "path": "data/disclosures/house_ptr/2022.json",
           "processed_document_count": 623,
           "public_production_trade_count": 0,
-          "sha256": "00b18bc78bd18a68ea3fd8ba2f3c316f9757a5fe74a95722b9ba9b3f28635b6d"
+          "sha256": "3f3ea20416c0ef1d1efcdb4e9aa9162319aef0b6691017d44629b59e93119057"
         },
         "2023": {
           "bytes": 5621080,
@@ -5797,7 +5795,7 @@
           "path": "data/disclosures/house_ptr/2023.json",
           "processed_document_count": 457,
           "public_production_trade_count": 0,
-          "sha256": "44e884a4292a3f990a29758546cbe8ff5e3d1f3c1b2d4eca542775b5b6f87e55"
+          "sha256": "a1ba228c2deb4938948249a2410962120c967d81f5e6533df0c6101a7499ed87"
         },
         "2024": {
           "bytes": 3890270,
@@ -5806,7 +5804,7 @@
           "path": "data/disclosures/house_ptr/2024.json",
           "processed_document_count": 449,
           "public_production_trade_count": 0,
-          "sha256": "43f2bd7c9b727fadf09774227109c0122a0de31eafb04c53a915ed970308c890"
+          "sha256": "5d554847e92c09e32c7dbfdaf3ff34bce4dd3dddbcdcb75b920ae7f41e2d58af"
         },
         "2025": {
           "bytes": 9627883,
@@ -5815,7 +5813,7 @@
           "path": "data/disclosures/house_ptr/2025.json",
           "processed_document_count": 497,
           "public_production_trade_count": 0,
-          "sha256": "ba834bf7e2b0782d30502fab0eddf2c5747fc8aee74428989be7939697a4c1a5"
+          "sha256": "75028ed02feed66ca2d54fffde530b01406016b2a299ad99fb4e602538265d19"
         },
         "2026": {
           "bytes": 4788823,
@@ -5824,7 +5822,7 @@
           "path": "data/disclosures/house_ptr/2026.json",
           "processed_document_count": 400,
           "public_production_trade_count": 0,
-          "sha256": "4dbed52adeef6eedb361648f43b3dc56e7a2270e0e3a384ec5ff07f88756cb33"
+          "sha256": "1926962593cdd12fb819911693d6fb2cce502055c4ca665dfd2261f0b82ee936"
         }
       }
     }
@@ -5838,12 +5836,12 @@
       "review_required_before_public_trade": true,
       "terms_acknowledgement_required": true
     },
-    "generated_at": "2026-10-11",
+    "generated_at": "2026-10-12",
     "interpretation_boundary": "This manifest measures roster and service-year research coverage only. It does not assert that a report exists, that a report was required, or that an official did or did not make reportable transactions.",
     "schema_version": "judicial-disclosure-manifest-v1",
     "source": {
       "portal_url": "https://pub.jefs.uscourts.gov/",
-      "roster_sha256": "0922b3f71d4924f5cc690a98fa002fde6d5c46e6263882c90db9d3214497d47c",
+      "roster_sha256": "2048e7b972f74fd294e56fea82a2b3e6afa1403d43744d35e219f90b825f5762",
       "roster_source": "Federal Judicial Center Article III service data",
       "source_id": "judicial-financial-disclosure",
       "source_tier": "official"
@@ -5965,12 +5963,12 @@
   "schema_version": "civicledger-static-compat-v2",
   "senate_disclosures": {
     "index": {
-      "generated_at": "2026-10-11",
+      "generated_at": "2026-10-12",
       "schema_version": "senate-disclosure-index-v1",
       "scope": {
         "coverage_mode": "all_111th_119th_senators",
         "document_scope": "Senator and former-Senator periodic transaction reports",
-        "query_end_date": "2026-10-11",
+        "query_end_date": "2026-10-12",
         "query_start_date": "2012-01-01",
         "roster_congress_end": 119,
         "roster_congress_start": 111,
@@ -6233,7 +6231,7 @@
     "crypto_price_point_count": 14215,
     "disclosure_queue_item_count": 5905,
     "entity_quality_issue_count": 7441,
-    "event_count": 4429,
+    "event_count": 4428,
     "executive_oge_indexed_document_count": 19,
     "executive_oge_manifest_official_count": 72,
     "executive_oge_manifest_role_count": 77,
@@ -6248,7 +6246,7 @@
     "historical_supreme_court_decision_count": 648,
     "house_historical_ptr_document_count": 3131,
     "house_historical_transaction_row_count": 0,
-    "house_ptr_indexed_document_count": 7624,
+    "house_ptr_indexed_document_count": 7756,
     "house_ptr_machine_readable_document_count": 5620,
     "house_ptr_ocr_required_document_count": 2002,
     "house_ptr_parser_preview_transaction_count": 54622,
@@ -6263,7 +6261,7 @@
     "macro_series_count": 6,
     "market_price_point_count": 92436,
     "market_price_provider": "Tiingo",
-    "normalized_source_snapshot_count": 10744,
+    "normalized_source_snapshot_count": 10743,
     "ocr_completed_document_count": 50,
     "ocr_processed_page_count": 397,
     "official_count": 363,
@@ -6273,7 +6271,7 @@
     "presidential_oge_parser_preview_transaction_count": 7182,
     "presidential_oge_public_production_trade_count": 0,
     "presidential_oge_source_status_count": 4,
-    "primary_source_context_record_count": 4149,
+    "primary_source_context_record_count": 4148,
     "public_official_role_count": 5926,
     "public_official_role_counts_by_branch": {
       "Executive": 77,
@@ -6307,7 +6305,7 @@
     "senate_ptr_parser_preview_transaction_count": 14210,
     "senate_ptr_processed_document_count": 2116,
     "senate_ptr_timeline_official_count": 66,
-    "source_ingested_federal_event_count": 1721,
+    "source_ingested_federal_event_count": 1720,
     "tracked_public_official_count": 2170,
     "trade_count": 134
   }
