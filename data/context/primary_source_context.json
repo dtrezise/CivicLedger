@@ -1,10 +1,10 @@
 {
-  "artifact_date": "2026-10-12",
+  "artifact_date": "2026-10-13",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "3969c209adb11b3a66d92efde408bece82e8999c50b9764da0b66b20032dadb5",
+  "dataset_hash": "573ff3dd6ea05c156d31e0af2707d41483179234df139c847686dece5ce34de0",
   "gaps": [
     {
-      "available_classified_record_count": 4775,
+      "available_classified_record_count": 4776,
       "category": "agencies",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:agencies-bounded-selection",
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 524,
+      "selected_record_count": 525,
       "status": "declared_scope_limit"
     },
     {
@@ -12056,6 +12056,27 @@
       "category": "congress",
       "context_only": true,
       "correlation_asserted": false,
+      "date": "2013-07-12",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-1151",
+      "law_number": "113-17",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1151"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1151",
+      "source_event_id": "congress-law-113-hr-1151",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes."
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
       "date": "2013-07-18",
       "docket_ids": [],
       "event_type": "legislation",
@@ -14900,6 +14921,27 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "To provide for the approval of the Amendment to the Agreement Between the Government of the United States of America and the Government of the United Kingdom of Great Britain and Northern Ireland for Cooperation on the Uses of Atomic Energy for Mutual Defense Purposes."
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2014-12-18",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-1204",
+      "law_number": "113-238",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1204"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1204",
+      "source_event_id": "congress-law-113-hr-1204",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "Aviation Security Stakeholder Participation Act of 2014"
     },
     {
       "agency_names": [],
@@ -104787,7 +104829,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "346e89306e5750f8633da6d5ad687f3537d97ac74b8c3eab0cc18df1ab32dc89",
+      "sha256": "38747bd96b0b8286bd4da95b0f46996f1744d6385bcdf28c235b0f97338f6b4a",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104807,13 +104849,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4148,
+    "record_count": 4150,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 523,
+      "congress": 525,
       "courts": 346,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4148
+    "record_with_official_url_count": 4150
   }
 }

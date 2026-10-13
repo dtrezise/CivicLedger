@@ -38092,6 +38092,47 @@
       ]
     },
     {
+      "announcement_date": "2013-07-12",
+      "asset_scope": [
+        "equity",
+        "etf",
+        "fixed_income"
+      ],
+      "branch_scope": [
+        "Legislative",
+        "Executive"
+      ],
+      "date": "2013-07-12",
+      "description": "Became Public Law No: 113-17. To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes.",
+      "editor_status": "source_ingested",
+      "effective_date": "2013-07-12",
+      "event_type": "legislation",
+      "id": "congress-law-113-hr-1151",
+      "jurisdiction_scope": [
+        "infrastructure",
+        "transportation"
+      ],
+      "label": "To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes.",
+      "law_number": "113-17",
+      "market_relevance": "title_keyword_match",
+      "market_topic_ids": [
+        "transportation_infrastructure"
+      ],
+      "publication_date": "2013-07-12",
+      "sector_scope": [
+        "Industrials"
+      ],
+      "source": "Congress.gov",
+      "source_tier": "official",
+      "sources": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1151"
+      ],
+      "ticker_scope": [
+        "DIA",
+        "XLI"
+      ]
+    },
+    {
       "announcement_date": "2013-07-18",
       "asset_scope": [
         "equity",
@@ -47289,6 +47330,57 @@
         "DIA",
         "SPY",
         "XLE",
+        "XLI"
+      ]
+    },
+    {
+      "announcement_date": "2014-12-18",
+      "asset_scope": [
+        "crypto",
+        "equity",
+        "etf",
+        "fixed_income"
+      ],
+      "branch_scope": [
+        "Legislative",
+        "Executive"
+      ],
+      "date": "2014-12-18",
+      "description": "Became Public Law No: 113-238. Aviation Security Stakeholder Participation Act of 2014",
+      "editor_status": "source_ingested",
+      "effective_date": "2014-12-18",
+      "event_type": "legislation",
+      "id": "congress-law-113-hr-1204",
+      "jurisdiction_scope": [
+        "banking",
+        "financial markets",
+        "infrastructure",
+        "securities",
+        "transportation",
+        "treasury"
+      ],
+      "label": "Aviation Security Stakeholder Participation Act of 2014",
+      "law_number": "113-238",
+      "market_relevance": "title_keyword_match",
+      "market_topic_ids": [
+        "financial_markets",
+        "transportation_infrastructure"
+      ],
+      "publication_date": "2014-12-18",
+      "sector_scope": [
+        "Financials",
+        "Industrials"
+      ],
+      "source": "Congress.gov",
+      "source_tier": "official",
+      "sources": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1204"
+      ],
+      "ticker_scope": [
+        "DIA",
+        "JPM",
+        "V",
+        "XLF",
         "XLI"
       ]
     },
@@ -127338,7 +127430,7 @@
       ]
     }
   ],
-  "generated_at": "2026-10-12",
+  "generated_at": "2026-10-13",
   "schema_version": "federal-market-events-v2",
   "scope": {
     "congresses": [
@@ -127352,7 +127444,7 @@
       118,
       119
     ],
-    "end_date": "2026-10-12",
+    "end_date": "2026-10-13",
     "federal_register_agency_selection": {
       "annual_type_limits": {
         "Notice": 12,
@@ -128253,44 +128345,44 @@
           "page_snapshots": [
             {
               "page": 1,
-              "response_sha256": "8af0e9080dfd440e271f9b0f558f1567ea75f9fd5524398def0555e87fd93cc9",
+              "response_sha256": "49b9373e1b1f66a84235c885d5609dd77637b367d12dafbd90c3687cd71c3bd8",
               "result_count": 6,
-              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=NOTICE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-12&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
+              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=NOTICE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-13&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
             }
           ],
           "query_conditions": {
             "publication_date_gte": "2026-01-01",
-            "publication_date_lte": "2026-10-12",
+            "publication_date_lte": "2026-10-13",
             "significant": true,
             "type": "NOTICE"
           },
           "reported_result_count": 6,
-          "response_set_sha256": "770089dccbf2b8630c867740cc1d4b36fceea52b0ac5b038cb4b3df928d1b8df",
+          "response_set_sha256": "f0b0d0d52cfb6d9e8733ec26e82210986350c35434b67f8b2c4b5bd0e60250ae",
           "selected_result_count": 3,
           "truncated": false,
           "year": 2026
         },
         {
-          "classified_result_count": 123,
+          "classified_result_count": 124,
           "document_type": "Rule",
-          "fetched_result_count": 168,
+          "fetched_result_count": 169,
           "id": "federal-register-significant-2026-rule",
           "page_snapshots": [
             {
               "page": 1,
-              "response_sha256": "47254a7cc9e037146f027689f297d09524568899997dc3bf05d6ae3ee09677d5",
-              "result_count": 168,
-              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=RULE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-12&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
+              "response_sha256": "0ccca21a15cef269f3c0206828f59ebd10e2484cebb84d8a7471fc0bcd4b3fba",
+              "result_count": 169,
+              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=RULE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-13&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
             }
           ],
           "query_conditions": {
             "publication_date_gte": "2026-01-01",
-            "publication_date_lte": "2026-10-12",
+            "publication_date_lte": "2026-10-13",
             "significant": true,
             "type": "RULE"
           },
-          "reported_result_count": 168,
-          "response_set_sha256": "8a490a6fcd07e7e291da46a2eff1f460a5d107d7ee1f36e83cb43727ae36e0f6",
+          "reported_result_count": 169,
+          "response_set_sha256": "fc4a46b238fa229ba93fc3387905ea84a9daf74a45b42765d2a6a446097a1850",
           "selected_result_count": 24,
           "truncated": false,
           "year": 2026
@@ -128317,61 +128409,61 @@
       "source_tier": "official",
       "term_snapshots": [
         {
-          "response_sha256": "e0845d3e7a3faac4619cbf3047dd45f268a1198ef1ef50a356de48a50ea76339",
+          "response_sha256": "14212e05d686463fb373d63bfa96ce72bc4cf1e8a42fe0efb6db12dbea17c02c",
           "row_count": 56,
           "term_year": 2017,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/17"
         },
         {
-          "response_sha256": "34ed8c27d87e9abaf109a1e86a3e04a5c34df9aa7b76b8403d171fb912716b75",
+          "response_sha256": "f81eae09a7edc0faaca18c49ba6173901adc1f2c384cd8a100bfba27a37f91dc",
           "row_count": 73,
           "term_year": 2018,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/18"
         },
         {
-          "response_sha256": "82429ba48b650a0cafc2a1e033b80c7150cea4f166f230f108551b7bba3a3505",
+          "response_sha256": "1f149568cefb3b4494b43fe73fa92f2d578c15602d6bba3730bd4223df580319",
           "row_count": 63,
           "term_year": 2019,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/19"
         },
         {
-          "response_sha256": "43750355477380422ba20542bdc30ec8c13df063ccd4dbbd09e716c086d9b30c",
+          "response_sha256": "bcc3ea77ee1eb4409afc2a6b15be24c13aec5118f2913f4dd4beb043b66bbb4a",
           "row_count": 68,
           "term_year": 2020,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/20"
         },
         {
-          "response_sha256": "0ca9c2c9a8a32ab89957cfecaa4a1b193ada2f542afc551e1357e5a1541c0207",
+          "response_sha256": "1dd2f1ae63e6c211c8112a9309ca2c1d28783dcc09a4b476f24b06dba5c9a3ac",
           "row_count": 66,
           "term_year": 2021,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/21"
         },
         {
-          "response_sha256": "17710cd91e5d2c5c94c6fc390ca62980401bfb592c19d05a35ed65aecff9cbdf",
+          "response_sha256": "3d890e08abd18fd12c8fe9c70126ddb24a0deb93dd5840f505c66b54eeb74314",
           "row_count": 58,
           "term_year": 2022,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/22"
         },
         {
-          "response_sha256": "c232da79f81fc4c4a768f340bf004ecf1b599967fbb2c85aba5ed0c5780fa9d7",
+          "response_sha256": "3c95d78ffddaefeda0deb8113c5ce74514025badca95396e970b0a19f7510af6",
           "row_count": 60,
           "term_year": 2023,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/23"
         },
         {
-          "response_sha256": "1adeda264206202bc0189efbb1ea739574a3c2d4036fec30d8d9de9591637cef",
+          "response_sha256": "8a03ef90494cc15523728f365816e9b4ee50586aeeb95602e32c5a7385878206",
           "row_count": 67,
           "term_year": 2024,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/24"
         },
         {
-          "response_sha256": "d28595a82157958a05a5da9c99b194a812c189ee125eddb1e2f614083b9d59ff",
+          "response_sha256": "eae9d1670692d8921e367282d0b629d15a3a420e2656a805cd681d53c62162f9",
           "row_count": 73,
           "term_year": 2025,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/25"
         },
         {
-          "response_sha256": "28a3211b6f95544e5b5e89b2b7cea0c4140063ad166dc393a6820be686b848d7",
+          "response_sha256": "f940245e7a11593b8cb1c7e528a682baaa774fe712af058d31a311aa72609934",
           "row_count": 0,
           "term_year": 2026,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/26"
@@ -128381,17 +128473,17 @@
     }
   ],
   "summary": {
-    "classified_federal_register_agency_document_count": 4775,
+    "classified_federal_register_agency_document_count": 4776,
     "counts_by_topic": {
       "agriculture": 64,
       "defense_space": 317,
       "energy_environment": 237,
-      "financial_markets": 727,
+      "financial_markets": 728,
       "fiscal": 359,
       "health": 559,
       "industry_trade": 247,
       "technology": 136,
-      "transportation_infrastructure": 223
+      "transportation_infrastructure": 225
     },
     "counts_by_type": {
       "agency_notice": 148,
@@ -128399,11 +128491,11 @@
       "court_decision": 346,
       "executive_order": 271,
       "funding": 74,
-      "legislation": 449
+      "legislation": 451
     },
-    "event_count": 1720,
+    "event_count": 1722,
     "raw_executive_order_count": 947,
-    "raw_federal_register_agency_document_count": 6026,
+    "raw_federal_register_agency_document_count": 6027,
     "raw_historical_supreme_court_decision_count": 644,
     "raw_public_law_count": 2842,
     "raw_supreme_court_opinion_count": 1228,
@@ -128434,7 +128526,7 @@
       "2025": 30,
       "2026": 27
     },
-    "selected_public_law_count": 524,
+    "selected_public_law_count": 525,
     "selected_supreme_court_opinion_count": 346
   }
 }
