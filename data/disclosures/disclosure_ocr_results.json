@@ -1,42 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-10-15",
+  "generated_at": "2026-10-16",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 6266,
-      "document_id": "house-ptr-2025-8221287",
-      "field_label_confidence": {
-        "amount": 0.5706,
-        "asset": 0.5706,
-        "notification_date": 0.5706,
-        "owner": 0.0,
-        "transaction_date": 0.5706,
-        "transaction_type": 0.5706
-      },
-      "filing_date": "2026-01-07",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8333,
-      "mean_ocr_confidence": 0.5706,
-      "mean_page_quality_score": 71.3,
-      "mean_review_quality_score": 0.713,
-      "minimum_page_quality_score": 71.3,
-      "official_id": "congress:M000317",
-      "official_name": "Nicole Malliotakis",
-      "page_count": 1,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 1
-      },
-      "processing_status": "ocr_low_quality_review_required",
-      "readable_page_count": 0,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221287.json",
-      "result_sha256": "4397a1d48e755f1b5a8785fd66ed650fced144569cf93148f04611747d76a9f7",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221287.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 183
-    },
     {
       "chamber": "House",
       "character_count": 7265,
@@ -1674,6 +1641,40 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116376.pdf",
       "transaction_rows_created": 0,
       "word_count": 9081
+    },
+    {
+      "chamber": "House",
+      "character_count": 26480,
+      "document_id": "house-ptr-2026-9116378",
+      "field_label_confidence": {
+        "amount": 0.4378,
+        "asset": 0.3352,
+        "notification_date": 0.4048,
+        "owner": 0.0,
+        "transaction_date": 0.4313,
+        "transaction_type": 0.3849
+      },
+      "filing_date": "2026-10-14",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.7714,
+      "mean_ocr_confidence": 0.4842,
+      "mean_page_quality_score": 62.01,
+      "mean_review_quality_score": 0.6201,
+      "minimum_page_quality_score": 56.33,
+      "official_id": "congress:M001157",
+      "official_name": "Michael T. McCaul",
+      "page_count": 4,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 2,
+        "usable_ocr_review_required": 2
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 2,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116378.json",
+      "result_sha256": "d76649e9e4bf5c51214706e1791dad3db396a61c78b76b2a495748ea1868bc80",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116378.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 837
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1690,18 +1691,18 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 851311,
-    "ocr_word_count": 103365,
+    "ocr_character_count": 871525,
+    "ocr_word_count": 104019,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 2,
-      "low_quality_ocr_review_required": 360,
-      "usable_ocr_review_required": 35
+      "low_quality_ocr_review_required": 361,
+      "usable_ocr_review_required": 37
     },
-    "processed_page_count": 397,
+    "processed_page_count": 400,
     "processing_status_counts": {
       "ocr_complete_review_required": 14,
-      "ocr_low_quality_review_required": 15,
-      "ocr_partial_review_required": 21
+      "ocr_low_quality_review_required": 14,
+      "ocr_partial_review_required": 22
     },
     "quality_dimensions": [
       "page_ocr_confidence",
@@ -1709,7 +1710,7 @@
       "field_label_confidence",
       "document_review_quality_score"
     ],
-    "readable_page_count": 37,
+    "readable_page_count": 39,
     "transaction_rows_created": 0
   }
 }
