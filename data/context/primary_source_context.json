@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-10-20",
+  "artifact_date": "2026-10-22",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "80fe7bab4eccf9624ad056cf6ede1a0f64f1bc664d588fd7c3216290932bc67b",
+  "dataset_hash": "66fd4c306c6516a38328eb794b4227d591e6f3d53d623a880711f4f57e1b35c2",
   "gaps": [
     {
       "available_classified_record_count": 4778,
@@ -12,11 +12,11 @@
       "status": "declared_scope_limit"
     },
     {
-      "available_record_count": 2846,
+      "available_record_count": 2856,
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 526,
+      "selected_record_count": 529,
       "status": "declared_scope_limit"
     },
     {
@@ -11243,6 +11243,27 @@
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
     },
     {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2013-05-01",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-1246",
+      "law_number": "113-8",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
+      "source_event_id": "congress-law-113-hr-1246",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "District of Columbia Chief Financial Officer Vacancy Act"
+    },
+    {
       "agency_names": [
         "Fish and Wildlife Service",
         "Interior Department"
@@ -13031,27 +13052,6 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "Alaska Native Tribal Health Consortium Land Transfer Act"
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2013-12-26",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-767",
-      "law_number": "113-69",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/767"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/767",
-      "source_event_id": "congress-law-113-hr-767",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "To amend the Energy Policy Act of 2005 to modify the Pilot Project offices of the Federal Permit Streamlining Pilot Project."
     },
     {
       "accession_number": "0001193125-13-487759",
@@ -104799,6 +104799,69 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "Improving Social Security\u2019s Service to Victims of Identity Theft Act"
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2026-10-20",
+      "docket_ids": [],
+      "event_type": "funding",
+      "id": "primary-source:congress:congress-law-119-hr-1721",
+      "law_number": "119-127",
+      "official_urls": [
+        "https://www.congress.gov/bill/119th-congress/house-bill/1721"
+      ],
+      "primary_url": "https://www.congress.gov/bill/119th-congress/house-bill/1721",
+      "source_event_id": "congress-law-119-hr-1721",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "Critical Infrastructure Manufacturing Feasibility Act"
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2026-10-20",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-119-hr-4467",
+      "law_number": "119-132",
+      "official_urls": [
+        "https://www.congress.gov/bill/119th-congress/house-bill/4467"
+      ],
+      "primary_url": "https://www.congress.gov/bill/119th-congress/house-bill/4467",
+      "source_event_id": "congress-law-119-hr-4467",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "Vicksburg National Military Park Boundary Modification Act"
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2026-10-20",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-119-hr-837",
+      "law_number": "119-126",
+      "official_urls": [
+        "https://www.congress.gov/bill/119th-congress/house-bill/837"
+      ],
+      "primary_url": "https://www.congress.gov/bill/119th-congress/house-bill/837",
+      "source_event_id": "congress-law-119-hr-837",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "To require the Secretary of Agriculture to convey the Pleasant Valley Ranger District Administrative Site to Gila County, Arizona."
     }
   ],
   "schema_version": "primary-source-context-v1",
@@ -104808,7 +104871,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "4dbecaddd5d7dcbb5be188498bb9255e8c87af3c47c3a07a4f408a02a560163b",
+      "sha256": "e4dce1069fe708c290ab9db2602ea65270001dc9ed9ac0cc450c00778d77f5a3",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104822,19 +104885,19 @@
     }
   ],
   "summary": {
-    "excluded_federal_event_count": 271,
+    "excluded_federal_event_count": 272,
     "gap_count": 62,
     "gap_counts": {
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4149,
+    "record_count": 4152,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 524,
+      "congress": 527,
       "courts": 346,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4149
+    "record_with_official_url_count": 4152
   }
 }
