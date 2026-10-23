@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-10-22",
+  "artifact_date": "2026-10-23",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "66fd4c306c6516a38328eb794b4227d591e6f3d53d623a880711f4f57e1b35c2",
+  "dataset_hash": "902e03c39afc1aec07a485d7239bfe9960904de76ba760fac42e8cd189f4ff8a",
   "gaps": [
     {
       "available_classified_record_count": 4778,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 529,
+      "selected_record_count": 527,
       "status": "declared_scope_limit"
     },
     {
@@ -12056,27 +12056,6 @@
       "category": "congress",
       "context_only": true,
       "correlation_asserted": false,
-      "date": "2013-07-12",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1151",
-      "law_number": "113-17",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1151"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1151",
-      "source_event_id": "congress-law-113-hr-1151",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "To direct the Secretary of State to develop a strategy to obtain observer status for Taiwan at the triennial International Civil Aviation Organization Assembly, and for other purposes."
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
       "date": "2013-07-18",
       "docket_ids": [],
       "event_type": "legislation",
@@ -13052,6 +13031,27 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "Alaska Native Tribal Health Consortium Land Transfer Act"
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2013-12-26",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-767",
+      "law_number": "113-69",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/767"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/767",
+      "source_event_id": "congress-law-113-hr-767",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "To amend the Energy Policy Act of 2005 to modify the Pilot Project offices of the Federal Permit Streamlining Pilot Project."
     },
     {
       "accession_number": "0001193125-13-487759",
@@ -14900,27 +14900,6 @@
       "source_record_sha256": null,
       "source_tier": "official",
       "title": "To provide for the approval of the Amendment to the Agreement Between the Government of the United States of America and the Government of the United Kingdom of Great Britain and Northern Ireland for Cooperation on the Uses of Atomic Energy for Mutual Defense Purposes."
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2014-12-18",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1204",
-      "law_number": "113-238",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1204"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1204",
-      "source_event_id": "congress-law-113-hr-1204",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "Aviation Security Stakeholder Participation Act of 2014"
     },
     {
       "agency_names": [],
@@ -104871,7 +104850,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "e4dce1069fe708c290ab9db2602ea65270001dc9ed9ac0cc450c00778d77f5a3",
+      "sha256": "17c3167a64b939751e655a75a59dd0af24676ea87ca441e59285ecd88fd4672c",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104891,13 +104870,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4152,
+    "record_count": 4151,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 527,
+      "congress": 526,
       "courts": 346,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4152
+    "record_with_official_url_count": 4151
   }
 }
