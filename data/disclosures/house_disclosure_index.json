@@ -756651,9 +756651,108 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035691.pdf",
       "state": "IN",
       "supersedes_document_id": null
+    },
+    {
+      "amendment_linkage_confidence": "none",
+      "amendment_reconciliation_action": "annotate_only",
+      "amendment_reconciliation_evidence": [],
+      "amendment_status": "no_explicit_amendment_reference",
+      "bioguide_id": "I000056",
+      "clerk_document_id": "20035700",
+      "district": "48",
+      "document_family_id": "house-family-1ebf29be08ed1d1101a9",
+      "document_id": "house-ptr-2026-20035700",
+      "filer_name": "Hon. Darrell E. Issa",
+      "filing_date": "2026-10-22",
+      "filing_type_code": "P",
+      "filing_year": 2026,
+      "identity_candidates": [
+        {
+          "official_id": "congress:I000056",
+          "official_name": "Darrell Issa",
+          "reasons": [
+            "surname",
+            "first_name",
+            "district",
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 12
+        },
+        {
+          "official_id": "congress:A000371",
+          "official_name": "Pete Aguilar",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        },
+        {
+          "official_id": "congress:B001285",
+          "official_name": "Julia Brownley",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        },
+        {
+          "official_id": "congress:B001287",
+          "official_name": "Ami Bera",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        },
+        {
+          "official_id": "congress:B001300",
+          "official_name": "Nanette Diaz Barrag\u00e1n",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        }
+      ],
+      "identity_resolution": "deterministic_match",
+      "match_reasons": [
+        "surname",
+        "first_name",
+        "district",
+        "state",
+        "active_on_filing_date"
+      ],
+      "match_score": 12,
+      "match_status": "matched",
+      "official_id": "congress:I000056",
+      "official_name": "Darrell Issa",
+      "record_status": "official_house_index",
+      "report_type": "periodic_transaction_report",
+      "review_required_before_public_trade": true,
+      "source_id": "house-financial-disclosure",
+      "source_index_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2026FD.txt",
+      "source_record_preserved": true,
+      "source_row_metadata": {
+        "DocID": "20035700",
+        "FilingDate": "10/22/2026",
+        "FilingType": "P",
+        "First": "Darrell E.",
+        "Last": "Issa",
+        "Prefix": "Hon.",
+        "StateDst": "CA48",
+        "Suffix": "",
+        "Year": "2026"
+      },
+      "source_row_sha256": "9fd639d4c6ebd72980e7cc72506caaf88231e5d2b4357b74dbd7366e1a75958d",
+      "source_tier": "official",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035700.pdf",
+      "state": "CA",
+      "supersedes_document_id": null
     }
   ],
-  "generated_at": "2026-10-23",
+  "generated_at": "2026-10-24",
   "schema_version": "house-disclosure-index-v1",
   "scope": {
     "document_scope": "Member periodic transaction reports indexed by the House Clerk",
@@ -756668,26 +756767,26 @@
   },
   "source_indexes": [
     {
-      "byte_count": 37528,
+      "byte_count": 43084,
       "member_ptr_count": 0,
-      "row_count": 655,
-      "sha256": "2d5498eda4cc422d7d53fa4efd1c4f1580994c5b878198ff6532e9557605067b",
+      "row_count": 660,
+      "sha256": "eabe5388e603d13777ceafb59cd4ab05d8c90de7ecb3ab196c45f132036d2d9f",
       "source_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2009FD.txt",
       "year": 2009
     },
     {
-      "byte_count": 36904,
+      "byte_count": 42652,
       "member_ptr_count": 0,
-      "row_count": 644,
-      "sha256": "2f0fcc5d945b1756a0f10b8ca0c12782468879df238e1f3149175f4965ce7870",
+      "row_count": 654,
+      "sha256": "7caec76b2c303d80ae67df4e189a9414257ec31e84010e6adfeea2cc32b52ca8",
       "source_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2010FD.txt",
       "year": 2010
     },
     {
-      "byte_count": 46644,
+      "byte_count": 65863,
       "member_ptr_count": 0,
-      "row_count": 830,
-      "sha256": "b6949970e40771899b271dbbc63c3f9944d5aa9cbfb3c07b8ba96f3f1cd3f25f",
+      "row_count": 1047,
+      "sha256": "926e34278476c51995827d9d384579204ed828a7e8fca23e5c205f86f42f7713",
       "source_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2011FD.txt",
       "year": 2011
     },
@@ -756796,18 +756895,18 @@
       "year": 2024
     },
     {
-      "byte_count": 154285,
+      "byte_count": 154332,
       "member_ptr_count": 497,
-      "row_count": 2963,
-      "sha256": "d7beaf156042ad8dde1e80f26beb3385c1b7235bff3da9989e6ab383f48021de",
+      "row_count": 2964,
+      "sha256": "2a6e930f8dcfa494fec460eec2cbb0d5d34edd5870ad162b75ec288b518d14d8",
       "source_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025FD.txt",
       "year": 2025
     },
     {
-      "byte_count": 91474,
-      "member_ptr_count": 417,
-      "row_count": 1794,
-      "sha256": "f9d87d1105eabe88be39888776120dfcf5cc554c718fbf75d26b208eb778959c",
+      "byte_count": 91789,
+      "member_ptr_count": 418,
+      "row_count": 1800,
+      "sha256": "1aff08058a5460740595d9834d911371d01ca43b74772968b4da8a6740eaec50",
       "source_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2026FD.txt",
       "year": 2026
     }
@@ -756815,26 +756914,27 @@
   "summary": {
     "ambiguous_member_ptr_document_count": 0,
     "filing_type_counts": {
-      "A": 3578,
+      "A": 3692,
       "B": 25,
-      "C": 10421,
+      "C": 10425,
       "D": 2383,
-      "E": 40,
+      "E": 47,
       "G": 56,
       "H": 396,
-      "O": 8160,
-      "P": 8421,
+      "N": 1,
+      "O": 8191,
+      "P": 8423,
       "R": 3,
-      "T": 630,
+      "T": 708,
       "W": 1149,
-      "X": 6313
+      "X": 6315
     },
-    "matched_member_ptr_document_count": 7771,
-    "member_ptr_document_count": 7773,
+    "matched_member_ptr_document_count": 7772,
+    "member_ptr_document_count": 7774,
     "public_production_trade_count": 0,
     "review_required_before_public_trade": true,
     "source_index_count": 18,
-    "source_index_row_count": 41575,
+    "source_index_row_count": 41814,
     "unmatched_member_ptr_document_count": 2
   }
 }
