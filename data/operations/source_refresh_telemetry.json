@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41587,
+      "current_record_count": 41588,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "bafd4022c8df9810617959df21d62a9434d2426bb814bbd003e5075ff2187a09",
+      "current_summary_sha256": "006ff24723e087143f50c88c0dad20af4eca3c97f35647e11861ebde4fc7063b",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -73,11 +73,11 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-10-26",
+  "generated_at": "2026-10-27",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
-    "p50": 726.0,
+    "p50": 714.0,
     "p95": 4617.0,
     "runs": [
       {
@@ -988,6 +988,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-10-26T16:50:24Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-10-27T16:06:13Z",
+        "duration_seconds": 615.0,
+        "failure_count": 0,
+        "run_id": "40535689760-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-10-27T15:55:58Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1215,8 +1224,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 101,
-    "refresh_run_count": 101,
+    "measured_refresh_count": 102,
+    "refresh_run_count": 102,
     "source_failure_count": 36
   }
 }

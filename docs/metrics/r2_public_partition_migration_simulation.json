@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148480044,
+        "current": 148531368,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -57,7 +57,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2705521,
+      "bytes": 2705569,
       "group": "timelines",
       "key": "congress:C000174",
       "path": "data/partitions/timelines/congress-c000174.json",
@@ -73,7 +73,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2135565,
+      "bytes": 2135606,
       "group": "timelines",
       "key": "congress:W000802",
       "path": "data/partitions/timelines/congress-w000802.json",
@@ -87,20 +87,20 @@
       "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148480044
+    "total_bytes": 148531368
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6016737
+      "total_bytes": 6033810
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30085160
+      "total_bytes": 30090515
     },
     "roles": {
       "candidate_bytes": 2668211,
@@ -109,15 +109,15 @@
       "total_bytes": 3366547
     },
     "timelines": {
-      "candidate_bytes": 18595467,
+      "candidate_bytes": 18595556,
       "candidate_count": 6,
       "partition_count": 363,
-      "total_bytes": 100465255
+      "total_bytes": 100491581
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2403345,
+      "bytes": 2403347,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -136,9 +136,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 429,
-    "bytes_removed": 21263678,
+    "bytes_removed": 21263767,
     "candidate_count": 7,
-    "remaining_total_bytes": 127216366
+    "remaining_total_bytes": 127267601
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 412,
-    "manifest_sha256": "e9e861ea307ee94dc4270e062cce0f0b228077cb0683765796a8f509a77f17cc"
+    "manifest_sha256": "fffbbbe9eded10de2ee04aaffffd6dfe1c9480b5029cbae92bc4831ebdbc0f1b"
   }
 }
