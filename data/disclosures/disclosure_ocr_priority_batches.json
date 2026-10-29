@@ -1,10 +1,82 @@
 {
   "batches": [
     {
-      "backlog_document_count": 2003,
-      "batch_id": "house-ocr-highest-confidence-2026-10-28",
+      "backlog_document_count": 2006,
+      "batch_id": "house-ocr-highest-confidence-2026-10-29",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [
+        {
+          "chamber": "House",
+          "document_id": "house-ptr-2026-9116389",
+          "eligibility_checks": {
+            "filer_identity_deterministically_matched": true,
+            "official_source_url": true,
+            "source_file_sha256_present": true,
+            "source_page_count_present": true
+          },
+          "eligible_for_ocr_batch": true,
+          "filing_date": "2026-10-27",
+          "ocr_content_present": false,
+          "official_id": "congress:H001086",
+          "official_name": "Diana Harshbarger",
+          "priority_score": 100,
+          "priority_tier": "highest_confidence",
+          "processing_status": "metadata_prioritized_ocr_not_run",
+          "source_byte_count": 35137,
+          "source_file_sha256": "5dc4c351d086a1921e499fb1bf9f0a6ae22616479dc72bcf309ed6fc5a31c62c",
+          "source_id": "house-financial-disclosure",
+          "source_page_count": 2,
+          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116389.pdf",
+          "transaction_rows_created": 0
+        },
+        {
+          "chamber": "House",
+          "document_id": "house-ptr-2026-9116390",
+          "eligibility_checks": {
+            "filer_identity_deterministically_matched": true,
+            "official_source_url": true,
+            "source_file_sha256_present": true,
+            "source_page_count_present": true
+          },
+          "eligible_for_ocr_batch": true,
+          "filing_date": "2026-10-27",
+          "ocr_content_present": false,
+          "official_id": "congress:H001086",
+          "official_name": "Diana Harshbarger",
+          "priority_score": 100,
+          "priority_tier": "highest_confidence",
+          "processing_status": "metadata_prioritized_ocr_not_run",
+          "source_byte_count": 37429,
+          "source_file_sha256": "54861fe40a39bbaa5cbbd1580a52aef27aa442da0ff6f4b3de5caa58e90ae860",
+          "source_id": "house-financial-disclosure",
+          "source_page_count": 2,
+          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116390.pdf",
+          "transaction_rows_created": 0
+        },
+        {
+          "chamber": "House",
+          "document_id": "house-ptr-2026-9116391",
+          "eligibility_checks": {
+            "filer_identity_deterministically_matched": true,
+            "official_source_url": true,
+            "source_file_sha256_present": true,
+            "source_page_count_present": true
+          },
+          "eligible_for_ocr_batch": true,
+          "filing_date": "2026-10-27",
+          "ocr_content_present": false,
+          "official_id": "congress:H001086",
+          "official_name": "Diana Harshbarger",
+          "priority_score": 100,
+          "priority_tier": "highest_confidence",
+          "processing_status": "metadata_prioritized_ocr_not_run",
+          "source_byte_count": 49146,
+          "source_file_sha256": "186ac84a35ebc78aeb55e571450a4f2339dfa6db0b2c3e6a990603a6b31215fc",
+          "source_id": "house-financial-disclosure",
+          "source_page_count": 2,
+          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116391.pdf",
+          "transaction_rows_created": 0
+        },
         {
           "chamber": "House",
           "document_id": "house-ptr-2026-9116378",
@@ -1132,95 +1204,23 @@
           "source_page_count": 2,
           "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/8221321.pdf",
           "transaction_rows_created": 0
-        },
-        {
-          "chamber": "House",
-          "document_id": "house-ptr-2026-8221322",
-          "eligibility_checks": {
-            "filer_identity_deterministically_matched": true,
-            "official_source_url": true,
-            "source_file_sha256_present": true,
-            "source_page_count_present": true
-          },
-          "eligible_for_ocr_batch": true,
-          "filing_date": "2026-02-06",
-          "ocr_content_present": false,
-          "official_id": "congress:K000389",
-          "official_name": "Ro Khanna",
-          "priority_score": 100,
-          "priority_tier": "highest_confidence",
-          "processing_status": "metadata_prioritized_ocr_not_run",
-          "source_byte_count": 1534853,
-          "source_file_sha256": "26f1ce2fb7823d2e84ea4fbde24514c5c6371b43a828720d50f21b1c8c7ad314",
-          "source_id": "house-financial-disclosure",
-          "source_page_count": 56,
-          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/8221322.pdf",
-          "transaction_rows_created": 0
-        },
-        {
-          "chamber": "House",
-          "document_id": "house-ptr-2025-8221310",
-          "eligibility_checks": {
-            "filer_identity_deterministically_matched": true,
-            "official_source_url": true,
-            "source_file_sha256_present": true,
-            "source_page_count_present": true
-          },
-          "eligible_for_ocr_batch": true,
-          "filing_date": "2026-01-16",
-          "ocr_content_present": false,
-          "official_id": "congress:R000395",
-          "official_name": "Harold Rogers",
-          "priority_score": 100,
-          "priority_tier": "highest_confidence",
-          "processing_status": "metadata_prioritized_ocr_not_run",
-          "source_byte_count": 24702,
-          "source_file_sha256": "2dcca87f6b23477b9c686ba3eb06fd6d31d4fcb73cc086089660c3f4e1b31de4",
-          "source_id": "house-financial-disclosure",
-          "source_page_count": 1,
-          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221310.pdf",
-          "transaction_rows_created": 0
-        },
-        {
-          "chamber": "House",
-          "document_id": "house-ptr-2025-8221302",
-          "eligibility_checks": {
-            "filer_identity_deterministically_matched": true,
-            "official_source_url": true,
-            "source_file_sha256_present": true,
-            "source_page_count_present": true
-          },
-          "eligible_for_ocr_batch": true,
-          "filing_date": "2026-01-15",
-          "ocr_content_present": false,
-          "official_id": "congress:M001157",
-          "official_name": "Michael T. McCaul",
-          "priority_score": 100,
-          "priority_tier": "highest_confidence",
-          "processing_status": "metadata_prioritized_ocr_not_run",
-          "source_byte_count": 138772,
-          "source_file_sha256": "47eabd41a18b2b31be6a5d9dba80725f5bb1978a8e684ab1a50f56b539ab56ed",
-          "source_id": "house-financial-disclosure",
-          "source_page_count": 5,
-          "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221302.pdf",
-          "transaction_rows_created": 0
         }
       ],
       "chamber": "House",
-      "eligible_document_count": 2003,
+      "eligible_document_count": 2006,
       "priority_tier_counts": {
-        "highest_confidence": 2003
+        "highest_confidence": 2006
       },
       "processing_boundary": "metadata_only_no_ocr_content_generated",
-      "remaining_eligible_document_count": 1953,
+      "remaining_eligible_document_count": 1956,
       "selected_document_count": 50,
-      "selected_document_id_sha256": "9a4dc6739db8ddb01b5d0e9008afb939a31a61b6199766e1925f6bbd53f15481",
-      "selected_source_byte_count": 10705968,
-      "selected_source_page_count": 400
+      "selected_document_id_sha256": "1029d454e01fdaa4b72f08e1f228558377b6d20b098ee111a45f14ecdcd28bdc",
+      "selected_source_byte_count": 9129353,
+      "selected_source_page_count": 344
     },
     {
       "backlog_document_count": 587,
-      "batch_id": "senate-ocr-highest-confidence-2026-10-28",
+      "batch_id": "senate-ocr-highest-confidence-2026-10-29",
       "batch_status": "ready_for_ocr_processing",
       "candidates": [],
       "chamber": "Senate",
@@ -1237,7 +1237,7 @@
     }
   ],
   "context_label": "Deterministic metadata-only priority batches for official image disclosures. No OCR text or transaction content is inferred or fabricated.",
-  "generated_at": "2026-10-28",
+  "generated_at": "2026-10-29",
   "priority_policy": {
     "batch_size_per_chamber": 50,
     "house_evidence": [
@@ -1261,12 +1261,12 @@
   },
   "schema_version": "disclosure-ocr-priority-batches-v1",
   "summary": {
-    "backlog_document_count": 2590,
-    "eligible_document_count": 2003,
+    "backlog_document_count": 2593,
+    "eligible_document_count": 2006,
     "ocr_content_record_count": 0,
     "selected_document_count": 50,
-    "selected_source_byte_count": 10705968,
-    "selected_source_page_count": 400,
+    "selected_source_byte_count": 9129353,
+    "selected_source_page_count": 344,
     "transaction_rows_created": 0
   }
 }

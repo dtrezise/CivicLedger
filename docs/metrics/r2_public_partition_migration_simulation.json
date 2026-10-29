@@ -2,7 +2,7 @@
   "activation_assessment": {
     "gates": {
       "asset_count": {
-        "current": 436,
+        "current": 437,
         "rationale": "Provides an early review point below the Workers Static Assets asset-count hard limit.",
         "threshold": 15000,
         "triggered_now": false
@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148533619,
+        "current": 148628287,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -82,25 +82,25 @@
     }
   ],
   "current_static_footprint": {
-    "asset_count": 436,
+    "asset_count": 437,
     "largest_asset": {
       "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148533619
+    "total_bytes": 148628287
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6031984
+      "total_bytes": 6034421
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30095868
+      "total_bytes": 30101217
     },
     "roles": {
       "candidate_bytes": 2668211,
@@ -111,8 +111,8 @@
     "timelines": {
       "candidate_bytes": 18595603,
       "candidate_count": 6,
-      "partition_count": 363,
-      "total_bytes": 100490758
+      "partition_count": 364,
+      "total_bytes": 100576157
     }
   },
   "large_bootstrap_artifacts_kept_static": [
@@ -135,10 +135,10 @@
     }
   },
   "projected_static_footprint_if_candidates_moved": {
-    "asset_count": 429,
+    "asset_count": 430,
     "bytes_removed": 21263814,
     "candidate_count": 7,
-    "remaining_total_bytes": 127269805
+    "remaining_total_bytes": 127364473
   },
   "safety": {
     "activates_r2": false,
@@ -150,7 +150,7 @@
   "schema_version": "civicledger-r2-migration-simulation-v1",
   "source": {
     "dataset_version": "seed-v1",
-    "evaluated_query_partition_count": 412,
-    "manifest_sha256": "932e962b6c3adebe152cbae90818e7687308e3e1f6fed2fecb78153f2dc47498"
+    "evaluated_query_partition_count": 413,
+    "manifest_sha256": "3976fe682aaa7aeb32f39cd3ee25786c714193a6d28c256d06f790c4eefc1279"
   }
 }

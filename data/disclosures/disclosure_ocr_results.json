@@ -1,109 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-10-28",
+  "generated_at": "2026-10-29",
   "ocr_engine": "tesseract 5.3.4",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 7265,
-      "document_id": "house-ptr-2025-8221302",
-      "field_label_confidence": {
-        "amount": 0.2893,
-        "asset": 0.3003,
-        "notification_date": 0.2627,
-        "owner": 0.0,
-        "transaction_date": 0.331,
-        "transaction_type": 0.2904
-      },
-      "filing_date": "2026-01-15",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8294,
-      "mean_ocr_confidence": 0.331,
-      "mean_page_quality_score": 54.42,
-      "mean_review_quality_score": 0.5442,
-      "minimum_page_quality_score": 48.06,
-      "official_id": "congress:M001157",
-      "official_name": "Michael T. McCaul",
-      "page_count": 5,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 5
-      },
-      "processing_status": "ocr_low_quality_review_required",
-      "readable_page_count": 0,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221302.json",
-      "result_sha256": "31aa6ac7c14b5b50a812090224df111b38068004dc25ce8a1e9428cb8d7d4c91",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221302.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 1569
-    },
-    {
-      "chamber": "House",
-      "character_count": 1384,
-      "document_id": "house-ptr-2025-8221310",
-      "field_label_confidence": {
-        "amount": 0.6987,
-        "asset": 0.6987,
-        "notification_date": 0.6987,
-        "owner": 0.0,
-        "transaction_date": 0.6987,
-        "transaction_type": 0.6987
-      },
-      "filing_date": "2026-01-16",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8333,
-      "mean_ocr_confidence": 0.6987,
-      "mean_page_quality_score": 74.61,
-      "mean_review_quality_score": 0.7461,
-      "minimum_page_quality_score": 74.61,
-      "official_id": "congress:R000395",
-      "official_name": "Harold Rogers",
-      "page_count": 1,
-      "page_review_status_counts": {
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_complete_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2025-8221310.json",
-      "result_sha256": "48006645c877e5b8e8529e1848605fa6d0316ced6448372c189d79232c20f112",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/8221310.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 281
-    },
-    {
-      "chamber": "House",
-      "character_count": 116295,
-      "document_id": "house-ptr-2026-8221322",
-      "field_label_confidence": {
-        "amount": 0.1626,
-        "asset": 0.3067,
-        "notification_date": 0.0063,
-        "owner": 0.0,
-        "transaction_date": 0.1675,
-        "transaction_type": 0.1633
-      },
-      "filing_date": "2026-02-06",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.8153,
-      "mean_ocr_confidence": 0.5136,
-      "mean_page_quality_score": 50.2,
-      "mean_review_quality_score": 0.502,
-      "minimum_page_quality_score": 39.7,
-      "official_id": "congress:K000389",
-      "official_name": "Ro Khanna",
-      "page_count": 56,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 54,
-        "usable_ocr_review_required": 2
-      },
-      "processing_status": "ocr_partial_review_required",
-      "readable_page_count": 2,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2026-8221322.json",
-      "result_sha256": "da97f74712b63ef5c1137c98e1733936029a314500897036fd63cd02d509c4f6",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/8221322.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 19470
-    },
     {
       "chamber": "House",
       "character_count": 2142,
@@ -1675,6 +1575,107 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116378.pdf",
       "transaction_rows_created": 0,
       "word_count": 837
+    },
+    {
+      "chamber": "House",
+      "character_count": 1656,
+      "document_id": "house-ptr-2026-9116389",
+      "field_label_confidence": {
+        "amount": 0.4876,
+        "asset": 0.4876,
+        "notification_date": 0.4876,
+        "owner": 0.0,
+        "transaction_date": 0.4876,
+        "transaction_type": 0.4115
+      },
+      "filing_date": "2026-10-27",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.8026,
+      "mean_ocr_confidence": 0.4876,
+      "mean_page_quality_score": 56.42,
+      "mean_review_quality_score": 0.5642,
+      "minimum_page_quality_score": 48.11,
+      "official_id": "congress:H001086",
+      "official_name": "Diana Harshbarger",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 2
+      },
+      "processing_status": "ocr_low_quality_review_required",
+      "readable_page_count": 0,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116389.json",
+      "result_sha256": "bc6d2983c4841ae26a3723a915d8f390f383c9cace48034077ab78e4e29f5a2c",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116389.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 383
+    },
+    {
+      "chamber": "House",
+      "character_count": 6387,
+      "document_id": "house-ptr-2026-9116390",
+      "field_label_confidence": {
+        "amount": 0.5073,
+        "asset": 0.5073,
+        "notification_date": 0.5073,
+        "owner": 0.0,
+        "transaction_date": 0.5073,
+        "transaction_type": 0.5073
+      },
+      "filing_date": "2026-10-27",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.8092,
+      "mean_ocr_confidence": 0.5073,
+      "mean_page_quality_score": 62.43,
+      "mean_review_quality_score": 0.6243,
+      "minimum_page_quality_score": 51.02,
+      "official_id": "congress:H001086",
+      "official_name": "Diana Harshbarger",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 1,
+        "usable_ocr_review_required": 1
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116390.json",
+      "result_sha256": "e3240459fc0fbb6a5001dbc311c449f70bf3c42dc1e158ecb125c794f6386de2",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116390.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 337
+    },
+    {
+      "chamber": "House",
+      "character_count": 2254,
+      "document_id": "house-ptr-2026-9116391",
+      "field_label_confidence": {
+        "amount": 0.5835,
+        "asset": 0.5835,
+        "notification_date": 0.5835,
+        "owner": 0.0,
+        "transaction_date": 0.5835,
+        "transaction_type": 0.5835
+      },
+      "filing_date": "2026-10-27",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.831,
+      "mean_ocr_confidence": 0.5835,
+      "mean_page_quality_score": 66.16,
+      "mean_review_quality_score": 0.6616,
+      "minimum_page_quality_score": 56.39,
+      "official_id": "congress:H001086",
+      "official_name": "Diana Harshbarger",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 1,
+        "usable_ocr_review_required": 1
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116391.json",
+      "result_sha256": "e1afd7b1855249edf7eacf9ae4ce8b7b51380d576ac2003d186e7aa3769545ce",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116391.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 415
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1691,18 +1692,18 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 871525,
-    "ocr_word_count": 104019,
+    "ocr_character_count": 756878,
+    "ocr_word_count": 83834,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 2,
-      "low_quality_ocr_review_required": 361,
-      "usable_ocr_review_required": 37
+      "low_quality_ocr_review_required": 306,
+      "usable_ocr_review_required": 36
     },
-    "processed_page_count": 400,
+    "processed_page_count": 344,
     "processing_status_counts": {
-      "ocr_complete_review_required": 14,
+      "ocr_complete_review_required": 13,
       "ocr_low_quality_review_required": 14,
-      "ocr_partial_review_required": 22
+      "ocr_partial_review_required": 23
     },
     "quality_dimensions": [
       "page_ocr_confidence",
@@ -1710,7 +1711,7 @@
       "field_label_confidence",
       "document_review_quality_score"
     ],
-    "readable_page_count": 39,
+    "readable_page_count": 38,
     "transaction_rows_created": 0
   }
 }
