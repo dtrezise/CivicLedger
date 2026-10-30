@@ -161303,35 +161303,6 @@
       "chamber": "House",
       "congress_number": 119,
       "court": null,
-      "district": "11",
-      "expected_forms": [
-        "Annual Financial Disclosure",
-        "Periodic Transaction Report"
-      ],
-      "full_name": "James R. Walkinshaw",
-      "indexed_document_count": 0,
-      "office": "U.S. Representative",
-      "official_id": "congress:W000831",
-      "presidential_term": "trump-47",
-      "priority": "high_current_official",
-      "promotion_status": "raw_document_required",
-      "queue_id": "house-financial-disclosure:congress:W000831:trump-47:House:119:representative",
-      "retrieval_mode": "official_house_clerk_search",
-      "review_required": true,
-      "role_category": "representative",
-      "role_title": "U.S. Representative",
-      "source_id": "house-financial-disclosure",
-      "source_status": "source_search_required",
-      "source_url": "https://api.congress.gov/v3/member/W000831?format=json",
-      "state": "VA"
-    },
-    {
-      "absence_inference_allowed": false,
-      "agency": "United States Congress",
-      "branch": "Legislative",
-      "chamber": "House",
-      "congress_number": 119,
-      "court": null,
       "district": "8",
       "expected_forms": [
         "Annual Financial Disclosure",
@@ -171215,13 +171186,13 @@
       "state": "CA"
     }
   ],
-  "generated_at": "2026-10-29",
+  "generated_at": "2026-10-30",
   "schema_version": "disclosure-ingestion-queue-v2",
   "summary": {
     "counts_by_branch": {
       "Executive": 74,
       "Judicial": 841,
-      "Legislative": 4990
+      "Legislative": 4989
     },
     "counts_by_congress": {
       "111": 560,
@@ -171232,15 +171203,15 @@
       "116": 550,
       "117": 557,
       "118": 554,
-      "119": 555
+      "119": 554
     },
     "counts_by_priority": {
-      "high_current_official": 1358,
+      "high_current_official": 1357,
       "historical_backfill": 4544,
       "presidential_baseline": 3
     },
     "counts_by_source": {
-      "house-financial-disclosure": 4061,
+      "house-financial-disclosure": 4060,
       "judicial-financial-disclosure": 841,
       "oge-individual-disclosures": 74,
       "senate-public-financial-disclosure": 929
@@ -171249,11 +171220,11 @@
       "biden-46": 1369,
       "obama-44": 2559,
       "trump-45": 1364,
-      "trump-47": 613
+      "trump-47": 612
     },
-    "current_or_current_term_queue_item_count": 1358,
+    "current_or_current_term_queue_item_count": 1357,
     "indexed_document_reference_count": 30,
-    "queue_item_count": 5905,
-    "unique_official_count": 2170
+    "queue_item_count": 5904,
+    "unique_official_count": 2169
   }
 }
