@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148631983,
+        "current": 148649573,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -65,7 +65,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2667663,
+      "bytes": 2668211,
       "group": "roles",
       "key": "Legislative",
       "path": "data/partitions/roles/legislative.json",
@@ -87,37 +87,37 @@
       "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148631983
+    "total_bytes": 148649573
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6034313
+      "total_bytes": 6033625
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30106576
+      "total_bytes": 30111947
     },
     "roles": {
-      "candidate_bytes": 2667663,
+      "candidate_bytes": 2668211,
       "candidate_count": 1,
       "partition_count": 3,
-      "total_bytes": 3365999
+      "total_bytes": 3366547
     },
     "timelines": {
       "candidate_bytes": 18595603,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100576157
+      "total_bytes": 100587627
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2402340,
+      "bytes": 2403347,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -136,9 +136,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 430,
-    "bytes_removed": 21263266,
+    "bytes_removed": 21263814,
     "candidate_count": 7,
-    "remaining_total_bytes": 127368717
+    "remaining_total_bytes": 127385759
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "c59a8adf73e899e52a9aa7f15daafce4d4ca78850d8e90c1d4481daca53aae7c"
+    "manifest_sha256": "38488ab23c6c3e3c2c803a594b720870d1b70bf9ca91b69f0346cbef9415d9ff"
   }
 }

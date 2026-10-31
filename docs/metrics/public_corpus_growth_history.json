@@ -620,35 +620,35 @@
     {
       "delta_from_previous_week": {
         "declared_artifact_count": 1,
-        "public_artifact_bytes": 106893,
+        "public_artifact_bytes": 124444,
         "query_partition_count": 1,
-        "static_asset_bytes": 107267,
+        "static_asset_bytes": 124857,
         "static_asset_count": 1
       },
       "iso_week": "2026-W44",
-      "observed_on": "2026-10-30",
+      "observed_on": "2026-10-31",
       "public_artifacts": {
         "declared_artifact_count": 420,
         "groups": {
           "bootstrap": {
             "artifact_count": 7,
-            "total_bytes": 5752949
+            "total_bytes": 5753799
           },
           "events": {
             "artifact_count": 18,
-            "total_bytes": 6034313
+            "total_bytes": 6033625
           },
           "market": {
             "artifact_count": 28,
-            "total_bytes": 30106576
+            "total_bytes": 30111947
           },
           "roles": {
             "artifact_count": 3,
-            "total_bytes": 3365999
+            "total_bytes": 3366547
           },
           "timelines": {
             "artifact_count": 364,
-            "total_bytes": 100576157
+            "total_bytes": 100587627
           }
         },
         "largest_artifact": {
@@ -657,12 +657,12 @@
           "path": "partitions/timelines/exec-donald-j-trump.json"
         },
         "query_partition_count": 413,
-        "query_partition_total_bytes": 140083045,
-        "total_bytes": 145835994
+        "query_partition_total_bytes": 140099746,
+        "total_bytes": 145853545
       },
       "source": {
         "dataset_version": "seed-v1",
-        "manifest_sha256": "c59a8adf73e899e52a9aa7f15daafce4d4ca78850d8e90c1d4481daca53aae7c"
+        "manifest_sha256": "38488ab23c6c3e3c2c803a594b720870d1b70bf9ca91b69f0346cbef9415d9ff"
       },
       "static_assets": {
         "asset_count": 437,
@@ -670,7 +670,7 @@
           "bytes": 4537252,
           "path": "data/partitions/timelines/exec-donald-j-trump.json"
         },
-        "total_bytes": 148631983
+        "total_bytes": 148649573
       }
     }
   ]
