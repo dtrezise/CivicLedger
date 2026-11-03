@@ -1,10 +1,10 @@
 {
-  "artifact_date": "2026-11-02",
+  "artifact_date": "2026-11-03",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "2118269a24ab2dbf8948c06e8681521f51685b523f38d9ea5f2a66fc0c05bb63",
+  "dataset_hash": "ace3fa5057f718a6a66c2a30f6e9a3cfffa434c022c50eff4cfd97d55061f5ab",
   "gaps": [
     {
-      "available_classified_record_count": 4782,
+      "available_classified_record_count": 4783,
       "category": "agencies",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:agencies-bounded-selection",
@@ -103176,33 +103176,6 @@
       "title": "COSTCO WHOLESALE CORP /NEW filed 8-K"
     },
     {
-      "agency_names": [
-        "Pipeline and Hazardous Materials Safety Administration",
-        "Transportation Department"
-      ],
-      "category": "agencies",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2026-05-29",
-      "docket_ids": [
-        "Docket No. PHMSA-2017-0151"
-      ],
-      "event_type": "agency_rule",
-      "id": "primary-source:agencies:federal-register-agency-2026-10782",
-      "law_number": null,
-      "official_urls": [
-        "https://www.federalregister.gov/documents/2026/05/29/2026-10782/pipeline-safety-class-location-change-requirements-correction",
-        "https://www.govinfo.gov/content/pkg/FR-2026-05-29/pdf/2026-10782.pdf"
-      ],
-      "primary_url": "https://www.federalregister.gov/documents/2026/05/29/2026-10782/pipeline-safety-class-location-change-requirements-correction",
-      "source_event_id": "federal-register-agency-2026-10782",
-      "source_name": "Federal Register",
-      "source_record_id": "federal-register:2026-10782",
-      "source_record_sha256": "250338208b69793525033234b2a172b42d0a6f183910215c8075426663e4c6f2",
-      "source_tier": "official",
-      "title": "Pipeline Safety: Class Location Change Requirements; Correction"
-    },
-    {
       "accession_number": "0000093410-26-000123",
       "category": "issuer_filings",
       "cik": "0000093410",
@@ -104882,6 +104855,33 @@
       "source_record_sha256": "56ebc27d7ff4a669b75d15e7a8678e73d0ddc76a0a31d383ccf5a4d25d3b2750",
       "source_tier": "official",
       "title": "Health Data, Technology, and Interoperability: ONC Deregulatory Actions To Unleash Prosperity"
+    },
+    {
+      "agency_names": [
+        "Centers for Medicare & Medicaid Services",
+        "Health and Human Services Department"
+      ],
+      "category": "agencies",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2026-11-03",
+      "docket_ids": [
+        "CMS-3409-F"
+      ],
+      "event_type": "agency_rule",
+      "id": "primary-source:agencies:federal-register-agency-2026-22381",
+      "law_number": null,
+      "official_urls": [
+        "https://www.federalregister.gov/documents/2026/11/03/2026-22381/medicare-and-medicaid-programs-organ-procurement-organizations-conditions-for-coverage-revisions-to",
+        "https://www.govinfo.gov/content/pkg/FR-2026-11-03/pdf/2026-22381.pdf"
+      ],
+      "primary_url": "https://www.federalregister.gov/documents/2026/11/03/2026-22381/medicare-and-medicaid-programs-organ-procurement-organizations-conditions-for-coverage-revisions-to",
+      "source_event_id": "federal-register-agency-2026-22381",
+      "source_name": "Federal Register",
+      "source_record_id": "federal-register:2026-22381",
+      "source_record_sha256": "dc6d4174960538686cec85257bae7fca008684fe40000484143fe1064f6fee84",
+      "source_tier": "official",
+      "title": "Medicare and Medicaid Programs; Organ Procurement Organizations Conditions for Coverage: Revisions to the Conditions for Coverage"
     }
   ],
   "schema_version": "primary-source-context-v1",
@@ -104891,7 +104891,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "a18c082702c281cd6a970d0938cf126536372d4c9209fc9a3a5c0611c80a0951",
+      "sha256": "a3702cd70a70c4e7776dd6101f44a27879bbc327666c8437b3fb8cf7c0025938",
       "source_id": "federal_events",
       "source_tier": "official"
     },
