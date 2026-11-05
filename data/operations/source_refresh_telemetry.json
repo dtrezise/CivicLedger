@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 48283,
+      "current_record_count": 41634,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "edd9864ab21416e26cbb10d640028ad376ae718901b6b1a9154839c78e844bf0",
+      "current_summary_sha256": "df202f7d4decaecf415f1c602d64e4c3a48e3e3b9b8566ffc8ae9f2c1400edfb",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -17,9 +17,9 @@
       "baseline_schema_version": "house-ptr-transactions-manifest-v2",
       "baseline_summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba",
       "count_metric": "processed_document_count",
-      "current_record_count": 7656,
+      "current_record_count": 7659,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "ce0a2a13ca5c5acb1e57bd372aaf6272827ae7efcfca5ef96d505629ff8f103c",
+      "current_summary_sha256": "60a35973a5693fda580d470c9360d0182eb498bc7fd2fa7c8fbb513d5a00d153",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -73,11 +73,11 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-11-04",
+  "generated_at": "2026-11-05",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
-    "p50": 699.0,
+    "p50": 697.0,
     "p95": 4617.0,
     "runs": [
       {
@@ -1060,6 +1060,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-11-04T18:06:41Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-11-05T18:13:29Z",
+        "duration_seconds": 338.0,
+        "failure_count": 0,
+        "run_id": "42081093894-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-11-05T18:07:51Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1287,8 +1296,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 109,
-    "refresh_run_count": 109,
+    "measured_refresh_count": 110,
+    "refresh_run_count": 110,
     "source_failure_count": 36
   }
 }
