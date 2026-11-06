@@ -127555,7 +127555,7 @@
       ]
     }
   ],
-  "generated_at": "2026-11-05",
+  "generated_at": "2026-11-06",
   "schema_version": "federal-market-events-v2",
   "scope": {
     "congresses": [
@@ -127569,7 +127569,7 @@
       118,
       119
     ],
-    "end_date": "2026-11-05",
+    "end_date": "2026-11-06",
     "federal_register_agency_selection": {
       "annual_type_limits": {
         "Notice": 12,
@@ -128470,44 +128470,44 @@
           "page_snapshots": [
             {
               "page": 1,
-              "response_sha256": "940ed92b7582117c4e80ea3cb5bfddd8bdb1d7d469b61ef7ba2f11093dd8b9cb",
+              "response_sha256": "b590a64dfec66b70cfad302519992c4560853e1e2686d672e61e30b06d7145eb",
               "result_count": 6,
-              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=NOTICE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-11-05&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
+              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=NOTICE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-11-06&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
             }
           ],
           "query_conditions": {
             "publication_date_gte": "2026-01-01",
-            "publication_date_lte": "2026-11-05",
+            "publication_date_lte": "2026-11-06",
             "significant": true,
             "type": "NOTICE"
           },
           "reported_result_count": 6,
-          "response_set_sha256": "a13e206c286ee04c9d193c09cd1340160b69c496dbca94a10a8a655ee345db31",
+          "response_set_sha256": "cf57f44dd02c73eb433f48ae5ecaf5a7ea0436e9d2c9fd79820ff76d1f1ed94b",
           "selected_result_count": 3,
           "truncated": false,
           "year": 2026
         },
         {
-          "classified_result_count": 131,
+          "classified_result_count": 132,
           "document_type": "Rule",
-          "fetched_result_count": 180,
+          "fetched_result_count": 182,
           "id": "federal-register-significant-2026-rule",
           "page_snapshots": [
             {
               "page": 1,
-              "response_sha256": "86f37ef89473ad8bfdfcd2dff13612e931c31ff8b9a874e17a18272917f29f36",
-              "result_count": 180,
-              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=RULE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-11-05&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
+              "response_sha256": "21779e34f0c3e1f598165ba27e4a143fb2df27da4fc02d8b67d20bf8a134f093",
+              "result_count": 182,
+              "url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Btype%5D%5B%5D=RULE&conditions%5Bsignificant%5D=1&conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-11-06&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=subtype&fields%5B%5D=publication_date&fields%5B%5D=effective_on&fields%5B%5D=html_url&fields%5B%5D=pdf_url&fields%5B%5D=abstract&fields%5B%5D=action&fields%5B%5D=agencies&fields%5B%5D=docket_ids&fields%5B%5D=regulation_id_numbers&fields%5B%5D=citation&fields%5B%5D=topics&fields%5B%5D=significant&per_page=1000&order=oldest"
             }
           ],
           "query_conditions": {
             "publication_date_gte": "2026-01-01",
-            "publication_date_lte": "2026-11-05",
+            "publication_date_lte": "2026-11-06",
             "significant": true,
             "type": "RULE"
           },
-          "reported_result_count": 180,
-          "response_set_sha256": "ab84a86c0bf676ab6bffe22848f976b92ca9436c70bc19e07328db66d565fba2",
+          "reported_result_count": 182,
+          "response_set_sha256": "cf6de7823ff6f81379c2f134952992272ac76dc5be72dc0278661ca35601b2c7",
           "selected_result_count": 24,
           "truncated": false,
           "year": 2026
@@ -128534,61 +128534,61 @@
       "source_tier": "official",
       "term_snapshots": [
         {
-          "response_sha256": "7687041062f736cbf284df74ff1a7d62a97459a8ba66a325c3949ba4b6704fcb",
+          "response_sha256": "8e80eadac7435902f10473fba6cc6dbbbe1ff1ea170b20a1abe2baec58b047ff",
           "row_count": 56,
           "term_year": 2017,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/17"
         },
         {
-          "response_sha256": "1714f1ca2d90dfd9cc742ab951c11d199c0322bd27920c26de46c14ce6771d2b",
+          "response_sha256": "5d281155bfb2f7eb9b5b607e51dafe9a423a3d885a406664aa7ad82ebaf9335e",
           "row_count": 73,
           "term_year": 2018,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/18"
         },
         {
-          "response_sha256": "575fb0d15ce84ac871fdce56a134e2ad724d48e788f3360247fc35cc8e8172c0",
+          "response_sha256": "7721776afbc2285c55f3718173dbdd28fea0791214e96936abdbc4ebfeef870d",
           "row_count": 63,
           "term_year": 2019,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/19"
         },
         {
-          "response_sha256": "91a18f4f980c83537d867a33ce5ae37a156b3e2680099bea7a4a60f9498e102b",
+          "response_sha256": "b216ca18bd19f29a50e5eb2e6cb434711e6b6000ba4a37137ff66f59dd486964",
           "row_count": 68,
           "term_year": 2020,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/20"
         },
         {
-          "response_sha256": "f6bd84b86dac4ce674ddf61c6de4bb4e45213c76f54009f3a87056575a068855",
+          "response_sha256": "ece9b82cb6cb9468009efa2c80d97ad4340a0fd6a07f9b995bbe1d7590771c20",
           "row_count": 66,
           "term_year": 2021,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/21"
         },
         {
-          "response_sha256": "5ff88f0e3043067af7a35c6048537d5fec74883ae5ef0d9f028ecad8209d3bf2",
+          "response_sha256": "046659226d278ad64a06cd6a88118168948ce5633e700bcce3770cefc947e951",
           "row_count": 58,
           "term_year": 2022,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/22"
         },
         {
-          "response_sha256": "d412ae18b90cce399074337045fccbc289186aeb54550df3b283b67d8abd0210",
+          "response_sha256": "f17ff91242b1c9b4211b954c95b22da1e9e005c38175e5baed5d50a285e8bde0",
           "row_count": 60,
           "term_year": 2023,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/23"
         },
         {
-          "response_sha256": "146894f4a12cae8c0567746a5980a102b68431e8a2faf8989a26f0b10d5b9370",
+          "response_sha256": "97e49eb6ce10f6a236ad5be9841b3ec1fcc6cae42a665ae042ef4ec3de0c661f",
           "row_count": 67,
           "term_year": 2024,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/24"
         },
         {
-          "response_sha256": "d481b5064d314996738ebb6277d00a329705e75137cf4483d89f793bcc739860",
+          "response_sha256": "afa2f7a8e728dc5795add68efbbb297b07d4cd38db81b659ed52f75cc444bae4",
           "row_count": 73,
           "term_year": 2025,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/25"
         },
         {
-          "response_sha256": "351fe537e9ac1066dfb2cd3bfd89ee257ba936aa6cf6130674959e860663dd3d",
+          "response_sha256": "0a86297a7aedec7b73aa2c877d0704b7d221b869c08d105f0b1f419b789de71e",
           "row_count": 1,
           "term_year": 2026,
           "url": "https://www.supremecourt.gov/opinions/slipopinion/26"
@@ -128598,7 +128598,7 @@
     }
   ],
   "summary": {
-    "classified_federal_register_agency_document_count": 4783,
+    "classified_federal_register_agency_document_count": 4784,
     "counts_by_topic": {
       "agriculture": 65,
       "defense_space": 318,
@@ -128620,7 +128620,7 @@
     },
     "event_count": 1724,
     "raw_executive_order_count": 950,
-    "raw_federal_register_agency_document_count": 6038,
+    "raw_federal_register_agency_document_count": 6040,
     "raw_historical_supreme_court_decision_count": 644,
     "raw_public_law_count": 2860,
     "raw_supreme_court_opinion_count": 1228,
