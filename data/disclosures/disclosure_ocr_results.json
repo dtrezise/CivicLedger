@@ -1,43 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-11-07",
-  "ocr_engine": "tesseract 5.3.4",
+  "generated_at": "2026-11-09",
+  "ocr_engine": "tesseract 5.5.0",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 2142,
-      "document_id": "house-ptr-2026-8221321",
-      "field_label_confidence": {
-        "amount": 0.6285,
-        "asset": 0.6285,
-        "notification_date": 0.4565,
-        "owner": 0.0,
-        "transaction_date": 0.6285,
-        "transaction_type": 0.5138
-      },
-      "filing_date": "2026-02-09",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.813,
-      "mean_ocr_confidence": 0.6285,
-      "mean_page_quality_score": 67.11,
-      "mean_review_quality_score": 0.6711,
-      "minimum_page_quality_score": 58.56,
-      "official_id": "congress:F000459",
-      "official_name": "Charles J. \"Chuck\" Fleischmann",
-      "page_count": 2,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 1,
-        "usable_ocr_review_required": 1
-      },
-      "processing_status": "ocr_partial_review_required",
-      "readable_page_count": 1,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2026-8221321.json",
-      "result_sha256": "3d2b6929e38bd6add96340352a83f9d5c35b3abdf186c5ccf464d1d1aea23bad",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/8221321.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 424
-    },
     {
       "chamber": "House",
       "character_count": 15995,
@@ -1676,6 +1642,40 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116391.pdf",
       "transaction_rows_created": 0,
       "word_count": 415
+    },
+    {
+      "chamber": "House",
+      "character_count": 57002,
+      "document_id": "house-ptr-2026-9116399",
+      "field_label_confidence": {
+        "amount": 0.1596,
+        "asset": 0.0543,
+        "notification_date": 0.0162,
+        "owner": 0.0,
+        "transaction_date": 0.1108,
+        "transaction_type": 0.1
+      },
+      "filing_date": "2026-11-05",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.8177,
+      "mean_ocr_confidence": 0.4948,
+      "mean_page_quality_score": 44.97,
+      "mean_review_quality_score": 0.4497,
+      "minimum_page_quality_score": 27.22,
+      "official_id": "congress:K000389",
+      "official_name": "Ro Khanna",
+      "page_count": 23,
+      "page_review_status_counts": {
+        "low_quality_ocr_review_required": 22,
+        "usable_ocr_review_required": 1
+      },
+      "processing_status": "ocr_partial_review_required",
+      "readable_page_count": 1,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116399.json",
+      "result_sha256": "50125ee01c1461c22e9ea12b117d1217af0dc07a41a4ea8197290d37932c5b2c",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116399.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 5577
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1692,14 +1692,14 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 756878,
-    "ocr_word_count": 83834,
+    "ocr_character_count": 811738,
+    "ocr_word_count": 88987,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 2,
-      "low_quality_ocr_review_required": 306,
+      "low_quality_ocr_review_required": 327,
       "usable_ocr_review_required": 36
     },
-    "processed_page_count": 344,
+    "processed_page_count": 365,
     "processing_status_counts": {
       "ocr_complete_review_required": 13,
       "ocr_low_quality_review_required": 14,
