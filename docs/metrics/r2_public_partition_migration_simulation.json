@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148769455,
+        "current": 148791914,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -87,20 +87,20 @@
       "bytes": 4537252,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148769455
+    "total_bytes": 148791914
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6035919
+      "total_bytes": 6036705
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30139348
+      "total_bytes": 30144721
     },
     "roles": {
       "candidate_bytes": 2668211,
@@ -112,12 +112,12 @@
       "candidate_bytes": 18603397,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100677327
+      "total_bytes": 100693488
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2403354,
+      "bytes": 2403355,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -138,7 +138,7 @@
     "asset_count": 430,
     "bytes_removed": 21271608,
     "candidate_count": 7,
-    "remaining_total_bytes": 127497847
+    "remaining_total_bytes": 127520306
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "533927fc0c4ff5767b8d0a87c0c81e2585b0a7fed395a72b512574f550e0f260"
+    "manifest_sha256": "3e5389506718e2cdb63412198e6610fca0707b8570f423d61459e30bd3f4bdfd"
   }
 }
