@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148799216,
+        "current": 148852020,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -87,20 +87,20 @@
       "bytes": 4537250,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148799216
+    "total_bytes": 148852020
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6036669
+      "total_bytes": 6036605
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30152050
+      "total_bytes": 30157425
     },
     "roles": {
       "candidate_bytes": 2668211,
@@ -112,7 +112,7 @@
       "candidate_bytes": 18603402,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100693497
+      "total_bytes": 100740990
     }
   },
   "large_bootstrap_artifacts_kept_static": [
@@ -138,7 +138,7 @@
     "asset_count": 430,
     "bytes_removed": 21271613,
     "candidate_count": 7,
-    "remaining_total_bytes": 127527603
+    "remaining_total_bytes": 127580407
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "74d83ba6bd5705b3f44bdb9562df8588fed28e290b4a2c353a0c6605767743d9"
+    "manifest_sha256": "d7143c4b534a9769ed12871540569639762a3be5723fc4e73d28b48a8e888ddb"
   }
 }

@@ -1,42 +1,9 @@
 {
   "context_label": "Official-source OCR evidence requiring human review. OCR text is not a reviewed transaction record.",
   "failures": [],
-  "generated_at": "2026-11-11",
+  "generated_at": "2026-11-12",
   "ocr_engine": "tesseract 5.5.0",
   "records": [
-    {
-      "chamber": "House",
-      "character_count": 15995,
-      "document_id": "house-ptr-2026-8221326",
-      "field_label_confidence": {
-        "amount": 0.3967,
-        "asset": 0.4566,
-        "notification_date": 0.3884,
-        "owner": 0.0,
-        "transaction_date": 0.4566,
-        "transaction_type": 0.4112
-      },
-      "filing_date": "2026-02-11",
-      "human_review_required": true,
-      "mean_layout_confidence": 0.7147,
-      "mean_ocr_confidence": 0.4566,
-      "mean_page_quality_score": 57.53,
-      "mean_review_quality_score": 0.5753,
-      "minimum_page_quality_score": 53.0,
-      "official_id": "congress:M001157",
-      "official_name": "Michael T. McCaul",
-      "page_count": 3,
-      "page_review_status_counts": {
-        "low_quality_ocr_review_required": 3
-      },
-      "processing_status": "ocr_low_quality_review_required",
-      "readable_page_count": 0,
-      "result_path": "data/disclosures/ocr_results/house-ptr-2026-8221326.json",
-      "result_sha256": "a57aad085dab01167a785266a619b287562301edbd74bf1329872a10d307eb08",
-      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/8221326.pdf",
-      "transaction_rows_created": 0,
-      "word_count": 561
-    },
     {
       "chamber": "House",
       "character_count": 1263,
@@ -1676,6 +1643,39 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116399.pdf",
       "transaction_rows_created": 0,
       "word_count": 5577
+    },
+    {
+      "chamber": "House",
+      "character_count": 2180,
+      "document_id": "house-ptr-2026-9116403",
+      "field_label_confidence": {
+        "amount": 0.6794,
+        "asset": 0.6794,
+        "notification_date": 0.6794,
+        "owner": 0.0,
+        "transaction_date": 0.6794,
+        "transaction_type": 0.5725
+      },
+      "filing_date": "2026-11-10",
+      "human_review_required": true,
+      "mean_layout_confidence": 0.82,
+      "mean_ocr_confidence": 0.6794,
+      "mean_page_quality_score": 67.83,
+      "mean_review_quality_score": 0.6783,
+      "minimum_page_quality_score": 58.67,
+      "official_id": "congress:F000459",
+      "official_name": "Charles J. \"Chuck\" Fleischmann",
+      "page_count": 2,
+      "page_review_status_counts": {
+        "usable_ocr_review_required": 2
+      },
+      "processing_status": "ocr_complete_review_required",
+      "readable_page_count": 2,
+      "result_path": "data/disclosures/ocr_results/house-ptr-2026-9116403.json",
+      "result_sha256": "b7ef21d74dbee2814e1e1778d730d966fd4696190466e39adfafba202b683515",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/9116403.pdf",
+      "transaction_rows_created": 0,
+      "word_count": 416
     }
   ],
   "schema_version": "disclosure-ocr-results-manifest-v2",
@@ -1692,17 +1692,17 @@
     },
     "failed_document_count": 0,
     "human_review_required_document_count": 50,
-    "ocr_character_count": 811738,
-    "ocr_word_count": 88987,
+    "ocr_character_count": 797923,
+    "ocr_word_count": 88842,
     "page_review_status_counts": {
       "high_quality_ocr_review_required": 2,
-      "low_quality_ocr_review_required": 327,
-      "usable_ocr_review_required": 36
+      "low_quality_ocr_review_required": 324,
+      "usable_ocr_review_required": 38
     },
-    "processed_page_count": 365,
+    "processed_page_count": 364,
     "processing_status_counts": {
-      "ocr_complete_review_required": 13,
-      "ocr_low_quality_review_required": 14,
+      "ocr_complete_review_required": 14,
+      "ocr_low_quality_review_required": 13,
       "ocr_partial_review_required": 23
     },
     "quality_dimensions": [
@@ -1711,7 +1711,7 @@
       "field_label_confidence",
       "document_review_quality_score"
     ],
-    "readable_page_count": 38,
+    "readable_page_count": 40,
     "transaction_rows_created": 0
   }
 }
