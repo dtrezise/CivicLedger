@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148852020,
+        "current": 148865371,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -33,7 +33,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3167055,
+      "bytes": 3167058,
       "group": "timelines",
       "key": "congress:P000612",
       "path": "data/partitions/timelines/congress-p000612.json",
@@ -41,7 +41,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 3157802,
+      "bytes": 3157801,
       "group": "timelines",
       "key": "congress:G000583",
       "path": "data/partitions/timelines/congress-g000583.json",
@@ -57,7 +57,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2705569,
+      "bytes": 2705570,
       "group": "timelines",
       "key": "congress:C000174",
       "path": "data/partitions/timelines/congress-c000174.json",
@@ -73,7 +73,7 @@
       "tier": "candidate"
     },
     {
-      "bytes": 2135612,
+      "bytes": 2135622,
       "group": "timelines",
       "key": "congress:W000802",
       "path": "data/partitions/timelines/congress-w000802.json",
@@ -87,20 +87,20 @@
       "bytes": 4537250,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148852020
+    "total_bytes": 148865371
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6036605
+      "total_bytes": 6034794
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30157425
+      "total_bytes": 30164930
     },
     "roles": {
       "candidate_bytes": 2668211,
@@ -109,10 +109,10 @@
       "total_bytes": 3366547
     },
     "timelines": {
-      "candidate_bytes": 18603402,
+      "candidate_bytes": 18603415,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100740990
+      "total_bytes": 100749117
     }
   },
   "large_bootstrap_artifacts_kept_static": [
@@ -136,9 +136,9 @@
   },
   "projected_static_footprint_if_candidates_moved": {
     "asset_count": 430,
-    "bytes_removed": 21271613,
+    "bytes_removed": 21271626,
     "candidate_count": 7,
-    "remaining_total_bytes": 127580407
+    "remaining_total_bytes": 127593745
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "d7143c4b534a9769ed12871540569639762a3be5723fc4e73d28b48a8e888ddb"
+    "manifest_sha256": "aa3abab8cee9cda7a736bcfdc8de44e77818145fe95ef7c30bd4d245603d5bf1"
   }
 }
