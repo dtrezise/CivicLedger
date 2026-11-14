@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148865371,
+        "current": 148900544,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -87,37 +87,37 @@
       "bytes": 4537250,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148865371
+    "total_bytes": 148900544
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6034794
+      "total_bytes": 6036680
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30164930
+      "total_bytes": 30170311
     },
     "roles": {
       "candidate_bytes": 2668211,
       "candidate_count": 1,
       "partition_count": 3,
-      "total_bytes": 3366547
+      "total_bytes": 3367314
     },
     "timelines": {
       "candidate_bytes": 18603415,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100749117
+      "total_bytes": 100774496
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2403355,
+      "bytes": 2404591,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -138,7 +138,7 @@
     "asset_count": 430,
     "bytes_removed": 21271626,
     "candidate_count": 7,
-    "remaining_total_bytes": 127593745
+    "remaining_total_bytes": 127628918
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "aa3abab8cee9cda7a736bcfdc8de44e77818145fe95ef7c30bd4d245603d5bf1"
+    "manifest_sha256": "635d83ba7fca9b27e4096d014733e86ad0b2c78fb064200d54a722337dc0c85e"
   }
 }
