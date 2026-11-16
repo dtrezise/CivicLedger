@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 48543,
+      "current_record_count": 41655,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "9e917bab157ecce11e9cd3959582eeddc90d98d08e9a059b63802b2b1a901d75",
+      "current_summary_sha256": "9eea5725bb4b4a2122c1a6aae436978bfbeadcf433eac99a6594928a806fd037",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -19,7 +19,7 @@
       "count_metric": "processed_document_count",
       "current_record_count": 7671,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "1d5fd3810f1addcbe01304df84fbb1cbda7ff16de835c97d30f8e14830820686",
+      "current_summary_sha256": "56634d26d302343a7e942effdc6a90d158c292a9da84889befdc1545c0780c06",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -73,7 +73,7 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-11-14",
+  "generated_at": "2026-11-16",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
@@ -1141,6 +1141,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-11-14T16:40:04Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-11-16T20:42:37Z",
+        "duration_seconds": 479.0,
+        "failure_count": 0,
+        "run_id": "43951044855-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-11-16T20:34:38Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1368,8 +1377,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 118,
-    "refresh_run_count": 118,
+    "measured_refresh_count": 119,
+    "refresh_run_count": 119,
     "source_failure_count": 36
   }
 }

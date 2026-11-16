@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-11-14",
+  "artifact_date": "2026-11-16",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "7a336d5e720408766be94bdda28d24b5dffcbcfbac8e903296f148114e585a87",
+  "dataset_hash": "7cb78bf10bcb678bfbfab65b3622710a31413f2089e170f55593ea7d6b84f45a",
   "gaps": [
     {
       "available_classified_record_count": 4785,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 528,
+      "selected_record_count": 529,
       "status": "declared_scope_limit"
     },
     {
@@ -11241,27 +11241,6 @@
         "TJX"
       ],
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
-    },
-    {
-      "agency_names": [],
-      "category": "congress",
-      "context_only": true,
-      "correlation_asserted": false,
-      "date": "2013-05-01",
-      "docket_ids": [],
-      "event_type": "legislation",
-      "id": "primary-source:congress:congress-law-113-hr-1246",
-      "law_number": "113-8",
-      "official_urls": [
-        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
-      ],
-      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
-      "source_event_id": "congress-law-113-hr-1246",
-      "source_name": "Congress.gov",
-      "source_record_id": null,
-      "source_record_sha256": null,
-      "source_tier": "official",
-      "title": "District of Columbia Chief Financial Officer Vacancy Act"
     },
     {
       "agency_names": [
@@ -76634,10 +76613,10 @@
       "id": "primary-source:courts:scotus-2023-21-22-448",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/23pdf/601us2r21_7648.pdf",
+        "https://www.supremecourt.gov/opinions/23pdf/22-448_o7jp.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/23"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/601us2r21_7648.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/22-448_o7jp.pdf",
       "source_event_id": "scotus-2023-21-22-448",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -77727,10 +77706,10 @@
       "id": "primary-source:courts:scotus-2023-34-23-367",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/23pdf/23-367_f3b7.pdf",
+        "https://www.supremecourt.gov/opinions/23pdf/602us1r34_e29g.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/23"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/23-367_f3b7.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/602us1r34_e29g.pdf",
       "source_event_id": "scotus-2023-34-23-367",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -77749,10 +77728,10 @@
       "id": "primary-source:courts:scotus-2023-35-23-235",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/23pdf/23-235_n7ip.pdf",
+        "https://www.supremecourt.gov/opinions/23pdf/602us1r35_h3ci.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/23"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/23-235_n7ip.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/602us1r35_h3ci.pdf",
       "source_event_id": "scotus-2023-35-23-235",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -104913,7 +104892,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "2db461caee304046121d8765f2f17a4663f18e25a0ea2d1a3ea1ec0c99bf79cf",
+      "sha256": "6ea27c66ad776da03db5ab449ff46b6b2c890a5a13c745bd436a4bec6e84be2c",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104933,13 +104912,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4154,
+    "record_count": 4153,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 528,
+      "congress": 527,
       "courts": 347,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4154
+    "record_with_official_url_count": 4153
   }
 }
