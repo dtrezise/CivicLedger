@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 148933196,
+        "current": 148957490,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -87,37 +87,37 @@
       "bytes": 4537250,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 148933196
+    "total_bytes": 148957490
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6034800
+      "total_bytes": 6036681
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30175694
+      "total_bytes": 30181057
     },
     "roles": {
       "candidate_bytes": 2668211,
       "candidate_count": 1,
       "partition_count": 3,
-      "total_bytes": 3367314
+      "total_bytes": 3368711
     },
     "timelines": {
       "candidate_bytes": 18603415,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100804166
+      "total_bytes": 100819411
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2404591,
+      "bytes": 2404529,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -138,7 +138,7 @@
     "asset_count": 430,
     "bytes_removed": 21271626,
     "candidate_count": 7,
-    "remaining_total_bytes": 127661570
+    "remaining_total_bytes": 127685864
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "b5ece031eb1c657af3a6f0354a89348b1ff12aa787242c539a350198ef07e69d"
+    "manifest_sha256": "3bdf316eb24d084e0280d748003e8aba099742f8c603d3fd440a359b1cb19074"
   }
 }

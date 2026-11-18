@@ -5,9 +5,9 @@
       "baseline_schema_version": "house-disclosure-index-v1",
       "baseline_summary_sha256": "a41c8f1355180c8aaf1ca23efb99c1c8cace62b1ede358c2f144dfae5ac66aff",
       "count_metric": "source_index_row_count",
-      "current_record_count": 41659,
+      "current_record_count": 41660,
       "current_schema_version": "house-disclosure-index-v1",
-      "current_summary_sha256": "ad4e6a4387d0d02422cec4ed54a8b5c7ffd0e521a64a216ad3fa4cf53cfe7df1",
+      "current_summary_sha256": "d74bfa7fc7c9eebe79fa8b6a01243ed7140738eb0fbf3b7ffea8fa07db5f4c9a",
       "path": "data/disclosures/house_disclosure_index.json",
       "source_id": "house-disclosure-index",
       "status": "changed"
@@ -17,9 +17,9 @@
       "baseline_schema_version": "house-ptr-transactions-manifest-v2",
       "baseline_summary_sha256": "92db9f44895ffd97d5148fdda7d37648edb184c283a3a0e1012d15d00bab0dba",
       "count_metric": "processed_document_count",
-      "current_record_count": 7675,
+      "current_record_count": 7676,
       "current_schema_version": "house-ptr-transactions-manifest-v2",
-      "current_summary_sha256": "bd28892fa602743e97d918ad62e7643ec920f8c91128bac3cb96845cbfcbc170",
+      "current_summary_sha256": "84b149848fb786ac223c81b1c663db7e35532b92d36bb71516a3df28a4bc009a",
       "path": "data/disclosures/house_ptr_transactions.json",
       "source_id": "house-ptr-transactions",
       "status": "changed"
@@ -31,7 +31,7 @@
       "count_metric": "indexed_document_count",
       "current_record_count": 0,
       "current_schema_version": "judicial-disclosure-manifest-v1",
-      "current_summary_sha256": "f4e5d40050006b14c412cbbad65ac4f9d6dfd62beb85afd910474505051c7fbc",
+      "current_summary_sha256": "dbdc9c0bcc0383d7583d6031f866193112d85c3db824399d6fa5deb1fcb653af",
       "path": "data/disclosures/judicial_disclosure_manifest.json",
       "source_id": "judicial-disclosure-manifest",
       "status": "changed"
@@ -73,7 +73,7 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-11-17",
+  "generated_at": "2026-11-18",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
@@ -1159,6 +1159,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-11-17T19:15:03Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-11-18T19:05:07Z",
+        "duration_seconds": 616.0,
+        "failure_count": 0,
+        "run_id": "44374629897-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-11-18T18:54:51Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1386,8 +1395,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 120,
-    "refresh_run_count": 120,
+    "measured_refresh_count": 121,
+    "refresh_run_count": 121,
     "source_failure_count": 36
   }
 }

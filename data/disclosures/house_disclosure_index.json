@@ -760176,9 +760176,108 @@
       "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035807.pdf",
       "state": "AR",
       "supersedes_document_id": null
+    },
+    {
+      "amendment_linkage_confidence": "none",
+      "amendment_reconciliation_action": "annotate_only",
+      "amendment_reconciliation_evidence": [],
+      "amendment_status": "no_explicit_amendment_reference",
+      "bioguide_id": "D000032",
+      "clerk_document_id": "20035811",
+      "district": "19",
+      "document_family_id": "house-family-b4331e49ae797ac1bb24",
+      "document_id": "house-ptr-2026-20035811",
+      "filer_name": "Hon. Byron Donalds",
+      "filing_date": "2026-11-16",
+      "filing_type_code": "P",
+      "filing_year": 2026,
+      "identity_candidates": [
+        {
+          "official_id": "congress:D000032",
+          "official_name": "Byron Donalds",
+          "reasons": [
+            "surname",
+            "first_name",
+            "district",
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 12
+        },
+        {
+          "official_id": "congress:B001257",
+          "official_name": "Gus M. Bilirakis",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        },
+        {
+          "official_id": "congress:B001260",
+          "official_name": "Vern Buchanan",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        },
+        {
+          "official_id": "congress:B001314",
+          "official_name": "Aaron Bean",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        },
+        {
+          "official_id": "congress:C001039",
+          "official_name": "Kat Cammack",
+          "reasons": [
+            "state",
+            "active_on_filing_date"
+          ],
+          "score": 3
+        }
+      ],
+      "identity_resolution": "deterministic_match",
+      "match_reasons": [
+        "surname",
+        "first_name",
+        "district",
+        "state",
+        "active_on_filing_date"
+      ],
+      "match_score": 12,
+      "match_status": "matched",
+      "official_id": "congress:D000032",
+      "official_name": "Byron Donalds",
+      "record_status": "official_house_index",
+      "report_type": "periodic_transaction_report",
+      "review_required_before_public_trade": true,
+      "source_id": "house-financial-disclosure",
+      "source_index_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2026FD.txt",
+      "source_record_preserved": true,
+      "source_row_metadata": {
+        "DocID": "20035811",
+        "FilingDate": "11/16/2026",
+        "FilingType": "P",
+        "First": "Byron",
+        "Last": "Donalds",
+        "Prefix": "Hon.",
+        "StateDst": "FL19",
+        "Suffix": "",
+        "Year": "2026"
+      },
+      "source_row_sha256": "8041f85ce4dec973598a735e7317f6b99ee54d867b75a254c73d8c304b275987",
+      "source_tier": "official",
+      "source_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035811.pdf",
+      "state": "FL",
+      "supersedes_document_id": null
     }
   ],
-  "generated_at": "2026-11-17",
+  "generated_at": "2026-11-18",
   "schema_version": "house-disclosure-index-v1",
   "scope": {
     "document_scope": "Member periodic transaction reports indexed by the House Clerk",
@@ -760329,10 +760428,10 @@
       "year": 2025
     },
     {
-      "byte_count": 95049,
-      "member_ptr_count": 453,
-      "row_count": 1861,
-      "sha256": "b822e76a97d3cba1ed52d3a843e5f40414a2a2d00efd7f6cd12676ad5eca96e9",
+      "byte_count": 95102,
+      "member_ptr_count": 454,
+      "row_count": 1862,
+      "sha256": "dfeb3be019bee1b25ceb0aba317b579dd332bba0c978ec54761ef98caf9e8b40",
       "source_url": "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2026FD.txt",
       "year": 2026
     }
@@ -760348,18 +760447,18 @@
       "G": 56,
       "H": 396,
       "O": 8160,
-      "P": 8458,
+      "P": 8459,
       "R": 3,
       "T": 630,
       "W": 1152,
       "X": 6313
     },
-    "matched_member_ptr_document_count": 7807,
-    "member_ptr_document_count": 7809,
+    "matched_member_ptr_document_count": 7808,
+    "member_ptr_document_count": 7810,
     "public_production_trade_count": 0,
     "review_required_before_public_trade": true,
     "source_index_count": 18,
-    "source_index_row_count": 41659,
+    "source_index_row_count": 41660,
     "unmatched_member_ptr_document_count": 2
   }
 }
