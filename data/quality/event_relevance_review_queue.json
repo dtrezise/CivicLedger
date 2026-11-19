@@ -1,6 +1,6 @@
 {
-  "available_relationship_count": 22979,
-  "generated_at": "2026-11-18",
+  "available_relationship_count": 22978,
+  "generated_at": "2026-11-19",
   "human_reviewed_count": 0,
   "interpretation_boundary": "Reviewers label contextual usefulness only. They do not label causation, intent, knowledge, benefit, wrongdoing, or investigative truth.",
   "items": [
@@ -931,7 +931,7 @@
     {
       "adjudication_status": "not_started",
       "branch": "Legislative",
-      "candidate_rank": 325,
+      "candidate_rank": 324,
       "candidate_score": 82.8,
       "event_date": "2023-09-13",
       "event_id": "sec-filing:0001018724:0001018724-23-000014",
@@ -1000,7 +1000,7 @@
     {
       "adjudication_status": "not_started",
       "branch": "Legislative",
-      "candidate_rank": 182,
+      "candidate_rank": 181,
       "candidate_score": 57.3,
       "event_date": "2016-12-28",
       "event_id": "federal-register-eo-13757",
@@ -1179,7 +1179,7 @@
     {
       "adjudication_status": "not_started",
       "branch": "Legislative",
-      "candidate_rank": 244,
+      "candidate_rank": 243,
       "candidate_score": 64.4,
       "event_date": "2018-02-09",
       "event_id": "congress-law-115-hr-1892",
@@ -1249,7 +1249,7 @@
     {
       "adjudication_status": "not_started",
       "branch": "Legislative",
-      "candidate_rank": 110,
+      "candidate_rank": 109,
       "candidate_score": 83.3,
       "event_date": "2018-09-13",
       "event_id": "congress-law-115-hr-4318",
@@ -1296,44 +1296,6 @@
       "reviewer_id": null,
       "second_reviewer_id": null,
       "stratum": "Legislative|direct|candidate",
-      "trade_context_candidate": true
-    },
-    {
-      "adjudication_status": "not_started",
-      "branch": "Legislative",
-      "candidate_rank": 41,
-      "candidate_score": 85.0,
-      "event_date": "2026-06-16",
-      "event_id": "federal-register-agency-2026-12069",
-      "label_status": "unreviewed",
-      "nearby_trade_ids": [
-        "house-ptr-2026-20034892-row-0001",
-        "house-ptr-2026-20034892-row-0002",
-        "house-ptr-2026-20034892-row-0003",
-        "house-ptr-2026-20034892-row-0004",
-        "house-ptr-2026-20034892-row-0005",
-        "house-ptr-2026-20034892-row-0006",
-        "house-ptr-2026-20034892-row-0007",
-        "house-ptr-2026-20034892-row-0008"
-      ],
-      "official_id": "congress:C001101",
-      "official_involvement": [],
-      "official_name": "Katherine M. Clark",
-      "relationship_reasons": [
-        "asset or ticker scope: JNJ",
-        "sector scope: Health Care",
-        "asset class: equity, etf",
-        "same day as a disclosed transaction"
-      ],
-      "relationship_tier": "asset_specific",
-      "relevance_label": null,
-      "review_item_id": "congress:C001101:federal-register-agency-2026-12069",
-      "review_note": null,
-      "review_question": "Is this sourced relationship useful context for the nearby disclosed transactions?",
-      "reviewed_at": null,
-      "reviewer_id": null,
-      "second_reviewer_id": null,
-      "stratum": "Legislative|asset_specific|candidate",
       "trade_context_candidate": true
     },
     {
@@ -2475,6 +2437,48 @@
       "reviewer_id": null,
       "second_reviewer_id": null,
       "stratum": "Legislative|direct|candidate",
+      "trade_context_candidate": true
+    },
+    {
+      "adjudication_status": "not_started",
+      "branch": "Legislative",
+      "candidate_rank": 21,
+      "candidate_score": 95.5,
+      "event_date": "2019-02-05",
+      "event_id": "federal-register-agency-2019-00799",
+      "label_status": "unreviewed",
+      "nearby_trade_ids": [
+        "senate-ptr-c75ec379-8d72-4242-88db-a7cd910840b4-row-0002-b8ce0dc2c9",
+        "senate-ptr-cf3ffbbc-56ba-44e0-a4b9-5bd37287ba4f-row-0002-b8ce0dc2c9",
+        "senate-ptr-c75ec379-8d72-4242-88db-a7cd910840b4-row-0001-63c0eaa598",
+        "senate-ptr-cf3ffbbc-56ba-44e0-a4b9-5bd37287ba4f-row-0001-63c0eaa598",
+        "senate-ptr-9600412e-5421-4331-9918-fa7b534b4e83-row-0004-bbebd780a6",
+        "senate-ptr-9600412e-5421-4331-9918-fa7b534b4e83-row-0005-0fb24986ee",
+        "senate-ptr-9600412e-5421-4331-9918-fa7b534b4e83-row-0006-092f172bc9",
+        "senate-ptr-9600412e-5421-4331-9918-fa7b534b4e83-row-0007-3b18a5c542",
+        "senate-ptr-9600412e-5421-4331-9918-fa7b534b4e83-row-0002-f3078ae363",
+        "senate-ptr-9600412e-5421-4331-9918-fa7b534b4e83-row-0003-0575b99bc6",
+        "senate-ptr-16a9d865-f3b4-48a6-8220-5eaeeb8c47c5-row-0001-0d0976252c",
+        "senate-ptr-2c16529c-a84c-4337-b3af-8210640f0c87-row-0001-0d0976252c"
+      ],
+      "official_id": "congress:I000024",
+      "official_involvement": [],
+      "official_name": "James M. Inhofe",
+      "relationship_reasons": [
+        "asset or ticker scope: JNJ, V",
+        "sector scope: Financials, Health Care",
+        "asset class: equity, etf",
+        "1 days after the nearest disclosed transaction"
+      ],
+      "relationship_tier": "asset_specific",
+      "relevance_label": null,
+      "review_item_id": "congress:I000024:federal-register-agency-2019-00799",
+      "review_note": null,
+      "review_question": "Is this sourced relationship useful context for the nearby disclosed transactions?",
+      "reviewed_at": null,
+      "reviewer_id": null,
+      "second_reviewer_id": null,
+      "stratum": "Legislative|asset_specific|candidate",
       "trade_context_candidate": true
     },
     {
