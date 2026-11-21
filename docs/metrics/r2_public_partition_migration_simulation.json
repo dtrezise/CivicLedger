@@ -14,7 +14,7 @@
         "triggered_now": false
       },
       "total_static_bytes": {
-        "current": 149006561,
+        "current": 149014037,
         "rationale": "Marks the documented point where deploy and checkout weight require review.",
         "threshold": 524288000,
         "triggered_now": false
@@ -87,37 +87,37 @@
       "bytes": 4537250,
       "path": "data/partitions/timelines/exec-donald-j-trump.json"
     },
-    "total_bytes": 149006561
+    "total_bytes": 149014037
   },
   "group_summary": {
     "events": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 18,
-      "total_bytes": 6035395
+      "total_bytes": 6034349
     },
     "market": {
       "candidate_bytes": 0,
       "candidate_count": 0,
       "partition_count": 28,
-      "total_bytes": 30193794
+      "total_bytes": 30199980
     },
     "roles": {
       "candidate_bytes": 2668211,
       "candidate_count": 1,
       "partition_count": 3,
-      "total_bytes": 3368711
+      "total_bytes": 3370246
     },
     "timelines": {
       "candidate_bytes": 18603403,
       "candidate_count": 6,
       "partition_count": 364,
-      "total_bytes": 100857281
+      "total_bytes": 100855879
     }
   },
   "large_bootstrap_artifacts_kept_static": [
     {
-      "bytes": 2404529,
+      "bytes": 2407006,
       "path": "data/partitions/officials-index.json",
       "rationale": "Bootstrap artifact remains static; compact it before considering an R2 dependency for initial load."
     }
@@ -138,7 +138,7 @@
     "asset_count": 430,
     "bytes_removed": 21271614,
     "candidate_count": 7,
-    "remaining_total_bytes": 127734947
+    "remaining_total_bytes": 127742423
   },
   "safety": {
     "activates_r2": false,
@@ -151,6 +151,6 @@
   "source": {
     "dataset_version": "seed-v1",
     "evaluated_query_partition_count": 413,
-    "manifest_sha256": "16a9156f84f23f09a1705ee6227b48fbcfac1d2f6ecb91581dd8f10ae8b0922b"
+    "manifest_sha256": "d3f85632a53c788430fbf476d3a4c4e8484e95f3a032a89cec1848322b14d17d"
   }
 }
