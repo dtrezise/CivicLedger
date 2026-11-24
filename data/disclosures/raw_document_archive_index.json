@@ -19,30 +19,30 @@
         "rights_note": "OGE displays statutory restrictions on obtaining or using public financial disclosure reports, including restrictions on unlawful, commercial, credit-rating, and solicitation uses. CivicLedger must preserve this notice before ingestion, export, or share-card use.",
         "source_id": "oge-individual-disclosures"
       },
-      "archive_object_status": "reused",
+      "archive_object_status": "new",
       "archive_status": "archived",
-      "byte_count": 3994653,
+      "byte_count": 4501548,
       "content_addressed": true,
       "content_hashes": {
-        "sha256": "90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6",
-        "sha512": "f9c2188730c3c1fbe1b5667b02f6c86df459715b878a7e503bd713b5c04f839a7c142905ca561bd2c09ab24bf4af4e772cb41543ae681475e9cb59a87d076c84"
+        "sha256": "05084eac9dbc68b1577fe311fbf78c695adc00fada9a8397fb65b8eb3ecebdb0",
+        "sha512": "d8d78cec97244d25ba6b35e29b8febc81acd9e7ab7da80f6fa83e3c19cdf7681851ea70837c087086349118663384a6db2deac5238f019913bdcd6010df03d1e"
       },
       "content_type": "application/pdf",
       "document_id": "oge-public-278e-sample",
       "document_type": "OGE Form 278e",
       "expected_official_id": null,
       "expected_official_name": "OGE public sample",
-      "file_hash": "90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6",
+      "file_hash": "05084eac9dbc68b1577fe311fbf78c695adc00fada9a8397fb65b8eb3ecebdb0",
       "final_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
       "hash_algorithm": "sha256",
       "http_status_code": 200,
       "identity_status": "expected_identity_unverified",
       "notes": "Official OGE sample form used for parser regression and raw-document archive plumbing; not a production official filing.",
-      "object_reused": true,
+      "object_reused": false,
       "response_metadata": {
-        "content_length": "3994653",
-        "etag": "W/\"MTAtMDAwMi0wLTg1MjU4QjlEMDA1Q0ZCNDEtRkU5MDRGQURCMTYzQjQ1QTg1MjU4NUI2MDA1QTIzRTg=\"",
-        "last_modified": "Thu, 19 Sep 2024 16:55:37 GMT"
+        "content_length": "4501548",
+        "etag": "W/\"MTAtMDAwMi0wLTg1MjU4RUI5MDA2NjRFQTItRkU5MDRGQURCMTYzQjQ1QTg1MjU4NUI2MDA1QTIzRTg=\"",
+        "last_modified": "Tue, 24 Nov 2026 18:37:29 GMT"
       },
       "retrieval_attempted": true,
       "retrieval_attempts": [
@@ -53,12 +53,12 @@
         }
       ],
       "retrieval_mode": "direct_public_sample",
-      "retrieved_at": "2026-11-23T22:12:49+00:00",
+      "retrieved_at": "2026-11-24T20:50:05+00:00",
       "review_required_before_public_trade": true,
       "source_id": "oge-individual-disclosures",
       "source_status": "downloadable_public_sample",
       "source_url": "https://www.oge.gov/Web/oge.nsf/OGE%20Forms/FE904FADB163B45A852585B6005A23E8/%24FILE/OGE%20Form%20278e%20Public%20Financial%20Disclosure%20Report.pdf?open=",
-      "storage_path": "data/raw_documents/oge-individual-disclosures/90/90dd3da72f4913a45e0d07e6669cdcf824a6fd6c257717e736c2545eb5ef57b6.pdf"
+      "storage_path": "data/raw_documents/oge-individual-disclosures/05/05084eac9dbc68b1577fe311fbf78c695adc00fada9a8397fb65b8eb3ecebdb0.pdf"
     },
     {
       "access_decision": {
@@ -197,7 +197,7 @@
       "source_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm="
     }
   ],
-  "generated_at": "2026-11-23T22:12:50+00:00",
+  "generated_at": "2026-11-24T20:50:06+00:00",
   "schema_version": "raw-document-archive-index-v1",
   "source": {
     "collection_url": "https://www.oge.gov/web/oge.nsf/Officials%20Individual%20Disclosures%20Search%20Collection?OpenForm=",
@@ -211,7 +211,7 @@
     "document_count": 5,
     "pending_document_count": 4,
     "restricted_document_count": 4,
-    "reused_archive_object_count": 1,
+    "reused_archive_object_count": 0,
     "review_required_before_public_trade": true
   }
 }

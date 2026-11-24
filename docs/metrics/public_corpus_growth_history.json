@@ -843,36 +843,36 @@
     },
     {
       "delta_from_previous_week": {
-        "declared_artifact_count": 0,
-        "public_artifact_bytes": 21294,
-        "query_partition_count": 0,
-        "static_asset_bytes": 21276,
-        "static_asset_count": 0
+        "declared_artifact_count": 1,
+        "public_artifact_bytes": 154337,
+        "query_partition_count": 1,
+        "static_asset_bytes": 155121,
+        "static_asset_count": 1
       },
       "iso_week": "2026-W48",
-      "observed_on": "2026-11-23",
+      "observed_on": "2026-11-24",
       "public_artifacts": {
-        "declared_artifact_count": 420,
+        "declared_artifact_count": 421,
         "groups": {
           "bootstrap": {
             "artifact_count": 7,
-            "total_bytes": 5757660
+            "total_bytes": 5757002
           },
           "events": {
             "artifact_count": 18,
-            "total_bytes": 6034866
+            "total_bytes": 6024192
           },
           "market": {
             "artifact_count": 28,
-            "total_bytes": 30205110
+            "total_bytes": 30205359
           },
           "roles": {
             "artifact_count": 3,
-            "total_bytes": 3370246
+            "total_bytes": 3370254
           },
           "timelines": {
-            "artifact_count": 364,
-            "total_bytes": 100871440
+            "artifact_count": 365,
+            "total_bytes": 101015558
           }
         },
         "largest_artifact": {
@@ -880,21 +880,21 @@
           "group": "timelines",
           "path": "partitions/timelines/exec-donald-j-trump.json"
         },
-        "query_partition_count": 413,
-        "query_partition_total_bytes": 140481662,
-        "total_bytes": 146239322
+        "query_partition_count": 414,
+        "query_partition_total_bytes": 140615363,
+        "total_bytes": 146372365
       },
       "source": {
         "dataset_version": "seed-v1",
-        "manifest_sha256": "2df618f1c9a06d00a00214a03066a27c918423bd818b69901c4973df881cd4ee"
+        "manifest_sha256": "55c013c7878cc0e461d8e3caf42654ea2d305dcd092e1b01d5c102cab5c16c04"
       },
       "static_assets": {
-        "asset_count": 437,
+        "asset_count": 438,
         "largest_asset": {
           "bytes": 4537250,
           "path": "data/partitions/timelines/exec-donald-j-trump.json"
         },
-        "total_bytes": 149035313
+        "total_bytes": 149169158
       }
     }
   ]
