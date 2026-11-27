@@ -1,7 +1,7 @@
 {
-  "artifact_date": "2026-11-26",
+  "artifact_date": "2026-11-27",
   "context_label": "Official primary-source context only. Inclusion records source availability and does not assert a relationship to any disclosure, trade, price move, or outcome.",
-  "dataset_hash": "94c47d97a8f47b032e5bdbd7104bf23b956ab68b051feee5f621f25d9e90c027",
+  "dataset_hash": "27b0176c482fe0e523d81354f4799eaa53146410e1f1534916d6fad53038dc56",
   "gaps": [
     {
       "available_classified_record_count": 4787,
@@ -16,7 +16,7 @@
       "category": "congress",
       "gap_type": "bounded_selection",
       "id": "primary-source-gap:congress-bounded-selection",
-      "selected_record_count": 530,
+      "selected_record_count": 529,
       "status": "declared_scope_limit"
     },
     {
@@ -11241,6 +11241,27 @@
         "TJX"
       ],
       "title": "TJX COMPANIES INC /DE/ filed DEF 14A"
+    },
+    {
+      "agency_names": [],
+      "category": "congress",
+      "context_only": true,
+      "correlation_asserted": false,
+      "date": "2013-05-01",
+      "docket_ids": [],
+      "event_type": "legislation",
+      "id": "primary-source:congress:congress-law-113-hr-1246",
+      "law_number": "113-8",
+      "official_urls": [
+        "https://www.congress.gov/bill/113th-congress/house-bill/1246"
+      ],
+      "primary_url": "https://www.congress.gov/bill/113th-congress/house-bill/1246",
+      "source_event_id": "congress-law-113-hr-1246",
+      "source_name": "Congress.gov",
+      "source_record_id": null,
+      "source_record_sha256": null,
+      "source_tier": "official",
+      "title": "District of Columbia Chief Financial Officer Vacancy Act"
     },
     {
       "agency_names": [
@@ -30502,10 +30523,10 @@
       "id": "primary-source:courts:scotus-2018-6-17-773",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/18pdf/17-773_4h25.pdf",
+        "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/18"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/18pdf/17-773_4h25.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
       "source_event_id": "scotus-2018-6-17-773",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -30616,10 +30637,10 @@
       "id": "primary-source:courts:scotus-2018-9-17-340",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/18pdf/17-340_o7kq.pdf",
+        "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/18"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/18pdf/17-340_o7kq.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/boundvolumes/586BV.pdf",
       "source_event_id": "scotus-2018-9-17-340",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -73073,10 +73094,10 @@
       "id": "primary-source:courts:scotus-2023-2-22-660",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/23pdf/601us1r02_c07d.pdf",
+        "https://www.supremecourt.gov/opinions/23pdf/22-660_7648.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/23"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/601us1r02_c07d.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/22-660_7648.pdf",
       "source_event_id": "scotus-2023-2-22-660",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -73095,10 +73116,10 @@
       "id": "primary-source:courts:scotus-2023-3-22-846",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/23pdf/601us1r03_4gcj.pdf",
+        "https://www.supremecourt.gov/opinions/23pdf/22-846_2co3.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/23"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/601us1r03_4gcj.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/22-846_2co3.pdf",
       "source_event_id": "scotus-2023-3-22-846",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -73527,10 +73548,10 @@
       "id": "primary-source:courts:scotus-2023-4-22-500",
       "law_number": null,
       "official_urls": [
-        "https://www.supremecourt.gov/opinions/23pdf/601us1r04_4g15.pdf",
+        "https://www.supremecourt.gov/opinions/23pdf/22-500_7k47.pdf",
         "https://www.supremecourt.gov/opinions/slipopinion/23"
       ],
-      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/601us1r04_4g15.pdf",
+      "primary_url": "https://www.supremecourt.gov/opinions/23pdf/22-500_7k47.pdf",
       "source_event_id": "scotus-2023-4-22-500",
       "source_name": "Supreme Court of the United States",
       "source_record_id": null,
@@ -104911,7 +104932,7 @@
       "artifact_date": null,
       "path": "data/context/federal_events.json",
       "schema_version": "federal-market-events-v2",
-      "sha256": "d5ea10f4a9f60bf8f80e94a1d2ffcc38d028ee8001976f3431bb1d5e0fe7fcf0",
+      "sha256": "132e97f679c37ec12be8dc53abf9ff1919934abd83ab83a75432116242390997",
       "source_id": "federal_events",
       "source_tier": "official"
     },
@@ -104931,13 +104952,13 @@
       "bounded_selection": 2,
       "sec_request_not_fully_covered": 60
     },
-    "record_count": 4154,
+    "record_count": 4155,
     "record_counts_by_category": {
       "agencies": 580,
-      "congress": 528,
+      "congress": 529,
       "courts": 347,
       "issuer_filings": 2699
     },
-    "record_with_official_url_count": 4154
+    "record_with_official_url_count": 4155
   }
 }

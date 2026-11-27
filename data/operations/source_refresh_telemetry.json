@@ -73,7 +73,7 @@
       "status": "changed"
     }
   ],
-  "generated_at": "2026-11-26",
+  "generated_at": "2026-11-27",
   "interpretation_boundary": "Operational source-refresh signals only. Failures and aggregate drift are review queues, not evidence about an official, trade, or event.",
   "refresh_duration": {
     "maximum": 5085.0,
@@ -1231,6 +1231,15 @@
         "source_id": "scheduled-live-refresh",
         "started_at": "2026-11-26T19:43:51Z",
         "status": "success"
+      },
+      {
+        "completed_at": "2026-11-27T19:42:38Z",
+        "duration_seconds": 613.0,
+        "failure_count": 0,
+        "run_id": "46057256646-1",
+        "source_id": "scheduled-live-refresh",
+        "started_at": "2026-11-27T19:32:25Z",
+        "status": "success"
       }
     ],
     "unit": "seconds"
@@ -1458,8 +1467,8 @@
   "summary": {
     "data_drift_count": 6,
     "failed_refresh_count": 35,
-    "measured_refresh_count": 128,
-    "refresh_run_count": 128,
+    "measured_refresh_count": 129,
+    "refresh_run_count": 129,
     "source_failure_count": 36
   }
 }
